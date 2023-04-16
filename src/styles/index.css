@@ -1,0 +1,32 @@
+html,
+body,
+#app {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+html.dark {
+  background: #121212;
+  color-scheme: dark;
+}
+
+[contenteditable='true']:focus-visible,
+[contenteditable='true']:focus {
+  outline: none;
+}
+
+[contenteditable]:empty:after {
+  content: attr(data-ph);
+  color: rgba(0, 0, 0, 0.2);
+  cursor: text;
+}
+
+:root {
+  --el-color-primary: rgb(38, 22, 47);
+  --el-color-primary-light-3: rgb(98, 93, 100);
+  --el-color-primary-light-5: rgb(128, 123, 131);
+  --el-color-primary-light-7: rgb(195, 193, 196);
+  --el-color-primary-light-9: rgb(244, 240, 247);
+  --el-color-primary-dark-2: rgb(42, 32, 48);
+}

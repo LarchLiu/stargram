@@ -1,0 +1,15 @@
+node_modules/
+dist/
+lib/
+.turbo
+.eslintcache
+.env
+
+.idea/
+
+.DS_Store
+
+.envrc
+
+local/
+extension/

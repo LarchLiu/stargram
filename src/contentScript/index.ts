@@ -1,4 +1,4 @@
-console.log("Content script loaded.");
+// console.log('Content script loaded.')
 
 // const observer = new MutationObserver((mutationsList) => {
 //   for (const mutation of mutationsList) {
@@ -27,7 +27,6 @@ function getDataFromPage() {
   const category = 'Github'
   const summary = 'test'
 
-
   // const jobPage = document.getElementById("jobPage");
   // console.log("jobPage:", jobPage);
   // const imageContainer = jobPage.querySelector(".relative.h-auto.w-full.false, .relative.h-auto.w-full.overflow-hidden");
@@ -42,38 +41,40 @@ function getDataFromPage() {
   //     break;
   //   }
   // }
-  
+
   // const prompt = jobPage.querySelector(".first-letter\\:capitalize").innerText;
   // const property = jobPage.querySelector(".line-clamp-1:not(.break-all)").innerText;
 
-  return { title, url, category, summary };
+  return { title, url, category, summary }
 }
 
 function handleSaveToNotion() {
-  console.log("Handling save to Notion in the content script");
-  const { title, url, category, summary } = getDataFromPage();
-  
+  console.log('Handling save to Notion in the content script')
+  const { title, url, category, summary } = getDataFromPage()
+
   chrome.runtime.sendMessage(
     {
-      action: "saveToNotion",
+      action: 'saveToNotion',
       data: { title, url, category, summary },
     },
     (response) => {
       if (chrome.runtime.lastError) {
-        console.log(chrome.runtime.lastError)
-      } else {
-        console.log(response)
+        // console.log(chrome.runtime.lastError)
       }
-    }
-  );
+      else {
+        // console.log(response)
+      }
+    },
+  )
 }
 
 chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
-  if (request.action === "saveToNotion") {
+  if (request.action === 'saveToNotion') {
     handleSaveToNotion()
-    sendResponse({ message: 'Handling save to Notion in the content script'})
-  } else {
-    sendResponse({ message: 'Unknow action'})
+    sendResponse({ message: 'Handling save to Notion in the content script' })
   }
-  return true; // 添加这一行以确保响应可以在异步操作完成后发送
-});
+  else {
+    sendResponse({ message: 'Unknow action' })
+  }
+  return true // 添加这一行以确保响应可以在异步操作完成后发送
+})
