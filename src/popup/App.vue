@@ -11,22 +11,22 @@ onMounted(() => {
       chrome.tabs.sendMessage(tabs[0].id, { action: 'saveToNotion' }, (response) => {
         const statusElement = document.getElementById('status')
         if (chrome.runtime.lastError) {
-          statusElement.textContent = `Error: 保存失败, ${chrome.runtime.lastError.message}`
+          statusElement.textContent = `Error: ${chrome.runtime.lastError.message}`
         }
         else {
-          if (response && response.message)
-            statusElement.textContent = `当前状态: ${response.message}`
+          if (response && response.error)
+            statusElement.textContent = `Error: ${response.message}`
         }
       })
     })
   })
 
-  chrome.runtime.onMessage.addListener(async (request) => {
+  chrome.runtime.onMessage.addListener(async (request: { action: string; data: { message: string; error: boolean } }, sender, sendResponse) => {
     if (request.action === 'saveToNotionFinish') {
       const statusElement = document.getElementById('status')
-      if (request.data.err)
-        statusElement.textContent = `Error: 保存失败, ${request.data.message}`
-
+      // console.log(request)
+      if (request.data && request.data.error)
+        statusElement.textContent = `Error: ${request.data.message}`
       else
         statusElement.textContent = '成功保存至 Notion'
 
@@ -34,6 +34,7 @@ onMounted(() => {
         statusElement.textContent = ''
       }, 3000)
     }
+    sendResponse('ok')
     return true
   })
 })

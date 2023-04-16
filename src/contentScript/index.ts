@@ -49,7 +49,7 @@ function getDataFromPage() {
 }
 
 function handleSaveToNotion() {
-  console.log('Handling save to Notion in the content script')
+  // console.log('Handling save to Notion in the content script')
   const { title, url, category, summary } = getDataFromPage()
 
   chrome.runtime.sendMessage(
@@ -71,10 +71,10 @@ function handleSaveToNotion() {
 chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
   if (request.action === 'saveToNotion') {
     handleSaveToNotion()
-    sendResponse({ message: 'Handling save to Notion in the content script' })
+    sendResponse({ message: 'Handling save to Notion in the content script', error: false })
   }
   else {
-    sendResponse({ message: 'Unknow action' })
+    sendResponse({ message: 'Unknow action', error: true })
   }
   return true // 添加这一行以确保响应可以在异步操作完成后发送
 })

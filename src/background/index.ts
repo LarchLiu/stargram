@@ -1,16 +1,16 @@
-const extensionId = 'bgiijojohannkkolgillijnkfgadpkpc'
-function sendResponseToPopup(res) {
+const extensionId = 'gcdmalofjiaofdiocehcjaalkmlealkb'
+function sendResponseToPopup(res: Error | { message: string }): void {
   chrome.runtime.sendMessage({
     action: 'saveToNotionFinish',
-    data: res,
+    data: { message: res.message, error: res instanceof Error },
   })
 }
 
 chrome.runtime.onInstalled.addListener(async () => {
   const result = await chrome.storage.sync.get(['notionApiKey', 'notionDatabaseId'])
-  const apiKey = result.notionApiKey ?? 'secret_ufFyjuKs4JqyKZkkKPjuzzbRAc8R3GdgrzdxMXosaeB'
-  const databaseId = result.notionDatabaseId ?? '63f34aafd23e4e438c51a917bf45d939'
-  chrome.storage.sync.set({ notionApiKey: apiKey, notionDatabaseId: databaseId })
+  const apiKey = result.notionApiKey ?? ''
+  const databaseId = result.notionDatabaseId ?? ''
+  await chrome.storage.sync.set({ notionApiKey: apiKey, notionDatabaseId: databaseId })
 })
 
 chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
@@ -20,8 +20,8 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
       saveToNotion(title, url, category, summary).then((res) => {
         // console.log(res)
         sendResponseToPopup(res)
-      }).catch((err) => {
-        sendResponseToPopup({ message: err.message, error: true })
+      }).catch((err: Error) => {
+        sendResponseToPopup(err)
       })
       sendResponse({ message: 'handling save to notion' })
     }
@@ -33,15 +33,15 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
   return true
 })
 
-async function saveProcess(title: string, url: string, category: string, summary: string) {
+async function saveProcess(title: string, url: string, category: string, summary: string): Promise<Error | { message: string }> {
   try {
     // 获取 Notion API 密钥和数据库 ID
     const result = await chrome.storage.sync.get(['notionApiKey', 'notionDatabaseId'])
-    const apiKey = result.notionApiKey ?? 'secret_ufFyjuKs4JqyKZkkKPjuzzbRAc8R3GdgrzdxMXosaeB'
-    const databaseId = result.notionDatabaseId ?? '63f34aafd23e4e438c51a917bf45d939'
+    const apiKey = result.notionApiKey ?? ''
+    const databaseId = result.notionDatabaseId ?? ''
     if (!apiKey || !databaseId) {
-      console.log('Missing Notion API key or Database ID in settings.')
-      return ({ message: 'Missing Notion API key or Database ID in settings.', error: true })
+      // console.log('Missing Notion API key or Database ID in settings.')
+      return new Error('Missing Notion API key or Database ID in settings.')
     }
 
     // 创建 Notion 页面并保存信息
@@ -91,10 +91,10 @@ async function saveProcess(title: string, url: string, category: string, summary
     })
 
     if (!response.ok) {
-      return ({ message: 'Error creating new page in Notion.', error: true })
+      return new Error('Error creating new page in Notion.')
     }
     else {
-      console.log('Created new page in Notion successfully!')
+      // console.log('Created new page in Notion successfully!')
       const newPageResponse = await response.json()
       const newPageId = newPageResponse.id // 获取新页面的 ID
 
@@ -133,7 +133,7 @@ async function saveProcess(title: string, url: string, category: string, summary
       )
 
       if (!addChildResponse.ok) {
-        return ({ message: 'Error appending child block to Notion page.', error: true })
+        return new Error('Error appending child block to Notion page.')
       }
       else {
         // console.log('Appended child block to Notion page successfully!')
@@ -143,16 +143,19 @@ async function saveProcess(title: string, url: string, category: string, summary
   }
   catch (error) {
     // console.log('Error saving to Notion:', error)
-    return ({ message: 'Error saving to Notion.', error: true })
+    return new Error('Error saving to Notion.')
   }
 }
 
-function saveToNotion(title: string, url: string, category: string, summary: string) {
+function saveToNotion(title: string, url: string, category: string, summary: string): Promise<Error | { message: string }> {
   return new Promise((resolve, reject) => {
     saveProcess(title, url, category, summary).then((res) => {
-      resolve(res)
-    }).catch((err) => {
-      reject(err)
+      if (res instanceof Error)
+        reject(res)
+      else
+        resolve(res)
+    }).catch((error: Error) => {
+      reject(error)
     })
   })
 }
