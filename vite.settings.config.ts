@@ -15,7 +15,7 @@ export default defineConfig({
         settings: r('src/settings/index.ts'),
       },
       output: {
-        assetFileNames: '[name].[ext]',
+        assetFileNames: 'settings/[name].[ext]',
         entryFileNames: '[name]/index.js',
         extend: true,
         format: 'es',

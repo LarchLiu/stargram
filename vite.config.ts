@@ -44,7 +44,7 @@ export default defineConfig({
         popup: r('src/popup/index.ts'),
       },
       output: {
-        assetFileNames: '[name].[ext]',
+        assetFileNames: 'popup/[name].[ext]',
         entryFileNames: '[name]/index.js',
         extend: true,
         format: 'es',

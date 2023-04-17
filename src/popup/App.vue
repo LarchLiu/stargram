@@ -44,13 +44,15 @@ onMounted(() => {
 </script>
 
 <template>
-  <p>点击 "保存到 Notion"按钮来保存当前页的内容到你的Notion页面。</p>
-  <button id="saveButton" class="ml-4 btn">
-    {{ t('popup.save') }}
-  </button>
-  <p>首次使用需要去下面设置页面填写NotionAPI和Notion页面地址</p>
-  <a href="../settings/index.html" target="_blank">设置页面</a>
-  <p id="status" />
+  <div m-5 w-240px>
+    <button id="saveButton" class="btn">
+      {{ t('popup.save') }}
+    </button>
+    <div mt-4>
+      <a href="../settings/index.html" target="_blank">{{ t('settings.title') }}</a>
+    </div>
+    <p id="status" />
+  </div>
 </template>
 
 <style scoped>

@@ -3,7 +3,7 @@ import { createI18n } from 'vue-i18n'
 import messages from '@intlify/unplugin-vue-i18n/messages'
 // import '@unocss/reset/tailwind.css'
 import App from './App.vue'
-import '../styles/styles.css'
+import './index.css'
 import 'uno.css'
 
 const i18n = createI18n({
