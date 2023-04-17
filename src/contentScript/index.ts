@@ -45,7 +45,7 @@ async function getDataFromPage() {
       // fetch readme
       const res = await fetch(readmePath)
       const readme = await res.text()
-      const apiKey = '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'
+      const apiKey = ''
 
       const openaiRes = await fetch('https://api.openai.com/v1/completions', {
         method: 'POST',
