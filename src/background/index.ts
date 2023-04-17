@@ -4,6 +4,12 @@ function sendResponseToPopup(res: Error | { message: string }): void {
     action: 'saveToNotionFinish',
     data: { message: res.message, error: res instanceof Error },
   })
+  chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+    chrome.tabs.sendMessage(tabs[0].id, {
+      action: 'sendResponseToContent',
+      data: { message: res.message, error: res instanceof Error },
+    })
+  })
 }
 
 chrome.runtime.onInstalled.addListener(async () => {
