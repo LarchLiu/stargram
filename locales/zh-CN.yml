@@ -6,5 +6,6 @@ settings:
   title: 设置
   notionApiKey: Notion API Key
   notionPageLink: Notion 页面链接
+  openaiApiKey: Openai API Key
   saveSettings: 保存
   settingsSaved: 设置已保存

@@ -7,10 +7,11 @@ function sendResponseToPopup(res: Error | { message: string }): void {
 }
 
 chrome.runtime.onInstalled.addListener(async () => {
-  const result = await chrome.storage.sync.get(['notionApiKey', 'notionDatabaseId'])
+  const result = await chrome.storage.sync.get(['notionApiKey', 'notionDatabaseId', 'openaiApiKey'])
   const apiKey = result.notionApiKey ?? ''
   const databaseId = result.notionDatabaseId ?? ''
-  await chrome.storage.sync.set({ notionApiKey: apiKey, notionDatabaseId: databaseId })
+  const openaiApiKey = result.openaiApiKey ?? ''
+  await chrome.storage.sync.set({ notionApiKey: apiKey, notionDatabaseId: databaseId, openaiApiKey })
 })
 
 chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {

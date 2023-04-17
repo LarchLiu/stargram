@@ -6,5 +6,6 @@ settings:
   title: Settings
   notionApiKey: Notion API Key
   notionPageLink: Notion Page Link
+  openaiApiKey: Openai API Key
   saveSettings: Save
   settingsSaved: Settings saved

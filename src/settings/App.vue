@@ -5,6 +5,7 @@ import { useI18n } from 'vue-i18n'
 const { t } = useI18n()
 const notionApiKeyInput = ref('')
 const notionPageLinkInput = ref('')
+const openaiApiKeyInput = ref('')
 
 function extractDatabaseIdFromPageLink(pageLink: string) {
   const regex = /([a-f0-9]{32})/
@@ -23,6 +24,7 @@ function saveSettings() {
   chrome.storage.sync.set(
     {
       notionApiKey: notionApiKeyInput.value,
+      openaiApiKey: openaiApiKeyInput.value,
       notionDatabaseId,
       notionPageLink,
     },
@@ -32,9 +34,10 @@ function saveSettings() {
   )
 }
 onMounted(() => {
-  chrome.storage.sync.get(['notionApiKey', 'notionPageLink'], (result) => {
+  chrome.storage.sync.get(['notionApiKey', 'notionPageLink', 'openaiApiKey'], (result) => {
     notionApiKeyInput.value = result.notionApiKey || ''
     notionPageLinkInput.value = result.notionPageLink || ''
+    openaiApiKeyInput.value = result.openaiApiKey || ''
   })
 })
 </script>
@@ -47,7 +50,11 @@ onMounted(() => {
       <input id="notionApiKey" v-model="notionApiKeyInput" class="mb-6 mt-2 w-full" type="text" name="notionApiKey">
 
       <label for="notionPageLink">{{ t('settings.notionPageLink') }}</label>
-      <input id="notionPageLink" v-model="notionPageLinkInput" class="mt-2 w-full" type="text" name="notionPageLink">
+      <input id="notionPageLink" v-model="notionPageLinkInput" class="mb-6 mt-2 w-full" type="text" name="notionPageLink">
+
+      <label for="openaiApiKey">{{ t('settings.openaiApiKey') }}</label>
+      <input id="openaiApiKey" v-model="openaiApiKeyInput" class="mt-2 w-full" type="text" name="notionPageLink">
+
       <button class="mt-6 btn" type="submit" @click="saveSettings">
         {{ t('settings.saveSettings') }}
       </button>

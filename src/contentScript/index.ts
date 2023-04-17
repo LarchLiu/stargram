@@ -27,6 +27,10 @@ async function getDataFromPage() {
   let category = 'Github'
   let summary = 'test hot reload no.123'
   const host = location.host
+
+  const result = await chrome.storage.sync.get(['openaiApiKey'])
+  const apiKey = result.openaiApiKey ?? ''
+
   if (host === 'github.com') {
     const path = location.pathname
     const readmeEl = document.getElementById('readme')
@@ -37,7 +41,7 @@ async function getDataFromPage() {
       about = titleArr.join(':')
     }
 
-    if (readmeEl) {
+    if (apiKey && readmeEl) {
       const branchMenu = document.getElementById('branch-select-menu')
       const branchEl = branchMenu.querySelector('.css-truncate-target') as HTMLElement
       const branch = (branchEl && branchEl.innerText) ? branchEl.innerText : 'main'
@@ -45,7 +49,6 @@ async function getDataFromPage() {
       // fetch readme
       const res = await fetch(readmePath)
       const readme = await res.text()
-      const apiKey = ''
 
       const openaiRes = await fetch('https://api.openai.com/v1/completions', {
         method: 'POST',
