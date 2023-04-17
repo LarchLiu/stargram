@@ -34,6 +34,12 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
 })
 
 async function saveProcess(title: string, url: string, category: string, summary: string): Promise<Error | { message: string }> {
+  const catArry = category.split(',')
+  const catOpt = catArry.map((item) => {
+    return {
+      name: item,
+    }
+  })
   try {
     // 获取 Notion API 密钥和数据库 ID
     const result = await chrome.storage.sync.get(['notionApiKey', 'notionDatabaseId'])
@@ -80,11 +86,7 @@ async function saveProcess(title: string, url: string, category: string, summary
             url,
           },
           Category: {
-            multi_select: [
-              {
-                name: category,
-              },
-            ],
+            multi_select: catOpt,
           },
         },
       }),

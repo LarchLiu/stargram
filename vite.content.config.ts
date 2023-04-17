@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite'
 import { commonConfig, r } from './vite.config'
 import { __DEV__, outputDir } from './const'
+import hotReloadContent from './scripts/hot-reload/content'
 
 // bundling the content script
 export default defineConfig({
@@ -23,4 +24,14 @@ export default defineConfig({
       },
     },
   },
+  plugins: [
+    ...commonConfig.plugins,
+    // Unocss(),
+
+    // // https://github.com/intlify/bundle-tools/tree/main/packages/vite-plugin-vue-i18n
+    // VueI18nPlugin({
+    //   include: [path.resolve(__dirname, 'locales/**')],
+    // }),
+    hotReloadContent(),
+  ],
 })

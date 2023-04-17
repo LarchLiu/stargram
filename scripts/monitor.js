@@ -13,21 +13,17 @@ const outputDir = __DEV__ ? 'local' : 'extension'
 const origin = {
   manifest: r('src/manifest.json'),
   assets: r('src/assets'),
-  styles: r('src/styles'),
 }
 
 const target = {
   manifest: r(`${outputDir}/manifest.json`),
   assets: r(`${outputDir}/assets`),
-  styles: r(`${outputDir}/styles`),
 }
 
 function copyManifest() {
   fs.copy(origin.manifest, target.manifest)
 }
-function copyStyles() {
-  fs.copy(origin.styles, target.styles)
-}
+
 async function copyIndexHtml() {
   for (const view of ['popup', 'settings']) {
     await fs.ensureDir(r(`${outputDir}/${view}`))
@@ -44,7 +40,6 @@ function copyAssets() {
 copyManifest()
 copyIndexHtml()
 copyAssets()
-copyStyles()
 
 if (__DEV__) {
   chokidar.watch([origin.manifest]).on('change', () => {
@@ -52,6 +47,5 @@ if (__DEV__) {
   })
   chokidar.watch(r('src/**/*.html')).on('change', () => {
     copyIndexHtml()
-    copyStyles()
   })
 }

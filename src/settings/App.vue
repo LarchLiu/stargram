@@ -33,7 +33,7 @@ onMounted(() => {
   })
 })
 
-function extractDatabaseIdFromPageLink(pageLink) {
+function extractDatabaseIdFromPageLink(pageLink: string) {
   const regex = /([a-f0-9]{32})/
   const match = pageLink.match(regex)
 

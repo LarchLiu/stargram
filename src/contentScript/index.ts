@@ -24,8 +24,8 @@
 function getDataFromPage() {
   const title = document.title
   const url = location.href
-  const category = 'Github'
-  const summary = 'test'
+  const category = 'Github, Issue'
+  const summary = 'test hot reload no.123'
 
   // const jobPage = document.getElementById("jobPage");
   // console.log("jobPage:", jobPage);

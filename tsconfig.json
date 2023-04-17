@@ -19,7 +19,7 @@
       "element-plus/global"
     ],
     "paths": {
-      "~/*": ["src/*", "scripts/*"]
+      "~/*": ["src/*"]
     }
   },
   "exclude": ["dist", "node_modules"]

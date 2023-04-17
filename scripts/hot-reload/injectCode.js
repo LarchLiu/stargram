@@ -1,12 +1,13 @@
-import { bgUpdatePort } from '../../const'
-
 function hotReloadClientInit() {
-  const bgWs = new WebSocket(`ws://127.0.0.1:${bgUpdatePort}`)
+  const bgWs = new WebSocket(`ws://127.0.0.1:${UP_PORT}`)
 
   let isAlive = true
+  // console.log('reject ready')
   const reloadContent = () => {
+    // console.log('reload content')
     chrome.tabs.query({}, (tabs) => {
       const currentTab = tabs.find(tab => tab.active)
+      // console.log(currentTab)
       if (!currentTab || currentTab.url.indexOf('chrome') === 0)
         return
 
@@ -18,6 +19,7 @@ function hotReloadClientInit() {
     })
   }
   bgWs.addEventListener('message', (e) => {
+    // console.log(e.data)
     if (e.data === 'UPDATE_BG') {
       bgWs.close()
       setTimeout(() => {
@@ -32,7 +34,7 @@ function hotReloadClientInit() {
       const interval = setInterval(() => {
         setTimeout(() => {
           if (!isAlive) {
-            const detectWs = new WebSocket(`ws://127.0.0.1:${bgUpdatePort}`)
+            const detectWs = new WebSocket(`ws://127.0.0.1:${UP_PORT}`)
             detectWs.onopen = () => {
               detectWs.close()
               clearInterval(interval)
