@@ -14,11 +14,11 @@ onMounted(() => {
       chrome.tabs.sendMessage(tabs[0].id, { action: 'saveToNotion' }, (response) => {
         const statusElement = document.getElementById('status')
         if (chrome.runtime.lastError) {
-          statusElement.textContent = `Error: ${chrome.runtime.lastError.message}`
+          statusElement.textContent = `${t('popup.error')}: ${chrome.runtime.lastError.message}`
         }
         else {
           if (response && response.error)
-            statusElement.textContent = `Error: ${response.message}`
+            statusElement.textContent = `${t('popup.error')}: ${response.message}`
         }
       })
     })
@@ -29,9 +29,9 @@ onMounted(() => {
       const statusElement = document.getElementById('status')
       // console.log(request)
       if (request.data && request.data.error)
-        statusElement.textContent = `Error: ${request.data.message}`
+        statusElement.textContent = `${t('popup.error')}: ${request.data.message}`
       else
-        statusElement.textContent = '成功保存至 Notion'
+        statusElement.textContent = t('popup.savedToNotion')
 
       setTimeout(() => {
         statusElement.textContent = ''

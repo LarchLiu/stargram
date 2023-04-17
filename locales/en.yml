@@ -1,4 +1,10 @@
 popup:
   save: Save to Notion
+  savedToNotion: Saved to Notion
+  error: Error
 settings:
   title: Settings
+  notionApiKey: Notion API Key
+  notionPageLink: Notion Page Link
+  saveSettings: Save
+  settingsSaved: Settings saved

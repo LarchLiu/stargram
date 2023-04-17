@@ -1,5 +1,10 @@
 popup:
   save: 保存至 Notion
+  savedToNotion: 保存至 Notion
+  error: 错误
 settings:
   title: 设置
-  
+  notionApiKey: Notion API Key
+  notionPageLink: Notion 页面链接
+  saveSettings: 保存
+  settingsSaved: 设置已保存

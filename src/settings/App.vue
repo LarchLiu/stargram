@@ -30,7 +30,7 @@ onMounted(() => {
           notionPageLink,
         },
         () => {
-          alert('Settings saved!')
+          alert(t('settings.settingsSaved'))
         },
       )
     })
@@ -53,16 +53,13 @@ onMounted(() => {
     <div class="w-640px flex-col justify-center">
       <h1>{{ t('settings.title') }}</h1>
       <form id="settingsForm">
-        <label for="notionApiKey">Notion API Key:</label>
+        <label for="notionApiKey">{{ t('settings.notionApiKey') }}</label>
         <input id="notionApiKey" class="mb-6 mt-2 w-full" type="text" name="notionApiKey">
 
-        <label for="notionPageLink">Notion Page Link:</label>
+        <label for="notionPageLink">{{ t('settings.notionPageLink') }}</label>
         <input id="notionPageLink" class="mt-2 w-full" type="text" name="notionPageLink">
-        <div mt-2>
-          <a href="https://github.com/op7418/Prompt-hunter/blob/main/README.md" target="_blank">Notion及页面ID获取方式</a>
-        </div>
         <button class="mt-6 btn" type="submit">
-          Save
+          {{ t('settings.saveSettings') }}
         </button>
       </form>
     </div>
