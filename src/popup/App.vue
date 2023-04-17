@@ -1,5 +1,8 @@
 <script setup lang="ts">
 import { onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 onMounted(() => {
   document.getElementById('saveButton').addEventListener('click', async () => {
@@ -42,8 +45,8 @@ onMounted(() => {
 
 <template>
   <p>点击 "保存到 Notion"按钮来保存当前页的内容到你的Notion页面。</p>
-  <button id="saveButton">
-    保存到 Notion
+  <button id="saveButton" class="ml-4 btn">
+    {{ t('popup.save') }}
   </button>
   <p>首次使用需要去下面设置页面填写NotionAPI和Notion页面地址</p>
   <a href="../settings/index.html" target="_blank">设置页面</a>

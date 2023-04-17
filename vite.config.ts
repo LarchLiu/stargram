@@ -1,8 +1,8 @@
 import { resolve } from 'node:path'
 import { defineConfig } from 'vite'
 import Vue from '@vitejs/plugin-vue'
-// import Unocss from 'unocss/vite'
-// import VueI18nPlugin from '@intlify/unplugin-vue-i18n/vite'
+import Unocss from 'unocss/vite'
+import VueI18nPlugin from '@intlify/unplugin-vue-i18n/vite'
 import hotReloadBackground from './scripts/hot-reload/background'
 import { __DEV__, outputDir } from './const'
 
@@ -20,12 +20,15 @@ export const commonConfig = {
       '~/': `${r('src')}/`,
     },
   },
-  plugins: [
-    Vue(),
-    // https://github.com/antfu/unocss
-    // see unocss.config.ts for config
-  ],
 }
+
+export const plugins = [
+  Vue(),
+  Unocss(),
+  VueI18nPlugin({
+    include: [resolve(__dirname, 'locales/**')],
+  }),
+]
 
 export default defineConfig({
   ...commonConfig,
@@ -49,13 +52,7 @@ export default defineConfig({
     },
   },
   plugins: [
-    ...commonConfig.plugins,
-    // Unocss(),
-
-    // // https://github.com/intlify/bundle-tools/tree/main/packages/vite-plugin-vue-i18n
-    // VueI18nPlugin({
-    //   include: [path.resolve(__dirname, 'locales/**')],
-    // }),
+    ...plugins,
     hotReloadBackground(),
   ],
 })

@@ -25,13 +25,6 @@ export default defineConfig({
     },
   },
   plugins: [
-    ...commonConfig.plugins,
-    // Unocss(),
-
-    // // https://github.com/intlify/bundle-tools/tree/main/packages/vite-plugin-vue-i18n
-    // VueI18nPlugin({
-    //   include: [path.resolve(__dirname, 'locales/**')],
-    // }),
     hotReloadContent(),
   ],
 })

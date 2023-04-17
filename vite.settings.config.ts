@@ -1,8 +1,7 @@
 import { defineConfig } from 'vite'
-import { commonConfig, r } from './vite.config'
+import { commonConfig, plugins, r } from './vite.config'
 import { __DEV__, outputDir } from './const'
 
-// bundling the content script
 export default defineConfig({
   ...commonConfig,
   build: {
@@ -23,4 +22,5 @@ export default defineConfig({
       },
     },
   },
+  plugins,
 })
