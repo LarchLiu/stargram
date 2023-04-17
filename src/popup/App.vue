@@ -1,40 +1,38 @@
 <script setup lang="ts">
-import { onMounted } from 'vue'
+import { onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
+const saveButton = ref()
+const saveStatus = ref('')
 
-onMounted(() => {
-  document.getElementById('saveButton').addEventListener('click', async () => {
-  // 延迟以确保 content script 已加载
-    await new Promise(resolve => setTimeout(resolve, 100))
+async function onSaveClick() {
+  await new Promise(resolve => setTimeout(resolve, 100))
 
-    // 向 content script 发送消息，请求保存操作
-    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-      chrome.tabs.sendMessage(tabs[0].id, { action: 'saveToNotion' }, (response) => {
-        const statusElement = document.getElementById('status')
-        if (chrome.runtime.lastError) {
-          statusElement.textContent = `${t('popup.error')}: ${chrome.runtime.lastError.message}`
-        }
-        else {
-          if (response && response.error)
-            statusElement.textContent = `${t('popup.error')}: ${response.message}`
-        }
-      })
+  chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+    chrome.tabs.sendMessage(tabs[0].id, { action: 'saveToNotion' }, (response) => {
+      const statusElement = document.getElementById('status')
+      if (chrome.runtime.lastError) {
+        statusElement.textContent = `${t('popup.error')}: ${chrome.runtime.lastError.message}`
+      }
+      else {
+        if (response && response.error)
+          statusElement.textContent = `${t('popup.error')}: ${response.message}`
+      }
     })
   })
+}
 
+onMounted(() => {
   chrome.runtime.onMessage.addListener(async (request: { action: string; data: { message: string; error: boolean } }, sender, sendResponse) => {
     if (request.action === 'saveToNotionFinish') {
-      const statusElement = document.getElementById('status')
-      // console.log(request)
       if (request.data && request.data.error)
-        statusElement.textContent = `${t('popup.error')}: ${request.data.message}`
+        saveStatus.value = `${t('popup.error')}: ${request.data.message}`
       else
-        statusElement.textContent = t('popup.savedToNotion')
+        saveStatus.value = t('popup.savedToNotion')
 
       setTimeout(() => {
-        statusElement.textContent = ''
+        saveStatus.value = ''
       }, 3000)
     }
     sendResponse('ok')
@@ -45,13 +43,15 @@ onMounted(() => {
 
 <template>
   <div m-5 w-240px>
-    <button id="saveButton" class="btn">
+    <button id="saveButton" ref="saveButton" class="btn" @click="onSaveClick">
       {{ t('popup.save') }}
     </button>
     <div mt-4>
       <a href="../settings/index.html" target="_blank">{{ t('settings.title') }}</a>
     </div>
-    <p id="status" />
+    <p id="status">
+      {{ saveStatus }}
+    </p>
   </div>
 </template>
 
