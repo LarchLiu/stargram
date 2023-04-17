@@ -21,13 +21,57 @@
 
 // observer.observe(document.body, config);
 
-function getDataFromPage() {
+async function getDataFromPage() {
   const title = document.title
   const url = location.href
-  const category = 'Github, Issue'
-  const summary = 'test hot reload no.123'
+  let category = 'Github'
+  let summary = 'test hot reload no.123'
+  const host = location.host
+  if (host === 'github.com') {
+    const path = location.pathname
+    const readmeEl = document.getElementById('readme')
+    const titleArr = title.split(':')
+    let about = ''
+    if (titleArr.length > 1) {
+      titleArr.shift()
+      about = titleArr.join(':')
+    }
 
-  // const jobPage = document.getElementById("jobPage");
+    if (readmeEl) {
+      const branchMenu = document.getElementById('branch-select-menu')
+      const branchEl = branchMenu.querySelector('.css-truncate-target') as HTMLElement
+      const branch = (branchEl && branchEl.innerText) ? branchEl.innerText : 'main'
+      const readmePath = `https://raw.githubusercontent.com/${path}/${branch}/README.md`
+      // fetch readme
+      const res = await fetch(readmePath)
+      const readme = await res.text()
+      const apiKey = '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'
+
+      const openaiRes = await fetch('https://api.openai.com/v1/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${apiKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: 'text-davinci-003',
+          prompt: `Summarize this then categorize this, categories should divided by punctuation \',\', return the summary and categories like this:\n\nSummary: my summary\n\nCategories: Github, OSS\n\n${about}\n\n${readme}`,
+          max_tokens: 200,
+          temperature: 0.5,
+        }),
+      })
+      const openaiData = await openaiRes.json()
+      const text = openaiData.choices[0].text
+      const textArr = text.split('\n\n')
+      summary = textArr[0].split(':')[1].trim()
+      category = textArr[1].split(':')[1].trim()
+      // console.log(category)
+    }
+    else {
+      summary = about || title
+    }
+  }
+
   // console.log("jobPage:", jobPage);
   // const imageContainer = jobPage.querySelector(".relative.h-auto.w-full.false, .relative.h-auto.w-full.overflow-hidden");
   // console.log("imageContainer:", imageContainer);
@@ -48,9 +92,9 @@ function getDataFromPage() {
   return { title, url, category, summary }
 }
 
-function handleSaveToNotion() {
+async function handleSaveToNotion() {
   // console.log('Handling save to Notion in the content script')
-  const { title, url, category, summary } = getDataFromPage()
+  const { title, url, category, summary } = await getDataFromPage()
 
   chrome.runtime.sendMessage(
     {
