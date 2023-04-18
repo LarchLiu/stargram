@@ -26,7 +26,7 @@ async function onSaveClick() {
 onMounted(() => {
   chrome.runtime.sendMessage({ action: 'popupViewOpen' })
   chrome.runtime.onMessage.addListener(async (request: { action: string; data: { message: string; error: boolean } }, sender, sendResponse) => {
-    if (request.action === 'saveToNotionFinish') {
+    if (request.action === 'savedStatusToPopup') {
       if (request.data && request.data.error)
         saveStatus.value = `${t('popup.error')}: ${request.data.message}`
       else

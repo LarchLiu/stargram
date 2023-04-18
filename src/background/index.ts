@@ -4,17 +4,18 @@ import type { PageData, SwResponse } from '~/types'
 const extensionId = 'gcdmalofjiaofdiocehcjaalkmlealkb'
 
 let popupOpen = false
-async function sendResponseToPopup(res: SwResponse) {
+async function sendSavedStatus(res: SwResponse) {
+  const data = { message: res.message, error: res instanceof Error }
   if (popupOpen) {
     await chrome.runtime.sendMessage({
-      action: 'saveToNotionFinish',
-      data: { message: res.message, error: res instanceof Error },
+      action: 'savedStatusToPopup',
+      data,
     })
   }
   if (!(res instanceof Error) && res.tabId) {
     chrome.tabs.sendMessage(res.tabId, {
-      action: 'sendResponseToContent',
-      data: { message: res.message, error: res instanceof Error },
+      action: 'savedStatusToContent',
+      data,
     })
   }
   else {
@@ -23,7 +24,7 @@ async function sendResponseToPopup(res: SwResponse) {
         return
       chrome.tabs.sendMessage(tabs[0].id, {
         action: 'sendResponseToContent',
-        data: { message: res.message, error: res instanceof Error },
+        data,
       })
     })
   }
@@ -46,9 +47,9 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
       pageData.tabId = tabId
       saveToNotion(pageData).then((res) => {
         // console.log(res)
-        sendResponseToPopup(res)
+        sendSavedStatus(res)
       }).catch((err: Error) => {
-        sendResponseToPopup(err)
+        sendSavedStatus(err)
       })
       sendResponse({ message: 'handling save to notion' })
     }
@@ -62,6 +63,13 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
   }
   else if (action === 'openViewClose') {
     popupOpen = false
+  }
+  else if (action === 'checkStarred') {
+    const tabId = sender.tab?.id
+    const url = request.data.url
+
+    checkStarredStatus(url, tabId)
+    sendResponse({ message: 'checking' })
   }
   return true
 })
@@ -241,4 +249,61 @@ function saveToNotion(pageData: PageData): Promise<SwResponse> {
       reject(error)
     })
   })
+}
+
+async function sendStarredStatus(tabId: number, starred: boolean, error?: string) {
+  if (popupOpen) {
+    await chrome.runtime.sendMessage({
+      action: 'starredStatusToPopup',
+      data: { message: error, error: !!error, starred },
+    })
+  }
+  if (tabId) {
+    chrome.tabs.sendMessage(tabId, {
+      action: 'starredStatusToContent',
+      data: { message: error, error: !!error, starred },
+    })
+  }
+}
+
+async function checkStarredStatus(url: string, tabId: number) {
+  const storage = await chrome.storage.sync.get(['notionApiKey', 'notionDatabaseId'])
+  const notionApiKey = storage.notionApiKey ?? ''
+  const databaseId = storage.notionDatabaseId ?? ''
+  let starred = false
+
+  if (!notionApiKey || !databaseId)
+    return sendStarredStatus(tabId, starred, 'Missing Notion API key or Database ID in settings.')
+
+  const response = await fetch(
+      `https://api.notion.com/v1/databases/${databaseId}/query`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Notion-Version': '2022-06-28',
+          'Authorization': `Bearer ${notionApiKey}`,
+        },
+        body: JSON.stringify({
+          filter: {
+            property: 'URL',
+            rich_text: {
+              contains: url,
+            },
+          },
+        }),
+      },
+  )
+
+  if (!response.ok) {
+    return sendStarredStatus(tabId, starred, 'Error check starred status.')
+  }
+  else {
+    // console.log('Appended child block to Notion page successfully!')
+    const data = await response.json()
+    if (data.results.length > 0)
+      starred = true
+
+    sendStarredStatus(tabId, starred)
+  }
 }
