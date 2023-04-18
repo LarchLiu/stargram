@@ -1,7 +1,7 @@
 {
   "name": "star-nexus",
   "version": "0.0.1",
-  "description": "Manage all your Starred Project",
+  "description": "Manage all your Starred Pages",
   "author": "alex",
   "license": "ISC",
   "main": "index.js",
