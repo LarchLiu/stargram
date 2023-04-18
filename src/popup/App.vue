@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import type { SendResponse } from '~/types'
 
 const { t } = useI18n()
 const saveButton = ref()
@@ -10,20 +11,20 @@ async function onSaveClick() {
   await new Promise(resolve => setTimeout(resolve, 100))
 
   chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-    chrome.tabs.sendMessage(tabs[0].id, { action: 'saveToNotion' }, (response) => {
-      const statusElement = document.getElementById('status')
+    chrome.tabs.sendMessage(tabs[0].id, { action: 'saveToNotion' }, (response: SendResponse) => {
       if (chrome.runtime.lastError) {
-        statusElement.textContent = `${t('popup.error')}: ${chrome.runtime.lastError.message}`
+        saveStatus.value = `${t('popup.error')}: ${chrome.runtime.lastError.message}`
       }
       else {
         if (response && response.error)
-          statusElement.textContent = `${t('popup.error')}: ${response.message}`
+          saveStatus.value = `${t('popup.error')}: ${response.message}`
       }
     })
   })
 }
 
 onMounted(() => {
+  chrome.runtime.sendMessage({ action: 'popupViewOpen' })
   chrome.runtime.onMessage.addListener(async (request: { action: string; data: { message: string; error: boolean } }, sender, sendResponse) => {
     if (request.action === 'saveToNotionFinish') {
       if (request.data && request.data.error)
@@ -35,9 +36,12 @@ onMounted(() => {
         saveStatus.value = ''
       }, 3000)
     }
-    sendResponse('ok')
+    sendResponse({ message: 'ok' })
     return true
   })
+})
+onMounted(() => {
+  chrome.runtime.sendMessage({ action: 'popupViewClose' })
 })
 </script>
 

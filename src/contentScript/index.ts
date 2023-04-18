@@ -1,14 +1,13 @@
-async function getDataFromPage() {
+import { GITHUB_HOST } from '~/const'
+import type { PageData } from '~/types'
+
+async function getDataFromPage(): Promise<PageData> {
   const title = document.title
   const url = location.href
-  let category = 'Github'
-  let summary = 'test hot reload no.123'
   const host = location.host
+  let content = ''
 
-  const result = await chrome.storage.sync.get(['openaiApiKey'])
-  const apiKey = result.openaiApiKey ?? ''
-
-  if (host === 'github.com') {
+  if (host === GITHUB_HOST) {
     const path = location.pathname
     const readmeEl = document.getElementById('readme')
     const titleArr = title.split(':')
@@ -18,7 +17,7 @@ async function getDataFromPage() {
       about = titleArr.join(':')
     }
 
-    if (apiKey && readmeEl) {
+    if (readmeEl) {
       const branchMenu = document.getElementById('branch-select-menu')
       const branchEl = branchMenu.querySelector('.css-truncate-target') as HTMLElement
       const branch = (branchEl && branchEl.innerText) ? branchEl.innerText : 'main'
@@ -26,42 +25,24 @@ async function getDataFromPage() {
       // fetch readme
       const res = await fetch(readmePath)
       const readme = await res.text()
-
-      const openaiRes = await fetch('https://api.openai.com/v1/completions', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${apiKey}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          model: 'text-davinci-003',
-          prompt: `Summarize this then categorize this, categories should divided by punctuation \',\', return the summary and categories like this:\n\nSummary: my summary\n\nCategories: Github, OSS\n\n${about}\n\n${readme}`,
-          max_tokens: 200,
-          temperature: 0.5,
-        }),
-      })
-      const openaiData = await openaiRes.json()
-      const text = openaiData.choices[0].text
-      const textArr = text.split('\n\n')
-      summary = textArr[0].split(':')[1].trim()
-      category = textArr[1].split(':')[1].trim()
+      content = `${about}\n\n${readme}`
       // console.log(category)
     }
     else {
-      summary = about || title
+      content = about || title
     }
   }
-  return { title, url, category, summary }
+  return { title, url, content }
 }
 
 async function handleSaveToNotion() {
   // console.log('Handling save to Notion in the content script')
-  const { title, url, category, summary } = await getDataFromPage()
+  const { title, url, content } = await getDataFromPage()
 
   chrome.runtime.sendMessage(
     {
       action: 'saveToNotion',
-      data: { title, url, category, summary },
+      data: { title, url, content }, // TODO: pass cur tab id to return finish response
     },
     (response) => {
       if (chrome.runtime.lastError) {
@@ -74,17 +55,6 @@ async function handleSaveToNotion() {
   )
 }
 
-chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
-  if (request.action === 'saveToNotion') {
-    handleSaveToNotion()
-    sendResponse({ message: 'Handling save to Notion in the content script', error: false })
-  }
-  else {
-    sendResponse({ message: 'Unknow action', error: true })
-  }
-  return true // 添加这一行以确保响应可以在异步操作完成后发送
-})
-
 // https://github.com/antfu/open-in-codeflow/blob/main/index.js
 const id = 'star-nexus'
 const iconSrc = 'data:image/svg+xml,%3Csvg xmlns="http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg" width="256" height="256" viewBox="0 0 256 256"%3E%3Cpath fill="currentColor" d="M237.47 70.71a11.18 11.18 0 0 0-9.73-7.71l-38.43-3.25l-15-35a11.24 11.24 0 0 0-20.63 0l-15 35L100.27 63a11.12 11.12 0 0 0-6.36 19.54L123 107.38l-8.72 36.92a11.09 11.09 0 0 0 4.26 11.5a11.23 11.23 0 0 0 12.42.6l33-19.64l33.05 19.64a11.22 11.22 0 0 0 12.42-.6a11.07 11.07 0 0 0 4.25-11.5L205 107.38l29.08-24.83a11.08 11.08 0 0 0 3.39-11.84Zm-40.66 27.9a11.05 11.05 0 0 0-3.61 11l8.39 35.55l-31.83-18.92a11.23 11.23 0 0 0-11.52 0l-31.82 18.92l8.38-35.56a11 11 0 0 0-3.6-11l-27.89-23.81l36.85-3.12a11.2 11.2 0 0 0 9.37-6.74L164 31.17l14.48 33.76a11.19 11.19 0 0 0 9.36 6.74l36.86 3.12ZM84.24 124.24l-56 56a6 6 0 0 1-8.48-8.48l56-56a6 6 0 0 1 8.48 8.48Zm16 47.52a6 6 0 0 1 0 8.48l-56 56a6 6 0 0 1-8.48-8.48l56-56a6 6 0 0 1 8.48 0Zm72 0a6 6 0 0 1 0 8.48l-56 56a6 6 0 0 1-8.48-8.48l56-56a6 6 0 0 1 8.49 0Z"%2F%3E%3C%2Fsvg%3E'
@@ -94,8 +64,12 @@ const css = [
   '.js-timeline-item:has(* > .author[href="/apps/codeflowapp"]) { display: none; }',
 ].join('')
 
-chrome.runtime.onMessage.addListener(async (request: { action: string; data: { message: string; error: boolean } }, sender, sendResponse) => {
-  if (request.action === 'sendResponseToContent') {
+chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
+  if (request.action === 'saveToNotion') {
+    handleSaveToNotion()
+    sendResponse({ message: 'Handling save to Notion in the content script', error: false })
+  }
+  else if (request.action === 'sendResponseToContent') {
     if (request.data && request.data.error) {
       //
     }
@@ -104,9 +78,12 @@ chrome.runtime.onMessage.addListener(async (request: { action: string; data: { m
       const icon = snBtn.querySelector('img')
       icon.src = iconfillSrc
     }
+    sendResponse({ message: 'ok' })
   }
-  sendResponse('ok')
-  return true
+  else {
+    sendResponse({ message: 'Unknow action', error: true })
+  }
+  return true // 添加这一行以确保响应可以在异步操作完成后发送
 })
 
 const style = document.createElement('style')
