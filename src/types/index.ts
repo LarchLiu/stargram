@@ -8,6 +8,7 @@ interface PageData {
 interface SendResponse {
   message: string
   error?: boolean
+  tabId?: number
 }
 
 type SwResponse = Error | SendResponse

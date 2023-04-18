@@ -11,14 +11,22 @@ async function sendResponseToPopup(res: SwResponse) {
       data: { message: res.message, error: res instanceof Error },
     })
   }
-  chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-    if (tabs.length === 0)
-      return
-    chrome.tabs.sendMessage(tabs[0].id, {
+  if (!(res instanceof Error) && res.tabId) {
+    chrome.tabs.sendMessage(res.tabId, {
       action: 'sendResponseToContent',
       data: { message: res.message, error: res instanceof Error },
     })
-  })
+  }
+  else {
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      if (tabs.length === 0)
+        return
+      chrome.tabs.sendMessage(tabs[0].id, {
+        action: 'sendResponseToContent',
+        data: { message: res.message, error: res instanceof Error },
+      })
+    })
+  }
 }
 
 chrome.runtime.onInstalled.addListener(async () => {
@@ -33,7 +41,9 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
   const action = request.action
   if (action === 'saveToNotion') {
     if (request.data) {
-      const pageData = request.data
+      const tabId = sender.tab?.id
+      const pageData = request.data as PageData
+      pageData.tabId = tabId
       saveToNotion(pageData).then((res) => {
         // console.log(res)
         sendResponseToPopup(res)
@@ -56,7 +66,7 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
   return true
 })
 
-async function saveProcess(data: PageData): Promise<SwResponse> {
+async function saveProcess(pageData: PageData): Promise<SwResponse> {
   try {
     let summary = ''
     let category = ''
@@ -90,7 +100,7 @@ async function saveProcess(data: PageData): Promise<SwResponse> {
             },
             {
               role: 'user',
-              content: data.content,
+              content: pageData.content,
             },
           ],
           max_tokens: 200,
@@ -118,7 +128,7 @@ async function saveProcess(data: PageData): Promise<SwResponse> {
       })
     }
     else {
-      summary = data.content
+      summary = pageData.content
     }
 
     // 创建 Notion 页面并保存信息
@@ -139,7 +149,7 @@ async function saveProcess(data: PageData): Promise<SwResponse> {
             title: [
               {
                 text: {
-                  content: data.title,
+                  content: pageData.title,
                 },
               },
             ],
@@ -154,7 +164,7 @@ async function saveProcess(data: PageData): Promise<SwResponse> {
             ],
           },
           URL: {
-            url: data.url,
+            url: pageData.url,
           },
           Category: {
             multi_select: catOpt,
@@ -210,7 +220,7 @@ async function saveProcess(data: PageData): Promise<SwResponse> {
       }
       else {
         // console.log('Appended child block to Notion page successfully!')
-        return ({ message: 'Data saved successfully.' })
+        return ({ message: 'Data saved successfully.', tabId: pageData.tabId })
       }
     }
   }
