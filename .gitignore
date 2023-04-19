@@ -13,3 +13,5 @@ lib/
 
 local/
 extension/
+extension.crx
+extension.pem

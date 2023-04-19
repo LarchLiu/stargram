@@ -67,13 +67,6 @@ async function handleSaveToNotion() {
   )
 }
 
-chrome.runtime.sendMessage(
-  {
-    action: 'checkStarred',
-    data: { url: location.href },
-  },
-)
-
 chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
   const action = request.action
   const snBtn = document.querySelector(`#${id}`)
@@ -162,6 +155,13 @@ function createButton() {
   icon.height = 18
   icon.classList.add('octicon')
   a.prepend(icon)
+
+  chrome.runtime.sendMessage(
+    {
+      action: 'checkStarred',
+      data: { url: location.href },
+    },
+  )
   return a
 }
 
