@@ -2,19 +2,47 @@ interface PageData {
   title: string
   url: string
   content: string
+  starred: boolean
   tabId?: number
+  notionPageId?: string
+  github?: GithubMeta
 }
 
-interface SendResponse {
+interface GithubMeta {
+  tags?: string[]
+  languages?: string[]
+}
+
+interface SwResponse {
+  starred: boolean
+  error?: string
+  tabId?: number
+  notionPageId?: string
+}
+
+interface ListenerResponse {
   message: string
   error?: boolean
-  tabId?: number
 }
 
-type SwResponse = Error | SendResponse
+interface SwRequest {
+  action: string
+  data?: SwResponse
+}
+
+interface ContentRequest {
+  action: string
+  data?: PageData
+}
+
+type ListenerSendResponse = (response: ListenerResponse) => void
 
 export type {
   PageData,
-  SendResponse,
+  ListenerResponse,
+  ListenerSendResponse,
   SwResponse,
+  SwRequest,
+  ContentRequest,
+  GithubMeta,
 }

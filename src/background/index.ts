@@ -1,21 +1,13 @@
 import { SUMMARIZE_PROMPT } from '~/const'
-import type { PageData, SwResponse } from '~/types'
+import type { ContentRequest, ListenerSendResponse, PageData, SwResponse } from '~/types'
 
 const extensionId = 'gcdmalofjiaofdiocehcjaalkmlealkb'
 
-let popupOpen = false
 async function sendSavedStatus(res: SwResponse) {
-  const data = { message: res.message, error: res instanceof Error }
-  if (popupOpen) {
-    await chrome.runtime.sendMessage({
-      action: 'savedStatusToPopup',
-      data,
-    })
-  }
-  if (!(res instanceof Error) && res.tabId) {
+  if (res.tabId) {
     chrome.tabs.sendMessage(res.tabId, {
       action: 'savedStatusToContent',
-      data,
+      data: res,
     })
   }
   else {
@@ -24,7 +16,7 @@ async function sendSavedStatus(res: SwResponse) {
         return
       chrome.tabs.sendMessage(tabs[0].id, {
         action: 'sendResponseToContent',
-        data,
+        data: res,
       })
     })
   }
@@ -38,18 +30,17 @@ chrome.runtime.onInstalled.addListener(async () => {
   await chrome.storage.sync.set({ notionApiKey: apiKey, notionDatabaseId: databaseId, openaiApiKey })
 })
 
-chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
+chrome.runtime.onMessage.addListener(async (request: ContentRequest, sender, sendResponse: ListenerSendResponse) => {
   const action = request.action
   if (action === 'saveToNotion') {
     if (request.data) {
       const tabId = sender.tab?.id
-      const pageData = request.data as PageData
+      const pageData = request.data
       pageData.tabId = tabId
       saveToNotion(pageData).then((res) => {
-        // console.log(res)
         sendSavedStatus(res)
-      }).catch((err: Error) => {
-        sendSavedStatus(err)
+      }).catch((err) => {
+        sendSavedStatus({ tabId, starred: pageData.starred, notionPageId: pageData.notionPageId, error: err.message ? err.message : 'Error saved to Notion.' })
       })
       sendResponse({ message: 'handling save to notion' })
     }
@@ -58,17 +49,15 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
       sendResponse({ message: 'Error: request.data is undefined.', error: true })
     }
   }
-  else if (action === 'openViewOpen') {
-    popupOpen = true
-  }
-  else if (action === 'openViewClose') {
-    popupOpen = false
-  }
   else if (action === 'checkStarred') {
     const tabId = sender.tab?.id
     const url = request.data.url
 
-    checkStarredStatus(url, tabId)
+    checkStarredStatus(url, tabId).then((res) => {
+      sendStarredStatus(res)
+    }).catch((err) => {
+      sendStarredStatus(err)
+    })
     sendResponse({ message: 'checking' })
   }
   return true
@@ -89,7 +78,8 @@ async function saveProcess(pageData: PageData): Promise<SwResponse> {
 
     if (!notionApiKey || !databaseId) {
       // console.log('Missing Notion API key or Database ID in settings.')
-      return new Error('Missing Notion API key or Database ID in settings.')
+      const error = { tabId: pageData.tabId, starred: pageData.starred, notionPageId: pageData.notionPageId, error: 'Missing Notion API key or Database ID in settings.' }
+      return error
     }
 
     if (openaiApiKey) {
@@ -115,6 +105,16 @@ async function saveProcess(pageData: PageData): Promise<SwResponse> {
           temperature: 0.5,
         }),
       })
+      if (openaiRes.status !== 200) {
+        const res = await openaiRes.json()
+        let error = 'Openai API error: '
+        if (res.error && res.error.message)
+          error += res.error.message
+        else
+          error += `${openaiRes.status.toString()}`
+        return { tabId: pageData.tabId, starred: pageData.starred, notionPageId: pageData.notionPageId, error }
+      }
+
       const openaiData = await openaiRes.json()
       let text = openaiData.choices[0].message.content as string
       text = text.replace(/\n/g, '')
@@ -139,6 +139,115 @@ async function saveProcess(pageData: PageData): Promise<SwResponse> {
       summary = pageData.content
     }
 
+    const body: { [key: string]: any } = {
+      parent: {
+        database_id: databaseId,
+      },
+      properties: {
+        Title: {
+          title: [
+            {
+              text: {
+                content: pageData.title,
+              },
+            },
+          ],
+        },
+        Summary: {
+          rich_text: [
+            {
+              text: {
+                content: summary,
+              },
+            },
+          ],
+        },
+        URL: {
+          url: pageData.url,
+        },
+        Categories: {
+          multi_select: catOpt,
+        },
+        Status: {
+          select: {
+            name: 'True',
+          },
+        },
+      },
+    }
+
+    if (Object.keys(pageData.github).length > 0) {
+      const github = pageData.github
+      body.properties = {
+        ...body.properties,
+        Websit: {
+          select: {
+            name: 'Github',
+          },
+        },
+      }
+      if (github.languages) {
+        const languages = github.languages.map((lang) => {
+          return {
+            name: lang,
+          }
+        })
+        body.properties = {
+          ...body.properties,
+          Languages: {
+            multi_select: languages,
+          },
+        }
+      }
+      if (github.tags) {
+        const tags = github.tags.map((tag) => {
+          return {
+            name: tag,
+          }
+        })
+        body.properties = {
+          ...body.properties,
+          Tags: {
+            multi_select: tags,
+          },
+        }
+      }
+    }
+
+    if (pageData.notionPageId) {
+      body.properties = {
+        ...body.properties,
+        Status: {
+          select: {
+            name: pageData.starred ? 'False' : 'True',
+          },
+        },
+      }
+      const res = await fetch(`https://api.notion.com/v1/pages/${pageData.notionPageId}`, {
+        method: 'PATCH',
+        headers: {
+          'Authorization': `Bearer ${notionApiKey}`,
+          'Notion-Version': '2022-06-28',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(body),
+      })
+
+      if (res.status !== 200) {
+        const _res = await res.json()
+        let error = 'Notion API error: '
+        if (_res.message)
+          error += _res.message
+        else
+          error += `${_res.status.toString()} Error updating page in Notion.`
+
+        return { tabId: pageData.tabId, starred: pageData.starred, notionPageId: pageData.notionPageId, error }
+      }
+      else {
+        return ({ tabId: pageData.tabId, notionPageId: pageData.notionPageId, starred: !pageData.starred })
+      }
+    }
+
     // 创建 Notion 页面并保存信息
     const response = await fetch('https://api.notion.com/v1/pages', {
       method: 'POST',
@@ -148,41 +257,18 @@ async function saveProcess(pageData: PageData): Promise<SwResponse> {
         'Authorization': `Bearer ${notionApiKey}`,
         'Access-Control-Allow-Origin': `chrome-extension://${extensionId}`,
       },
-      body: JSON.stringify({
-        parent: {
-          database_id: databaseId,
-        },
-        properties: {
-          Title: {
-            title: [
-              {
-                text: {
-                  content: pageData.title,
-                },
-              },
-            ],
-          },
-          Summary: {
-            rich_text: [
-              {
-                text: {
-                  content: summary,
-                },
-              },
-            ],
-          },
-          URL: {
-            url: pageData.url,
-          },
-          Category: {
-            multi_select: catOpt,
-          },
-        },
-      }),
+      body: JSON.stringify(body),
     })
 
-    if (!response.ok) {
-      return new Error('Error creating new page in Notion.')
+    if (response.status !== 200) {
+      const res = await response.json()
+      let error = 'Notion API error: '
+      if (res.message)
+        error += res.message
+      else
+        error += `${response.status.toString()} Error creating new page in Notion.`
+
+      return { tabId: pageData.tabId, starred: pageData.starred, notionPageId: pageData.notionPageId, error }
     }
     else {
       // console.log('Created new page in Notion successfully!')
@@ -223,18 +309,24 @@ async function saveProcess(pageData: PageData): Promise<SwResponse> {
         },
       )
 
-      if (!addChildResponse.ok) {
-        return new Error('Error appending child block to Notion page.')
+      if (addChildResponse.status !== 200) {
+        const res = await response.json()
+        let error = 'Notion API error: '
+        if (res.message)
+          error += res.message
+        else
+          error += `${response.status.toString()} Error appending child block to Notion page.`
+
+        return { tabId: pageData.tabId, starred: pageData.starred, notionPageId: pageData.notionPageId, error }
       }
       else {
         // console.log('Appended child block to Notion page successfully!')
-        return ({ message: 'Data saved successfully.', tabId: pageData.tabId })
+        return ({ tabId: pageData.tabId, notionPageId: newPageId, starred: true })
       }
     }
   }
   catch (error) {
-    // console.log('Error saving to Notion:', error)
-    return new Error('Error saving to Notion.')
+    return { tabId: pageData.tabId, starred: pageData.starred, notionPageId: pageData.notionPageId, error: error.message ? error.message : 'Error saving to Notion.' }
   }
 }
 
@@ -251,31 +343,27 @@ function saveToNotion(pageData: PageData): Promise<SwResponse> {
   })
 }
 
-async function sendStarredStatus(tabId: number, starred: boolean, error?: string) {
-  if (popupOpen) {
-    await chrome.runtime.sendMessage({
-      action: 'starredStatusToPopup',
-      data: { message: error, error: !!error, starred },
-    })
-  }
-  if (tabId) {
-    chrome.tabs.sendMessage(tabId, {
+async function sendStarredStatus(status: SwResponse) {
+  if (status.tabId) {
+    chrome.tabs.sendMessage(status.tabId, {
       action: 'starredStatusToContent',
-      data: { message: error, error: !!error, starred },
+      data: status,
     })
   }
 }
 
-async function checkStarredStatus(url: string, tabId: number) {
+async function checkStarredStatus(url: string, tabId: number): Promise<SwResponse> {
   const storage = await chrome.storage.sync.get(['notionApiKey', 'notionDatabaseId'])
   const notionApiKey = storage.notionApiKey ?? ''
   const databaseId = storage.notionDatabaseId ?? ''
   let starred = false
+  let notionPageId = ''
 
   if (!notionApiKey || !databaseId)
-    return sendStarredStatus(tabId, starred, 'Missing Notion API key or Database ID in settings.')
+    return ({ tabId, notionPageId, starred, error: 'Missing Notion API key or Database ID in settings.' })
 
-  const response = await fetch(
+  try {
+    const response = await fetch(
       `https://api.notion.com/v1/databases/${databaseId}/query`,
       {
         method: 'POST',
@@ -293,17 +381,31 @@ async function checkStarredStatus(url: string, tabId: number) {
           },
         }),
       },
-  )
+    )
 
-  if (!response.ok) {
-    return sendStarredStatus(tabId, starred, 'Error check starred status.')
+    if (response.status !== 200) {
+      const res = await response.json()
+      let error = 'Notion API error: '
+      if (res.message)
+        error += res.message
+      else
+        error += response.status.toString()
+
+      return ({ tabId, starred, notionPageId, error })
+    }
+    else {
+      const data = await response.json()
+
+      if (data.results.length > 0) {
+        if (data.results[0].properties.Status.select.name === 'True')
+          starred = true
+        notionPageId = data.results[0].id
+      }
+
+      return ({ tabId, starred, notionPageId })
+    }
   }
-  else {
-    // console.log('Appended child block to Notion page successfully!')
-    const data = await response.json()
-    if (data.results.length > 0)
-      starred = true
-
-    sendStarredStatus(tabId, starred)
+  catch (err) {
+    return ({ tabId, starred, notionPageId, error: err.message ? err.message : 'Error check starred status.' })
   }
 }
