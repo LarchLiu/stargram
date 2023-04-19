@@ -130,6 +130,8 @@ async function saveProcess(pageData: PageData): Promise<SwResponse> {
 
       const catArry = category.split(',')
       catOpt = catArry.map((item) => {
+        if (item.endsWith('.'))
+          item = item.slice(0, -1)
         return {
           name: item,
         }
