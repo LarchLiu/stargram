@@ -172,7 +172,7 @@ async function saveProcess(pageData: PageData): Promise<SwResponse> {
         },
         Status: {
           select: {
-            name: 'True',
+            name: 'Starred',
           },
         },
       },
@@ -221,7 +221,7 @@ async function saveProcess(pageData: PageData): Promise<SwResponse> {
         ...body.properties,
         Status: {
           select: {
-            name: pageData.starred ? 'False' : 'True',
+            name: pageData.starred ? 'Unstarred' : 'Starred',
           },
         },
       }
@@ -399,7 +399,7 @@ async function checkStarredStatus(url: string, tabId: number): Promise<SwRespons
       const data = await response.json()
 
       if (data.results.length > 0) {
-        if (data.results[0].properties.Status.select.name === 'True')
+        if (data.results[0].properties.Status.select.name === 'Starred')
           starred = true
         notionPageId = data.results[0].id
       }
