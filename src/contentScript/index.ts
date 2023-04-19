@@ -32,6 +32,10 @@ async function getDataFromPage(): Promise<PageData> {
       const res = await fetch(readmePath)
       const readme = await res.text()
       content = `${about}\n\n${readme}`
+      if (content.length > 1000) {
+        content = content.substring(0, 1000)
+        content += '...'
+      }
       // console.log(category)
     }
     else {

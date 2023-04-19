@@ -111,7 +111,7 @@ async function saveProcess(pageData: PageData): Promise<SwResponse> {
               content: pageData.content,
             },
           ],
-          max_tokens: 200,
+          max_tokens: 400,
           temperature: 0.5,
         }),
       })
