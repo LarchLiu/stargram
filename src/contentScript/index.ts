@@ -1,4 +1,4 @@
-import { GITHUB_HOST, starFillSrc, starSrc } from '~/const'
+import { GITHUB_DOMAIN, GITHUB_HOST, GITHUB_RAW_DOMAIN, GITHUB_REPOS_API, starFillSrc, starSrc } from '~/const'
 import type { GithubMeta, ListenerSendResponse, PageData, SwRequest } from '~/types'
 
 let twinkTimer = null
@@ -6,71 +6,61 @@ let starred = false
 let twinkStarred = false
 let notionPageId = ''
 const id = 'star-nexus'
+
 function init() {
   const button = document.querySelector(`#${id}`)
   if (button)
     return
 
   if (location.host === GITHUB_HOST) {
-    chrome.runtime.sendMessage(
-      {
-        action: 'checkStarred',
-        data: { url: location.href },
-      },
-    )
+    const regexGithubPath = /https:\/\/github.com\/([^\/]*\/[^\/]*)/g // match github.com/user/repo/
+    const pathMatch = regexGithubPath.exec(location.href)
+    const path = pathMatch ? pathMatch[1] : ''
+    if (path) {
+      chrome.runtime.sendMessage(
+        {
+          action: 'checkStarred',
+          data: { url: `${GITHUB_DOMAIN}/${path}` },
+        },
+      )
+    }
   }
 }
 
 init()
 
 async function getDataFromPage(): Promise<PageData> {
-  const title = document.title
-  const url = location.href
+  const regexGithubPath = /https:\/\/github.com\/([^\/]*\/[^\/]*)/g // match github.com/user/repo/
+  let title = document.title
+  let url = location.href
   const host = location.host
   const githubMeta: GithubMeta = {}
   let content = ''
+  const githubPathMatch = regexGithubPath.exec(url)
+  const githubPath = githubPathMatch ? githubPathMatch[1] : ''
 
-  if (host === GITHUB_HOST) {
-    const path = location.pathname
-    const readmeEl = document.getElementById('readme')
-    const titleArr = title.split(':')
-    const tags = []
-    const languages = []
-    let about = ''
-    if (titleArr.length > 1) {
-      titleArr.shift()
-      about = titleArr.join(':')
-    }
-
-    const tagsEl = document.getElementsByClassName('topic-tag')
-    for (let i = 0; i < tagsEl.length; i++)
-      tags.push((tagsEl[i] as HTMLElement).innerText)
-
-    const languagesEl = document.querySelectorAll('.Layout-sidebar .BorderGrid-row .color-fg-default.text-bold.mr-1')
-    for (let i = 0; i < languagesEl.length; i++)
-      languages.push((languagesEl[i] as HTMLSpanElement).textContent)
-
-    if (tags.length)
+  if (host === GITHUB_HOST && githubPath) {
+    const repoJson = await fetch(`${GITHUB_REPOS_API}/${githubPath}`).then(r => r.json()).catch(e => e.message || 'error fetch repo')
+    title = `${repoJson.full_name}: ${repoJson.description}`
+    url = repoJson.html_url
+    const tags = repoJson.topics
+    // const tagsJson = await fetch(`${GITHUB_REPOS_API}/${path}/topics`).then(r => r.json()).catch(e => e.message || 'error fetch tags')
+    const languagesJson = await fetch(`${GITHUB_REPOS_API}/${githubPath}/languages`).then(r => r.json()).catch(e => e.message || 'error fetch languages')
+    if (tags && tags.length > 0)
       githubMeta.tags = tags
-    if (languages.length)
-      githubMeta.languages = languages
-    if (readmeEl) {
-      const branchMenu = document.getElementById('branch-select-menu')
-      const branchEl = branchMenu.querySelector('.css-truncate-target') as HTMLElement
-      const branch = (branchEl && branchEl.innerText) ? branchEl.innerText : 'main'
-      const readmePath = `https://raw.githubusercontent.com/${path}/${branch}/README.md`
-      // fetch readme
-      const res = await fetch(readmePath)
-      const readme = await res.text()
-      content = `${about}\n\n${readme}`
-      if (content.length > 1000) {
-        content = content.substring(0, 1000)
-        content += '...'
-      }
-      // console.log(category)
-    }
-    else {
-      content = about || title
+
+    if (languagesJson)
+      githubMeta.languages = Object.keys(languagesJson)
+    // fetch readme
+    const res = await fetch(`${GITHUB_RAW_DOMAIN}/${githubPath}/main/README.md`)
+    let readme = ''
+    if (res.status === 200)
+      readme = await res.text()
+
+    content = `${title}\n\n${readme}`
+    if (content.length > 1000) {
+      content = content.substring(0, 1000)
+      content += '...'
     }
   }
   return { title, url, content, starred, github: githubMeta, notionPageId }

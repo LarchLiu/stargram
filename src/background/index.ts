@@ -1,4 +1,4 @@
-import { SUMMARIZE_PROMPT } from '~/const'
+import { GITHUB_HOST, SUMMARIZE_PROMPT } from '~/const'
 import type { ContentRequest, ListenerSendResponse, PageData, SwResponse } from '~/types'
 
 const extensionId = 'gcdmalofjiaofdiocehcjaalkmlealkb'
@@ -128,7 +128,7 @@ async function saveProcess(pageData: PageData): Promise<SwResponse> {
       if (categoryArr)
         category = categoryArr[1].trim()
 
-      const catArry = category.split(',')
+      const catArry = (category || 'Others').split(',')
       catOpt = catArry.map((item) => {
         if (item.endsWith('.'))
           item = item.slice(0, -1)
@@ -178,7 +178,7 @@ async function saveProcess(pageData: PageData): Promise<SwResponse> {
       },
     }
 
-    if (Object.keys(pageData.github).length > 0) {
+    if (pageData.url.includes(GITHUB_HOST)) {
       const github = pageData.github
       body.properties = {
         ...body.properties,
