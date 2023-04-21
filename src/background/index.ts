@@ -182,7 +182,7 @@ async function saveProcess(pageData: PageData): Promise<SwResponse> {
       const github = pageData.github
       body.properties = {
         ...body.properties,
-        Websit: {
+        Website: {
           select: {
             name: 'Github',
           },
