@@ -11,6 +11,7 @@ interface PageData {
 interface GithubMeta {
   tags?: string[]
   languages?: string[]
+  socialPreview?: string
 }
 
 interface SwResponse {

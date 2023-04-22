@@ -41,7 +41,8 @@ async function getDataFromPage(): Promise<PageData> {
 
   if (host === GITHUB_HOST && githubPath) {
     const repoJson = await fetch(`${GITHUB_REPOS_API}/${githubPath}`).then(r => r.json()).catch(e => e.message || 'error fetch repo')
-    title = `${repoJson.full_name}: ${repoJson.description}`
+    const description = repoJson.description ? repoJson.description.replace(/:\w+:/g, ' ') : ''
+    title = repoJson.full_name + (description ? (`: ${description}`) : '')
     url = repoJson.html_url
     const tags = repoJson.topics
     // const tagsJson = await fetch(`${GITHUB_REPOS_API}/${path}/topics`).then(r => r.json()).catch(e => e.message || 'error fetch tags')
@@ -51,8 +52,14 @@ async function getDataFromPage(): Promise<PageData> {
 
     if (languagesJson)
       githubMeta.languages = Object.keys(languagesJson)
+
+    const imageBaseUrl = 'https://star-nexus-og.vercel.app/api/github-og.png'
+    const user = repoJson.owner.login
+    const repo = repoJson.name
+    const imageUrl = `${imageBaseUrl}?username=${user}&reponame=${repo}&stargazers_count=${repoJson.stargazers_count}&language=${repoJson.language}&issues=${repoJson.open_issues_count}&forks=${repoJson.forks_count}&description=${description}`
+    githubMeta.socialPreview = encodeURI(imageUrl)
     // fetch readme
-    const res = await fetch(`${GITHUB_RAW_DOMAIN}/${githubPath}/main/README.md`)
+    const res = await fetch(`${GITHUB_RAW_DOMAIN}/${githubPath}/${repoJson.default_branch}/README.md`)
     let readme = ''
     if (res.status === 200)
       readme = await res.text()

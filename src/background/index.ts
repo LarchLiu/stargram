@@ -177,7 +177,7 @@ async function saveProcess(pageData: PageData): Promise<SwResponse> {
         },
       },
     }
-
+    let imageUrl = ''
     if (pageData.url.includes(GITHUB_HOST)) {
       const github = pageData.github
       body.properties = {
@@ -214,6 +214,8 @@ async function saveProcess(pageData: PageData): Promise<SwResponse> {
           },
         }
       }
+      if (github.socialPreview)
+        imageUrl = github.socialPreview
     }
 
     if (pageData.notionPageId) {
@@ -276,22 +278,14 @@ async function saveProcess(pageData: PageData): Promise<SwResponse> {
       // console.log('Created new page in Notion successfully!')
       const newPageResponse = await response.json()
       const newPageId = newPageResponse.id // 获取新页面的 ID
+      if (!imageUrl)
+        return ({ tabId: pageData.tabId, notionPageId: newPageId, starred: true })
 
       const imageBlock = {
         object: 'block',
-        type: 'paragraph',
-        paragraph: {
-          rich_text: [
-            {
-              type: 'text',
-              text: {
-                content: '- Notion API Team',
-                link: {
-                  type: 'url',
-                  url: 'https://twitter.com/NotionAPI',
-                },
-              },
-            }],
+        type: 'embed',
+        embed: {
+          url: imageUrl,
         },
       }
 
@@ -312,12 +306,12 @@ async function saveProcess(pageData: PageData): Promise<SwResponse> {
       )
 
       if (addChildResponse.status !== 200) {
-        const res = await response.json()
+        const res = await addChildResponse.json()
         let error = 'Notion API error: '
         if (res.message)
           error += res.message
         else
-          error += `${response.status.toString()} Error appending child block to Notion page.`
+          error += `${addChildResponse.status.toString()} Error appending child block to Notion page.`
 
         return { tabId: pageData.tabId, starred: pageData.starred, notionPageId: pageData.notionPageId, error }
       }
