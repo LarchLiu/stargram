@@ -1,3 +1,4 @@
+/* eslint-disable import/no-mutable-exports */
 export const ENV = {
   // OpenAI API Key
   API_KEY: null,
@@ -66,22 +67,22 @@ export const ENV = {
   TELEGRAM_API_DOMAIN: 'https://api.telegram.org',
   OPENAI_API_DOMAIN: 'https://api.openai.com',
 
-};
+}
 
 export const CONST = {
   PASSWORD_KEY: 'chat_history_password',
   GROUP_TYPES: ['group', 'supergroup'],
   USER_AGENT: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.2 Safari/605.1.15',
-};
+}
 
-export let DATABASE = null;
-export let API_GUARD = null;
+export let DATABASE = null
+export let API_GUARD = null
 
 const ENV_VALUE_TYPE = {
   API_KEY: 'string',
   NOTION_API_KEY: 'string',
   NOTION_DATABASE_ID: 'string',
-};
+}
 
 /**
  * @callback I18nGenerator
@@ -94,49 +95,48 @@ const ENV_VALUE_TYPE = {
  * @param {I18nGenerator} i18n
  */
 export function initEnv(env, i18n) {
-  DATABASE = env.DATABASE;
-  API_GUARD = env.API_GUARD;
+  DATABASE = env.DATABASE
+  API_GUARD = env.API_GUARD
   for (const key in ENV) {
     if (env[key]) {
       switch (ENV_VALUE_TYPE[key] || (typeof ENV[key])) {
         case 'number':
-          ENV[key] = parseInt(env[key]) || ENV[key];
-          break;
+          ENV[key] = parseInt(env[key]) || ENV[key]
+          break
         case 'boolean':
-          ENV[key] = (env[key] || 'false') === 'true';
-          break;
+          ENV[key] = (env[key] || 'false') === 'true'
+          break
         case 'string':
-          ENV[key] = env[key];
-          break;
+          ENV[key] = env[key]
+          break
         case 'object':
           if (Array.isArray(ENV[key])) {
-            ENV[key] = env[key].split(',');
-          } else {
+            ENV[key] = env[key].split(',')
+          }
+          else {
             try {
-              ENV[key] = JSON.parse(env[key]);
-            } catch (e) {
-              console.error(e);
+              ENV[key] = JSON.parse(env[key])
+            }
+            catch (e) {
+              console.error(e)
             }
           }
-          break;
+          break
         default:
-          ENV[key] = env[key];
-          break;
+          ENV[key] = env[key]
+          break
       }
     }
   }
-  {
-    // 兼容性代码 兼容旧版本
-    if (env.TELEGRAM_TOKEN && !ENV.TELEGRAM_AVAILABLE_TOKENS.includes(env.TELEGRAM_TOKEN)) {
-      if (env.BOT_NAME && ENV.TELEGRAM_AVAILABLE_TOKENS.length === ENV.TELEGRAM_BOT_NAME.length) {
-        ENV.TELEGRAM_BOT_NAME.push(env.BOT_NAME);
-      }
-      ENV.TELEGRAM_AVAILABLE_TOKENS.push(env.TELEGRAM_TOKEN);
-    }
+  // 兼容性代码 兼容旧版本
+  if (env.TELEGRAM_TOKEN && !ENV.TELEGRAM_AVAILABLE_TOKENS.includes(env.TELEGRAM_TOKEN)) {
+    if (env.BOT_NAME && ENV.TELEGRAM_AVAILABLE_TOKENS.length === ENV.TELEGRAM_BOT_NAME.length)
+      ENV.TELEGRAM_BOT_NAME.push(env.BOT_NAME)
+
+    ENV.TELEGRAM_AVAILABLE_TOKENS.push(env.TELEGRAM_TOKEN)
   }
 
-
-  ENV.I18N = i18n((ENV.LANGUAGE || 'cn').toLowerCase());
-  ENV.SYSTEM_INIT_MESSAGE = ENV.I18N.env.system_init_message;
-  console.log(ENV);
+  ENV.I18N = i18n((ENV.LANGUAGE || 'cn').toLowerCase())
+  ENV.SYSTEM_INIT_MESSAGE = ENV.I18N.env.system_init_message
+  // console.log(ENV)
 }

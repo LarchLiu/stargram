@@ -1,6 +1,4 @@
-// eslint-disable-next-line no-unused-vars
-import {Context} from './context.js';
-import {DATABASE, ENV} from './env.js';
+import { DATABASE, ENV } from './env.js'
 
 /**
  *
@@ -22,9 +20,8 @@ async function sendMessage(message, token, context) {
           text: message,
         }),
       },
-  );
+  )
 }
-
 
 /**
  *
@@ -34,24 +31,25 @@ async function sendMessage(message, token, context) {
  * @return {Promise<Response>}
  */
 export async function sendMessageToTelegram(message, token, context) {
-  console.log('Send Message:\n', message);
-  const chatContext = context;
-  if (message.length<=4096) {
-    const resp = await sendMessage(message, token, chatContext);
+  // console.log('Send Message:\n', message)
+  const chatContext = context
+  if (message.length <= 4096) {
+    const resp = await sendMessage(message, token, chatContext)
     if (resp.status === 200) {
-      return resp;
-    } else {
+      return resp
+    }
+    else {
       // 继续尝试用HTML发送
       // {"ok":false,"error_code":400,"description":"Bad Request: can't parse entities
     }
   }
-  const limit = 4000;
-  chatContext.parse_mode = 'HTML';
+  const limit = 4000
+  chatContext.parse_mode = 'HTML'
   for (let i = 0; i < message.length; i += limit) {
-    const msg = message.slice(i, i + limit);
-    await sendMessage(`<pre>\n${msg}\n</pre>`, token, chatContext);
+    const msg = message.slice(i, i + limit)
+    await sendMessage(`<pre>\n${msg}\n</pre>`, token, chatContext)
   }
-  return new Response('Message batch send', {status: 200});
+  return new Response('Message batch send', { status: 200 })
 }
 
 /**
@@ -61,10 +59,9 @@ export async function sendMessageToTelegram(message, token, context) {
  */
 export function sendMessageToTelegramWithContext(context) {
   return async (message) => {
-    return sendMessageToTelegram(message, context.SHARE_CONTEXT.currentBotToken, context.CURRENT_CHAT_CONTEXT);
-  };
+    return sendMessageToTelegram(message, context.SHARE_CONTEXT.currentBotToken, context.CURRENT_CHAT_CONTEXT)
+  }
 }
-
 
 /**
  * 发送图片消息到Telegram
@@ -88,7 +85,7 @@ export async function sendPhotoToTelegram(url, token, context) {
           parse_mode: null,
         }),
       },
-  );
+  )
 }
 
 /**
@@ -98,10 +95,9 @@ export async function sendPhotoToTelegram(url, token, context) {
  */
 export function sendPhotoToTelegramWithContext(context) {
   return (url) => {
-    return sendPhotoToTelegram(url, context.SHARE_CONTEXT.currentBotToken, context.CURRENT_CHAT_CONTEXT);
-  };
+    return sendPhotoToTelegram(url, context.SHARE_CONTEXT.currentBotToken, context.CURRENT_CHAT_CONTEXT)
+  }
 }
-
 
 /**
  * 发送聊天动作到TG
@@ -122,10 +118,10 @@ export async function sendChatActionToTelegram(action, token, chatId) {
         },
         body: JSON.stringify({
           chat_id: chatId,
-          action: action,
+          action,
         }),
       },
-  ).then((res) => res.json());
+  ).then(res => res.json())
 }
 
 /**
@@ -135,8 +131,8 @@ export async function sendChatActionToTelegram(action, token, chatId) {
  */
 export function sendChatActionToTelegramWithContext(context) {
   return (action) => {
-    return sendChatActionToTelegram(action, context.SHARE_CONTEXT.currentBotToken, context.CURRENT_CHAT_CONTEXT.chat_id);
-  };
+    return sendChatActionToTelegram(action, context.SHARE_CONTEXT.currentBotToken, context.CURRENT_CHAT_CONTEXT.chat_id)
+  }
 }
 
 /**
@@ -154,10 +150,10 @@ export async function bindTelegramWebHook(token, url) {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          url: url,
+          url,
         }),
       },
-  ).then((res) => res.json());
+  ).then(res => res.json())
 }
 
 // 判断是否为群组管理员
@@ -170,33 +166,33 @@ export async function bindTelegramWebHook(token, url) {
  * @return {Promise<string>}
  */
 export async function getChatRole(id, groupAdminKey, chatId, token) {
-  let groupAdmin;
+  let groupAdmin
   try {
-    groupAdmin = JSON.parse(await DATABASE.get(groupAdminKey));
-  } catch (e) {
-    console.error(e);
-    return e.message;
+    groupAdmin = JSON.parse(await DATABASE.get(groupAdminKey))
+  }
+  catch (e) {
+    console.error(e)
+    return e.message
   }
   if (!groupAdmin || !Array.isArray(groupAdmin) || groupAdmin.length === 0) {
-    const administers = await getChatAdminister(chatId, token);
-    if (administers == null) {
-      return null;
-    }
-    groupAdmin = administers;
+    const administers = await getChatAdminister(chatId, token)
+    if (administers == null)
+      return null
+
+    groupAdmin = administers
     // 缓存120s
     await DATABASE.put(
-        groupAdminKey,
-        JSON.stringify(groupAdmin),
-        {expiration: (Date.now() / 1000) + 120},
-    );
+      groupAdminKey,
+      JSON.stringify(groupAdmin),
+      { expiration: (Date.now() / 1000) + 120 },
+    )
   }
   for (let i = 0; i < groupAdmin.length; i++) {
-    const user = groupAdmin[i];
-    if (user.user.id === id) {
-      return user.status;
-    }
+    const user = groupAdmin[i]
+    if (user.user.id === id)
+      return user.status
   }
-  return 'member';
+  return 'member'
 }
 
 /**
@@ -205,8 +201,8 @@ export async function getChatRole(id, groupAdminKey, chatId, token) {
  */
 export function getChatRoleWithContext(context) {
   return (id) => {
-    return getChatRole(id, context.SHARE_CONTEXT.groupAdminKey, context.CURRENT_CHAT_CONTEXT.chat_id, context.SHARE_CONTEXT.currentBotToken);
-  };
+    return getChatRole(id, context.SHARE_CONTEXT.groupAdminKey, context.CURRENT_CHAT_CONTEXT.chat_id, context.SHARE_CONTEXT.currentBotToken)
+  }
 }
 
 /**
@@ -227,15 +223,15 @@ export async function getChatAdminister(chatId, token) {
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({chat_id: chatId}),
+          body: JSON.stringify({ chat_id: chatId }),
         },
-    ).then((res) => res.json());
-    if (resp.ok) {
-      return resp.result;
-    }
-  } catch (e) {
-    console.error(e);
-    return null;
+    ).then(res => res.json())
+    if (resp.ok)
+      return resp.result
+  }
+  catch (e) {
+    console.error(e)
+    return null
   }
 }
 
@@ -254,7 +250,7 @@ export async function getBot(token) {
           'Content-Type': 'application/json',
         },
       },
-  ).then((res) => res.json());
+  ).then(res => res.json())
   if (resp.ok) {
     return {
       ok: true,
@@ -264,8 +260,9 @@ export async function getBot(token) {
         can_join_groups: resp.result.can_join_groups,
         can_read_all_group_messages: resp.result.can_read_all_group_messages,
       },
-    };
-  } else {
-    return resp;
+    }
+  }
+  else {
+    return resp
   }
 }

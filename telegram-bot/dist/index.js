@@ -40,9 +40,9 @@ var ENV = {
   // 检查更新的分支
   UPDATE_BRANCH: "main",
   // 当前版本
-  BUILD_TIMESTAMP: 1682138048,
+  BUILD_TIMESTAMP: 1682158913,
   // 当前版本 commit id
-  BUILD_VERSION: "4e59966",
+  BUILD_VERSION: "dfa6dda",
   /**
   * @type {I18n}
   */
@@ -102,17 +102,13 @@ function initEnv(env, i18n2) {
       }
     }
   }
-  {
-    if (env.TELEGRAM_TOKEN && !ENV.TELEGRAM_AVAILABLE_TOKENS.includes(env.TELEGRAM_TOKEN)) {
-      if (env.BOT_NAME && ENV.TELEGRAM_AVAILABLE_TOKENS.length === ENV.TELEGRAM_BOT_NAME.length) {
-        ENV.TELEGRAM_BOT_NAME.push(env.BOT_NAME);
-      }
-      ENV.TELEGRAM_AVAILABLE_TOKENS.push(env.TELEGRAM_TOKEN);
-    }
+  if (env.TELEGRAM_TOKEN && !ENV.TELEGRAM_AVAILABLE_TOKENS.includes(env.TELEGRAM_TOKEN)) {
+    if (env.BOT_NAME && ENV.TELEGRAM_AVAILABLE_TOKENS.length === ENV.TELEGRAM_BOT_NAME.length)
+      ENV.TELEGRAM_BOT_NAME.push(env.BOT_NAME);
+    ENV.TELEGRAM_AVAILABLE_TOKENS.push(env.TELEGRAM_TOKEN);
   }
   ENV.I18N = i18n2((ENV.LANGUAGE || "cn").toLowerCase());
   ENV.SYSTEM_INIT_MESSAGE = ENV.I18N.env.system_init_message;
-  console.log(ENV);
 }
 
 // src/context.js
@@ -170,9 +166,8 @@ var Context = class {
   _initChatContext(chatId, replyToMessageId) {
     this.CURRENT_CHAT_CONTEXT.chat_id = chatId;
     this.CURRENT_CHAT_CONTEXT.reply_to_message_id = replyToMessageId;
-    if (replyToMessageId) {
+    if (replyToMessageId)
       this.CURRENT_CHAT_CONTEXT.allow_sending_without_reply = true;
-    }
   }
   //
   /**
@@ -188,9 +183,8 @@ var Context = class {
         if (key === "USER_DEFINE" && typeof this.USER_DEFINE === typeof userConfig[key]) {
           this._initUserDefine(userConfig[key]);
         } else {
-          if (this.USER_CONFIG.hasOwnProperty(key) && typeof this.USER_CONFIG[key] === typeof userConfig[key]) {
+          if (this.USER_CONFIG.hasOwnProperty(key) && typeof this.USER_CONFIG[key] === typeof userConfig[key])
             this.USER_CONFIG[key] = userConfig[key];
-          }
         }
       }
     } catch (e) {
@@ -203,9 +197,8 @@ var Context = class {
    */
   _initUserDefine(userDefine) {
     for (const key in userDefine) {
-      if (this.USER_DEFINE.hasOwnProperty(key) && typeof this.USER_DEFINE[key] === typeof userDefine[key]) {
+      if (this.USER_DEFINE.hasOwnProperty(key) && typeof this.USER_DEFINE[key] === typeof userDefine[key])
         this.USER_DEFINE[key] = userDefine[key];
-      }
     }
   }
   /**
@@ -217,14 +210,12 @@ var Context = class {
       /^\/telegram\/(\d+:[A-Za-z0-9_-]{35})\/webhook/
     )[1];
     const telegramIndex = ENV.TELEGRAM_AVAILABLE_TOKENS.indexOf(token);
-    if (telegramIndex === -1) {
+    if (telegramIndex === -1)
       throw new Error("Token not allowed");
-    }
     this.SHARE_CONTEXT.currentBotToken = token;
     this.SHARE_CONTEXT.currentBotId = token.split(":")[0];
-    if (ENV.TELEGRAM_BOT_NAME.length > telegramIndex) {
+    if (ENV.TELEGRAM_BOT_NAME.length > telegramIndex)
       this.SHARE_CONTEXT.currentBotName = ENV.TELEGRAM_BOT_NAME[telegramIndex];
-    }
   }
   /**
    *
@@ -234,9 +225,8 @@ var Context = class {
   async _initShareContext(message) {
     this.SHARE_CONTEXT.usageKey = `usage:${this.SHARE_CONTEXT.currentBotId}`;
     const id = message?.chat?.id;
-    if (id === void 0 || id === null) {
+    if (id === void 0 || id === null)
       throw new Error("Chat id not found");
-    }
     const botId = this.SHARE_CONTEXT.currentBotId;
     let historyKey = `history:${id}`;
     let configStoreKey = `user_config:${id}`;
@@ -267,11 +257,8 @@ var Context = class {
     const chatId = message?.chat?.id;
     const replyId = CONST.GROUP_TYPES.includes(message.chat?.type) ? message.message_id : null;
     this._initChatContext(chatId, replyId);
-    console.log(this.CURRENT_CHAT_CONTEXT);
     await this._initShareContext(message);
-    console.log(this.SHARE_CONTEXT);
     await this._initUserConfig(this.SHARE_CONTEXT.configStoreKey);
-    console.log(this.USER_CONFIG);
   }
 };
 
@@ -292,7 +279,6 @@ async function sendMessage(message, token, context) {
   );
 }
 async function sendMessageToTelegram(message, token, context) {
-  console.log("Send Message:\n", message);
   const chatContext = context;
   if (message.length <= 4096) {
     const resp = await sendMessage(message, token, chatContext);
@@ -381,9 +367,8 @@ async function getChatRole(id, groupAdminKey, chatId, token) {
   }
   if (!groupAdmin || !Array.isArray(groupAdmin) || groupAdmin.length === 0) {
     const administers = await getChatAdminister(chatId, token);
-    if (administers == null) {
+    if (administers == null)
       return null;
-    }
     groupAdmin = administers;
     await DATABASE.put(
       groupAdminKey,
@@ -393,9 +378,8 @@ async function getChatRole(id, groupAdminKey, chatId, token) {
   }
   for (let i = 0; i < groupAdmin.length; i++) {
     const user = groupAdmin[i];
-    if (user.user.id === id) {
+    if (user.user.id === id)
       return user.status;
-    }
   }
   return "member";
 }
@@ -416,9 +400,8 @@ async function getChatAdminister(chatId, token) {
         body: JSON.stringify({ chat_id: chatId })
       }
     ).then((res) => res.json());
-    if (resp.ok) {
+    if (resp.ok)
       return resp.result;
-    }
   } catch (e) {
     console.error(e);
     return null;
@@ -453,9 +436,8 @@ async function getBot(token) {
 async function resourceLoader(key, url) {
   try {
     const raw = await DATABASE.get(key);
-    if (raw && raw !== "") {
+    if (raw && raw !== "")
       return raw;
-    }
   } catch (e) {
     console.error(e);
   }
@@ -492,7 +474,7 @@ async function gpt3TokensCounter() {
   };
   const dictZip = (x, y) => {
     const result = {};
-    x.map((_, i) => {
+    x.forEach((_, i) => {
       result[x[i]] = y[i];
     });
     return result;
@@ -510,7 +492,7 @@ async function gpt3TokensCounter() {
     }
     cs = cs.map((x) => chr(x));
     const result = {};
-    bs.map((_, i) => {
+    bs.forEach((_, i) => {
       result[bs[i]] = cs[i];
     });
     return result;
@@ -527,35 +509,32 @@ async function gpt3TokensCounter() {
   }
   const pat = /'s|'t|'re|'ve|'m|'ll|'d| ?\p{L}+| ?\p{N}+| ?[^\s\p{L}\p{N}]+|\s+(?!\S)|\s+/gu;
   const decoder = {};
-  Object.keys(encoder).map((x) => {
+  Object.keys(encoder).forEach((x) => {
     decoder[encoder[x]] = x;
   });
   const lines = bpe_file.split("\n");
   const bpe_merges = lines.slice(1, lines.length - 1).map((x) => {
-    return x.split(/(\s+)/).filter(function(e) {
+    return x.split(/(\s+)/).filter((e) => {
       return e.trim().length > 0;
     });
   });
   const byte_encoder = bytes_to_unicode();
   const byte_decoder = {};
-  Object.keys(byte_encoder).map((x) => {
+  Object.keys(byte_encoder).forEach((x) => {
     byte_decoder[byte_encoder[x]] = x;
   });
   const bpe_ranks = dictZip(bpe_merges, range(0, bpe_merges.length));
   const cache = /* @__PURE__ */ new Map();
   function bpe(token) {
-    if (cache.has(token)) {
+    if (cache.has(token))
       return cache.get(token);
-    }
-    ``;
     let word = token.split("");
     let pairs = get_pairs(word);
-    if (!pairs) {
+    if (!pairs)
       return token;
-    }
     while (true) {
       const minPairs = {};
-      Array.from(pairs).map((pair) => {
+      Array.from(pairs).forEach((pair) => {
         const rank = bpe_ranks[pair];
         minPairs[isNaN(rank) ? 1e11 : rank] = pair;
       });
@@ -564,9 +543,8 @@ async function gpt3TokensCounter() {
           return parseInt(x);
         }
       ))];
-      if (!(bigram in bpe_ranks)) {
+      if (!(bigram in bpe_ranks))
         break;
-      }
       const first = bigram[0];
       const second = bigram[1];
       let new_word = [];
@@ -588,11 +566,10 @@ async function gpt3TokensCounter() {
         }
       }
       word = new_word;
-      if (word.length === 1) {
+      if (word.length === 1)
         break;
-      } else {
+      else
         pairs = get_pairs(word);
-      }
     }
     word = word.join(" ");
     cache.set(token, word);
@@ -706,9 +683,8 @@ function mergeConfig(config, key, value) {
 async function tokensCounter() {
   let counter = (text) => Array.from(text).length;
   try {
-    if (ENV.GPT3_TOKENS_COUNT) {
+    if (ENV.GPT3_TOKENS_COUNT)
       counter = await gpt3TokensCounter();
-    }
   } catch (e) {
     console.error(e);
   }
@@ -722,23 +698,23 @@ async function tokensCounter() {
   };
 }
 function makeResponse200(resp) {
-  if (resp === null) {
+  if (resp === null)
     return new Response("NOT HANDLED", { status: 200 });
-  }
   if (resp.status === 200) {
     return resp;
   } else {
-    return new Response(resp.body, { status: 200, headers: {
-      "Original-Status": resp.status,
-      ...resp.headers
-    } });
+    return new Response(resp.body, {
+      status: 200,
+      headers: {
+        "Original-Status": resp.status,
+        ...resp.headers
+      }
+    });
   }
 }
 
 // src/openai.js
 async function requestCompletionsFromOpenAI(message, history, context) {
-  console.log(`requestCompletionsFromOpenAI: ${message}`);
-  console.log(`history: ${JSON.stringify(history, null, 2)}`);
   const key = context.USER_CONFIG.OPENAI_API_KEY || ENV.API_KEY;
   const body = {
     model: ENV.CHAT_MODEL,
@@ -754,20 +730,18 @@ async function requestCompletionsFromOpenAI(message, history, context) {
     body: JSON.stringify(body)
   }).then((res) => res.json());
   if (resp.error?.message) {
-    if (ENV.DEV_MODE || ENV.DEV_MODE) {
+    if (ENV.DEV_MODE || ENV.DEV_MODE)
       throw new Error(`OpenAI API Error
 > ${resp.error.message}
 Body: ${JSON.stringify(body)}`);
-    } else {
+    else
       throw new Error(`OpenAI API Error
 > ${resp.error.message}`);
-    }
   }
   setTimeout(() => updateBotUsage(resp.usage, context).catch(console.error), 0);
   return resp.choices[0].message.content;
 }
 async function requestImageFromOpenAI(prompt, context) {
-  console.log(`requestImageFromOpenAI: ${prompt}`);
   const key = context.USER_CONFIG.OPENAI_API_KEY || ENV.API_KEY;
   const body = {
     prompt,
@@ -782,10 +756,9 @@ async function requestImageFromOpenAI(prompt, context) {
     },
     body: JSON.stringify(body)
   }).then((res) => res.json());
-  if (resp.error?.message) {
+  if (resp.error?.message)
     throw new Error(`OpenAI API Error
 > ${resp.error.message}`);
-  }
   return resp.data[0].url;
 }
 async function requestCompletionsFromChatGPT(text, context, modifier) {
@@ -807,9 +780,8 @@ async function requestCompletionsFromChatGPT(text, context, modifier) {
   return answer;
 }
 async function updateBotUsage(usage, context) {
-  if (!ENV.ENABLE_USAGE_STATISTICS) {
+  if (!ENV.ENABLE_USAGE_STATISTICS)
     return;
-  }
   let dbValue = JSON.parse(await DATABASE.get(context.SHARE_CONTEXT.usageKey));
   if (!dbValue) {
     dbValue = {
@@ -820,11 +792,10 @@ async function updateBotUsage(usage, context) {
     };
   }
   dbValue.tokens.total += usage.total_tokens;
-  if (!dbValue.tokens.chats[context.SHARE_CONTEXT.chatId]) {
+  if (!dbValue.tokens.chats[context.SHARE_CONTEXT.chatId])
     dbValue.tokens.chats[context.SHARE_CONTEXT.chatId] = usage.total_tokens;
-  } else {
+  else
     dbValue.tokens.chats[context.SHARE_CONTEXT.chatId] += usage.total_tokens;
-  }
   await DATABASE.put(context.SHARE_CONTEXT.usageKey, JSON.stringify(dbValue));
 }
 async function loadHistory(key, context) {
@@ -840,30 +811,26 @@ async function loadHistory(key, context) {
   } catch (e) {
     console.error(e);
   }
-  if (!history || !Array.isArray(history)) {
+  if (!history || !Array.isArray(history))
     history = [];
-  }
   let original = JSON.parse(JSON.stringify(history));
-  if (context.SHARE_CONTEXT.role) {
+  if (context.SHARE_CONTEXT.role)
     history = history.filter((chat) => context.SHARE_CONTEXT.role === chat.cosplay);
-  }
   history.forEach((item) => {
     delete item.cosplay;
   });
   const counter = await tokensCounter();
   const trimHistory = (list, initLength, maxLength, maxToken) => {
-    if (list.length > maxLength) {
+    if (list.length > maxLength)
       list = list.splice(list.length - maxLength);
-    }
     let tokenLength = initLength;
     for (let i = list.length - 1; i >= 0; i--) {
       const historyItem = list[i];
       let length = 0;
-      if (historyItem.content) {
+      if (historyItem.content)
         length = counter(historyItem.content);
-      } else {
+      else
         historyItem.content = "";
-      }
       tokenLength += length;
       if (tokenLength > maxToken) {
         list = list.splice(i + 1);
@@ -886,25 +853,22 @@ async function loadHistory(key, context) {
     default:
       history.unshift(initMessage);
   }
-  if (ENV.SYSTEM_INIT_MESSAGE_ROLE !== "system" && history.length > 0 && history[0].role === "system") {
+  if (ENV.SYSTEM_INIT_MESSAGE_ROLE !== "system" && history.length > 0 && history[0].role === "system")
     history[0].role = ENV.SYSTEM_INIT_MESSAGE_ROLE;
-  }
   return { real: history, original };
 }
 
 // src/command.js
 var commandAuthCheck = {
-  default: function(chatType) {
-    if (CONST.GROUP_TYPES.includes(chatType)) {
+  default(chatType) {
+    if (CONST.GROUP_TYPES.includes(chatType))
       return ["administrator", "creator"];
-    }
     return false;
   },
-  shareModeGroup: function(chatType) {
+  shareModeGroup(chatType) {
     if (CONST.GROUP_TYPES.includes(chatType)) {
-      if (!ENV.GROUP_CHAT_BOT_SHARE_MODE) {
+      if (!ENV.GROUP_CHAT_BOT_SHARE_MODE)
         return false;
-      }
       return ["administrator", "creator"];
     }
     return false;
@@ -969,15 +933,15 @@ var commandHandlers = {
 async function commandUpdateRole(message, command, subcommand, context) {
   if (subcommand === "show") {
     const size = Object.getOwnPropertyNames(context.USER_DEFINE.ROLE).length;
-    if (size === 0) {
+    if (size === 0)
       return sendMessageToTelegramWithContext(context)(ENV.I18N.command.role.not_defined_any_role);
-    }
     let showMsg = ENV.I18N.command.role.current_defined_role(size);
     for (const role2 in context.USER_DEFINE.ROLE) {
       if (context.USER_DEFINE.ROLE.hasOwnProperty(role2)) {
         showMsg += `~${role2}:
 <pre>`;
-        showMsg += JSON.stringify(context.USER_DEFINE.ROLE[role2]) + "\n";
+        showMsg += `${JSON.stringify(context.USER_DEFINE.ROLE[role2])}
+`;
         showMsg += "</pre>";
       }
     }
@@ -985,9 +949,8 @@ async function commandUpdateRole(message, command, subcommand, context) {
     return sendMessageToTelegramWithContext(context)(showMsg);
   }
   const kv = subcommand.indexOf(" ");
-  if (kv === -1) {
+  if (kv === -1)
     return sendMessageToTelegramWithContext(context)(ENV.I18N.command.role.help);
-  }
   const role = subcommand.slice(0, kv);
   const settings = subcommand.slice(kv + 1).trim();
   const skv = settings.indexOf("=");
@@ -1030,9 +993,8 @@ async function commandUpdateRole(message, command, subcommand, context) {
   }
 }
 async function commandGenerateImg(message, command, subcommand, context) {
-  if (subcommand === "") {
+  if (subcommand === "")
     return sendMessageToTelegramWithContext(context)(ENV.I18N.command.img.help);
-  }
   try {
     setTimeout(() => sendChatActionToTelegramWithContext(context)("upload_photo").catch(console.error), 0);
     const imgUrl = await requestImageFromOpenAI(subcommand, context);
@@ -1055,11 +1017,10 @@ async function commandCreateNewChatContext(message, command, subcommand, context
     if (command === "/new") {
       return sendMessageToTelegramWithContext(context)(ENV.I18N.command.new.new_chat_start);
     } else {
-      if (context.SHARE_CONTEXT.chatType === "private") {
+      if (context.SHARE_CONTEXT.chatType === "private")
         return sendMessageToTelegramWithContext(context)(ENV.I18N.command.new.new_chat_start_private(context.CURRENT_CHAT_CONTEXT.chat_id));
-      } else {
+      else
         return sendMessageToTelegramWithContext(context)(ENV.I18N.command.new.new_chat_start_group(context.CURRENT_CHAT_CONTEXT.chat_id));
-      }
     }
   } catch (e) {
     return sendMessageToTelegramWithContext(context)(`ERROR: ${e.message}`);
@@ -1067,9 +1028,8 @@ async function commandCreateNewChatContext(message, command, subcommand, context
 }
 async function commandUpdateUserConfig(message, command, subcommand, context) {
   const kv = subcommand.indexOf("=");
-  if (kv === -1) {
+  if (kv === -1)
     return sendMessageToTelegramWithContext(context)(ENV.I18N.command.setenv.help);
-  }
   const key = subcommand.slice(0, kv);
   const value = subcommand.slice(kv + 1);
   try {
@@ -1121,24 +1081,21 @@ async function commandFetchUpdate(message, command, subcommand, context) {
   }
 }
 async function commandUsage(message, command, subcommand, context) {
-  if (!ENV.ENABLE_USAGE_STATISTICS) {
+  if (!ENV.ENABLE_USAGE_STATISTICS)
     return sendMessageToTelegramWithContext(context)(ENV.I18N.command.usage.usage_not_open);
-  }
   const usage = JSON.parse(await DATABASE.get(context.SHARE_CONTEXT.usageKey));
   let text = ENV.I18N.command.usage.current_usage;
   if (usage?.tokens) {
     const { tokens } = usage;
     const sortedChats = Object.keys(tokens.chats || {}).sort((a, b) => tokens.chats[b] - tokens.chats[a]);
     text += ENV.I18N.command.usage.total_usage(tokens.total);
-    for (let i = 0; i < Math.min(sortedChats.length, 30); i++) {
+    for (let i = 0; i < Math.min(sortedChats.length, 30); i++)
       text += `
   - ${sortedChats[i]}: ${tokens.chats[sortedChats[i]]} tokens`;
-    }
-    if (sortedChats.length === 0) {
+    if (sortedChats.length === 0)
       text += "0 tokens";
-    } else if (sortedChats.length > 30) {
+    else if (sortedChats.length > 30)
       text += "\n  ...";
-    }
   } else {
     text += ENV.I18N.command.usage.no_usage;
   }
@@ -1146,7 +1103,8 @@ async function commandUsage(message, command, subcommand, context) {
 }
 async function commandSystem(message, command, subcommand, context) {
   let msg = "Current System Info:\n";
-  msg += "OpenAI Model:" + ENV.CHAT_MODEL + "\n";
+  msg += `OpenAI Model:${ENV.CHAT_MODEL}
+`;
   if (ENV.DEV_MODE) {
     const shareCtx = { ...context.SHARE_CONTEXT };
     shareCtx.currentBotToken = "******";
@@ -1177,9 +1135,8 @@ async function commandRegenerate(message, command, subcommand, context) {
       if (data === void 0 || data === null) {
         break;
       } else if (data.role === "user") {
-        if (text === "" || text === void 0 || text === null) {
+        if (text === "" || text === void 0 || text === null)
           nextText = data.content;
-        }
         break;
       }
     }
@@ -1204,16 +1161,15 @@ async function handleCommandMessage(message, context) {
     };
   }
   for (const key in commandHandlers) {
-    if (message.text === key || message.text.startsWith(key + " ")) {
+    if (message.text === key || message.text.startsWith(`${key} `)) {
       const command = commandHandlers[key];
       try {
         if (command.needAuth) {
           const roleList = command.needAuth(context.SHARE_CONTEXT.chatType);
           if (roleList) {
             const chatRole = await getChatRoleWithContext(context)(context.SHARE_CONTEXT.speakerId);
-            if (chatRole === null) {
+            if (chatRole === null)
               return sendMessageToTelegramWithContext(context)(ENV.I18N.command.permission.not_authorized);
-            }
             if (!roleList.includes(chatRole)) {
               const msg = ENV.I18N.command.permission.not_enough_permission(roleList, chatRole);
               return sendMessageToTelegramWithContext(context)(msg);
@@ -1240,14 +1196,12 @@ async function bindCommandForTelegram(token) {
     all_chat_administrators: []
   };
   for (const key in commandHandlers) {
-    if (ENV.HIDE_COMMAND_BUTTONS.includes(key)) {
+    if (ENV.HIDE_COMMAND_BUTTONS.includes(key))
       continue;
-    }
     if (commandHandlers.hasOwnProperty(key) && commandHandlers[key].scopes) {
       for (const scope of commandHandlers[key].scopes) {
-        if (!scopeCommandMap[scope]) {
+        if (!scopeCommandMap[scope])
           scopeCommandMap[scope] = [];
-        }
         scopeCommandMap[scope].push(key);
       }
     }
@@ -1306,10 +1260,8 @@ async function getWebsiteInfo(text) {
         const regexGithubPath = /https:\/\/github.com\/([^\/]*\/[^\/]*)/g;
         const pathMatch = regexGithubPath.exec(url);
         const path = pathMatch ? pathMatch[1] : "";
-        if (!path) {
+        if (!path)
           break;
-        }
-        ;
         fetchOpt.headers = headers;
         const apiUrl = `https://api.github.com/repos/${path}`;
         const repoRes = await fetch(apiUrl, fetchOpt);
@@ -1318,29 +1270,23 @@ async function getWebsiteInfo(text) {
           const readmeUrl = `https://raw.githubusercontent.com/${repoJson.full_name}/${repoJson.default_branch}/README.md`;
           let readme = "";
           const readmeRes = await fetch(readmeUrl, fetchOpt);
-          if (readmeRes.status === 200) {
+          if (readmeRes.status === 200)
             readme = await readmeRes.text();
-          }
-          ;
           const description = repoJson.description ? repoJson.description.replace(/:\w+:/g, " ") : "";
-          info.title = repoJson.full_name + (description ? ": " + description : "");
+          info.title = repoJson.full_name + (description ? `: ${description}` : "");
           info.url = repoJson.html_url;
-          info.content = info.title + "\n\n" + readme;
-          if (info.content.length > 2e3) {
-            info.content = info.content.substring(0, 2e3) + "...";
-          }
-          ;
+          info.content = `${info.title}
+
+${readme}`;
+          if (info.content.length > 2e3)
+            info.content = `${info.content.substring(0, 2e3)}...`;
           const tags = repoJson.topics;
           const languagesJson = await fetch(repoJson.languages_url, fetchOpt).then((r) => r.json()).catch((e) => e.message || "error fetch languages");
           const github = {};
-          if (tags && tags.length > 0) {
+          if (tags && tags.length > 0)
             github.tags = tags;
-          }
-          ;
-          if (languagesJson) {
+          if (languagesJson)
             github.languages = Object.keys(languagesJson);
-          }
-          ;
           const imageBaseUrl = "https://star-nexus-og.vercel.app/api/github-og.png";
           const user = repoJson.owner.login;
           const repo = repoJson.name;
@@ -1394,11 +1340,10 @@ async function saveToNotion(pageData) {
       if (openaiRes.status !== 200) {
         const res = await openaiRes.json();
         let error = "Openai API error: ";
-        if (res.error && res.error.message) {
+        if (res.error && res.error.message)
           error += res.error.message;
-        } else {
+        else
           error += `${openaiRes.status.toString()}`;
-        }
         return { message: error };
       }
       const openaiData = await openaiRes.json();
@@ -1408,20 +1353,14 @@ async function saveToNotion(pageData) {
       const regexCategory = /Categories:(.*)$/g;
       const summaryArr = regexSummery.exec(text);
       const categoryArr = regexCategory.exec(text);
-      if (summaryArr) {
+      if (summaryArr)
         summary = summaryArr[1].trim();
-      }
-      ;
-      if (categoryArr) {
+      if (categoryArr)
         category = categoryArr[1].trim();
-      }
-      ;
       const catArry = (category || "Others").split(",");
       catOpt = catArry.map((item) => {
-        if (item.endsWith(".")) {
+        if (item.endsWith("."))
           item = item.slice(0, -1);
-        }
-        ;
         return {
           name: item
         };
@@ -1502,10 +1441,8 @@ async function saveToNotion(pageData) {
           }
         };
       }
-      if (github.socialPreview) {
+      if (github.socialPreview)
         imageUrl = github.socialPreview;
-      }
-      ;
     }
     const response = await fetch("https://api.notion.com/v1/pages", {
       method: "POST",
@@ -1519,20 +1456,16 @@ async function saveToNotion(pageData) {
     if (response.status !== 200) {
       const res = await response.json();
       let error = "Notion API error: ";
-      if (res.message) {
+      if (res.message)
         error += res.message;
-      } else {
+      else
         error += `${response.status.toString()} Error creating new page in Notion.`;
-      }
-      ;
       return { message: error };
     } else {
       const newPageResponse = await response.json();
       const newPageId = newPageResponse.id;
-      if (!imageUrl) {
+      if (!imageUrl)
         return { message: "success" };
-      }
-      ;
       const imageBlock = {
         object: "block",
         type: "embed",
@@ -1557,11 +1490,10 @@ async function saveToNotion(pageData) {
       if (addChildResponse.status !== 200) {
         const res = await response.json();
         let error = "Notion API error: ";
-        if (res.message) {
+        if (res.message)
           error += res.message;
-        } else {
+        else
           error += `${response.status.toString()} Error appending child block to Notion page.`;
-        }
         return { message: error };
       } else {
         return { message: "success" };
@@ -1589,18 +1521,15 @@ async function msgSaveLastMessage(message, context) {
   return null;
 }
 async function msgCheckEnvIsReady(message, context) {
-  if (!ENV.API_KEY) {
+  if (!ENV.API_KEY)
     return sendMessageToTelegramWithContext(context)("OpenAI API Key Not Set");
-  }
-  if (!DATABASE) {
+  if (!DATABASE)
     return sendMessageToTelegramWithContext(context)("DATABASE Not Set");
-  }
   return null;
 }
 async function msgFilterWhiteList(message, context) {
-  if (ENV.I_AM_A_GENEROUS_PERSON) {
+  if (ENV.I_AM_A_GENEROUS_PERSON)
     return null;
-  }
   if (context.SHARE_CONTEXT.chatType === "private") {
     if (!ENV.CHAT_WHITE_LIST.includes(`${context.CURRENT_CHAT_CONTEXT.chat_id}`)) {
       return sendMessageToTelegramWithContext(context)(
@@ -1610,9 +1539,8 @@ async function msgFilterWhiteList(message, context) {
     return null;
   }
   if (CONST.GROUP_TYPES.includes(context.SHARE_CONTEXT.chatType)) {
-    if (!ENV.GROUP_CHAT_BOT_ENABLE) {
+    if (!ENV.GROUP_CHAT_BOT_ENABLE)
       return new Response("Not support", { status: 401 });
-    }
     if (!ENV.CHAT_GROUP_WHITE_LIST.includes(`${context.CURRENT_CHAT_CONTEXT.chat_id}`)) {
       return sendMessageToTelegramWithContext(context)(
         ENV.I18N.message.group_has_no_permission_to_use_the_bot(context.CURRENT_CHAT_CONTEXT.chat_id)
@@ -1625,22 +1553,19 @@ async function msgFilterWhiteList(message, context) {
   );
 }
 async function msgFilterNonTextMessage(message, context) {
-  if (!message.text) {
+  if (!message.text)
     return sendMessageToTelegramWithContext(context)(ENV.I18N.message.not_supported_chat_type_message);
-  }
   return null;
 }
 async function msgHandleGroupMessage(message, context) {
-  if (!message.text) {
+  if (!message.text)
     return new Response("Non text message", { status: 200 });
-  }
   const botName = context.SHARE_CONTEXT.currentBotName;
   if (botName) {
     let mentioned = false;
     if (message.reply_to_message) {
-      if (message.reply_to_message.from.username === botName) {
+      if (message.reply_to_message.from.username === botName)
         mentioned = true;
-      }
     }
     if (message.entities) {
       let content = "";
@@ -1653,10 +1578,9 @@ async function msgHandleGroupMessage(message, context) {
                 entity.offset,
                 entity.offset + entity.length
               );
-              if (mention.endsWith(botName)) {
+              if (mention.endsWith(botName))
                 mentioned = true;
-              }
-              const cmd = mention.replaceAll("@" + botName, "").replaceAll(botName, "").trim();
+              const cmd = mention.replaceAll(`@${botName}`, "").replaceAll(botName, "").trim();
               content += cmd;
               offset = entity.offset + entity.length;
             }
@@ -1668,9 +1592,8 @@ async function msgHandleGroupMessage(message, context) {
                 entity.offset,
                 entity.offset + entity.length
               );
-              if (mention === botName || mention === "@" + botName) {
+              if (mention === botName || mention === `@${botName}`)
                 mentioned = true;
-              }
             }
             content += message.text.substring(offset, entity.offset);
             offset = entity.offset + entity.length;
@@ -1680,11 +1603,10 @@ async function msgHandleGroupMessage(message, context) {
       content += message.text.substring(offset, message.text.length);
       message.text = content.trim();
     }
-    if (!mentioned) {
+    if (!mentioned)
       return new Response("No mentioned", { status: 200 });
-    } else {
+    else
       return null;
-    }
   }
   return new Response("Not set bot name", { status: 200 });
 }
@@ -1692,14 +1614,12 @@ async function msgHandleCommand(message, context) {
   return await handleCommandMessage(message, context);
 }
 async function msgHandleRole(message, context) {
-  if (!message.text.startsWith("~")) {
+  if (!message.text.startsWith("~"))
     return null;
-  }
   message.text = message.text.slice(1);
   const kv = message.text.indexOf(" ");
-  if (kv === -1) {
+  if (kv === -1)
     return null;
-  }
   const role = message.text.slice(0, kv);
   const msg = message.text.slice(kv + 1).trim();
   if (context.USER_DEFINE.ROLE.hasOwnProperty(role)) {
@@ -1707,28 +1627,24 @@ async function msgHandleRole(message, context) {
     message.text = msg;
     const roleConfig = context.USER_DEFINE.ROLE[role];
     for (const key in roleConfig) {
-      if (context.USER_CONFIG.hasOwnProperty(key) && typeof context.USER_CONFIG[key] === typeof roleConfig[key]) {
+      if (context.USER_CONFIG.hasOwnProperty(key) && typeof context.USER_CONFIG[key] === typeof roleConfig[key])
         context.USER_CONFIG[key] = roleConfig[key];
-      }
     }
   }
 }
 async function msgChatWithOpenAI(message, context) {
   try {
-    console.log("Ask:" + message.text || "");
     setTimeout(() => sendChatActionToTelegramWithContext(context)("typing").catch(console.error), 0);
     const infoArr = await getWebsiteInfo(message.text);
     for (let i = 0; i < infoArr.length; i++) {
       const info = infoArr[i];
       const answer = await saveToNotion(info);
       if (answer.message !== "success") {
-        console.log("Error:" + answer.message);
         return sendMessageToTelegramWithContext(context)(answer.message);
       }
     }
-    if (infoArr.length === 0) {
+    if (infoArr.length === 0)
       return sendMessageToTelegramWithContext(context)("No supported website.");
-    }
     return sendMessageToTelegramWithContext(context)("Saved to Notion \u{1F389}");
   } catch (e) {
     return sendMessageToTelegramWithContext(context)(`Error: ${e.message}`);
@@ -1736,19 +1652,19 @@ async function msgChatWithOpenAI(message, context) {
 }
 async function msgProcessByChatType(message, context) {
   const handlerMap = {
-    "private": [
+    private: [
       msgFilterWhiteList,
       msgFilterNonTextMessage,
       msgHandleCommand,
       msgHandleRole
     ],
-    "group": [
+    group: [
       msgHandleGroupMessage,
       msgFilterWhiteList,
       msgHandleCommand,
       msgHandleRole
     ],
-    "supergroup": [
+    supergroup: [
       msgHandleGroupMessage,
       msgFilterWhiteList,
       msgHandleCommand,
@@ -1764,9 +1680,8 @@ async function msgProcessByChatType(message, context) {
   for (const handler of handlers) {
     try {
       const result = await handler(message, context);
-      if (result && result instanceof Response) {
+      if (result && result instanceof Response)
         return result;
-      }
     } catch (e) {
       console.error(e);
       return sendMessageToTelegramWithContext(context)(
@@ -1776,22 +1691,19 @@ async function msgProcessByChatType(message, context) {
   }
   return null;
 }
-async function loadMessage(request, context) {
+async function loadMessage(request, _context) {
   const raw = await request.json();
-  console.log(JSON.stringify(raw));
   if (ENV.DEV_MODE) {
     setTimeout(() => {
       DATABASE.put(`log:${(/* @__PURE__ */ new Date()).toISOString()}`, JSON.stringify(raw), { expirationTtl: 600 }).catch(console.error);
     });
   }
-  if (raw.edited_message) {
+  if (raw.edited_message)
     throw new Error("Ignore edited message");
-  }
-  if (raw.message) {
+  if (raw.message)
     return raw.message;
-  } else {
+  else
     throw new Error("Invalid message");
-  }
 }
 async function handleMessage(request) {
   const context = new Context();
@@ -1812,9 +1724,8 @@ async function handleMessage(request) {
   for (const handler of handlers) {
     try {
       const result = await handler(message, context);
-      if (result && result instanceof Response) {
+      if (result && result instanceof Response)
         return result;
-      }
     } catch (e) {
       console.error(e);
       return new Response(errorToString(e), { status: 500 });
@@ -1867,9 +1778,8 @@ async function loadChatHistory(request) {
   const historyKey = pathname.match(/^\/telegram\/(.+)\/history/)[1];
   const params = new URL(request.url).searchParams;
   const passwordParam = params.get("password");
-  if (passwordParam !== password) {
+  if (passwordParam !== password)
     return new Response("Password Error", { status: 401 });
-  }
   const history = JSON.parse(await DATABASE.get(historyKey));
   const HTML = renderHTML(`
         <div id="history" style="width: 100%; height: 100%; overflow: auto; padding: 10px;">
@@ -1893,7 +1803,6 @@ async function telegramWebhook(request) {
 }
 async function telegramSafeHook(request) {
   try {
-    console.log("API_GUARD is enabled");
     const url = new URL(request.url);
     url.pathname = url.pathname.replace("/safehook", "/webhook");
     request = new Request(url, request);
@@ -1959,28 +1868,21 @@ async function loadBotInfo() {
 }
 async function handleRequest(request) {
   const { pathname } = new URL(request.url);
-  if (pathname === `/`) {
+  if (pathname === "/")
     return defaultIndexAction();
-  }
-  if (pathname.startsWith(`/init`)) {
+  if (pathname.startsWith("/init"))
     return bindWebHookAction(request);
-  }
-  if (pathname.startsWith(`/telegram`) && pathname.endsWith(`/webhook`)) {
+  if (pathname.startsWith("/telegram") && pathname.endsWith("/webhook"))
     return telegramWebhook(request);
-  }
-  if (pathname.startsWith(`/telegram`) && pathname.endsWith(`/safehook`)) {
+  if (pathname.startsWith("/telegram") && pathname.endsWith("/safehook"))
     return telegramSafeHook(request);
-  }
   if (ENV.DEV_MODE || ENV.DEBUG_MODE) {
-    if (pathname.startsWith(`/telegram`) && pathname.endsWith(`/history`)) {
+    if (pathname.startsWith("/telegram") && pathname.endsWith("/history"))
       return loadChatHistory(request);
-    }
-    if (pathname.startsWith(`/gpt3/tokens/test`)) {
+    if (pathname.startsWith("/gpt3/tokens/test"))
       return gpt3TokenTest(request);
-    }
-    if (pathname.startsWith(`/telegram`) && pathname.endsWith(`/bot`)) {
+    if (pathname.startsWith("/telegram") && pathname.endsWith("/bot"))
       return loadBotInfo();
-    }
   }
   return null;
 }
@@ -1988,73 +1890,73 @@ async function handleRequest(request) {
 // src/i18n/zh-hans.js
 var zh_hans_default = {
   env: {
-    "system_init_message": "\u4F60\u662F\u4E00\u4E2A\u5F97\u529B\u7684\u52A9\u624B"
+    system_init_message: "\u4F60\u662F\u4E00\u4E2A\u5F97\u529B\u7684\u52A9\u624B"
   },
   utils: {
-    "not_supported_configuration": "\u4E0D\u652F\u6301\u7684\u914D\u7F6E\u9879\u6216\u6570\u636E\u7C7B\u578B\u9519\u8BEF"
+    not_supported_configuration: "\u4E0D\u652F\u6301\u7684\u914D\u7F6E\u9879\u6216\u6570\u636E\u7C7B\u578B\u9519\u8BEF"
   },
   message: {
-    "not_supported_chat_type": (type) => `\u6682\u4E0D\u652F\u6301${type}\u7C7B\u578B\u7684\u804A\u5929`,
-    "not_supported_chat_type_message": "\u6682\u4E0D\u652F\u6301\u975E\u6587\u672C\u683C\u5F0F\u6D88\u606F",
-    "handle_chat_type_message_error": (type) => `\u5904\u7406${type}\u7C7B\u578B\u7684\u804A\u5929\u6D88\u606F\u51FA\u9519`,
-    "user_has_no_permission_to_use_the_bot": (id) => `\u4F60\u6CA1\u6709\u6743\u9650\u4F7F\u7528\u8FD9\u4E2Abot, \u8BF7\u8BF7\u8054\u7CFB\u7BA1\u7406\u5458\u6DFB\u52A0\u4F60\u7684ID(${id})\u5230\u767D\u540D\u5355`,
-    "group_has_no_permission_to_use_the_bot": (id) => `\u8BE5\u7FA4\u672A\u5F00\u542F\u804A\u5929\u6743\u9650, \u8BF7\u8BF7\u8054\u7CFB\u7BA1\u7406\u5458\u6DFB\u52A0\u7FA4ID(${id})\u5230\u767D\u540D\u5355`
+    not_supported_chat_type: (type) => `\u6682\u4E0D\u652F\u6301${type}\u7C7B\u578B\u7684\u804A\u5929`,
+    not_supported_chat_type_message: "\u6682\u4E0D\u652F\u6301\u975E\u6587\u672C\u683C\u5F0F\u6D88\u606F",
+    handle_chat_type_message_error: (type) => `\u5904\u7406${type}\u7C7B\u578B\u7684\u804A\u5929\u6D88\u606F\u51FA\u9519`,
+    user_has_no_permission_to_use_the_bot: (id) => `\u4F60\u6CA1\u6709\u6743\u9650\u4F7F\u7528\u8FD9\u4E2Abot, \u8BF7\u8BF7\u8054\u7CFB\u7BA1\u7406\u5458\u6DFB\u52A0\u4F60\u7684ID(${id})\u5230\u767D\u540D\u5355`,
+    group_has_no_permission_to_use_the_bot: (id) => `\u8BE5\u7FA4\u672A\u5F00\u542F\u804A\u5929\u6743\u9650, \u8BF7\u8BF7\u8054\u7CFB\u7BA1\u7406\u5458\u6DFB\u52A0\u7FA4ID(${id})\u5230\u767D\u540D\u5355`
   },
   command: {
     help: {
-      "summary": "\u5F53\u524D\u652F\u6301\u4EE5\u4E0B\u547D\u4EE4:\n",
-      "help": "\u83B7\u53D6\u547D\u4EE4\u5E2E\u52A9",
-      "new": "\u53D1\u8D77\u65B0\u7684\u5BF9\u8BDD",
-      "start": "\u83B7\u53D6\u4F60\u7684ID, \u5E76\u53D1\u8D77\u65B0\u7684\u5BF9\u8BDD",
-      "img": "\u751F\u6210\u4E00\u5F20\u56FE\u7247, \u547D\u4EE4\u5B8C\u6574\u683C\u5F0F\u4E3A `/img \u56FE\u7247\u63CF\u8FF0`, \u4F8B\u5982`/img \u6708\u5149\u4E0B\u7684\u6C99\u6EE9`",
-      "version": "\u83B7\u53D6\u5F53\u524D\u7248\u672C\u53F7, \u5224\u65AD\u662F\u5426\u9700\u8981\u66F4\u65B0",
-      "setenv": "\u8BBE\u7F6E\u7528\u6237\u914D\u7F6E\uFF0C\u547D\u4EE4\u5B8C\u6574\u683C\u5F0F\u4E3A /setenv KEY=VALUE",
-      "delenv": "\u5220\u9664\u7528\u6237\u914D\u7F6E\uFF0C\u547D\u4EE4\u5B8C\u6574\u683C\u5F0F\u4E3A /delenv KEY",
-      "usage": "\u83B7\u53D6\u5F53\u524D\u673A\u5668\u4EBA\u7684\u7528\u91CF\u7EDF\u8BA1",
-      "system": "\u67E5\u770B\u5F53\u524D\u4E00\u4E9B\u7CFB\u7EDF\u4FE1\u606F",
-      "role": "\u8BBE\u7F6E\u9884\u8BBE\u7684\u8EAB\u4EFD",
-      "redo": "\u91CD\u505A\u4E0A\u4E00\u6B21\u7684\u5BF9\u8BDD, /redo \u52A0\u4FEE\u6539\u8FC7\u7684\u5185\u5BB9 \u6216\u8005 \u76F4\u63A5 /redo",
-      "echo": "\u56DE\u663E\u6D88\u606F"
+      summary: "\u5F53\u524D\u652F\u6301\u4EE5\u4E0B\u547D\u4EE4:\n",
+      help: "\u83B7\u53D6\u547D\u4EE4\u5E2E\u52A9",
+      new: "\u53D1\u8D77\u65B0\u7684\u5BF9\u8BDD",
+      start: "\u83B7\u53D6\u4F60\u7684ID, \u5E76\u53D1\u8D77\u65B0\u7684\u5BF9\u8BDD",
+      img: "\u751F\u6210\u4E00\u5F20\u56FE\u7247, \u547D\u4EE4\u5B8C\u6574\u683C\u5F0F\u4E3A `/img \u56FE\u7247\u63CF\u8FF0`, \u4F8B\u5982`/img \u6708\u5149\u4E0B\u7684\u6C99\u6EE9`",
+      version: "\u83B7\u53D6\u5F53\u524D\u7248\u672C\u53F7, \u5224\u65AD\u662F\u5426\u9700\u8981\u66F4\u65B0",
+      setenv: "\u8BBE\u7F6E\u7528\u6237\u914D\u7F6E\uFF0C\u547D\u4EE4\u5B8C\u6574\u683C\u5F0F\u4E3A /setenv KEY=VALUE",
+      delenv: "\u5220\u9664\u7528\u6237\u914D\u7F6E\uFF0C\u547D\u4EE4\u5B8C\u6574\u683C\u5F0F\u4E3A /delenv KEY",
+      usage: "\u83B7\u53D6\u5F53\u524D\u673A\u5668\u4EBA\u7684\u7528\u91CF\u7EDF\u8BA1",
+      system: "\u67E5\u770B\u5F53\u524D\u4E00\u4E9B\u7CFB\u7EDF\u4FE1\u606F",
+      role: "\u8BBE\u7F6E\u9884\u8BBE\u7684\u8EAB\u4EFD",
+      redo: "\u91CD\u505A\u4E0A\u4E00\u6B21\u7684\u5BF9\u8BDD, /redo \u52A0\u4FEE\u6539\u8FC7\u7684\u5185\u5BB9 \u6216\u8005 \u76F4\u63A5 /redo",
+      echo: "\u56DE\u663E\u6D88\u606F"
     },
     role: {
-      "not_defined_any_role": "\u8FD8\u672A\u5B9A\u4E49\u4EFB\u4F55\u89D2\u8272",
-      "current_defined_role": (size) => `\u5F53\u524D\u5DF2\u5B9A\u4E49\u7684\u89D2\u8272\u5982\u4E0B(${size}):
+      not_defined_any_role: "\u8FD8\u672A\u5B9A\u4E49\u4EFB\u4F55\u89D2\u8272",
+      current_defined_role: (size) => `\u5F53\u524D\u5DF2\u5B9A\u4E49\u7684\u89D2\u8272\u5982\u4E0B(${size}):
 `,
-      "help": "\u683C\u5F0F\u9519\u8BEF: \u547D\u4EE4\u5B8C\u6574\u683C\u5F0F\u4E3A `/role \u64CD\u4F5C`\n\u5F53\u524D\u652F\u6301\u4EE5\u4E0B`\u64CD\u4F5C`:\n `/role show` \u663E\u793A\u5F53\u524D\u5B9A\u4E49\u7684\u89D2\u8272.\n `/role \u89D2\u8272\u540D del` \u5220\u9664\u6307\u5B9A\u540D\u79F0\u7684\u89D2\u8272.\n `/role \u89D2\u8272\u540D KEY=VALUE` \u8BBE\u7F6E\u6307\u5B9A\u89D2\u8272\u7684\u914D\u7F6E.\n  \u76EE\u524D\u4EE5\u4E0B\u8BBE\u7F6E\u9879:\n   `SYSTEM_INIT_MESSAGE`:\u521D\u59CB\u5316\u6D88\u606F\n   `OPENAI_API_EXTRA_PARAMS`:OpenAI API \u989D\u5916\u53C2\u6570\uFF0C\u5FC5\u987B\u4E3AJSON",
-      "delete_role_success": "\u5220\u9664\u89D2\u8272\u6210\u529F",
-      "delete_role_error": (e) => `\u5220\u9664\u89D2\u8272\u9519\u8BEF: \`${e.message}\``,
-      "update_role_success": "\u66F4\u65B0\u914D\u7F6E\u6210\u529F",
-      "update_role_error": (e) => `\u914D\u7F6E\u9879\u683C\u5F0F\u9519\u8BEF: \`${e.message}\``
+      help: "\u683C\u5F0F\u9519\u8BEF: \u547D\u4EE4\u5B8C\u6574\u683C\u5F0F\u4E3A `/role \u64CD\u4F5C`\n\u5F53\u524D\u652F\u6301\u4EE5\u4E0B`\u64CD\u4F5C`:\n `/role show` \u663E\u793A\u5F53\u524D\u5B9A\u4E49\u7684\u89D2\u8272.\n `/role \u89D2\u8272\u540D del` \u5220\u9664\u6307\u5B9A\u540D\u79F0\u7684\u89D2\u8272.\n `/role \u89D2\u8272\u540D KEY=VALUE` \u8BBE\u7F6E\u6307\u5B9A\u89D2\u8272\u7684\u914D\u7F6E.\n  \u76EE\u524D\u4EE5\u4E0B\u8BBE\u7F6E\u9879:\n   `SYSTEM_INIT_MESSAGE`:\u521D\u59CB\u5316\u6D88\u606F\n   `OPENAI_API_EXTRA_PARAMS`:OpenAI API \u989D\u5916\u53C2\u6570\uFF0C\u5FC5\u987B\u4E3AJSON",
+      delete_role_success: "\u5220\u9664\u89D2\u8272\u6210\u529F",
+      delete_role_error: (e) => `\u5220\u9664\u89D2\u8272\u9519\u8BEF: \`${e.message}\``,
+      update_role_success: "\u66F4\u65B0\u914D\u7F6E\u6210\u529F",
+      update_role_error: (e) => `\u914D\u7F6E\u9879\u683C\u5F0F\u9519\u8BEF: \`${e.message}\``
     },
     img: {
-      "help": "\u8BF7\u8F93\u5165\u56FE\u7247\u63CF\u8FF0\u3002\u547D\u4EE4\u5B8C\u6574\u683C\u5F0F\u4E3A `/img \u72F8\u82B1\u732B`"
+      help: "\u8BF7\u8F93\u5165\u56FE\u7247\u63CF\u8FF0\u3002\u547D\u4EE4\u5B8C\u6574\u683C\u5F0F\u4E3A `/img \u72F8\u82B1\u732B`"
     },
     new: {
-      "new_chat_start": "\u65B0\u7684\u5BF9\u8BDD\u5DF2\u7ECF\u5F00\u59CB",
-      "new_chat_start_private": (id) => `\u65B0\u7684\u5BF9\u8BDD\u5DF2\u7ECF\u5F00\u59CB\uFF0C\u4F60\u7684ID(${id})`,
-      "new_chat_start_group": (id) => `\u65B0\u7684\u5BF9\u8BDD\u5DF2\u7ECF\u5F00\u59CB\uFF0C\u7FA4\u7EC4ID(${id})`
+      new_chat_start: "\u65B0\u7684\u5BF9\u8BDD\u5DF2\u7ECF\u5F00\u59CB",
+      new_chat_start_private: (id) => `\u65B0\u7684\u5BF9\u8BDD\u5DF2\u7ECF\u5F00\u59CB\uFF0C\u4F60\u7684ID(${id})`,
+      new_chat_start_group: (id) => `\u65B0\u7684\u5BF9\u8BDD\u5DF2\u7ECF\u5F00\u59CB\uFF0C\u7FA4\u7EC4ID(${id})`
     },
     setenv: {
-      "help": "\u914D\u7F6E\u9879\u683C\u5F0F\u9519\u8BEF: \u547D\u4EE4\u5B8C\u6574\u683C\u5F0F\u4E3A /setenv KEY=VALUE",
-      "update_config_success": "\u66F4\u65B0\u914D\u7F6E\u6210\u529F",
-      "update_config_error": (e) => `\u914D\u7F6E\u9879\u683C\u5F0F\u9519\u8BEF: ${e.message}`
+      help: "\u914D\u7F6E\u9879\u683C\u5F0F\u9519\u8BEF: \u547D\u4EE4\u5B8C\u6574\u683C\u5F0F\u4E3A /setenv KEY=VALUE",
+      update_config_success: "\u66F4\u65B0\u914D\u7F6E\u6210\u529F",
+      update_config_error: (e) => `\u914D\u7F6E\u9879\u683C\u5F0F\u9519\u8BEF: ${e.message}`
     },
     version: {
-      "new_version_found": (current, online) => `\u53D1\u73B0\u65B0\u7248\u672C\uFF0C\u5F53\u524D\u7248\u672C: ${JSON.stringify(current)}\uFF0C\u6700\u65B0\u7248\u672C: ${JSON.stringify(online)}`,
-      "current_is_latest_version": (current) => `\u5F53\u524D\u5DF2\u7ECF\u662F\u6700\u65B0\u7248\u672C, \u5F53\u524D\u7248\u672C: ${JSON.stringify(current)}`
+      new_version_found: (current, online) => `\u53D1\u73B0\u65B0\u7248\u672C\uFF0C\u5F53\u524D\u7248\u672C: ${JSON.stringify(current)}\uFF0C\u6700\u65B0\u7248\u672C: ${JSON.stringify(online)}`,
+      current_is_latest_version: (current) => `\u5F53\u524D\u5DF2\u7ECF\u662F\u6700\u65B0\u7248\u672C, \u5F53\u524D\u7248\u672C: ${JSON.stringify(current)}`
     },
     usage: {
-      "usage_not_open": "\u5F53\u524D\u673A\u5668\u4EBA\u672A\u5F00\u542F\u7528\u91CF\u7EDF\u8BA1",
-      "current_usage": "\u{1F4CA} \u5F53\u524D\u673A\u5668\u4EBA\u7528\u91CF\n\nTokens:\n",
-      "total_usage": (total) => `- \u603B\u7528\u91CF\uFF1A${total || 0} tokens
+      usage_not_open: "\u5F53\u524D\u673A\u5668\u4EBA\u672A\u5F00\u542F\u7528\u91CF\u7EDF\u8BA1",
+      current_usage: "\u{1F4CA} \u5F53\u524D\u673A\u5668\u4EBA\u7528\u91CF\n\nTokens:\n",
+      total_usage: (total) => `- \u603B\u7528\u91CF\uFF1A${total || 0} tokens
 - \u5404\u804A\u5929\u7528\u91CF\uFF1A`,
-      "no_usage": "- \u6682\u65E0\u7528\u91CF"
+      no_usage: "- \u6682\u65E0\u7528\u91CF"
     },
     permission: {
-      "not_authorized": "\u8EAB\u4EFD\u6743\u9650\u9A8C\u8BC1\u5931\u8D25",
-      "not_enough_permission": (roleList, chatRole) => `\u6743\u9650\u4E0D\u8DB3,\u9700\u8981${roleList.join(",")},\u5F53\u524D:${chatRole}`,
-      "role_error": (e) => `\u8EAB\u4EFD\u9A8C\u8BC1\u51FA\u9519:` + e.message,
-      "command_error": (e) => `\u547D\u4EE4\u6267\u884C\u9519\u8BEF: ${e.message}`
+      not_authorized: "\u8EAB\u4EFD\u6743\u9650\u9A8C\u8BC1\u5931\u8D25",
+      not_enough_permission: (roleList, chatRole) => `\u6743\u9650\u4E0D\u8DB3,\u9700\u8981${roleList.join(",")},\u5F53\u524D:${chatRole}`,
+      role_error: (e) => `\u8EAB\u4EFD\u9A8C\u8BC1\u51FA\u9519:${e.message}`,
+      command_error: (e) => `\u547D\u4EE4\u6267\u884C\u9519\u8BEF: ${e.message}`
     }
   }
 };
@@ -2062,73 +1964,73 @@ var zh_hans_default = {
 // src/i18n/zh-hant.js
 var zh_hant_default = {
   env: {
-    "system_init_message": "\u4F60\u662F\u4E00\u500B\u5F97\u529B\u7684\u52A9\u624B"
+    system_init_message: "\u4F60\u662F\u4E00\u500B\u5F97\u529B\u7684\u52A9\u624B"
   },
   utils: {
-    "not_supported_configuration": "\u4E0D\u652F\u6301\u7684\u914D\u7F6E\u6216\u6578\u64DA\u985E\u578B\u932F\u8AA4"
+    not_supported_configuration: "\u4E0D\u652F\u6301\u7684\u914D\u7F6E\u6216\u6578\u64DA\u985E\u578B\u932F\u8AA4"
   },
   message: {
-    "not_supported_chat_type": (type) => `\u7576\u524D\u4E0D\u652F\u6301${type}\u985E\u578B\u7684\u804A\u5929`,
-    "not_supported_chat_type_message": "\u7576\u524D\u4E0D\u652F\u6301\u975E\u6587\u672C\u683C\u5F0F\u6D88\u606F",
-    "handle_chat_type_message_error": (type) => `\u8655\u7406${type}\u985E\u578B\u7684\u804A\u5929\u6D88\u606F\u51FA\u932F`,
-    "user_has_no_permission_to_use_the_bot": (id) => `\u60A8\u6C92\u6709\u6B0A\u9650\u4F7F\u7528\u672C\u6A5F\u5668\u4EBA\uFF0C\u8ACB\u806F\u7E6B\u7BA1\u7406\u54E1\u5C07\u60A8\u7684ID(${id})\u6DFB\u52A0\u5230\u767D\u540D\u55AE\u4E2D`,
-    "group_has_no_permission_to_use_the_bot": (id) => `\u8A72\u7FA4\u7D44\u672A\u958B\u555F\u804A\u5929\u6B0A\u9650\uFF0C\u8ACB\u806F\u7E6B\u7BA1\u7406\u54E1\u5C07\u8A72\u7FA4\u7D44ID(${id})\u6DFB\u52A0\u5230\u767D\u540D\u55AE\u4E2D`
+    not_supported_chat_type: (type) => `\u7576\u524D\u4E0D\u652F\u6301${type}\u985E\u578B\u7684\u804A\u5929`,
+    not_supported_chat_type_message: "\u7576\u524D\u4E0D\u652F\u6301\u975E\u6587\u672C\u683C\u5F0F\u6D88\u606F",
+    handle_chat_type_message_error: (type) => `\u8655\u7406${type}\u985E\u578B\u7684\u804A\u5929\u6D88\u606F\u51FA\u932F`,
+    user_has_no_permission_to_use_the_bot: (id) => `\u60A8\u6C92\u6709\u6B0A\u9650\u4F7F\u7528\u672C\u6A5F\u5668\u4EBA\uFF0C\u8ACB\u806F\u7E6B\u7BA1\u7406\u54E1\u5C07\u60A8\u7684ID(${id})\u6DFB\u52A0\u5230\u767D\u540D\u55AE\u4E2D`,
+    group_has_no_permission_to_use_the_bot: (id) => `\u8A72\u7FA4\u7D44\u672A\u958B\u555F\u804A\u5929\u6B0A\u9650\uFF0C\u8ACB\u806F\u7E6B\u7BA1\u7406\u54E1\u5C07\u8A72\u7FA4\u7D44ID(${id})\u6DFB\u52A0\u5230\u767D\u540D\u55AE\u4E2D`
   },
   command: {
     help: {
-      "summary": "\u7576\u524D\u652F\u6301\u7684\u547D\u4EE4\u5982\u4E0B\uFF1A\n",
-      "help": "\u7372\u53D6\u547D\u4EE4\u5E6B\u52A9",
-      "new": "\u958B\u59CB\u4E00\u500B\u65B0\u5C0D\u8A71",
-      "start": "\u7372\u53D6\u60A8\u7684ID\u4E26\u958B\u59CB\u4E00\u500B\u65B0\u5C0D\u8A71",
-      "img": "\u751F\u6210\u5716\u7247\uFF0C\u5B8C\u6574\u547D\u4EE4\u683C\u5F0F\u70BA`/img \u5716\u7247\u63CF\u8FF0`\uFF0C\u4F8B\u5982`/img \u6D77\u7058\u6708\u5149`",
-      "version": "\u7372\u53D6\u7576\u524D\u7248\u672C\u865F\u78BA\u8A8D\u662F\u5426\u9700\u8981\u66F4\u65B0",
-      "setenv": "\u8A2D\u7F6E\u7528\u6236\u914D\u7F6E\uFF0C\u5B8C\u6574\u547D\u4EE4\u683C\u5F0F\u70BA/setenv KEY=VALUE",
-      "delenv": "\u522A\u9664\u7528\u6236\u914D\u7F6E\uFF0C\u5B8C\u6574\u547D\u4EE4\u683C\u5F0F\u70BA/delenv KEY",
-      "usage": "\u7372\u53D6\u6A5F\u5668\u4EBA\u7576\u524D\u7684\u4F7F\u7528\u60C5\u6CC1\u7D71\u8A08",
-      "system": "\u67E5\u770B\u4E00\u4E9B\u7CFB\u7D71\u4FE1\u606F",
-      "role": "\u8A2D\u7F6E\u9810\u8A2D\u8EAB\u4EFD",
-      "redo": "\u91CD\u505A\u4E0A\u4E00\u6B21\u7684\u5C0D\u8A71 /redo \u52A0\u4FEE\u6539\u904E\u7684\u5167\u5BB9 \u6216\u8005 \u76F4\u63A5 /redo",
-      "echo": "\u56DE\u663E\u6D88\u606F"
+      summary: "\u7576\u524D\u652F\u6301\u7684\u547D\u4EE4\u5982\u4E0B\uFF1A\n",
+      help: "\u7372\u53D6\u547D\u4EE4\u5E6B\u52A9",
+      new: "\u958B\u59CB\u4E00\u500B\u65B0\u5C0D\u8A71",
+      start: "\u7372\u53D6\u60A8\u7684ID\u4E26\u958B\u59CB\u4E00\u500B\u65B0\u5C0D\u8A71",
+      img: "\u751F\u6210\u5716\u7247\uFF0C\u5B8C\u6574\u547D\u4EE4\u683C\u5F0F\u70BA`/img \u5716\u7247\u63CF\u8FF0`\uFF0C\u4F8B\u5982`/img \u6D77\u7058\u6708\u5149`",
+      version: "\u7372\u53D6\u7576\u524D\u7248\u672C\u865F\u78BA\u8A8D\u662F\u5426\u9700\u8981\u66F4\u65B0",
+      setenv: "\u8A2D\u7F6E\u7528\u6236\u914D\u7F6E\uFF0C\u5B8C\u6574\u547D\u4EE4\u683C\u5F0F\u70BA/setenv KEY=VALUE",
+      delenv: "\u522A\u9664\u7528\u6236\u914D\u7F6E\uFF0C\u5B8C\u6574\u547D\u4EE4\u683C\u5F0F\u70BA/delenv KEY",
+      usage: "\u7372\u53D6\u6A5F\u5668\u4EBA\u7576\u524D\u7684\u4F7F\u7528\u60C5\u6CC1\u7D71\u8A08",
+      system: "\u67E5\u770B\u4E00\u4E9B\u7CFB\u7D71\u4FE1\u606F",
+      role: "\u8A2D\u7F6E\u9810\u8A2D\u8EAB\u4EFD",
+      redo: "\u91CD\u505A\u4E0A\u4E00\u6B21\u7684\u5C0D\u8A71 /redo \u52A0\u4FEE\u6539\u904E\u7684\u5167\u5BB9 \u6216\u8005 \u76F4\u63A5 /redo",
+      echo: "\u56DE\u663E\u6D88\u606F"
     },
     role: {
-      "not_defined_any_role": "\u5C1A\u672A\u5B9A\u7FA9\u4EFB\u4F55\u89D2\u8272",
-      "current_defined_role": (size) => `\u7576\u524D\u5DF2\u5B9A\u7FA9\u7684\u89D2\u8272\u5982\u4E0B(${size})\uFF1A
+      not_defined_any_role: "\u5C1A\u672A\u5B9A\u7FA9\u4EFB\u4F55\u89D2\u8272",
+      current_defined_role: (size) => `\u7576\u524D\u5DF2\u5B9A\u7FA9\u7684\u89D2\u8272\u5982\u4E0B(${size})\uFF1A
 `,
-      "help": "\u683C\u5F0F\u932F\u8AA4\uFF1A\u5B8C\u6574\u547D\u4EE4\u683C\u5F0F\u70BA`/role \u64CD\u4F5C`\n\u7576\u524D\u652F\u6301\u7684`\u64CD\u4F5C`\u5982\u4E0B\uFF1A\n `/role show` \u67E5\u770B\u7576\u524D\u5DF2\u5B9A\u7FA9\u7684\u89D2\u8272\u3002\n `/role \u89D2\u8272\u540D del` \u522A\u9664\u6307\u5B9A\u7684\u89D2\u8272\u3002\n `/role \u89D2\u8272\u540D KEY=VALUE` \u8A2D\u7F6E\u6307\u5B9A\u89D2\u8272\u7684\u914D\u7F6E\u3002\n  \u7576\u524D\u652F\u6301\u7684\u8A2D\u7F6E\u5982\u4E0B\uFF1A\n   `SYSTEM_INIT_MESSAGE`\uFF1A\u521D\u59CB\u5316\u6D88\u606F\n   `OPENAI_API_EXTRA_PARAMS`\uFF1AOpenAI API\u984D\u5916\u53C3\u6578\uFF0C\u5FC5\u9808\u70BAJSON",
-      "delete_role_success": "\u522A\u9664\u89D2\u8272\u6210\u529F",
-      "delete_role_error": (e) => `\u522A\u9664\u89D2\u8272\u51FA\u932F\uFF1A\`${e.message}\``,
-      "update_role_success": "\u66F4\u65B0\u914D\u7F6E\u6210\u529F",
-      "update_role_error": (e) => `\u914D\u7F6E\u9805\u683C\u5F0F\u932F\u8AA4\uFF1A\`${e.message}\``
+      help: "\u683C\u5F0F\u932F\u8AA4\uFF1A\u5B8C\u6574\u547D\u4EE4\u683C\u5F0F\u70BA`/role \u64CD\u4F5C`\n\u7576\u524D\u652F\u6301\u7684`\u64CD\u4F5C`\u5982\u4E0B\uFF1A\n `/role show` \u67E5\u770B\u7576\u524D\u5DF2\u5B9A\u7FA9\u7684\u89D2\u8272\u3002\n `/role \u89D2\u8272\u540D del` \u522A\u9664\u6307\u5B9A\u7684\u89D2\u8272\u3002\n `/role \u89D2\u8272\u540D KEY=VALUE` \u8A2D\u7F6E\u6307\u5B9A\u89D2\u8272\u7684\u914D\u7F6E\u3002\n  \u7576\u524D\u652F\u6301\u7684\u8A2D\u7F6E\u5982\u4E0B\uFF1A\n   `SYSTEM_INIT_MESSAGE`\uFF1A\u521D\u59CB\u5316\u6D88\u606F\n   `OPENAI_API_EXTRA_PARAMS`\uFF1AOpenAI API\u984D\u5916\u53C3\u6578\uFF0C\u5FC5\u9808\u70BAJSON",
+      delete_role_success: "\u522A\u9664\u89D2\u8272\u6210\u529F",
+      delete_role_error: (e) => `\u522A\u9664\u89D2\u8272\u51FA\u932F\uFF1A\`${e.message}\``,
+      update_role_success: "\u66F4\u65B0\u914D\u7F6E\u6210\u529F",
+      update_role_error: (e) => `\u914D\u7F6E\u9805\u683C\u5F0F\u932F\u8AA4\uFF1A\`${e.message}\``
     },
     img: {
-      "help": "\u8ACB\u8F38\u5165\u5716\u7247\u63CF\u8FF0\u3002\u5B8C\u6574\u547D\u4EE4\u683C\u5F0F\u70BA`/img raccoon cat`"
+      help: "\u8ACB\u8F38\u5165\u5716\u7247\u63CF\u8FF0\u3002\u5B8C\u6574\u547D\u4EE4\u683C\u5F0F\u70BA`/img raccoon cat`"
     },
     new: {
-      "new_chat_start": "\u958B\u59CB\u4E00\u500B\u65B0\u5C0D\u8A71",
-      "new_chat_start_private": (id) => `\u958B\u59CB\u4E00\u500B\u65B0\u5C0D\u8A71\uFF0C\u60A8\u7684ID(${id})`,
-      "new_chat_start_group": (id) => `\u958B\u59CB\u4E00\u500B\u65B0\u5C0D\u8A71\uFF0C\u7FA4\u7D44ID(${id})`
+      new_chat_start: "\u958B\u59CB\u4E00\u500B\u65B0\u5C0D\u8A71",
+      new_chat_start_private: (id) => `\u958B\u59CB\u4E00\u500B\u65B0\u5C0D\u8A71\uFF0C\u60A8\u7684ID(${id})`,
+      new_chat_start_group: (id) => `\u958B\u59CB\u4E00\u500B\u65B0\u5C0D\u8A71\uFF0C\u7FA4\u7D44ID(${id})`
     },
     setenv: {
-      "help": "\u914D\u7F6E\u9805\u683C\u5F0F\u932F\u8AA4\uFF1A\u5B8C\u6574\u547D\u4EE4\u683C\u5F0F\u70BA/setenv KEY=VALUE",
-      "update_config_success": "\u66F4\u65B0\u914D\u7F6E\u6210\u529F",
-      "update_config_error": (e) => `\u914D\u7F6E\u9805\u683C\u5F0F\u932F\u8AA4\uFF1A\`${e.message}\``
+      help: "\u914D\u7F6E\u9805\u683C\u5F0F\u932F\u8AA4\uFF1A\u5B8C\u6574\u547D\u4EE4\u683C\u5F0F\u70BA/setenv KEY=VALUE",
+      update_config_success: "\u66F4\u65B0\u914D\u7F6E\u6210\u529F",
+      update_config_error: (e) => `\u914D\u7F6E\u9805\u683C\u5F0F\u932F\u8AA4\uFF1A\`${e.message}\``
     },
     version: {
-      "new_version_found": (current, online) => `\u767C\u73FE\u65B0\u7248\u672C\uFF0C\u7576\u524D\u7248\u672C\uFF1A${JSON.stringify(current)}\uFF0C\u6700\u65B0\u7248\u672C\uFF1A${JSON.stringify(online)}`,
-      "current_is_latest_version": (current) => `\u7576\u524D\u5DF2\u662F\u6700\u65B0\u7248\u672C\uFF0C\u7576\u524D\u7248\u672C\uFF1A${JSON.stringify(current)}`
+      new_version_found: (current, online) => `\u767C\u73FE\u65B0\u7248\u672C\uFF0C\u7576\u524D\u7248\u672C\uFF1A${JSON.stringify(current)}\uFF0C\u6700\u65B0\u7248\u672C\uFF1A${JSON.stringify(online)}`,
+      current_is_latest_version: (current) => `\u7576\u524D\u5DF2\u662F\u6700\u65B0\u7248\u672C\uFF0C\u7576\u524D\u7248\u672C\uFF1A${JSON.stringify(current)}`
     },
     usage: {
-      "usage_not_open": "\u7576\u524D\u6A5F\u5668\u4EBA\u672A\u958B\u555F\u4F7F\u7528\u60C5\u6CC1\u7D71\u8A08",
-      "current_usage": "\u{1F4CA} \u7576\u524D\u6A5F\u5668\u4EBA\u4F7F\u7528\u60C5\u6CC1\n\n\u4F7F\u7528\u60C5\u6CC1\uFF1A\n",
-      "total_usage": (total) => `- \u7E3D\u8A08\uFF1A${total || 0} \u6B21
+      usage_not_open: "\u7576\u524D\u6A5F\u5668\u4EBA\u672A\u958B\u555F\u4F7F\u7528\u60C5\u6CC1\u7D71\u8A08",
+      current_usage: "\u{1F4CA} \u7576\u524D\u6A5F\u5668\u4EBA\u4F7F\u7528\u60C5\u6CC1\n\n\u4F7F\u7528\u60C5\u6CC1\uFF1A\n",
+      total_usage: (total) => `- \u7E3D\u8A08\uFF1A${total || 0} \u6B21
 - \u6BCF\u500B\u7FA4\u7D44\u4F7F\u7528\u60C5\u6CC1\uFF1A `,
-      "no_usage": "- \u66AB\u7121\u4F7F\u7528\u60C5\u6CC1"
+      no_usage: "- \u66AB\u7121\u4F7F\u7528\u60C5\u6CC1"
     },
     permission: {
-      "not_authorized": "\u8EAB\u4EFD\u6B0A\u9650\u9A57\u8B49\u5931\u6557",
-      "not_enough_permission": (roleList, chatRole) => `\u6B0A\u9650\u4E0D\u8DB3\uFF0C\u9700\u8981${roleList.join(",")}\uFF0C\u7576\u524D\uFF1A${chatRole}`,
-      "role_error": (e) => `\u8EAB\u4EFD\u9A57\u8B49\u51FA\u932F\uFF1A` + e.message,
-      "command_error": (e) => `\u547D\u4EE4\u57F7\u884C\u51FA\u932F\uFF1A${e.message}`
+      not_authorized: "\u8EAB\u4EFD\u6B0A\u9650\u9A57\u8B49\u5931\u6557",
+      not_enough_permission: (roleList, chatRole) => `\u6B0A\u9650\u4E0D\u8DB3\uFF0C\u9700\u8981${roleList.join(",")}\uFF0C\u7576\u524D\uFF1A${chatRole}`,
+      role_error: (e) => `\u8EAB\u4EFD\u9A57\u8B49\u51FA\u932F\uFF1A${e.message}`,
+      command_error: (e) => `\u547D\u4EE4\u57F7\u884C\u51FA\u932F\uFF1A${e.message}`
     }
   }
 };
@@ -2136,73 +2038,73 @@ var zh_hant_default = {
 // src/i18n/en.js
 var en_default = {
   env: {
-    "system_init_message": "You are a helpful assistant"
+    system_init_message: "You are a helpful assistant"
   },
   utils: {
-    "not_supported_configuration": "Not supported configuration or data type error"
+    not_supported_configuration: "Not supported configuration or data type error"
   },
   message: {
-    "not_supported_chat_type": (type) => `Currently not supported ${type} type of chat`,
-    "not_supported_chat_type_message": "Currently not supported non-text format messages",
-    "handle_chat_type_message_error": (type) => `Error handling ${type} type of chat messages`,
-    "user_has_no_permission_to_use_the_bot": (id) => `You do not have permission to use this bot, please contact the administrator to add your ID (${id}) to the whitelist`,
-    "group_has_no_permission_to_use_the_bot": (id) => `The group has not enabled chat permissions, please contact the administrator to add the group ID (${id}) to the whitelist`
+    not_supported_chat_type: (type) => `Currently not supported ${type} type of chat`,
+    not_supported_chat_type_message: "Currently not supported non-text format messages",
+    handle_chat_type_message_error: (type) => `Error handling ${type} type of chat messages`,
+    user_has_no_permission_to_use_the_bot: (id) => `You do not have permission to use this bot, please contact the administrator to add your ID (${id}) to the whitelist`,
+    group_has_no_permission_to_use_the_bot: (id) => `The group has not enabled chat permissions, please contact the administrator to add the group ID (${id}) to the whitelist`
   },
   command: {
     help: {
-      "summary": "The following commands are currently supported:\n",
-      "help": "Get command help",
-      "new": "Start a new conversation",
-      "start": "Get your ID and start a new conversation",
-      "img": "Generate an image, the complete command format is `/img image description`, for example `/img beach at moonlight`",
-      "version": "Get the current version number to determine whether to update",
-      "setenv": "Set user configuration, the complete command format is /setenv KEY=VALUE",
-      "delenv": "Delete user configuration, the complete command format is /delenv KEY",
-      "usage": "Get the current usage statistics of the robot",
-      "system": "View some system information",
-      "role": "Set the preset identity",
-      "redo": "Redo the last conversation, /redo with modified content or directly /redo",
-      "echo": "Echo the message"
+      summary: "The following commands are currently supported:\n",
+      help: "Get command help",
+      new: "Start a new conversation",
+      start: "Get your ID and start a new conversation",
+      img: "Generate an image, the complete command format is `/img image description`, for example `/img beach at moonlight`",
+      version: "Get the current version number to determine whether to update",
+      setenv: "Set user configuration, the complete command format is /setenv KEY=VALUE",
+      delenv: "Delete user configuration, the complete command format is /delenv KEY",
+      usage: "Get the current usage statistics of the robot",
+      system: "View some system information",
+      role: "Set the preset identity",
+      redo: "Redo the last conversation, /redo with modified content or directly /redo",
+      echo: "Echo the message"
     },
     role: {
-      "not_defined_any_role": "No roles have been defined yet",
-      "current_defined_role": (size) => `The following roles are currently defined (${size}):
+      not_defined_any_role: "No roles have been defined yet",
+      current_defined_role: (size) => `The following roles are currently defined (${size}):
 `,
-      "help": "Format error: the complete command format is `/role operation`\nThe following `operation` is currently supported:\n `/role show` Display the currently defined roles.\n `/role role name del` Delete the specified role.\n `/role role name KEY=VALUE` Set the configuration of the specified role.\n  The following settings are currently supported:\n   `SYSTEM_INIT_MESSAGE`: Initialization message\n   `OPENAI_API_EXTRA_PARAMS`: OpenAI API extra parameters, must be JSON",
-      "delete_role_success": "Delete role successfully",
-      "delete_role_error": (e) => `Delete role error: \`${e.message}\``,
-      "update_role_success": "Update configuration successfully",
-      "update_role_error": (e) => `Configuration item format error: \`${e.message}\``
+      help: "Format error: the complete command format is `/role operation`\nThe following `operation` is currently supported:\n `/role show` Display the currently defined roles.\n `/role role name del` Delete the specified role.\n `/role role name KEY=VALUE` Set the configuration of the specified role.\n  The following settings are currently supported:\n   `SYSTEM_INIT_MESSAGE`: Initialization message\n   `OPENAI_API_EXTRA_PARAMS`: OpenAI API extra parameters, must be JSON",
+      delete_role_success: "Delete role successfully",
+      delete_role_error: (e) => `Delete role error: \`${e.message}\``,
+      update_role_success: "Update configuration successfully",
+      update_role_error: (e) => `Configuration item format error: \`${e.message}\``
     },
     img: {
-      "help": "Please enter the image description. The complete command format is `/img raccoon cat`"
+      help: "Please enter the image description. The complete command format is `/img raccoon cat`"
     },
     new: {
-      "new_chat_start": "A new conversation has started",
-      "new_chat_start_private": (id) => `A new conversation has started, your ID (${id})`,
-      "new_chat_start_group": (id) => `A new conversation has started, group ID (${id})`
+      new_chat_start: "A new conversation has started",
+      new_chat_start_private: (id) => `A new conversation has started, your ID (${id})`,
+      new_chat_start_group: (id) => `A new conversation has started, group ID (${id})`
     },
     setenv: {
-      "help": "Configuration item format error: the complete command format is /setenv KEY=VALUE",
-      "update_config_success": "Update configuration successfully",
-      "update_config_error": (e) => `Configuration item format error: ${e.message}`
+      help: "Configuration item format error: the complete command format is /setenv KEY=VALUE",
+      update_config_success: "Update configuration successfully",
+      update_config_error: (e) => `Configuration item format error: ${e.message}`
     },
     version: {
-      "new_version_found": (current, online) => `New version found, current version: ${JSON.stringify(current)}, latest version: ${JSON.stringify(online)}`,
-      "current_is_latest_version": (current) => `Current is the latest version, current version: ${JSON.stringify(current)}`
+      new_version_found: (current, online) => `New version found, current version: ${JSON.stringify(current)}, latest version: ${JSON.stringify(online)}`,
+      current_is_latest_version: (current) => `Current is the latest version, current version: ${JSON.stringify(current)}`
     },
     usage: {
-      "usage_not_open": "The current robot is not open for usage statistics",
-      "current_usage": "\u{1F4CA} Current robot usage\n\nTokens:\n",
-      "total_usage": (total) => `- Total: ${total || 0} tokens
+      usage_not_open: "The current robot is not open for usage statistics",
+      current_usage: "\u{1F4CA} Current robot usage\n\nTokens:\n",
+      total_usage: (total) => `- Total: ${total || 0} tokens
 - Per chat usage: `,
-      "no_usage": "- No usage"
+      no_usage: "- No usage"
     },
     permission: {
-      "not_authorized": "Identity permission verification failed",
-      "not_enough_permission": (roleList, chatRole) => `Insufficient permissions, need ${roleList.join(",")}, current: ${chatRole}`,
-      "role_error": (e) => `Identity verification error: ` + e.message,
-      "command_error": (e) => `Command execution error: ${e.message}`
+      not_authorized: "Identity permission verification failed",
+      not_enough_permission: (roleList, chatRole) => `Insufficient permissions, need ${roleList.join(",")}, current: ${chatRole}`,
+      role_error: (e) => `Identity verification error: ${e.message}`,
+      command_error: (e) => `Command execution error: ${e.message}`
     }
   }
 };

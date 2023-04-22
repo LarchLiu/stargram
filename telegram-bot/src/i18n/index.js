@@ -1,7 +1,6 @@
-
-import zhHans from './zh-hans.js';
-import zhHant from './zh-hant.js';
-import en from './en.js';
+import zhHans from './zh-hans.js'
+import zhHant from './zh-hant.js'
+import en from './en.js'
 
 /**
  *
@@ -13,14 +12,14 @@ export default function i18n(lang) {
     case 'cn':
     case 'zh-cn':
     case 'zh-hans':
-      return zhHans;
+      return zhHans
     case 'zh-tw':
     case 'zh-hk':
     case 'zh-mo':
     case 'zh-hant':
-      return zhHant;
+      return zhHant
     case 'en':
     case 'en-us':
-      return en;
+      return en
   }
 }

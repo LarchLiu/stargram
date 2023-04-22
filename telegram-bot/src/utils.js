@@ -1,29 +1,28 @@
-import {CONST, DATABASE, ENV} from './env.js';
-import {gpt3TokensCounter} from './gpt3.js';
+import { CONST, DATABASE, ENV } from './env.js'
+import { gpt3TokensCounter } from './gpt3.js'
 
 /**
  * @param {number} length
  * @return {string}
  */
 export function randomString(length) {
-  const chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-  let result = '';
-  for (let i = length; i > 0; --i) result += chars[Math.floor(Math.random() * chars.length)];
-  return result;
+  const chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
+  let result = ''
+  for (let i = length; i > 0; --i) result += chars[Math.floor(Math.random() * chars.length)]
+  return result
 }
 
 /**
  * @return {Promise<string>}
  */
 export async function historyPassword() {
-  let password = await DATABASE.get(CONST.PASSWORD_KEY);
+  let password = await DATABASE.get(CONST.PASSWORD_KEY)
   if (password === null) {
-    password = randomString(32);
-    await DATABASE.put(CONST.PASSWORD_KEY, password);
+    password = randomString(32)
+    await DATABASE.put(CONST.PASSWORD_KEY, password)
   }
-  return password;
+  return password
 }
-
 
 /**
  * @param {string} body
@@ -74,7 +73,7 @@ export function renderHTML(body) {
     ${body}
   </body>
 </html>
-  `;
+  `
 }
 
 /**
@@ -86,9 +85,8 @@ export function errorToString(e) {
   return JSON.stringify({
     message: e.message,
     stack: e.stack,
-  });
+  })
 }
-
 
 /**
  * @param {object} config
@@ -98,23 +96,24 @@ export function errorToString(e) {
 export function mergeConfig(config, key, value) {
   switch (typeof config[key]) {
     case 'number':
-      config[key] = Number(value);
-      break;
+      config[key] = Number(value)
+      break
     case 'boolean':
-      config[key] = value === 'true';
-      break;
+      config[key] = value === 'true'
+      break
     case 'string':
-      config[key] = value;
-      break;
+      config[key] = value
+      break
     case 'object':
-      const object = JSON.parse(value);
+      // eslint-disable-next-line no-case-declarations
+      const object = JSON.parse(value)
       if (typeof object === 'object') {
-        config[key] = object;
-        break;
+        config[key] = object
+        break
       }
-      throw new Error(ENV.I18N.utils.not_supported_configuration);
+      throw new Error(ENV.I18N.utils.not_supported_configuration)
     default:
-      throw new Error(ENV.I18N.utils.not_supported_configuration);
+      throw new Error(ENV.I18N.utils.not_supported_configuration)
   }
 }
 
@@ -122,22 +121,23 @@ export function mergeConfig(config, key, value) {
  * @return {Promise<(function(string): number)>}
  */
 export async function tokensCounter() {
-  let counter = (text) => Array.from(text).length;
+  let counter = text => Array.from(text).length
   try {
-    if (ENV.GPT3_TOKENS_COUNT) {
-      counter = await gpt3TokensCounter();
-    }
-  } catch (e) {
-    console.error(e);
+    if (ENV.GPT3_TOKENS_COUNT)
+      counter = await gpt3TokensCounter()
+  }
+  catch (e) {
+    console.error(e)
   }
   return (text) => {
     try {
-      return counter(text);
-    } catch (e) {
-      console.error(e);
-      return Array.from(text).length;
+      return counter(text)
     }
-  };
+    catch (e) {
+      console.error(e)
+      return Array.from(text).length
+    }
+  }
 }
 
 /**
@@ -146,16 +146,20 @@ export async function tokensCounter() {
  * @return {Response}
  */
 export function makeResponse200(resp) {
-  if (resp === null) {
-    return new Response('NOT HANDLED', {status: 200});
-  }
+  if (resp === null)
+    return new Response('NOT HANDLED', { status: 200 })
+
   if (resp.status === 200) {
-    return resp;
-  } else {
+    return resp
+  }
+  else {
     // 如果返回4xx，5xx，Telegram会重试这个消息，后续消息就不会到达，所有webhook的错误都返回200
-    return new Response(resp.body, {status: 200, headers: {
-      'Original-Status': resp.status,
-      ...resp.headers,
-    }});
+    return new Response(resp.body, {
+      status: 200,
+      headers: {
+        'Original-Status': resp.status,
+        ...resp.headers,
+      },
+    })
   }
 }
