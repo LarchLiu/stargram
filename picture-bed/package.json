@@ -1,0 +1,32 @@
+{
+  "name": "picture-bed",
+  "version": "0.0.1",
+  "description": "Manage all your starred pages.",
+  "author": "Alex Liu <larch.liu@gmail.com>",
+  "license": "MIT",
+  "homepage": "https://github.com/LarchLiu/star-nexus",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LarchLiu/star-nexus.git"
+  },
+  "bugs": {
+    "url": "https://github.com/LarchLiu/star-nexus/issues"
+  },
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@vercel/og": "latest",
+    "next": "latest",
+    "react": "latest",
+    "react-dom": "latest"
+  },
+  "devDependencies": {
+    "@types/node": "^18.15.5",
+    "@types/react": "^18.0.28"
+  }
+}
