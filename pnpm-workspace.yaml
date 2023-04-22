@@ -1,0 +1,6 @@
+packages:
+  - "core"
+  - "chrome-extension"
+  - "picture-bed"
+  - "docs"
+  - "telegram-bot"

@@ -1,47 +1,46 @@
 {
   "name": "star-nexus",
   "version": "0.0.1",
-  "description": "Manage all your Starred Pages",
-  "author": "alex",
-  "license": "ISC",
-  "main": "index.js",
+  "private": true,
+  "packageManager": "pnpm@8.2.0",
+  "description": "Manage all your starred pages.",
+  "author": "Alex Liu <larch.liu@gmail.com>",
+  "license": "MIT",
+  "homepage": "https://github.com/LarchLiu/star-nexus",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LarchLiu/star-nexus.git"
+  },
+  "bugs": {
+    "url": "https://github.com/LarchLiu/star-nexus/issues"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  },
   "scripts": {
-    "dev": "cross-env CRX_ENV=development run-p dev:*",
-    "dev:code": "vite build",
-    "dev:content": "vite build --config vite.content.config.ts",
-    "dev:settings": "vite build --config vite.settings.config.ts",
-    "dev:copy": "node scripts/monitor.js",
-    "build": "cross-env CRX_ENV=production pnpm clear && vite build && vite build --config vite.content.config.ts && vite build --config vite.settings.config.ts && node scripts/monitor.js",
-    "clear": "rimraf extension",
-    "lint": "eslint src"
+    "dev": "turbo run dev --parallel",
+    "dev:core": "turbo run dev --filter=core",
+    "dev:docs": "turbo run dev --filter=docs",
+    "dev:ext": "turbo run dev --filter=chrome-extension",
+    "dev:pic": "turbo run dev --filter=picture-bed",
+    "build": "turbo run build",
+    "build:core": "turbo run build --filter=core",
+    "build:docs": "turbo run build --filter=docs",
+    "build:ext": "turbo run build --filter=chrome-extension...",
+    "build:tg": "turbo run build --filter=telegram-bot...",
+    "build:pic": "turbo run build --filter=picture-bed",
+    "lint": "turbo run lint",
+    "up": "taze major -r",
+    "up:w": "taze major -r -w"
   },
-  "dependencies": {
-    "@vueuse/core": "^10.0.2",
-    "@vueuse/head": "^1.1.23",
-    "element-plus": "^2.3.3",
-    "vue-i18n": "^9.2.2"
-  },
+  "dependencies": {},
   "devDependencies": {
-    "@antfu/eslint-config": "^0.38.4",
-    "@intlify/unplugin-vue-i18n": "^0.10.0",
-    "@types/chrome": "^0.0.231",
-    "@types/fs-extra": "^11.0.1",
-    "@types/node": "^18.15.11",
-    "@types/ws": "^8.5.4",
-    "@unocss/eslint-config": "^0.51.4",
-    "@vitejs/plugin-vue": "^4.1.0",
-    "chokidar": "^3.5.3",
-    "chrome-types": "^0.1.185",
-    "cross-env": "^7.0.3",
-    "eslint": "^8.38.0",
-    "eslint-plugin-cypress": "^2.13.2",
-    "fs-extra": "^11.1.1",
-    "npm-run-all": "^4.1.5",
-    "rimraf": "^5.0.0",
-    "typescript": "^5.0.4",
-    "unocss": "^0.51.4",
-    "vite": "^4.2.1",
-    "vue": "^3.2.47",
-    "ws": "^8.9.0"
+    "@antfu/eslint-config": "^0.38.5",
+    "eslint": "^8.29.0",
+    "taze": "^0.9.1",
+    "turbo": "^1.9.3",
+    "typescript": "^5.0.3",
+    "vite": "^4.3.1",
+    "vitest": "^0.30.1"
   }
 }

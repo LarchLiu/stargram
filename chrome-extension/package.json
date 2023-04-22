@@ -1,0 +1,51 @@
+{
+  "name": "chrome-extension",
+  "version": "0.0.1",
+  "description": "Manage all your Starred Pages",
+  "author": "Alex Liu <larch.liu@gmail.com>",
+  "license": "MIT",
+  "homepage": "https://github.com/LarchLiu/star-nexus",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LarchLiu/star-nexus.git"
+  },
+  "bugs": {
+    "url": "https://github.com/LarchLiu/star-nexus/issues"
+  },
+  "main": "index.js",
+  "scripts": {
+    "dev": "cross-env CRX_ENV=development run-p dev:*",
+    "dev:code": "vite build",
+    "dev:content": "vite build --config vite.content.config.ts",
+    "dev:settings": "vite build --config vite.settings.config.ts",
+    "dev:copy": "node scripts/monitor.js",
+    "build": "cross-env CRX_ENV=production pnpm clear && vite build && vite build --config vite.content.config.ts && vite build --config vite.settings.config.ts && node scripts/monitor.js",
+    "clear": "rimraf extension",
+    "lint": "eslint src"
+  },
+  "dependencies": {
+    "@vueuse/core": "^10.0.2",
+    "@vueuse/head": "^1.1.23",
+    "element-plus": "^2.3.3",
+    "vue-i18n": "^9.2.2"
+  },
+  "devDependencies": {
+    "@intlify/unplugin-vue-i18n": "^0.10.0",
+    "@types/chrome": "^0.0.231",
+    "@types/fs-extra": "^11.0.1",
+    "@types/node": "^18.15.11",
+    "@types/ws": "^8.5.4",
+    "@unocss/eslint-config": "^0.51.4",
+    "@vitejs/plugin-vue": "^4.1.0",
+    "chokidar": "^3.5.3",
+    "chrome-types": "^0.1.185",
+    "cross-env": "^7.0.3",
+    "eslint-plugin-cypress": "^2.13.2",
+    "fs-extra": "^11.1.1",
+    "npm-run-all": "^4.1.5",
+    "rimraf": "^5.0.0",
+    "unocss": "^0.51.4",
+    "vue": "^3.2.47",
+    "ws": "^8.9.0"
+  }
+}
