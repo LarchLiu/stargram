@@ -1,11 +1,12 @@
 import Head from 'next/head'
+import { Analytics } from '@vercel/analytics/react'
 
 export default function Page() {
   return (
     <div>
       <Head>
-        <meta name="og:title" content="Vercel Edge Network" />
-        <meta name="og:description" content="Vercel Edge Network" />
+        <meta name="og:title" content="StarNexus" />
+        <meta name="og:description" content="Manage all your Starred pages" />
         <meta
           name="og:image"
           content={
@@ -19,7 +20,10 @@ export default function Page() {
           }
         />
       </Head>
-      <h1>A page with Open Graph Image.</h1>
+      <Analytics />
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+        <h1>StarNexus</h1>
+      </div>
     </div>
   )
 }
