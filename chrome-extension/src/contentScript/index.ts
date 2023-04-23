@@ -31,7 +31,9 @@ function init() {
 init()
 
 async function getDataFromPage(): Promise<{ data?: PageData; error?: string }> {
-  const info = await getWebsiteInfo()
+  const result = await chrome.storage.sync.get(['pictureBed'])
+  const pictureBed = result.pictureBed ?? ''
+  const info = await getWebsiteInfo(location.href, pictureBed)
 
   return { data: { ...info.data, notionPageId, starred }, error: info.error }
 }

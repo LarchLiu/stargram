@@ -6,13 +6,14 @@ import type {
   WebsiteInfo,
   WebsiteLoader,
 } from './types'
+import { fetchGet, getHost } from './utils'
 
-async function getWebsiteInfo(picBed?: string): Promise<FetchWebsite> {
+async function getWebsiteInfo(url: string, picBed?: string): Promise<FetchWebsite> {
   let info: FetchWebsite = {}
-  const host = location.host
+  const host = getHost(url)
 
   if (websiteLoader[host])
-    info = await websiteLoader[host].loader(picBed)
+    info = await websiteLoader[host].loader(url, picBed)
 
   return info
 }
@@ -24,4 +25,5 @@ export {
   FetchWebsite,
   FetchError,
   getWebsiteInfo,
+  fetchGet,
 }

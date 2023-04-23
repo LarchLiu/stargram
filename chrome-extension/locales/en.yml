@@ -7,5 +7,6 @@ settings:
   notionApiKey: Notion API Key
   notionPageLink: Notion Page Link
   openaiApiKey: Openai API Key
+  pictureBed: Picture Bed URL
   saveSettings: Save
   settingsSaved: Settings saved

@@ -1,4 +1,4 @@
-async function get<T>(url: string, header: Record<string, string> = {}, query: Record<string, string> = {}): Promise<T> {
+async function fetchGet<T>(url: string, header: Record<string, string> = {}, query: Record<string, string> = {}): Promise<T> {
   if (query && Object.keys(query).length)
     url += `?${new URLSearchParams(query).toString()}`
   try {
@@ -22,6 +22,16 @@ async function get<T>(url: string, header: Record<string, string> = {}, query: R
   }
 }
 
+function getHost(url: string) {
+  const match = url.match(/https?:\/\/([^/]+)\//i)
+  let host = ''
+  if (match && match[1])
+    host = match[1]
+
+  return host
+}
+
 export {
-  get,
+  fetchGet,
+  getHost,
 }
