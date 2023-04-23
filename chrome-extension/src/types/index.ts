@@ -1,17 +1,12 @@
-interface PageData {
-  title: string
-  url: string
-  content: string
+import type {
+  GithubMeta,
+  WebsiteInfo,
+} from '@starnexus/core'
+
+interface PageData extends WebsiteInfo {
   starred: boolean
   tabId?: number
   notionPageId?: string
-  github?: GithubMeta
-}
-
-interface GithubMeta {
-  tags?: string[]
-  languages?: string[]
-  socialPreview?: string
 }
 
 interface SwResponse {

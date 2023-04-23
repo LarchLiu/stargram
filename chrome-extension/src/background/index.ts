@@ -1,8 +1,6 @@
 import { GITHUB_HOST, SUMMARIZE_PROMPT } from '~/const'
 import type { ContentRequest, ListenerSendResponse, PageData, SwResponse } from '~/types'
 
-const extensionId = 'gcdmalofjiaofdiocehcjaalkmlealkb'
-
 async function sendSavedStatus(res: SwResponse) {
   if (res.tabId) {
     chrome.tabs.sendMessage(res.tabId, {
@@ -178,13 +176,13 @@ async function saveProcess(pageData: PageData): Promise<SwResponse> {
       },
     }
     let imageUrl = ''
-    if (pageData.url.includes(GITHUB_HOST)) {
-      const github = pageData.github
+    if (pageData.url.includes(GITHUB_HOST) && pageData.meta.host === GITHUB_HOST) {
+      const github = pageData.meta
       body.properties = {
         ...body.properties,
         Website: {
           select: {
-            name: 'Github',
+            name: github.website,
           },
         },
       }
@@ -259,7 +257,6 @@ async function saveProcess(pageData: PageData): Promise<SwResponse> {
         'Content-Type': 'application/json',
         'Notion-Version': '2022-06-28',
         'Authorization': `Bearer ${notionApiKey}`,
-        'Access-Control-Allow-Origin': `chrome-extension://${extensionId}`,
       },
       body: JSON.stringify(body),
     })
@@ -297,7 +294,6 @@ async function saveProcess(pageData: PageData): Promise<SwResponse> {
             'Content-Type': 'application/json',
             'Notion-Version': '2022-06-28',
             'Authorization': `Bearer ${notionApiKey}`,
-            'Access-Control-Allow-Origin': `chrome-extension://${extensionId}`,
           },
           body: JSON.stringify({
             children: [imageBlock],

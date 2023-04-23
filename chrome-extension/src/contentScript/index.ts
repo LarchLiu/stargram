@@ -1,5 +1,6 @@
-import { GITHUB_DOMAIN, GITHUB_HOST, GITHUB_RAW_DOMAIN, GITHUB_REPOS_API, starFillSrc, starSrc } from '~/const'
-import type { GithubMeta, ListenerSendResponse, PageData, SwRequest } from '~/types'
+import { getWebsiteInfo } from '@starnexus/core'
+import { GITHUB_DOMAIN, GITHUB_HOST, starFillSrc, starSrc } from '~/const'
+import type { ListenerSendResponse, PageData, SwRequest } from '~/types'
 
 let twinkTimer = null
 let starred = false
@@ -29,48 +30,10 @@ function init() {
 
 init()
 
-async function getDataFromPage(): Promise<PageData> {
-  const regexGithubPath = /https:\/\/github.com\/([^\/]*\/[^\/]*)/g // match github.com/user/repo/
-  let title = document.title
-  let url = location.href
-  const host = location.host
-  const githubMeta: GithubMeta = {}
-  let content = ''
-  const githubPathMatch = regexGithubPath.exec(url)
-  const githubPath = githubPathMatch ? githubPathMatch[1] : ''
+async function getDataFromPage(): Promise<{ data?: PageData; error?: string }> {
+  const info = await getWebsiteInfo()
 
-  if (host === GITHUB_HOST && githubPath) {
-    const repoJson = await fetch(`${GITHUB_REPOS_API}/${githubPath}`).then(r => r.json()).catch(e => e.message || 'error fetch repo')
-    const description = repoJson.description ? repoJson.description.replace(/:\w+:/g, ' ') : ''
-    title = repoJson.full_name + (description ? (`: ${description}`) : '')
-    url = repoJson.html_url
-    const tags = repoJson.topics
-    // const tagsJson = await fetch(`${GITHUB_REPOS_API}/${path}/topics`).then(r => r.json()).catch(e => e.message || 'error fetch tags')
-    const languagesJson = await fetch(`${GITHUB_REPOS_API}/${githubPath}/languages`).then(r => r.json()).catch(e => e.message || 'error fetch languages')
-    if (tags && tags.length > 0)
-      githubMeta.tags = tags
-
-    if (languagesJson)
-      githubMeta.languages = Object.keys(languagesJson)
-
-    const imageBaseUrl = 'https://star-nexus-og.vercel.app/api/github-og.png'
-    const user = repoJson.owner.login
-    const repo = repoJson.name
-    const imageUrl = `${imageBaseUrl}?username=${user}&reponame=${repo}&stargazers_count=${repoJson.stargazers_count}&language=${repoJson.language}&issues=${repoJson.open_issues_count}&forks=${repoJson.forks_count}&description=${description}`
-    githubMeta.socialPreview = encodeURI(imageUrl)
-    // fetch readme
-    const res = await fetch(`${GITHUB_RAW_DOMAIN}/${githubPath}/${repoJson.default_branch}/README.md`)
-    let readme = ''
-    if (res.status === 200)
-      readme = await res.text()
-
-    content = `${title}\n\n${readme}`
-    if (content.length > 1000) {
-      content = content.substring(0, 1000)
-      content += '...'
-    }
-  }
-  return { title, url, content, starred, github: githubMeta, notionPageId }
+  return { data: { ...info.data, notionPageId, starred }, error: info.error }
 }
 
 function startTwink() {
@@ -88,7 +51,11 @@ function startTwink() {
 
 async function handleSaveToNotion() {
   // console.log('Handling save to Notion in the content script')
-  const pageData = await getDataFromPage()
+  const { data: pageData, error } = await getDataFromPage()
+  if (error) {
+    alert(error)
+    return
+  }
   startTwink()
 
   chrome.runtime.sendMessage(
