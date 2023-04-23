@@ -18,13 +18,12 @@
     "node": ">=16.0.0"
   },
   "scripts": {
-    "dev": "turbo run dev --parallel",
-    "dev:core": "turbo run dev --filter=core",
+    "dev:core": "turbo run dev --filter=@starnexus/core",
     "dev:docs": "turbo run dev --filter=docs",
-    "dev:ext": "turbo run dev --filter=chrome-extension",
+    "dev:ext": "turbo run dev --filter=chrome-extension...",
     "dev:pic": "turbo run dev --filter=picture-bed",
     "build": "turbo run build",
-    "build:core": "turbo run build --filter=core",
+    "build:core": "turbo run build --filter=@starnexus/core",
     "build:docs": "turbo run build --filter=docs",
     "build:ext": "turbo run build --filter=chrome-extension...",
     "build:tg": "turbo run build --filter=telegram-bot...",
@@ -36,7 +35,8 @@
   "dependencies": {},
   "devDependencies": {
     "@antfu/eslint-config": "^0.38.5",
-    "eslint": "^8.29.0",
+    "@unocss/eslint-config": "^0.51.4",
+    "eslint": "^8.39.0",
     "taze": "^0.9.1",
     "turbo": "^1.9.3",
     "typescript": "^5.0.3",

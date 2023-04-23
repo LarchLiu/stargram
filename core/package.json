@@ -1,0 +1,38 @@
+{
+  "name": "@starnexus/core",
+  "type": "module",
+  "version": "0.0.1",
+  "description": "StarNexus core package",
+  "author": "Alex Liu <larch.liu@gmail.com>",
+  "license": "MIT",
+  "homepage": "https://github.com/LarchLiu/star-nexus",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LarchLiu/star-nexus.git"
+  },
+  "bugs": {
+    "url": "https://github.com/LarchLiu/star-nexus/issues"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "require": "./dist/index.cjs",
+      "import": "./dist/index.js"
+    }
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "dev": "pnpm build",
+    "build": "vite build && vue-tsc --declaration --emitDeclarationOnly",
+    "clear": "rimraf dist",
+    "lint": "eslint src"
+  },
+  "devDependencies": {
+    "vue-tsc": "^1.4.2"
+  }
+}
