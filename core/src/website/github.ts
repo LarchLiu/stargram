@@ -2,22 +2,22 @@ import type { FetchError, FetchWebsite, GithubMeta } from '~/types'
 import { GITHUB_HOST, GITHUB_RAW_DOMAIN, GITHUB_REPOS_API, PICTURE_BED_URL } from '~/const'
 import { fetchGet } from '~/utils'
 
-async function getGithubInfo(url: string, picBed?: string): Promise<FetchWebsite> {
-  const regexGithubPath = /https:\/\/github.com\/([^\/]*\/[^\/]*)/g // match github.com/user/repo/
+async function getGithubInfo(url: string, picBed?: string, header: Record<string, string> = {}): Promise<FetchWebsite> {
   let title = ''
-  const githubMeta: GithubMeta = { host: GITHUB_HOST, website: 'Github' }
   let content = ''
+  const githubMeta: GithubMeta = { host: GITHUB_HOST, website: 'Github' }
+  const regexGithubPath = /https:\/\/github.com\/([^\/]*\/[^\/]*)/g // match github.com/user/repo/
   const githubPathMatch = regexGithubPath.exec(url)
   const githubPath = githubPathMatch ? githubPathMatch[1] : ''
 
   try {
     if (githubPath) {
       // fetch repo info
-      const repoJson = await fetchGet<any>(`${GITHUB_REPOS_API}/${githubPath}`)
+      const repoJson = await fetchGet<any>(`${GITHUB_REPOS_API}/${githubPath}`, header)
       // fetch languages
-      const languagesJson = await fetchGet(`${GITHUB_REPOS_API}/${githubPath}/languages`)
+      const languagesJson = await fetchGet(`${GITHUB_REPOS_API}/${githubPath}/languages`, header)
       // fetch readme
-      const readme = await fetchGet<string>(`${GITHUB_RAW_DOMAIN}/${githubPath}/${repoJson.default_branch}/README.md`)
+      const readme = await fetchGet<string>(`${GITHUB_RAW_DOMAIN}/${githubPath}/${repoJson.default_branch}/README.md`, header)
 
       const description = repoJson.description ? repoJson.description.replace(/:\w+:/g, ' ') : ''
       title = repoJson.full_name + (description ? (`: ${description}`) : '')
@@ -43,6 +43,9 @@ async function getGithubInfo(url: string, picBed?: string): Promise<FetchWebsite
         content = content.substring(0, 1000)
         content += '...'
       }
+    }
+    else {
+      return { error: 'Not supported website.' }
     }
     return { data: { title, url, content, meta: githubMeta } }
   }

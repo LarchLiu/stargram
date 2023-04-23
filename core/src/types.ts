@@ -22,7 +22,7 @@ interface FetchWebsite {
 
 interface WebsiteLoader {
   [key: string]: {
-    loader: (url: string, picBed?: string) => Promise<FetchWebsite>
+    loader: (url: string, picBed?: string, header?: Record<string, string>) => Promise<FetchWebsite>
   }
 }
 

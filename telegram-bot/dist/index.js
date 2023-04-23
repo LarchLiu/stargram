@@ -7,6 +7,7 @@ var ENV = {
   // Notion info
   NOTION_API_KEY: null,
   NOTION_DATABASE_ID: null,
+  PICTURE_BED_URL: null,
   // 允许访问的Telegram Token， 设置时以逗号分隔
   TELEGRAM_AVAILABLE_TOKENS: [],
   // 允许访问的Telegram Token 对应的Bot Name， 设置时以逗号分隔
@@ -40,9 +41,9 @@ var ENV = {
   // 检查更新的分支
   UPDATE_BRANCH: "main",
   // 当前版本
-  BUILD_TIMESTAMP: 1682158913,
+  BUILD_TIMESTAMP: 1682271104,
   // 当前版本 commit id
-  BUILD_VERSION: "dfa6dda",
+  BUILD_VERSION: "35e1b9b",
   /**
   * @type {I18n}
   */
@@ -68,7 +69,8 @@ var API_GUARD = null;
 var ENV_VALUE_TYPE = {
   API_KEY: "string",
   NOTION_API_KEY: "string",
-  NOTION_DATABASE_ID: "string"
+  NOTION_DATABASE_ID: "string",
+  PICTURE_BED_URL: "string"
 };
 function initEnv(env, i18n2) {
   DATABASE = env.DATABASE;
@@ -483,9 +485,9 @@ async function gpt3TokensCounter() {
     const bs = range(ord("!"), ord("~") + 1).concat(range(ord("\xA1"), ord("\xAC") + 1), range(ord("\xAE"), ord("\xFF") + 1));
     let cs = bs.slice();
     let n = 0;
-    for (let b = 0; b < 2 ** 8; b++) {
-      if (!bs.includes(b)) {
-        bs.push(b);
+    for (let b2 = 0; b2 < 2 ** 8; b2++) {
+      if (!bs.includes(b2)) {
+        bs.push(b2);
         cs.push(2 ** 8 + n);
         n = n + 1;
       }
@@ -1087,7 +1089,7 @@ async function commandUsage(message, command, subcommand, context) {
   let text = ENV.I18N.command.usage.current_usage;
   if (usage?.tokens) {
     const { tokens } = usage;
-    const sortedChats = Object.keys(tokens.chats || {}).sort((a, b) => tokens.chats[b] - tokens.chats[a]);
+    const sortedChats = Object.keys(tokens.chats || {}).sort((a, b2) => tokens.chats[b2] - tokens.chats[a]);
     text += ENV.I18N.command.usage.total_usage(tokens.total);
     for (let i = 0; i < Math.min(sortedChats.length, 30); i++)
       text += `
@@ -1238,64 +1240,82 @@ function commandsDocument() {
   });
 }
 
+// ../core/dist/index.js
+async function h(o, a = { "User-Agent": E }, s = {}) {
+  s && Object.keys(s).length && (o += `?${new URLSearchParams(s).toString()}`);
+  try {
+    const t = await fetch(o, {
+      method: "GET",
+      headers: a
+    });
+    if (!t.ok)
+      throw new Error(t.statusText);
+    let n = t;
+    const c = t.headers.get("content-type");
+    return c && c.includes("application/json") ? n = await t.json() : c && c.includes("text/") && (n = await t.text()), n;
+  } catch (t) {
+    throw new Error(t.message);
+  }
+}
+function d(o) {
+  const a = o.match(/https?:\/\/([^/]+)\//i);
+  let s = "";
+  return a && a[1] && (s = a[1]), s;
+}
+async function I(o, a, s = {}) {
+  let t = "", n = "";
+  const c = { host: T, website: "Github" }, u = /https:\/\/github.com\/([^\/]*\/[^\/]*)/g.exec(o), i = u ? u[1] : "";
+  try {
+    if (i) {
+      const e = await h(`${p}/${i}`, s), l = await h(`${p}/${i}/languages`, s), m = await h(`${P}/${i}/${e.default_branch}/README.md`, s), r = e.description ? e.description.replace(/:\w+:/g, " ") : "";
+      t = e.full_name + (r ? `: ${r}` : ""), o = e.html_url;
+      const g = e.topics;
+      g && g.length > 0 && (c.tags = g), l && (c.languages = Object.keys(l));
+      const f = a || U;
+      if (f) {
+        const _ = e.owner.login, $ = e.name, w = `${f}?username=${_}&reponame=${$}&stargazers_count=${e.stargazers_count}&language=${e.language}&issues=${e.open_issues_count}&forks=${e.forks_count}&description=${r}`;
+        c.socialPreview = encodeURI(w);
+      }
+      n = `${t}
+
+${m}`, n.length > 1e3 && (n = n.substring(0, 1e3), n += "...");
+    } else
+      return { error: "Not supported website." };
+    return { data: { title: t, url: o, content: n, meta: c } };
+  } catch (e) {
+    return { error: e };
+  }
+}
+var T = "github.com";
+var G = "https://api.github.com";
+var p = `${G}/repos`;
+var P = "https://raw.githubusercontent.com";
+var U = "";
+var E = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.2 Safari/605.1.15";
+var b = {
+  "github.com": {
+    loader: I
+  }
+};
+async function A(o, a, s = {}) {
+  let t = {};
+  const n = d(o);
+  return b[n] && (t = await b[n].loader(o, a, s)), t;
+}
+
 // src/notion.js
 var SUMMARIZE_PROMPT = "Summarize this Document first and then Categorize it. The Document is the *Markdown* format. In summary within 200 words. Categories with less than 5 items. Category names should be divided by a comma. Return the summary first and then the categories like this:\n\nSummary: my summary.\n\nCategories: XXX, YYY\n\n The Document is: \n\n";
-async function getWebsiteInfo(text) {
-  const fetchOpt = {
-    method: "GET"
-  };
+async function getWebsiteInfoFromText(text) {
   const regex = /https?:\/\/(github.com|twitter.com|m.weibo.cn)\/[-A-Za-z0-9+&@#\/%?=~_|!:,.;]+[-A-Za-z0-9+&@#\/%=~_|]/g;
-  const hostRegex = /https?:\/\/(github.com|twitter.com|m.weibo.cn)\//g;
   const match = text.match(regex);
   const infoArr = [];
   if (match) {
     for (let i = 0; i < match.length; i++) {
       const url = match[i];
-      const host = hostRegex.exec(url)[1];
-      const info = {};
-      if (host === "github.com") {
-        const headers = {
-          "User-Agent": CONST.USER_AGENT
-        };
-        const regexGithubPath = /https:\/\/github.com\/([^\/]*\/[^\/]*)/g;
-        const pathMatch = regexGithubPath.exec(url);
-        const path = pathMatch ? pathMatch[1] : "";
-        if (!path)
-          break;
-        fetchOpt.headers = headers;
-        const apiUrl = `https://api.github.com/repos/${path}`;
-        const repoRes = await fetch(apiUrl, fetchOpt);
-        if (repoRes.status === 200) {
-          const repoJson = await repoRes.json();
-          const readmeUrl = `https://raw.githubusercontent.com/${repoJson.full_name}/${repoJson.default_branch}/README.md`;
-          let readme = "";
-          const readmeRes = await fetch(readmeUrl, fetchOpt);
-          if (readmeRes.status === 200)
-            readme = await readmeRes.text();
-          const description = repoJson.description ? repoJson.description.replace(/:\w+:/g, " ") : "";
-          info.title = repoJson.full_name + (description ? `: ${description}` : "");
-          info.url = repoJson.html_url;
-          info.content = `${info.title}
-
-${readme}`;
-          if (info.content.length > 2e3)
-            info.content = `${info.content.substring(0, 2e3)}...`;
-          const tags = repoJson.topics;
-          const languagesJson = await fetch(repoJson.languages_url, fetchOpt).then((r) => r.json()).catch((e) => e.message || "error fetch languages");
-          const github = {};
-          if (tags && tags.length > 0)
-            github.tags = tags;
-          if (languagesJson)
-            github.languages = Object.keys(languagesJson);
-          const imageBaseUrl = "https://star-nexus-og.vercel.app/api/github-og.png";
-          const user = repoJson.owner.login;
-          const repo = repoJson.name;
-          const imageUrl = `${imageBaseUrl}?username=${user}&reponame=${repo}&stargazers_count=${repoJson.stargazers_count}&language=${repoJson.language}&issues=${repoJson.open_issues_count}&forks=${repoJson.forks_count}&description=${description}`;
-          github.socialPreview = encodeURI(imageUrl);
-          info.github = github;
-          infoArr.push(info);
-        }
-      }
+      const { data, error } = await A(url, ENV.PICTURE_BED_URL);
+      if (error)
+        break;
+      infoArr.push(data);
     }
   }
   return infoArr;
@@ -1405,13 +1425,13 @@ async function saveToNotion(pageData) {
       }
     };
     let imageUrl = "";
-    if (Object.keys(pageData.github).length > 0) {
-      const github = pageData.github;
+    if (Object.keys(pageData.meta).length > 0 && pageData.meta.host === "github.com") {
+      const github = pageData.meta;
       body.properties = {
         ...body.properties,
         Website: {
           select: {
-            name: "Github"
+            name: pageData.meta.website
           }
         }
       };
@@ -1635,7 +1655,9 @@ async function msgHandleRole(message, context) {
 async function msgChatWithOpenAI(message, context) {
   try {
     setTimeout(() => sendChatActionToTelegramWithContext(context)("typing").catch(console.error), 0);
-    const infoArr = await getWebsiteInfo(message.text);
+    const infoArr = await getWebsiteInfoFromText(message.text);
+    if (infoArr.length === 0)
+      return sendMessageToTelegramWithContext(context)("No supported website.");
     for (let i = 0; i < infoArr.length; i++) {
       const info = infoArr[i];
       const answer = await saveToNotion(info);
@@ -1643,8 +1665,6 @@ async function msgChatWithOpenAI(message, context) {
         return sendMessageToTelegramWithContext(context)(answer.message);
       }
     }
-    if (infoArr.length === 0)
-      return sendMessageToTelegramWithContext(context)("No supported website.");
     return sendMessageToTelegramWithContext(context)("Saved to Notion \u{1F389}");
   } catch (e) {
     return sendMessageToTelegramWithContext(context)(`Error: ${e.message}`);

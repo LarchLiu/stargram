@@ -108,20 +108,23 @@ interface TelegramMessageEntity {
   user?: TelegramUser;
 }
 
-interface PageData {
+interface WebsiteInfo {
     title: string
     url: string
     content: string
-    github?: GithubMeta
+    meta?: GithubMeta
   }
   
   interface GithubMeta {
+    host: string
+    website: 'Github'
     tags?: string[]
     languages?: string[]
+    socialPreview?: string
   }
   
   interface SavedResponse {
     message: string
   }
 
-export { TelegramWebhookRequest, TelegramMessage, TelegramUser, TelegramChat, TelegramMessageEntity, PageData, GithubMeta, SavedResponse };
+export { TelegramWebhookRequest, TelegramMessage, TelegramUser, TelegramChat, TelegramMessageEntity, WebsiteInfo, GithubMeta, SavedResponse };

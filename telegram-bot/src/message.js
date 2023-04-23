@@ -6,7 +6,7 @@ import { sendChatActionToTelegramWithContext, sendMessageToTelegramWithContext }
 // import {requestCompletionsFromChatGPT} from './openai.js';
 import { handleCommandMessage } from './command.js'
 import { errorToString } from './utils.js'
-import { getWebsiteInfo, saveToNotion } from './notion.js'
+import { getWebsiteInfoFromText, saveToNotion } from './notion.js'
 
 // import {TelegramMessage, TelegramWebhookRequest} from './type.d.ts';
 
@@ -245,7 +245,10 @@ async function msgChatWithOpenAI(message, context) {
   try {
     // console.log(`Ask:${message.text}` || '')
     setTimeout(() => sendChatActionToTelegramWithContext(context)('typing').catch(console.error), 0)
-    const infoArr = await getWebsiteInfo(message.text)
+    const infoArr = await getWebsiteInfoFromText(message.text)
+    if (infoArr.length === 0)
+      return sendMessageToTelegramWithContext(context)('No supported website.')
+
     for (let i = 0; i < infoArr.length; i++) {
       const info = infoArr[i]
       const answer = await saveToNotion(info)
@@ -254,9 +257,6 @@ async function msgChatWithOpenAI(message, context) {
         return sendMessageToTelegramWithContext(context)(answer.message)
       }
     }
-    if (infoArr.length === 0)
-      return sendMessageToTelegramWithContext(context)('No supported website.')
-
     return sendMessageToTelegramWithContext(context)('Saved to Notion 🎉')
   }
   catch (e) {

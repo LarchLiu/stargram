@@ -1,4 +1,6 @@
-async function fetchGet<T>(url: string, header: Record<string, string> = {}, query: Record<string, string> = {}): Promise<T> {
+import { CONTENT_TYPE } from '~/const'
+
+async function fetchGet<T>(url: string, header: Record<string, string> = { 'User-Agent': CONTENT_TYPE }, query: Record<string, string> = {}): Promise<T> {
   if (query && Object.keys(query).length)
     url += `?${new URLSearchParams(query).toString()}`
   try {

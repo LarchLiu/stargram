@@ -125,6 +125,10 @@ importers:
         version: 18.0.28
 
   telegram-bot:
+    dependencies:
+      '@starnexus/core':
+        specifier: workspace:*
+        version: link:../core
     devDependencies:
       esbuild:
         specifier: ^0.17.11
