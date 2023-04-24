@@ -26,10 +26,10 @@ async function getWebsiteInfoFromText(text) {
 /**
  * Saves page data to Notion database and returns an object with updated info or an error message.
  * @async
- * @param {WebsiteInfo} pageData - Object containing data for the page to be saved.
+ * @param {WebsiteInfo} websiteInfo - Object containing data for the page to be saved.
  * @return {Promise<SavedResponse>} - Object containing updated page info or an error message.
  */
-async function saveToNotion(pageData) {
+async function saveToNotion(websiteInfo) {
   let summary = ''
   let categories = ['Others']
 
@@ -44,7 +44,7 @@ async function saveToNotion(pageData) {
   }
 
   if (openaiApiKey) {
-    const { data, error } = await summarizeContent(openaiApiKey, pageData)
+    const { data, error } = await summarizeContent(openaiApiKey, websiteInfo)
     if (error)
       return { error }
 
@@ -53,17 +53,17 @@ async function saveToNotion(pageData) {
     categories = data.categories
   }
   else {
-    summary = pageData.content
+    summary = websiteInfo.content
   }
 
   const notionPage = {
     databaseId,
-    title: pageData.title,
+    title: websiteInfo.title,
     summary,
-    url: pageData.url,
+    url: websiteInfo.url,
     categories,
     status: 'Starred',
-    meta: pageData.meta,
+    meta: websiteInfo.meta,
   }
 
   const { error } = await saveNotion(notionApiKey, notionPage)
