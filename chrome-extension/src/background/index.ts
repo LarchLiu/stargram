@@ -39,7 +39,7 @@ chrome.runtime.onMessage.addListener(async (request: ContentRequest, sender, sen
       saveToNotion(pageData).then((res) => {
         sendSavedStatus(res)
       }).catch((err) => {
-        sendSavedStatus({ tabId, starred: pageData.starred, notionPageId: pageData.notionPageId, error: err.message ? err.message : 'Error saved to Notion.' })
+        sendSavedStatus(err)
       })
       sendResponse({ message: 'handling save to notion' })
     }
@@ -113,11 +113,8 @@ async function saveProcess(pageData: PageData): Promise<SwResponse> {
 function saveToNotion(pageData: PageData): Promise<SwResponse> {
   return new Promise((resolve, reject) => {
     saveProcess(pageData).then((res) => {
-      if (res instanceof Error)
-        reject(res)
-      else
-        resolve(res)
-    }).catch((error: Error) => {
+      resolve(res)
+    }).catch((error) => {
       reject(error)
     })
   })

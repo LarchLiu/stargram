@@ -53,12 +53,15 @@ function startTwink() {
 
 async function handleSaveToNotion() {
   // console.log('Handling save to Notion in the content script')
+  startTwink()
+
   const { data: pageData, error } = await getDataFromPage()
   if (error) {
+    if (twinkTimer)
+      clearInterval(twinkTimer)
     alert(error)
     return
   }
-  startTwink()
 
   chrome.runtime.sendMessage(
     {
