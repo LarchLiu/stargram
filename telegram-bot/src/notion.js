@@ -1,12 +1,11 @@
-import { getWebsiteInfo } from '@starnexus/core'
+import { getWebsiteInfo, summarizeContent } from '@starnexus/core'
 import { ENV } from './env.js'
 
-const SUMMARIZE_PROMPT = 'Summarize this Document first and then Categorize it. The Document is the *Markdown* format. In summary within 200 words. Categories with less than 5 items. Category names should be divided by a comma. Return the summary first and then the categories like this:\n\nSummary: my summary.\n\nCategories: XXX, YYY\n\n The Document is: \n\n'
 /**
  * Given a URL, returns information about the website if it is hosted on GitHub.
  *
  * @param {string} text - The text input by user.
- * @return {Promise<WebsiteInfo[]>} - A Promise that resolves to the fetched information.
+ * @return {Promise<FetchWebsite[]>} - A Promise that resolves to the fetched information.
  */
 async function getWebsiteInfoFromText(text) {
   const regex = /https?:\/\/(github.com|twitter.com|m.weibo.cn)\/[-A-Za-z0-9+&@#\/%?=~_|!:,.;]+[-A-Za-z0-9+&@#\/%=~_|]/g
@@ -16,12 +15,9 @@ async function getWebsiteInfoFromText(text) {
   if (match) {
     for (let i = 0; i < match.length; i++) {
       const url = match[i]
+      const info = await getWebsiteInfo(url, ENV.PICTURE_BED_URL)
 
-      const { data, error } = await getWebsiteInfo(url, ENV.PICTURE_BED_URL)
-      if (error)
-        break
-
-      infoArr.push(data)
+      infoArr.push(info)
     }
   }
   return infoArr
@@ -36,7 +32,6 @@ async function getWebsiteInfoFromText(text) {
 async function saveToNotion(pageData) {
   try {
     let summary = ''
-    let category = ''
     let catOpt = [{
       name: 'Others',
     }]
@@ -47,60 +42,18 @@ async function saveToNotion(pageData) {
 
     if (!notionApiKey || !databaseId) {
       // console.log('Missing Notion API key or Database ID in settings.')
-      const error = { message: 'Missing Notion API key or Database ID in settings.' }
+      const error = { error: 'Missing Notion API key or Database ID in settings.' }
       return error
     }
 
     if (openaiApiKey) {
-      const openaiRes = await fetch('https://api.openai.com/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${openaiApiKey}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          model: 'gpt-3.5-turbo',
-          messages: [
-            {
-              role: 'system',
-              content: SUMMARIZE_PROMPT,
-            },
-            {
-              role: 'user',
-              content: pageData.content,
-            },
-          ],
-          max_tokens: 400,
-          temperature: 0.5,
-        }),
-      })
-      if (openaiRes.status !== 200) {
-        const res = await openaiRes.json()
-        let error = 'Openai API error: '
-        if (res.error && res.error.message)
-          error += res.error.message
+      const { data, error } = await summarizeContent(openaiApiKey, pageData)
+      if (error)
+        return { error }
 
-        else
-          error += `${openaiRes.status.toString()}`
+      summary = data.summary
 
-        return { message: error }
-      }
-
-      const openaiData = await openaiRes.json()
-      let text = openaiData.choices[0].message.content
-      text = text.replace(/\n/g, '')
-      const regexSummery = /Summary:(.*)Categories:/g
-      const regexCategory = /Categories:(.*)$/g
-      const summaryArr = regexSummery.exec(text)
-      const categoryArr = regexCategory.exec(text)
-      if (summaryArr)
-        summary = summaryArr[1].trim()
-
-      if (categoryArr)
-        category = categoryArr[1].trim()
-
-      const catArry = (category || 'Others').split(',')
-      catOpt = catArry.map((item) => {
+      catOpt = data.category.map((item) => {
         if (item.endsWith('.'))
           item = item.slice(0, -1)
 
@@ -210,7 +163,7 @@ async function saveToNotion(pageData) {
       else
         error += `${response.status.toString()} Error creating new page in Notion.`
 
-      return { message: error }
+      return { error }
     }
     else {
       // console.log('Created new page in Notion successfully!')
@@ -252,7 +205,7 @@ async function saveToNotion(pageData) {
         else
           error += `${response.status.toString()} Error appending child block to Notion page.`
 
-        return { message: error }
+        return { error }
       }
       else {
         // console.log('Appended child block to Notion page successfully!')
@@ -261,7 +214,7 @@ async function saveToNotion(pageData) {
     }
   }
   catch (error) {
-    return { message: error.message ? error.message : 'Error saving to Notion.' }
+    return { error: error.message ? error.message : 'Error saving to Notion.' }
   }
 }
 

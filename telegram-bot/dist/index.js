@@ -41,9 +41,9 @@ var ENV = {
   // 检查更新的分支
   UPDATE_BRANCH: "main",
   // 当前版本
-  BUILD_TIMESTAMP: 1682271104,
+  BUILD_TIMESTAMP: 1682312953,
   // 当前版本 commit id
-  BUILD_VERSION: "35e1b9b",
+  BUILD_VERSION: "1c01186",
   /**
   * @type {I18n}
   */
@@ -448,7 +448,7 @@ async function resourceLoader(key, url) {
       headers: {
         "User-Agent": CONST.USER_AGENT
       }
-    }).then((x) => x.text());
+    }).then((x2) => x2.text());
     await DATABASE.put(key, bpe);
     return bpe;
   } catch (e) {
@@ -458,26 +458,26 @@ async function resourceLoader(key, url) {
 }
 async function gpt3TokensCounter() {
   const repo = "https://raw.githubusercontent.com/tbxark-archive/GPT-3-Encoder/master";
-  const encoder = await resourceLoader("encoder_raw_file", `${repo}/encoder.json`).then((x) => JSON.parse(x));
+  const encoder = await resourceLoader("encoder_raw_file", `${repo}/encoder.json`).then((x2) => JSON.parse(x2));
   const bpe_file = await resourceLoader("bpe_raw_file", `${repo}/vocab.bpe`);
-  const range = (x, y) => {
-    const res = Array.from(Array(y).keys()).slice(x);
+  const range = (x2, y) => {
+    const res = Array.from(Array(y).keys()).slice(x2);
     return res;
   };
-  const ord = (x) => {
-    return x.charCodeAt(0);
+  const ord = (x2) => {
+    return x2.charCodeAt(0);
   };
-  const chr = (x) => {
-    return String.fromCharCode(x);
+  const chr = (x2) => {
+    return String.fromCharCode(x2);
   };
   const textEncoder = new TextEncoder("utf-8");
   const encodeStr = (str) => {
-    return Array.from(textEncoder.encode(str)).map((x) => x.toString());
+    return Array.from(textEncoder.encode(str)).map((x2) => x2.toString());
   };
-  const dictZip = (x, y) => {
+  const dictZip = (x2, y) => {
     const result = {};
-    x.forEach((_, i) => {
-      result[x[i]] = y[i];
+    x2.forEach((_, i) => {
+      result[x2[i]] = y[i];
     });
     return result;
   };
@@ -485,14 +485,14 @@ async function gpt3TokensCounter() {
     const bs = range(ord("!"), ord("~") + 1).concat(range(ord("\xA1"), ord("\xAC") + 1), range(ord("\xAE"), ord("\xFF") + 1));
     let cs = bs.slice();
     let n = 0;
-    for (let b2 = 0; b2 < 2 ** 8; b2++) {
-      if (!bs.includes(b2)) {
-        bs.push(b2);
+    for (let b = 0; b < 2 ** 8; b++) {
+      if (!bs.includes(b)) {
+        bs.push(b);
         cs.push(2 ** 8 + n);
         n = n + 1;
       }
     }
-    cs = cs.map((x) => chr(x));
+    cs = cs.map((x2) => chr(x2));
     const result = {};
     bs.forEach((_, i) => {
       result[bs[i]] = cs[i];
@@ -511,19 +511,19 @@ async function gpt3TokensCounter() {
   }
   const pat = /'s|'t|'re|'ve|'m|'ll|'d| ?\p{L}+| ?\p{N}+| ?[^\s\p{L}\p{N}]+|\s+(?!\S)|\s+/gu;
   const decoder = {};
-  Object.keys(encoder).forEach((x) => {
-    decoder[encoder[x]] = x;
+  Object.keys(encoder).forEach((x2) => {
+    decoder[encoder[x2]] = x2;
   });
   const lines = bpe_file.split("\n");
-  const bpe_merges = lines.slice(1, lines.length - 1).map((x) => {
-    return x.split(/(\s+)/).filter((e) => {
+  const bpe_merges = lines.slice(1, lines.length - 1).map((x2) => {
+    return x2.split(/(\s+)/).filter((e) => {
       return e.trim().length > 0;
     });
   });
   const byte_encoder = bytes_to_unicode();
   const byte_decoder = {};
-  Object.keys(byte_encoder).forEach((x) => {
-    byte_decoder[byte_encoder[x]] = x;
+  Object.keys(byte_encoder).forEach((x2) => {
+    byte_decoder[byte_encoder[x2]] = x2;
   });
   const bpe_ranks = dictZip(bpe_merges, range(0, bpe_merges.length));
   const cache = /* @__PURE__ */ new Map();
@@ -541,8 +541,8 @@ async function gpt3TokensCounter() {
         minPairs[isNaN(rank) ? 1e11 : rank] = pair;
       });
       const bigram = minPairs[Math.min(...Object.keys(minPairs).map(
-        (x) => {
-          return parseInt(x);
+        (x2) => {
+          return parseInt(x2);
         }
       ))];
       if (!(bigram in bpe_ranks))
@@ -552,13 +552,13 @@ async function gpt3TokensCounter() {
       let new_word = [];
       let i = 0;
       while (i < word.length) {
-        const j = word.indexOf(first, i);
-        if (j === -1) {
+        const j2 = word.indexOf(first, i);
+        if (j2 === -1) {
           new_word = new_word.concat(word.slice(i));
           break;
         }
-        new_word = new_word.concat(word.slice(i, j));
-        i = j;
+        new_word = new_word.concat(word.slice(i, j2));
+        i = j2;
         if (word[i] === first && i < word.length - 1 && word[i + 1] === second) {
           new_word.push(first + second);
           i = i + 2;
@@ -579,12 +579,12 @@ async function gpt3TokensCounter() {
   }
   return function tokenCount(text) {
     let tokensCount = 0;
-    const matches = Array.from(text.matchAll(pat)).map((x) => x[0]);
+    const matches = Array.from(text.matchAll(pat)).map((x2) => x2[0]);
     for (let token of matches) {
-      token = encodeStr(token).map((x) => {
-        return byte_encoder[x];
+      token = encodeStr(token).map((x2) => {
+        return byte_encoder[x2];
       }).join("");
-      const new_tokens = bpe(token).split(" ").map((x) => encoder[x]);
+      const new_tokens = bpe(token).split(" ").map((x2) => encoder[x2]);
       tokensCount += new_tokens.length;
     }
     return tokensCount;
@@ -1089,7 +1089,7 @@ async function commandUsage(message, command, subcommand, context) {
   let text = ENV.I18N.command.usage.current_usage;
   if (usage?.tokens) {
     const { tokens } = usage;
-    const sortedChats = Object.keys(tokens.chats || {}).sort((a, b2) => tokens.chats[b2] - tokens.chats[a]);
+    const sortedChats = Object.keys(tokens.chats || {}).sort((a, b) => tokens.chats[b] - tokens.chats[a]);
     text += ENV.I18N.command.usage.total_usage(tokens.total);
     for (let i = 0; i < Math.min(sortedChats.length, 30); i++)
       text += `
@@ -1241,70 +1241,145 @@ function commandsDocument() {
 }
 
 // ../core/dist/index.js
-async function h(o, a = { "User-Agent": E }, s = {}) {
-  s && Object.keys(s).length && (o += `?${new URLSearchParams(s).toString()}`);
+async function l(o, i, s) {
+  var a;
   try {
-    const t = await fetch(o, {
+    const n = {
       method: "GET",
-      headers: a
-    });
-    if (!t.ok)
-      throw new Error(t.statusText);
-    let n = t;
-    const c = t.headers.get("content-type");
-    return c && c.includes("application/json") ? n = await t.json() : c && c.includes("text/") && (n = await t.text()), n;
-  } catch (t) {
-    throw new Error(t.message);
-  }
-}
-function d(o) {
-  const a = o.match(/https?:\/\/([^/]+)\//i);
-  let s = "";
-  return a && a[1] && (s = a[1]), s;
-}
-async function I(o, a, s = {}) {
-  let t = "", n = "";
-  const c = { host: T, website: "Github" }, u = /https:\/\/github.com\/([^\/]*\/[^\/]*)/g.exec(o), i = u ? u[1] : "";
-  try {
-    if (i) {
-      const e = await h(`${p}/${i}`, s), l = await h(`${p}/${i}/languages`, s), m = await h(`${P}/${i}/${e.default_branch}/README.md`, s), r = e.description ? e.description.replace(/:\w+:/g, " ") : "";
-      t = e.full_name + (r ? `: ${r}` : ""), o = e.html_url;
-      const g = e.topics;
-      g && g.length > 0 && (c.tags = g), l && (c.languages = Object.keys(l));
-      const f = a || U;
-      if (f) {
-        const _ = e.owner.login, $ = e.name, w = `${f}?username=${_}&reponame=${$}&stargazers_count=${e.stargazers_count}&language=${e.language}&issues=${e.open_issues_count}&forks=${e.forks_count}&description=${r}`;
-        c.socialPreview = encodeURI(w);
+      headers: i
+    };
+    s && Object.keys(s).length && (o += `?${new URLSearchParams(s).toString()}`);
+    const t = await fetch(o, n);
+    if (!t.ok) {
+      let c = t.statusText;
+      const e = t.headers.get("content-type");
+      if (e && e.includes("application/json")) {
+        const g = await t.json();
+        c = ((a = g.error) == null ? void 0 : a.message) || g.message || t.statusText;
       }
-      n = `${t}
-
-${m}`, n.length > 1e3 && (n = n.substring(0, 1e3), n += "...");
-    } else
-      return { error: "Not supported website." };
-    return { data: { title: t, url: o, content: n, meta: c } };
-  } catch (e) {
-    return { error: e };
+      throw new Error(c);
+    }
+    let u = t;
+    const r = t.headers.get("content-type");
+    return r && r.includes("application/json") ? u = await t.json() : r && r.includes("text/") && (u = await t.text()), u;
+  } catch (n) {
+    throw new Error(n.message);
   }
 }
-var T = "github.com";
-var G = "https://api.github.com";
-var p = `${G}/repos`;
+async function $(o, i, s) {
+  var a;
+  try {
+    const n = {
+      method: "POST",
+      headers: i,
+      body: s ? JSON.stringify(s) : void 0
+    }, t = await fetch(o, n);
+    if (!t.ok) {
+      let c = t.statusText;
+      const e = t.headers.get("content-type");
+      if (e && e.includes("application/json")) {
+        const g = await t.json();
+        c = ((a = g.error) == null ? void 0 : a.message) || g.message || t.statusText;
+      }
+      throw new Error(c);
+    }
+    let u = t;
+    const r = t.headers.get("content-type");
+    return r && r.includes("application/json") ? u = await t.json() : r && r.includes("text/") && (u = await t.text()), u;
+  } catch (n) {
+    throw new Error(n.message);
+  }
+}
+function T(o) {
+  const i = o.match(/https?:\/\/([^/]+)\//i);
+  let s = "";
+  return i && i[1] && (s = i[1]), s;
+}
+async function x(o, i, s = { "User-Agent": S }) {
+  let a = "", n = "";
+  const t = { host: A, website: "Github" }, r = /https:\/\/github.com\/([^\/]*\/[^\/]*)/g.exec(o), c = r ? r[1] : "";
+  try {
+    if (c) {
+      const e = await l(`${f}/${c}`, s), g = await l(`${f}/${c}/languages`, s), y = await l(`${P}/${c}/${e.default_branch}/README.md`, s), h = e.description ? e.description.replace(/:\w+:/g, " ") : "";
+      a = e.full_name + (h ? `: ${h}` : ""), o = e.html_url;
+      const m = e.topics;
+      m && m.length > 0 && (t.tags = m), g && (t.languages = Object.keys(g));
+      const p = i || O;
+      if (p) {
+        const w = e.owner.login, b = e.name, _ = `${p}?username=${w}&reponame=${b}&stargazers_count=${e.stargazers_count}&language=${e.language}&issues=${e.open_issues_count}&forks=${e.forks_count}&description=${h}`;
+        t.socialPreview = encodeURI(_);
+      }
+      n = `${a}
+
+${y}`, n.length > 1e3 && (n = n.substring(0, 1e3), n += "...");
+    } else
+      return { error: "Github error: Not supported website." };
+    return { data: { title: a, url: o, content: n, meta: t } };
+  } catch (e) {
+    return { error: `Github error: ${e}` };
+  }
+}
+var A = "github.com";
+var I = "https://api.github.com";
+var f = `${I}/repos`;
 var P = "https://raw.githubusercontent.com";
-var U = "";
-var E = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.2 Safari/605.1.15";
-var b = {
+var O = "";
+var E = "https://api.openai.com/v1/chat/completions";
+var G = `Summarize this Document first and then Categorize it. The Document is the *Markdown* format. In summary within 200 words. Categories with less than 5 items. Category names should be divided by a comma. Return the summary first and then the categories like this:
+
+Summary: my summary.
+
+Categories: XXX, YYY
+
+The Document is: 
+
+`;
+var S = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.2 Safari/605.1.15";
+var d = {
   "github.com": {
-    loader: I
+    loader: x
   }
 };
-async function A(o, a, s = {}) {
-  let t = {};
-  const n = d(o);
-  return b[n] && (t = await b[n].loader(o, a, s)), t;
+async function j(o, i, s) {
+  let a = {};
+  const n = T(o);
+  return d[n] && (a = await d[n].loader(o, i, s)), a;
+}
+async function M(o, i) {
+  try {
+    let s = "", a = "", t = (await $(
+      E,
+      {
+        Authorization: `Bearer ${o}`,
+        "Content-Type": "application/json"
+      },
+      {
+        model: "gpt-3.5-turbo",
+        messages: [
+          {
+            role: "system",
+            content: G
+          },
+          {
+            role: "user",
+            content: i.content
+          }
+        ],
+        max_tokens: 400,
+        temperature: 0.5
+      }
+    )).choices[0].message.content;
+    t = t.replace(/\n/g, "");
+    const u = /Summary:(.*)Categories:/g, r = /Categories:(.*)$/g, c = u.exec(t), e = r.exec(t);
+    c && (s = c[1].trim()), e && (a = e[1].trim());
+    const g = (a || "Others").split(",");
+    return { data: { summary: s, category: g } };
+  } catch (s) {
+    return { error: `Openai API error: ${s}` };
+  }
 }
 
 // src/notion.js
-var SUMMARIZE_PROMPT = "Summarize this Document first and then Categorize it. The Document is the *Markdown* format. In summary within 200 words. Categories with less than 5 items. Category names should be divided by a comma. Return the summary first and then the categories like this:\n\nSummary: my summary.\n\nCategories: XXX, YYY\n\n The Document is: \n\n";
 async function getWebsiteInfoFromText(text) {
   const regex = /https?:\/\/(github.com|twitter.com|m.weibo.cn)\/[-A-Za-z0-9+&@#\/%?=~_|!:,.;]+[-A-Za-z0-9+&@#\/%=~_|]/g;
   const match = text.match(regex);
@@ -1312,10 +1387,8 @@ async function getWebsiteInfoFromText(text) {
   if (match) {
     for (let i = 0; i < match.length; i++) {
       const url = match[i];
-      const { data, error } = await A(url, ENV.PICTURE_BED_URL);
-      if (error)
-        break;
-      infoArr.push(data);
+      const info = await j(url, ENV.PICTURE_BED_URL);
+      infoArr.push(info);
     }
   }
   return infoArr;
@@ -1323,7 +1396,6 @@ async function getWebsiteInfoFromText(text) {
 async function saveToNotion(pageData) {
   try {
     let summary = "";
-    let category = "";
     let catOpt = [{
       name: "Others"
     }];
@@ -1331,54 +1403,15 @@ async function saveToNotion(pageData) {
     const databaseId = ENV.NOTION_DATABASE_ID;
     const openaiApiKey = ENV.API_KEY;
     if (!notionApiKey || !databaseId) {
-      const error = { message: "Missing Notion API key or Database ID in settings." };
+      const error = { error: "Missing Notion API key or Database ID in settings." };
       return error;
     }
     if (openaiApiKey) {
-      const openaiRes = await fetch("https://api.openai.com/v1/chat/completions", {
-        method: "POST",
-        headers: {
-          "Authorization": `Bearer ${openaiApiKey}`,
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          model: "gpt-3.5-turbo",
-          messages: [
-            {
-              role: "system",
-              content: SUMMARIZE_PROMPT
-            },
-            {
-              role: "user",
-              content: pageData.content
-            }
-          ],
-          max_tokens: 400,
-          temperature: 0.5
-        })
-      });
-      if (openaiRes.status !== 200) {
-        const res = await openaiRes.json();
-        let error = "Openai API error: ";
-        if (res.error && res.error.message)
-          error += res.error.message;
-        else
-          error += `${openaiRes.status.toString()}`;
-        return { message: error };
-      }
-      const openaiData = await openaiRes.json();
-      let text = openaiData.choices[0].message.content;
-      text = text.replace(/\n/g, "");
-      const regexSummery = /Summary:(.*)Categories:/g;
-      const regexCategory = /Categories:(.*)$/g;
-      const summaryArr = regexSummery.exec(text);
-      const categoryArr = regexCategory.exec(text);
-      if (summaryArr)
-        summary = summaryArr[1].trim();
-      if (categoryArr)
-        category = categoryArr[1].trim();
-      const catArry = (category || "Others").split(",");
-      catOpt = catArry.map((item) => {
+      const { data, error } = await M(openaiApiKey, pageData);
+      if (error)
+        return { error };
+      summary = data.summary;
+      catOpt = data.category.map((item) => {
         if (item.endsWith("."))
           item = item.slice(0, -1);
         return {
@@ -1480,7 +1513,7 @@ async function saveToNotion(pageData) {
         error += res.message;
       else
         error += `${response.status.toString()} Error creating new page in Notion.`;
-      return { message: error };
+      return { error };
     } else {
       const newPageResponse = await response.json();
       const newPageId = newPageResponse.id;
@@ -1514,13 +1547,13 @@ async function saveToNotion(pageData) {
           error += res.message;
         else
           error += `${response.status.toString()} Error appending child block to Notion page.`;
-        return { message: error };
+        return { error };
       } else {
         return { message: "success" };
       }
     }
   } catch (error) {
-    return { message: error.message ? error.message : "Error saving to Notion." };
+    return { error: error.message ? error.message : "Error saving to Notion." };
   }
 }
 
@@ -1660,9 +1693,11 @@ async function msgChatWithOpenAI(message, context) {
       return sendMessageToTelegramWithContext(context)("No supported website.");
     for (let i = 0; i < infoArr.length; i++) {
       const info = infoArr[i];
-      const answer = await saveToNotion(info);
-      if (answer.message !== "success") {
-        return sendMessageToTelegramWithContext(context)(answer.message);
+      if (info.error)
+        return sendMessageToTelegramWithContext(context)(info.error);
+      const answer = await saveToNotion(info.data);
+      if (answer.error) {
+        return sendMessageToTelegramWithContext(context)(answer.error);
       }
     }
     return sendMessageToTelegramWithContext(context)("Saved to Notion \u{1F389}");

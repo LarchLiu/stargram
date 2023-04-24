@@ -251,10 +251,13 @@ async function msgChatWithOpenAI(message, context) {
 
     for (let i = 0; i < infoArr.length; i++) {
       const info = infoArr[i]
-      const answer = await saveToNotion(info)
-      if (answer.message !== 'success') {
+      if (info.error)
+        return sendMessageToTelegramWithContext(context)(info.error)
+
+      const answer = await saveToNotion(info.data)
+      if (answer.error) {
         // console.log(`Error:${answer.message}`)
-        return sendMessageToTelegramWithContext(context)(answer.message)
+        return sendMessageToTelegramWithContext(context)(answer.error)
       }
     }
     return sendMessageToTelegramWithContext(context)('Saved to Notion 🎉')
