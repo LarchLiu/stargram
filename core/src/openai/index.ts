@@ -42,7 +42,7 @@ async function summarizeContent(apiKey: string, websiteInfo: WebsiteInfo): Promi
       category = categoryArr[1].trim()
 
     const catArry = (category || 'Others').split(',')
-    return { data: { summary, category: catArry } }
+    return { data: { summary, categories: catArry } }
   }
   catch (err) {
     return { error: `Openai API error: ${err}` }

@@ -53,7 +53,7 @@ async function saveToNotion(pageData) {
 
       summary = data.summary
 
-      catOpt = data.category.map((item) => {
+      catOpt = data.categories.map((item) => {
         if (item.endsWith('.'))
           item = item.slice(0, -1)
 

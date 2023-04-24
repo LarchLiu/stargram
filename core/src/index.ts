@@ -11,6 +11,7 @@ import type {
 import { fetchGet, fetchPost } from './utils/index'
 import { getWebsiteInfo } from './website'
 import { summarizeContent } from './openai'
+import { saveToNotion } from './notion'
 
 export {
   // types
@@ -25,6 +26,7 @@ export {
   // functions
   getWebsiteInfo,
   summarizeContent,
+  saveToNotion,
   fetchGet,
   fetchPost,
 }

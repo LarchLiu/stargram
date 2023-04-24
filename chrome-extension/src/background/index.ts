@@ -1,5 +1,4 @@
-import { summarizeContent } from '@starnexus/core'
-import { GITHUB_HOST } from '~/const'
+import { saveToNotion as saveNotion, summarizeContent } from '@starnexus/core'
 import type { ContentRequest, ListenerSendResponse, PageData, SwResponse } from '~/types'
 
 async function sendSavedStatus(res: SwResponse) {
@@ -66,10 +65,7 @@ chrome.runtime.onMessage.addListener(async (request: ContentRequest, sender, sen
 async function saveProcess(pageData: PageData): Promise<SwResponse> {
   try {
     let summary = ''
-    let catOpt = [{
-      name: 'Others',
-    }]
-
+    let categories = ['Others']
     const storage = await chrome.storage.sync.get(['notionApiKey', 'notionDatabaseId', 'openaiApiKey'])
     const notionApiKey = storage.notionApiKey ?? ''
     const databaseId = storage.notionDatabaseId ?? ''
@@ -87,195 +83,27 @@ async function saveProcess(pageData: PageData): Promise<SwResponse> {
         return { tabId: pageData.tabId, starred: pageData.starred, notionPageId: pageData.notionPageId, error }
 
       summary = data.summary
-      catOpt = data.category.map((item) => {
-        if (item.endsWith('.'))
-          item = item.slice(0, -1)
-        return {
-          name: item,
-        }
-      })
+      categories = data.categories
     }
     else {
       summary = pageData.content
     }
 
-    const body: { [key: string]: any } = {
-      parent: {
-        database_id: databaseId,
-      },
-      properties: {
-        Title: {
-          title: [
-            {
-              text: {
-                content: pageData.title,
-              },
-            },
-          ],
-        },
-        Summary: {
-          rich_text: [
-            {
-              text: {
-                content: summary,
-              },
-            },
-          ],
-        },
-        URL: {
-          url: pageData.url,
-        },
-        Categories: {
-          multi_select: catOpt,
-        },
-        Status: {
-          select: {
-            name: 'Starred',
-          },
-        },
-      },
-    }
-    let imageUrl = ''
-    if (pageData.url.includes(GITHUB_HOST) && pageData.meta.host === GITHUB_HOST) {
-      const github = pageData.meta
-      body.properties = {
-        ...body.properties,
-        Website: {
-          select: {
-            name: github.website,
-          },
-        },
-      }
-      if (github.languages) {
-        const languages = github.languages.map((lang) => {
-          return {
-            name: lang,
-          }
-        })
-        body.properties = {
-          ...body.properties,
-          Languages: {
-            multi_select: languages,
-          },
-        }
-      }
-      if (github.tags) {
-        const tags = github.tags.map((tag) => {
-          return {
-            name: tag,
-          }
-        })
-        body.properties = {
-          ...body.properties,
-          Tags: {
-            multi_select: tags,
-          },
-        }
-      }
-      if (github.socialPreview)
-        imageUrl = github.socialPreview
+    const notionPage = {
+      databaseId: databaseId as string,
+      title: pageData.title,
+      summary,
+      url: pageData.url,
+      categories,
+      status: 'Starred' as const,
+      meta: pageData.meta,
     }
 
-    if (pageData.notionPageId) {
-      body.properties = {
-        ...body.properties,
-        Status: {
-          select: {
-            name: pageData.starred ? 'Unstarred' : 'Starred',
-          },
-        },
-      }
-      const res = await fetch(`https://api.notion.com/v1/pages/${pageData.notionPageId}`, {
-        method: 'PATCH',
-        headers: {
-          'Authorization': `Bearer ${notionApiKey}`,
-          'Notion-Version': '2022-06-28',
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(body),
-      })
-
-      if (res.status !== 200) {
-        const _res = await res.json()
-        let error = 'Notion API error: '
-        if (_res.message)
-          error += _res.message
-        else
-          error += `${_res.status.toString()} Error updating page in Notion.`
-
-        return { tabId: pageData.tabId, starred: pageData.starred, notionPageId: pageData.notionPageId, error }
-      }
-      else {
-        return ({ tabId: pageData.tabId, notionPageId: pageData.notionPageId, starred: !pageData.starred })
-      }
-    }
-
-    // 创建 Notion 页面并保存信息
-    const response = await fetch('https://api.notion.com/v1/pages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Notion-Version': '2022-06-28',
-        'Authorization': `Bearer ${notionApiKey}`,
-      },
-      body: JSON.stringify(body),
-    })
-
-    if (response.status !== 200) {
-      const res = await response.json()
-      let error = 'Notion API error: '
-      if (res.message)
-        error += res.message
-      else
-        error += `${response.status.toString()} Error creating new page in Notion.`
-
+    const { data, error } = await saveNotion(notionApiKey, notionPage)
+    if (error)
       return { tabId: pageData.tabId, starred: pageData.starred, notionPageId: pageData.notionPageId, error }
-    }
-    else {
-      // console.log('Created new page in Notion successfully!')
-      const newPageResponse = await response.json()
-      const newPageId = newPageResponse.id // 获取新页面的 ID
-      if (!imageUrl)
-        return ({ tabId: pageData.tabId, notionPageId: newPageId, starred: true })
 
-      const imageBlock = {
-        object: 'block',
-        type: 'embed',
-        embed: {
-          url: imageUrl,
-        },
-      }
-
-      const addChildResponse = await fetch(
-        `https://api.notion.com/v1/blocks/${newPageId}/children`,
-        {
-          method: 'PATCH',
-          headers: {
-            'Content-Type': 'application/json',
-            'Notion-Version': '2022-06-28',
-            'Authorization': `Bearer ${notionApiKey}`,
-          },
-          body: JSON.stringify({
-            children: [imageBlock],
-          }),
-        },
-      )
-
-      if (addChildResponse.status !== 200) {
-        const res = await addChildResponse.json()
-        let error = 'Notion API error: '
-        if (res.message)
-          error += res.message
-        else
-          error += `${addChildResponse.status.toString()} Error appending child block to Notion page.`
-
-        return { tabId: pageData.tabId, starred: pageData.starred, notionPageId: pageData.notionPageId, error }
-      }
-      else {
-        // console.log('Appended child block to Notion page successfully!')
-        return ({ tabId: pageData.tabId, notionPageId: newPageId, starred: true })
-      }
-    }
+    return { tabId: pageData.tabId, starred: data.starred, notionPageId: data.notionPageId }
   }
   catch (error) {
     return { tabId: pageData.tabId, starred: pageData.starred, notionPageId: pageData.notionPageId, error: error.message ? error.message : 'Error saving to Notion.' }

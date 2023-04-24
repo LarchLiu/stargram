@@ -1,4 +1,6 @@
-async function fetchGet<T>(url: string, headers?: HeadersInit, query?: Record<string, string>): Promise<T> {
+import type { NotThrowError } from '../types'
+
+async function fetchGet<T>(url: string, headers?: HeadersInit, query?: Record<string, string>, throwError = true): Promise<T | NotThrowError> {
   try {
     const reqOpt: RequestInit = {
       method: 'GET',
@@ -16,6 +18,13 @@ async function fetchGet<T>(url: string, headers?: HeadersInit, query?: Record<st
         const json = await res.json()
         message = json.error?.message || json.message || res.statusText
       }
+      else if (type && type.includes('text/')) {
+        const text = await res.text()
+        message = text
+      }
+      if (!throwError)
+        return { error: message }
+
       throw new Error(message)
     }
 
@@ -32,10 +41,10 @@ async function fetchGet<T>(url: string, headers?: HeadersInit, query?: Record<st
   }
 }
 
-async function fetchPost<T>(url: string, headers?: HeadersInit, body?: Record<string, any>): Promise<T> {
+async function fetchPost<T>(url: string, headers?: HeadersInit, body?: Record<string, any>, patch?: boolean, throwError = true): Promise<T | NotThrowError> {
   try {
     const reqOpt: RequestInit = {
-      method: 'POST',
+      method: patch ? 'PATCH' : 'POST',
       headers,
       body: body ? JSON.stringify(body) : undefined,
     }
@@ -48,6 +57,13 @@ async function fetchPost<T>(url: string, headers?: HeadersInit, body?: Record<st
         const json = await res.json()
         message = json.error?.message || json.message || res.statusText
       }
+      else if (type && type.includes('text/')) {
+        const text = await res.text()
+        message = text
+      }
+      if (!throwError)
+        return { error: message }
+
       throw new Error(message)
     }
 

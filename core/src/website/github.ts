@@ -1,4 +1,4 @@
-import type { FetchError, FetchWebsite, GithubMeta } from '../types'
+import type { FetchError, FetchWebsite, GithubMeta, NotThrowError } from '../types'
 import { GITHUB_HOST, GITHUB_RAW_DOMAIN, GITHUB_REPOS_API, PICTURE_BED_URL, USER_AGENT } from '../const'
 import { fetchGet } from '../utils'
 
@@ -17,7 +17,8 @@ async function getGithubInfo(url: string, picBed?: string, header: Record<string
       // fetch languages
       const languagesJson = await fetchGet(`${GITHUB_REPOS_API}/${githubPath}/languages`, header)
       // fetch readme
-      const readme = await fetchGet<string>(`${GITHUB_RAW_DOMAIN}/${githubPath}/${repoJson.default_branch}/README.md`, header)
+      const readmeRes = await fetchGet<string>(`${GITHUB_RAW_DOMAIN}/${githubPath}/${repoJson.default_branch}/README.md`, header, undefined, false)
+      const readme = (readmeRes as NotThrowError).error ? '' : readmeRes
 
       const description = repoJson.description ? repoJson.description.replace(/:\w+:/g, ' ') : ''
       title = repoJson.full_name + (description ? (`: ${description}`) : '')

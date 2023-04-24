@@ -2,11 +2,15 @@ interface WebsiteInfo {
   title: string
   url: string
   content: string
-  meta?: GithubMeta
+  meta?: WebsiteMeta
 }
 
-interface GithubMeta {
+interface WebsiteMeta {
   host: string
+  website: string
+}
+
+interface GithubMeta extends WebsiteMeta {
   website: 'Github'
   tags?: string[]
   languages?: string[]
@@ -14,6 +18,10 @@ interface GithubMeta {
 }
 
 type FetchError = string
+
+interface NotThrowError {
+  error: FetchError
+}
 
 interface FetchWebsite {
   data?: WebsiteInfo
@@ -33,14 +41,27 @@ interface FetchOpenai {
 
 interface OpenaiSummarize {
   summary: string
-  category: string[]
+  categories: string[]
 }
 
 interface NotionPage {
+  databaseId: string
   title: string
   summary: string
   url: string
+  categories: string[]
+  status: 'Starred' | 'Unstarred'
+  meta?: WebsiteMeta
+}
 
+interface SavedNotion {
+  starred: boolean
+  notionPageId: string
+}
+
+interface FetchNotion {
+  data?: SavedNotion
+  error?: FetchError
 }
 
 export type {
@@ -49,7 +70,9 @@ export type {
   WebsiteLoader,
   FetchWebsite,
   FetchError,
+  NotThrowError,
   FetchOpenai,
   OpenaiSummarize,
   NotionPage,
+  FetchNotion,
 }
