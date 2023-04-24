@@ -1,6 +1,7 @@
 {
   "name": "picture-bed",
   "version": "0.0.1",
+  "private": true,
   "description": "Manage all your starred pages.",
   "author": "Alex Liu <larch.liu@gmail.com>",
   "license": "MIT",
@@ -12,7 +13,6 @@
   "bugs": {
     "url": "https://github.com/LarchLiu/star-nexus/issues"
   },
-  "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
