@@ -1,4 +1,5 @@
-import { GITHUB_HOST, SUMMARIZE_PROMPT } from '~/const'
+import { summarizeContent } from '@starnexus/core'
+import { GITHUB_HOST } from '~/const'
 import type { ContentRequest, ListenerSendResponse, PageData, SwResponse } from '~/types'
 
 async function sendSavedStatus(res: SwResponse) {
@@ -65,7 +66,6 @@ chrome.runtime.onMessage.addListener(async (request: ContentRequest, sender, sen
 async function saveProcess(pageData: PageData): Promise<SwResponse> {
   try {
     let summary = ''
-    let category = ''
     let catOpt = [{
       name: 'Others',
     }]
@@ -82,53 +82,12 @@ async function saveProcess(pageData: PageData): Promise<SwResponse> {
     }
 
     if (openaiApiKey) {
-      const openaiRes = await fetch('https://api.openai.com/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${openaiApiKey}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          model: 'gpt-3.5-turbo',
-          messages: [
-            {
-              role: 'system',
-              content: SUMMARIZE_PROMPT,
-            },
-            {
-              role: 'user',
-              content: pageData.content,
-            },
-          ],
-          max_tokens: 400,
-          temperature: 0.5,
-        }),
-      })
-      if (openaiRes.status !== 200) {
-        const res = await openaiRes.json()
-        let error = 'Openai API error: '
-        if (res.error && res.error.message)
-          error += res.error.message
-        else
-          error += `${openaiRes.status.toString()}`
+      const { data, error } = await summarizeContent(openaiApiKey, pageData)
+      if (error)
         return { tabId: pageData.tabId, starred: pageData.starred, notionPageId: pageData.notionPageId, error }
-      }
 
-      const openaiData = await openaiRes.json()
-      let text = openaiData.choices[0].message.content as string
-      text = text.replace(/\n/g, '')
-      const regexSummery = /Summary:(.*)Categories:/g
-      const regexCategory = /Categories:(.*)$/g
-      const summaryArr = regexSummery.exec(text)
-      const categoryArr = regexCategory.exec(text)
-      if (summaryArr)
-        summary = summaryArr[1].trim()
-
-      if (categoryArr)
-        category = categoryArr[1].trim()
-
-      const catArry = (category || 'Others').split(',')
-      catOpt = catArry.map((item) => {
+      summary = data.summary
+      catOpt = data.category.map((item) => {
         if (item.endsWith('.'))
           item = item.slice(0, -1)
         return {

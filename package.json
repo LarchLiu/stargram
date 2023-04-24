@@ -20,7 +20,7 @@
   "scripts": {
     "dev:core": "turbo run dev --filter=@starnexus/core",
     "dev:docs": "turbo run dev --filter=docs",
-    "dev:ext": "turbo run dev --filter=chrome-extension...",
+    "dev:ext": "turbo run dev --filter=chrome-extension",
     "dev:pic": "turbo run dev --filter=picture-bed",
     "build": "turbo run build",
     "build:core": "turbo run build --filter=@starnexus/core",
