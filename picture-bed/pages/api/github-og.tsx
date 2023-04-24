@@ -41,7 +41,7 @@ export default async function handler(req: NextRequest) {
     lang="zh-CN"
     style={{
       fontSize: 60,
-      background: '#f6f6f6',
+      background: 'white',
       width: '100%',
       height: '100%',
       flexDirection: 'column',
