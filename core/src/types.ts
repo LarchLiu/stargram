@@ -26,10 +26,30 @@ interface WebsiteLoader {
   }
 }
 
+interface FetchOpenai {
+  data?: OpenaiSummarize
+  error?: FetchError
+}
+
+interface OpenaiSummarize {
+  summary: string
+  category: string[]
+}
+
+interface NotionPage {
+  title: string
+  summary: string
+  url: string
+
+}
+
 export type {
   WebsiteInfo,
   GithubMeta,
   WebsiteLoader,
   FetchWebsite,
   FetchError,
+  FetchOpenai,
+  OpenaiSummarize,
+  NotionPage,
 }

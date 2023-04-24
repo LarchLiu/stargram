@@ -1,8 +1,8 @@
-import type { FetchError, FetchWebsite, GithubMeta } from '~/types'
-import { GITHUB_HOST, GITHUB_RAW_DOMAIN, GITHUB_REPOS_API, PICTURE_BED_URL } from '~/const'
-import { fetchGet } from '~/utils'
+import type { FetchError, FetchWebsite, GithubMeta } from '../types'
+import { GITHUB_HOST, GITHUB_RAW_DOMAIN, GITHUB_REPOS_API, PICTURE_BED_URL, USER_AGENT } from '../const'
+import { fetchGet } from '../utils'
 
-async function getGithubInfo(url: string, picBed?: string, header: Record<string, string> = {}): Promise<FetchWebsite> {
+async function getGithubInfo(url: string, picBed?: string, header: Record<string, string> = { 'User-Agent': USER_AGENT }): Promise<FetchWebsite> {
   let title = ''
   let content = ''
   const githubMeta: GithubMeta = { host: GITHUB_HOST, website: 'Github' }
@@ -45,12 +45,12 @@ async function getGithubInfo(url: string, picBed?: string, header: Record<string
       }
     }
     else {
-      return { error: 'Not supported website.' }
+      return { error: 'Github error: Not supported website.' }
     }
     return { data: { title, url, content, meta: githubMeta } }
   }
   catch (error) {
-    return { error: error as FetchError }
+    return { error: `Github error: ${error as FetchError}` }
   }
 }
 

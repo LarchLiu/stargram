@@ -1,15 +1,55 @@
-import { CONTENT_TYPE } from '~/const'
-
-async function fetchGet<T>(url: string, header: Record<string, string> = { 'User-Agent': CONTENT_TYPE }, query: Record<string, string> = {}): Promise<T> {
-  if (query && Object.keys(query).length)
-    url += `?${new URLSearchParams(query).toString()}`
+async function fetchGet<T>(url: string, headers?: HeadersInit, query?: Record<string, string>): Promise<T> {
   try {
-    const res = await fetch(url, {
+    const reqOpt: RequestInit = {
       method: 'GET',
-      headers: header,
-    })
-    if (!res.ok)
-      throw new Error(res.statusText)
+      headers,
+    }
+
+    if (query && Object.keys(query).length)
+      url += `?${new URLSearchParams(query).toString()}`
+
+    const res = await fetch(url, reqOpt)
+    if (!res.ok) {
+      let message = res.statusText
+      const type = res.headers.get('content-type')
+      if (type && type.includes('application/json')) {
+        const json = await res.json()
+        message = json.error?.message || json.message || res.statusText
+      }
+      throw new Error(message)
+    }
+
+    let data: any = res
+    const type = res.headers.get('content-type')
+    if (type && type.includes('application/json'))
+      data = await res.json()
+    else if (type && type.includes('text/'))
+      data = await res.text()
+    return data as T
+  }
+  catch (err: any) {
+    throw new Error(err.message)
+  }
+}
+
+async function fetchPost<T>(url: string, headers?: HeadersInit, body?: Record<string, any>): Promise<T> {
+  try {
+    const reqOpt: RequestInit = {
+      method: 'POST',
+      headers,
+      body: body ? JSON.stringify(body) : undefined,
+    }
+
+    const res = await fetch(url, reqOpt)
+    if (!res.ok) {
+      let message = res.statusText
+      const type = res.headers.get('content-type')
+      if (type && type.includes('application/json')) {
+        const json = await res.json()
+        message = json.error?.message || json.message || res.statusText
+      }
+      throw new Error(message)
+    }
 
     let data: any = res
     const type = res.headers.get('content-type')
@@ -35,5 +75,6 @@ function getHost(url: string) {
 
 export {
   fetchGet,
+  fetchPost,
   getHost,
 }
