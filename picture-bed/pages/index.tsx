@@ -1,5 +1,4 @@
 import Head from 'next/head'
-import { Analytics } from '@vercel/analytics/react'
 
 export default function Page() {
   return (
@@ -20,7 +19,6 @@ export default function Page() {
           }
         />
       </Head>
-      <Analytics />
       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
         <h1>StarNexus</h1>
       </div>
