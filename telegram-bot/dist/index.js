@@ -41,9 +41,9 @@ var ENV = {
   // 检查更新的分支
   UPDATE_BRANCH: "main",
   // 当前版本
-  BUILD_TIMESTAMP: 1682312953,
+  BUILD_TIMESTAMP: 1682389089,
   // 当前版本 commit id
-  BUILD_VERSION: "1c01186",
+  BUILD_VERSION: "ddb18d6",
   /**
   * @type {I18n}
   */
@@ -448,7 +448,7 @@ async function resourceLoader(key, url) {
       headers: {
         "User-Agent": CONST.USER_AGENT
       }
-    }).then((x2) => x2.text());
+    }).then((x) => x.text());
     await DATABASE.put(key, bpe);
     return bpe;
   } catch (e) {
@@ -458,26 +458,26 @@ async function resourceLoader(key, url) {
 }
 async function gpt3TokensCounter() {
   const repo = "https://raw.githubusercontent.com/tbxark-archive/GPT-3-Encoder/master";
-  const encoder = await resourceLoader("encoder_raw_file", `${repo}/encoder.json`).then((x2) => JSON.parse(x2));
+  const encoder = await resourceLoader("encoder_raw_file", `${repo}/encoder.json`).then((x) => JSON.parse(x));
   const bpe_file = await resourceLoader("bpe_raw_file", `${repo}/vocab.bpe`);
-  const range = (x2, y) => {
-    const res = Array.from(Array(y).keys()).slice(x2);
+  const range = (x, y) => {
+    const res = Array.from(Array(y).keys()).slice(x);
     return res;
   };
-  const ord = (x2) => {
-    return x2.charCodeAt(0);
+  const ord = (x) => {
+    return x.charCodeAt(0);
   };
-  const chr = (x2) => {
-    return String.fromCharCode(x2);
+  const chr = (x) => {
+    return String.fromCharCode(x);
   };
   const textEncoder = new TextEncoder("utf-8");
   const encodeStr = (str) => {
-    return Array.from(textEncoder.encode(str)).map((x2) => x2.toString());
+    return Array.from(textEncoder.encode(str)).map((x) => x.toString());
   };
-  const dictZip = (x2, y) => {
+  const dictZip = (x, y) => {
     const result = {};
-    x2.forEach((_, i) => {
-      result[x2[i]] = y[i];
+    x.forEach((_, i) => {
+      result[x[i]] = y[i];
     });
     return result;
   };
@@ -485,14 +485,14 @@ async function gpt3TokensCounter() {
     const bs = range(ord("!"), ord("~") + 1).concat(range(ord("\xA1"), ord("\xAC") + 1), range(ord("\xAE"), ord("\xFF") + 1));
     let cs = bs.slice();
     let n = 0;
-    for (let b = 0; b < 2 ** 8; b++) {
-      if (!bs.includes(b)) {
-        bs.push(b);
+    for (let b2 = 0; b2 < 2 ** 8; b2++) {
+      if (!bs.includes(b2)) {
+        bs.push(b2);
         cs.push(2 ** 8 + n);
         n = n + 1;
       }
     }
-    cs = cs.map((x2) => chr(x2));
+    cs = cs.map((x) => chr(x));
     const result = {};
     bs.forEach((_, i) => {
       result[bs[i]] = cs[i];
@@ -511,19 +511,19 @@ async function gpt3TokensCounter() {
   }
   const pat = /'s|'t|'re|'ve|'m|'ll|'d| ?\p{L}+| ?\p{N}+| ?[^\s\p{L}\p{N}]+|\s+(?!\S)|\s+/gu;
   const decoder = {};
-  Object.keys(encoder).forEach((x2) => {
-    decoder[encoder[x2]] = x2;
+  Object.keys(encoder).forEach((x) => {
+    decoder[encoder[x]] = x;
   });
   const lines = bpe_file.split("\n");
-  const bpe_merges = lines.slice(1, lines.length - 1).map((x2) => {
-    return x2.split(/(\s+)/).filter((e) => {
+  const bpe_merges = lines.slice(1, lines.length - 1).map((x) => {
+    return x.split(/(\s+)/).filter((e) => {
       return e.trim().length > 0;
     });
   });
   const byte_encoder = bytes_to_unicode();
   const byte_decoder = {};
-  Object.keys(byte_encoder).forEach((x2) => {
-    byte_decoder[byte_encoder[x2]] = x2;
+  Object.keys(byte_encoder).forEach((x) => {
+    byte_decoder[byte_encoder[x]] = x;
   });
   const bpe_ranks = dictZip(bpe_merges, range(0, bpe_merges.length));
   const cache = /* @__PURE__ */ new Map();
@@ -541,8 +541,8 @@ async function gpt3TokensCounter() {
         minPairs[isNaN(rank) ? 1e11 : rank] = pair;
       });
       const bigram = minPairs[Math.min(...Object.keys(minPairs).map(
-        (x2) => {
-          return parseInt(x2);
+        (x) => {
+          return parseInt(x);
         }
       ))];
       if (!(bigram in bpe_ranks))
@@ -579,12 +579,12 @@ async function gpt3TokensCounter() {
   }
   return function tokenCount(text) {
     let tokensCount = 0;
-    const matches = Array.from(text.matchAll(pat)).map((x2) => x2[0]);
+    const matches = Array.from(text.matchAll(pat)).map((x) => x[0]);
     for (let token of matches) {
-      token = encodeStr(token).map((x2) => {
-        return byte_encoder[x2];
+      token = encodeStr(token).map((x) => {
+        return byte_encoder[x];
       }).join("");
-      const new_tokens = bpe(token).split(" ").map((x2) => encoder[x2]);
+      const new_tokens = bpe(token).split(" ").map((x) => encoder[x]);
       tokensCount += new_tokens.length;
     }
     return tokensCount;
@@ -1089,7 +1089,7 @@ async function commandUsage(message, command, subcommand, context) {
   let text = ENV.I18N.command.usage.current_usage;
   if (usage?.tokens) {
     const { tokens } = usage;
-    const sortedChats = Object.keys(tokens.chats || {}).sort((a, b) => tokens.chats[b] - tokens.chats[a]);
+    const sortedChats = Object.keys(tokens.chats || {}).sort((a, b2) => tokens.chats[b2] - tokens.chats[a]);
     text += ENV.I18N.command.usage.total_usage(tokens.total);
     for (let i = 0; i < Math.min(sortedChats.length, 30); i++)
       text += `
@@ -1241,91 +1241,97 @@ function commandsDocument() {
 }
 
 // ../core/dist/index.js
-async function l(o, i, s) {
-  var a;
+async function f(i, e, a, o = true) {
+  var u;
   try {
-    const n = {
+    const c = {
       method: "GET",
-      headers: i
+      headers: e
     };
-    s && Object.keys(s).length && (o += `?${new URLSearchParams(s).toString()}`);
-    const t = await fetch(o, n);
-    if (!t.ok) {
-      let c = t.statusText;
-      const e = t.headers.get("content-type");
-      if (e && e.includes("application/json")) {
-        const g = await t.json();
-        c = ((a = g.error) == null ? void 0 : a.message) || g.message || t.statusText;
-      }
-      throw new Error(c);
+    a && Object.keys(a).length && (i += `?${new URLSearchParams(a).toString()}`);
+    const s = await fetch(i, c);
+    if (!s.ok) {
+      let t = s.statusText;
+      const r = s.headers.get("content-type");
+      if (r && r.includes("application/json")) {
+        const p = await s.json();
+        t = ((u = p.error) == null ? void 0 : u.message) || p.message || s.statusText;
+      } else
+        r && r.includes("text/") && (t = await s.text());
+      if (!o)
+        return { error: t };
+      throw new Error(t);
     }
-    let u = t;
-    const r = t.headers.get("content-type");
-    return r && r.includes("application/json") ? u = await t.json() : r && r.includes("text/") && (u = await t.text()), u;
-  } catch (n) {
-    throw new Error(n.message);
+    let n = s;
+    const l = s.headers.get("content-type");
+    return l && l.includes("application/json") ? n = await s.json() : l && l.includes("text/") && (n = await s.text()), n;
+  } catch (c) {
+    throw new Error(c.message);
   }
 }
-async function $(o, i, s) {
-  var a;
+async function g(i, e, a, o, u = true) {
+  var c;
   try {
-    const n = {
-      method: "POST",
-      headers: i,
-      body: s ? JSON.stringify(s) : void 0
-    }, t = await fetch(o, n);
-    if (!t.ok) {
-      let c = t.statusText;
-      const e = t.headers.get("content-type");
-      if (e && e.includes("application/json")) {
-        const g = await t.json();
-        c = ((a = g.error) == null ? void 0 : a.message) || g.message || t.statusText;
-      }
-      throw new Error(c);
+    const s = {
+      method: o ? "PATCH" : "POST",
+      headers: e,
+      body: a ? JSON.stringify(a) : void 0
+    }, n = await fetch(i, s);
+    if (!n.ok) {
+      let r = n.statusText;
+      const p = n.headers.get("content-type");
+      if (p && p.includes("application/json")) {
+        const m = await n.json();
+        r = ((c = m.error) == null ? void 0 : c.message) || m.message || n.statusText;
+      } else
+        p && p.includes("text/") && (r = await n.text());
+      if (!u)
+        return { error: r };
+      throw new Error(r);
     }
-    let u = t;
-    const r = t.headers.get("content-type");
-    return r && r.includes("application/json") ? u = await t.json() : r && r.includes("text/") && (u = await t.text()), u;
-  } catch (n) {
-    throw new Error(n.message);
+    let l = n;
+    const t = n.headers.get("content-type");
+    return t && t.includes("application/json") ? l = await n.json() : t && t.includes("text/") && (l = await n.text()), l;
+  } catch (s) {
+    throw new Error(s.message);
   }
 }
-function T(o) {
-  const i = o.match(/https?:\/\/([^/]+)\//i);
-  let s = "";
-  return i && i[1] && (s = i[1]), s;
+function T(i) {
+  const e = i.match(/https?:\/\/([^/]+)\//i);
+  let a = "";
+  return e && e[1] && (a = e[1]), a;
 }
-async function x(o, i, s = { "User-Agent": S }) {
-  let a = "", n = "";
-  const t = { host: A, website: "Github" }, r = /https:\/\/github.com\/([^\/]*\/[^\/]*)/g.exec(o), c = r ? r[1] : "";
+async function A(i, e, a = { "User-Agent": U }) {
+  let o = "", u = "";
+  const c = { host: P, website: "Github" }, n = /https:\/\/github.com\/([^\/]*\/[^\/]*)/g.exec(i), l = n ? n[1] : "";
   try {
-    if (c) {
-      const e = await l(`${f}/${c}`, s), g = await l(`${f}/${c}/languages`, s), y = await l(`${P}/${c}/${e.default_branch}/README.md`, s), h = e.description ? e.description.replace(/:\w+:/g, " ") : "";
-      a = e.full_name + (h ? `: ${h}` : ""), o = e.html_url;
-      const m = e.topics;
-      m && m.length > 0 && (t.tags = m), g && (t.languages = Object.keys(g));
-      const p = i || O;
-      if (p) {
-        const w = e.owner.login, b = e.name, _ = `${p}?username=${w}&reponame=${b}&stargazers_count=${e.stargazers_count}&language=${e.language}&issues=${e.open_issues_count}&forks=${e.forks_count}&description=${h}`;
-        t.socialPreview = encodeURI(_);
+    if (l) {
+      const t = await f(`${w}/${l}`, a), r = await f(`${w}/${l}/languages`, a), p = await f(`${S}/${l}/${t.default_branch}/README.md`, a, void 0, false), m = p.error ? "" : p, h = t.description ? t.description.replace(/:\w+:/g, " ") : "";
+      o = t.full_name + (h ? `: ${h}` : ""), i = t.html_url;
+      const d = t.topics;
+      d && d.length > 0 && (c.tags = d), r && (c.languages = Object.keys(r));
+      const y = e || j;
+      if (y) {
+        const $ = t.owner.login, x = t.name, _ = `${y}?username=${$}&reponame=${x}&stargazers_count=${t.stargazers_count}&language=${t.language}&issues=${t.open_issues_count}&forks=${t.forks_count}&description=${h}`;
+        c.socialPreview = encodeURI(_);
       }
-      n = `${a}
+      u = `${o}
 
-${y}`, n.length > 1e3 && (n = n.substring(0, 1e3), n += "...");
+${m}`, u.length > 1e3 && (u = u.substring(0, 1e3), u += "...");
     } else
       return { error: "Github error: Not supported website." };
-    return { data: { title: a, url: o, content: n, meta: t } };
-  } catch (e) {
-    return { error: `Github error: ${e}` };
+    return { data: { title: o, url: i, content: u, meta: c } };
+  } catch (t) {
+    return { error: `Github error: ${t}` };
   }
 }
-var A = "github.com";
+var P = "github.com";
 var I = "https://api.github.com";
-var f = `${I}/repos`;
-var P = "https://raw.githubusercontent.com";
-var O = "";
-var E = "https://api.openai.com/v1/chat/completions";
-var G = `Summarize this Document first and then Categorize it. The Document is the *Markdown* format. In summary within 200 words. Categories with less than 5 items. Category names should be divided by a comma. Return the summary first and then the categories like this:
+var w = `${I}/repos`;
+var S = "https://raw.githubusercontent.com";
+var j = "";
+var O = "https://api.openai.com/v1/chat/completions";
+var C = `Summarize this Document first and then Categorize it. The Document is the *Markdown* format. In summary within 200 words. Categories with less than 5 items. Category names should be divided by a comma. Return the summary first and then the categories like this:
 
 Summary: my summary.
 
@@ -1334,23 +1340,23 @@ Categories: XXX, YYY
 The Document is: 
 
 `;
-var S = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.2 Safari/605.1.15";
-var d = {
+var U = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.2 Safari/605.1.15";
+var b = {
   "github.com": {
-    loader: x
+    loader: A
   }
 };
-async function j(o, i, s) {
-  let a = {};
-  const n = T(o);
-  return d[n] && (a = await d[n].loader(o, i, s)), a;
+async function k(i, e, a) {
+  let o = {};
+  const u = T(i);
+  return b[u] && (o = await b[u].loader(i, e, a)), o;
 }
-async function M(o, i) {
+async function R(i, e) {
   try {
-    let s = "", a = "", t = (await $(
-      E,
+    let a = "", o = "", c = (await g(
+      O,
       {
-        Authorization: `Bearer ${o}`,
+        Authorization: `Bearer ${i}`,
         "Content-Type": "application/json"
       },
       {
@@ -1358,24 +1364,170 @@ async function M(o, i) {
         messages: [
           {
             role: "system",
-            content: G
+            content: C
           },
           {
             role: "user",
-            content: i.content
+            content: e.content
           }
         ],
         max_tokens: 400,
         temperature: 0.5
       }
     )).choices[0].message.content;
-    t = t.replace(/\n/g, "");
-    const u = /Summary:(.*)Categories:/g, r = /Categories:(.*)$/g, c = u.exec(t), e = r.exec(t);
-    c && (s = c[1].trim()), e && (a = e[1].trim());
-    const g = (a || "Others").split(",");
-    return { data: { summary: s, category: g } };
-  } catch (s) {
-    return { error: `Openai API error: ${s}` };
+    c = c.replace(/\n/g, "");
+    const s = /Summary:(.*)Categories:/g, n = /Categories:(.*)$/g, l = s.exec(c), t = n.exec(c);
+    l && (a = l[1].trim()), t && (o = t[1].trim());
+    const r = (o || "Others").split(",");
+    return { data: { summary: a, categories: r } };
+  } catch (a) {
+    return { error: `Openai API error: ${a}` };
+  }
+}
+async function E(i, e) {
+  try {
+    let a = [{
+      name: "Others"
+    }];
+    a = e.categories.map((r) => (r.endsWith(".") && (r = r.slice(0, -1)), {
+      name: r
+    }));
+    const o = {
+      parent: {
+        database_id: e.databaseId
+      },
+      properties: {
+        Title: {
+          title: [
+            {
+              text: {
+                content: e.title
+              }
+            }
+          ]
+        },
+        Summary: {
+          rich_text: [
+            {
+              text: {
+                content: e.summary
+              }
+            }
+          ]
+        },
+        URL: {
+          url: e.url
+        },
+        Categories: {
+          multi_select: a
+        },
+        Status: {
+          select: {
+            name: "Starred"
+          }
+        }
+      }
+    };
+    let u = "";
+    if (e.meta && Object.keys(e.meta).length > 0 && e.meta.host === "github.com") {
+      const r = e.meta;
+      if (o.properties = {
+        ...o.properties,
+        Website: {
+          select: {
+            name: e.meta.website
+          }
+        }
+      }, r.languages) {
+        const p = r.languages.map((m) => ({
+          name: m
+        }));
+        o.properties = {
+          ...o.properties,
+          Languages: {
+            multi_select: p
+          }
+        };
+      }
+      if (r.tags) {
+        const p = r.tags.map((m) => ({
+          name: m
+        }));
+        o.properties = {
+          ...o.properties,
+          Tags: {
+            multi_select: p
+          }
+        };
+      }
+      r.socialPreview && (u = r.socialPreview);
+    }
+    const c = await g(
+      `https://api.notion.com/v1/databases/${e.databaseId}/query`,
+      {
+        "Content-Type": "application/json",
+        "Notion-Version": "2022-06-28",
+        Authorization: `Bearer ${i}`
+      },
+      {
+        filter: {
+          property: "URL",
+          rich_text: {
+            contains: e.url
+          }
+        }
+      }
+    );
+    let s = "", n = false;
+    if (c.results.length > 0 && (c.results[0].properties.Status.select.name === "Starred" && (n = true), s = c.results[0].id), s)
+      return o.properties = {
+        ...o.properties,
+        Status: {
+          select: {
+            name: n ? "Unstarred" : "Starred"
+          }
+        }
+      }, await g(
+        `https://api.notion.com/v1/pages/${s}`,
+        {
+          Authorization: `Bearer ${i}`,
+          "Notion-Version": "2022-06-28",
+          "Content-Type": "application/json"
+        },
+        o,
+        true
+      ), { data: { starred: !n, notionPageId: s } };
+    if (s = (await g(
+      "https://api.notion.com/v1/pages",
+      {
+        "Content-Type": "application/json",
+        "Notion-Version": "2022-06-28",
+        Authorization: `Bearer ${i}`
+      },
+      o
+    )).id, !u)
+      return { data: { starred: !n, notionPageId: s } };
+    const t = {
+      object: "block",
+      type: "embed",
+      embed: {
+        url: u
+      }
+    };
+    return await g(
+      `https://api.notion.com/v1/blocks/${s}/children`,
+      {
+        "Content-Type": "application/json",
+        "Notion-Version": "2022-06-28",
+        Authorization: `Bearer ${i}`
+      },
+      {
+        children: [t]
+      },
+      true
+    ), { data: { starred: !n, notionPageId: s } };
+  } catch (a) {
+    return { error: `Notion API error: ${a}` };
   }
 }
 
@@ -1387,174 +1539,44 @@ async function getWebsiteInfoFromText(text) {
   if (match) {
     for (let i = 0; i < match.length; i++) {
       const url = match[i];
-      const info = await j(url, ENV.PICTURE_BED_URL);
+      const info = await k(url, ENV.PICTURE_BED_URL);
       infoArr.push(info);
     }
   }
   return infoArr;
 }
-async function saveToNotion(pageData) {
-  try {
-    let summary = "";
-    let catOpt = [{
-      name: "Others"
-    }];
-    const notionApiKey = ENV.NOTION_API_KEY;
-    const databaseId = ENV.NOTION_DATABASE_ID;
-    const openaiApiKey = ENV.API_KEY;
-    if (!notionApiKey || !databaseId) {
-      const error = { error: "Missing Notion API key or Database ID in settings." };
-      return error;
-    }
-    if (openaiApiKey) {
-      const { data, error } = await M(openaiApiKey, pageData);
-      if (error)
-        return { error };
-      summary = data.summary;
-      catOpt = data.category.map((item) => {
-        if (item.endsWith("."))
-          item = item.slice(0, -1);
-        return {
-          name: item
-        };
-      });
-    } else {
-      summary = pageData.content;
-    }
-    const body = {
-      parent: {
-        database_id: databaseId
-      },
-      properties: {
-        Title: {
-          title: [
-            {
-              text: {
-                content: pageData.title
-              }
-            }
-          ]
-        },
-        Summary: {
-          rich_text: [
-            {
-              text: {
-                content: summary
-              }
-            }
-          ]
-        },
-        URL: {
-          url: pageData.url
-        },
-        Categories: {
-          multi_select: catOpt
-        },
-        Status: {
-          select: {
-            name: "Starred"
-          }
-        }
-      }
-    };
-    let imageUrl = "";
-    if (Object.keys(pageData.meta).length > 0 && pageData.meta.host === "github.com") {
-      const github = pageData.meta;
-      body.properties = {
-        ...body.properties,
-        Website: {
-          select: {
-            name: pageData.meta.website
-          }
-        }
-      };
-      if (github.languages) {
-        const languages = github.languages.map((lang) => {
-          return {
-            name: lang
-          };
-        });
-        body.properties = {
-          ...body.properties,
-          Languages: {
-            multi_select: languages
-          }
-        };
-      }
-      if (github.tags) {
-        const tags = github.tags.map((tag) => {
-          return {
-            name: tag
-          };
-        });
-        body.properties = {
-          ...body.properties,
-          Tags: {
-            multi_select: tags
-          }
-        };
-      }
-      if (github.socialPreview)
-        imageUrl = github.socialPreview;
-    }
-    const response = await fetch("https://api.notion.com/v1/pages", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Notion-Version": "2022-06-28",
-        "Authorization": `Bearer ${notionApiKey}`
-      },
-      body: JSON.stringify(body)
-    });
-    if (response.status !== 200) {
-      const res = await response.json();
-      let error = "Notion API error: ";
-      if (res.message)
-        error += res.message;
-      else
-        error += `${response.status.toString()} Error creating new page in Notion.`;
-      return { error };
-    } else {
-      const newPageResponse = await response.json();
-      const newPageId = newPageResponse.id;
-      if (!imageUrl)
-        return { message: "success" };
-      const imageBlock = {
-        object: "block",
-        type: "embed",
-        embed: {
-          url: imageUrl
-        }
-      };
-      const addChildResponse = await fetch(
-        `https://api.notion.com/v1/blocks/${newPageId}/children`,
-        {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-            "Notion-Version": "2022-06-28",
-            "Authorization": `Bearer ${notionApiKey}`
-          },
-          body: JSON.stringify({
-            children: [imageBlock]
-          })
-        }
-      );
-      if (addChildResponse.status !== 200) {
-        const res = await response.json();
-        let error = "Notion API error: ";
-        if (res.message)
-          error += res.message;
-        else
-          error += `${response.status.toString()} Error appending child block to Notion page.`;
-        return { error };
-      } else {
-        return { message: "success" };
-      }
-    }
-  } catch (error) {
-    return { error: error.message ? error.message : "Error saving to Notion." };
+async function saveToNotion(websiteInfo) {
+  let summary = "";
+  let categories = ["Others"];
+  const notionApiKey = ENV.NOTION_API_KEY;
+  const databaseId = ENV.NOTION_DATABASE_ID;
+  const openaiApiKey = ENV.API_KEY;
+  if (!notionApiKey || !databaseId) {
+    const error2 = { error: "Missing Notion API key or Database ID in settings." };
+    return error2;
   }
+  if (openaiApiKey) {
+    const { data, error: error2 } = await R(openaiApiKey, websiteInfo);
+    if (error2)
+      return { error: error2 };
+    summary = data.summary;
+    categories = data.categories;
+  } else {
+    summary = websiteInfo.content;
+  }
+  const notionPage = {
+    databaseId,
+    title: websiteInfo.title,
+    summary,
+    url: websiteInfo.url,
+    categories,
+    status: "Starred",
+    meta: websiteInfo.meta
+  };
+  const { error } = await E(notionApiKey, notionPage);
+  if (error)
+    return { error };
+  return { message: "success" };
 }
 
 // src/message.js
