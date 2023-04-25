@@ -64,6 +64,10 @@ interface FetchNotion {
   error?: FetchError
 }
 
+interface SupabasePicBedRes {
+  url: string
+}
+
 export type {
   WebsiteInfo,
   GithubMeta,
@@ -75,4 +79,5 @@ export type {
   OpenaiSummarize,
   NotionPage,
   FetchNotion,
+  SupabasePicBedRes,
 }

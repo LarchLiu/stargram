@@ -1,4 +1,4 @@
-import type { FetchError, FetchWebsite, GithubMeta, NotThrowError } from '../types'
+import type { FetchError, FetchWebsite, GithubMeta, NotThrowError, SupabasePicBedRes } from '../types'
 import { GITHUB_HOST, GITHUB_RAW_DOMAIN, GITHUB_REPOS_API, PICTURE_BED_URL, USER_AGENT } from '../const'
 import { fetchGet } from '../utils'
 
@@ -36,7 +36,8 @@ async function getGithubInfo(url: string, picBed?: string, header: Record<string
         const user = repoJson.owner.login
         const repo = repoJson.name
         const imageUrl = `${imageBaseUrl}?username=${user}&reponame=${repo}&stargazers_count=${repoJson.stargazers_count}&language=${repoJson.language}&issues=${repoJson.open_issues_count}&forks=${repoJson.forks_count}&description=${description}`
-        githubMeta.socialPreview = encodeURI(imageUrl)
+        const imageJson = await fetchGet<SupabasePicBedRes>(imageUrl)
+        githubMeta.socialPreview = (imageJson as SupabasePicBedRes).url
       }
 
       content = `${title}\n\n${readme}`

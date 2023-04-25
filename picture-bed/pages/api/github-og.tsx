@@ -20,7 +20,7 @@ export default async function handler(req: NextRequest) {
       style={{
         fontSize: 60,
         color: 'black',
-        background: '#f6f6f6',
+        background: 'white',
         width: '100%',
         height: '100%',
         flexDirection: 'column',
