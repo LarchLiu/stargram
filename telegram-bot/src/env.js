@@ -49,9 +49,9 @@ export const ENV = {
   // 检查更新的分支
   UPDATE_BRANCH: 'main',
   // 当前版本
-  BUILD_TIMESTAMP: process.env.BUILD_TIMESTAMP || 0,
+  BUILD_TIMESTAMP: import.meta.env.VITE_TIMESTAMP || 0,
   // 当前版本 commit id
-  BUILD_VERSION: process.env.BUILD_VERSION || '',
+  BUILD_VERSION: import.meta.env.VITE_VERSION || '',
 
   /**
  * @type {I18n}
