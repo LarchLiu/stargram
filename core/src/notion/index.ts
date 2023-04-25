@@ -155,9 +155,12 @@ async function saveToNotion(apiKey: string, info: NotionPage): Promise<FetchNoti
 
     const imageBlock = {
       object: 'block',
-      type: 'embed',
-      embed: {
-        url: imageUrl,
+      type: 'image',
+      image: {
+        type: 'external',
+        external: {
+          url: imageUrl,
+        },
       },
     }
 
