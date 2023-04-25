@@ -26,7 +26,7 @@
   ],
   "scripts": {
     "lint": "eslint src",
-    "build": "zx scripts/build.mjs",
+    "build": "zx scripts/pre-build.mjs & vite build & zx scripts/move-file.mjs",
     "debug": "wrangler dev --local",
     "wrangler": "wrangler2",
     "deploy:dist": "wrangler2 publish",

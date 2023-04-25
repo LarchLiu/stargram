@@ -10,9 +10,7 @@ try {
   cd(path.resolve(__dirname, '..'))
   await fs.remove('.env')
   await $`echo 'VITE_TIMESTAMP=${timestamp}\nVITE_VERSION=${commitHash}' > .env`
-  await $`npx vite build`
 
-  cd(path.resolve(__dirname, '../dist'))
   await $`echo ${timestamp} > timestamp`
   await $`echo ${JSON.stringify(buildInfo)} > buildinfo.json`
 }
