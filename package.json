@@ -26,6 +26,7 @@
     "build:core": "turbo run build --filter=@starnexus/core",
     "build:docs": "turbo run build --filter=docs",
     "build:ext": "turbo run build --filter=chrome-extension...",
+    "build:bots": "turbo run build --filter={./bots/*}...",
     "build:tg": "turbo run build --filter=telegram-bot...",
     "build:pic": "turbo run build --filter=picture-bed",
     "lint": "turbo run lint",

@@ -3,4 +3,4 @@ packages:
   - "chrome-extension"
   - "picture-bed"
   - "docs"
-  - "telegram-bot"
+  - "bots/*"
