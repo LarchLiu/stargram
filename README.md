@@ -5,6 +5,5 @@ StarNexus
 <p align="center">
 Manage all your Starred Pages.
 <br>
-<br>
 </p>
 
