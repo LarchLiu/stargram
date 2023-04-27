@@ -7,6 +7,9 @@ export default defineConfig({
       '~/': `${resolve(__dirname, 'src')}/`,
     },
   },
+  define: {
+    'import.meta.vitest': 'undefined',
+  },
   build: {
     cssCodeSplit: false,
     lib: {

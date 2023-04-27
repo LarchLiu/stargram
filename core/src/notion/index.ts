@@ -1,5 +1,6 @@
 import { fetchPost } from '../utils'
 import type { FetchNotion, GithubMeta, NotionPage } from '../types'
+import { GITHUB_DOMAIN, NOTION_API_URL } from '../const'
 
 async function saveToNotion(apiKey: string, info: NotionPage): Promise<FetchNotion> {
   try {
@@ -53,7 +54,7 @@ async function saveToNotion(apiKey: string, info: NotionPage): Promise<FetchNoti
       },
     }
     let imageUrl = ''
-    if (info.meta && Object.keys(info.meta).length > 0 && info.meta.host === 'github.com') {
+    if (info.meta && Object.keys(info.meta).length > 0 && info.meta.domain === GITHUB_DOMAIN) {
       const github = info.meta as GithubMeta
       body.properties = {
         ...body.properties,
@@ -94,7 +95,7 @@ async function saveToNotion(apiKey: string, info: NotionPage): Promise<FetchNoti
     }
 
     // check notion page exists
-    const checkData = await fetchPost<any>(`https://api.notion.com/v1/databases/${info.databaseId}/query`,
+    const checkData = await fetchPost<any>(`${NOTION_API_URL}/databases/${info.databaseId}/query`,
       {
         'Content-Type': 'application/json',
         'Notion-Version': '2022-06-28',
@@ -128,7 +129,7 @@ async function saveToNotion(apiKey: string, info: NotionPage): Promise<FetchNoti
         },
       }
       // update notion page info
-      await fetchPost(`https://api.notion.com/v1/pages/${notionPageId}`,
+      await fetchPost(`${NOTION_API_URL}/pages/${notionPageId}`,
         {
           'Authorization': `Bearer ${apiKey}`,
           'Notion-Version': '2022-06-28',
@@ -140,7 +141,7 @@ async function saveToNotion(apiKey: string, info: NotionPage): Promise<FetchNoti
     }
 
     // create notion page
-    const newPageResponse = await fetchPost<any>('https://api.notion.com/v1/pages',
+    const newPageResponse = await fetchPost<any>(`${NOTION_API_URL}/pages`,
       {
         'Content-Type': 'application/json',
         'Notion-Version': '2022-06-28',
@@ -164,7 +165,7 @@ async function saveToNotion(apiKey: string, info: NotionPage): Promise<FetchNoti
       },
     }
 
-    await fetchPost(`https://api.notion.com/v1/blocks/${notionPageId}/children`,
+    await fetchPost(`${NOTION_API_URL}/blocks/${notionPageId}/children`,
       {
         'Content-Type': 'application/json',
         'Notion-Version': '2022-06-28',

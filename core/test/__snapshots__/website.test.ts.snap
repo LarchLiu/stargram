@@ -1,0 +1,5 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`get website info > github repo path error 1`] = `"Github error: Not supported website."`;
+
+exports[`get website info > website domain error 1`] = `"StarNexus error: Not supported website."`;

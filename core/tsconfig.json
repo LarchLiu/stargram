@@ -18,10 +18,14 @@
     "useDefineForClassFields": true,
     "sourceMap": true,
     "isolatedModules": true,
+    "types": [
+      "vitest",
+      "vitest/importMeta"
+    ],
     "paths": {
       "~/*": ["./src/*"]
     }
   },
-  "include": ["./src/*.ts", "./src/**/*.ts"],
+  "include": ["./src/*.ts", "./src/**/*.ts", "./test/**/*.ts"],
   "exclude": ["dist", "node_modules"]
 }

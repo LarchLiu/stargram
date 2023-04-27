@@ -80,8 +80,8 @@ async function fetchPost<T>(url: string, headers?: HeadersInit, body?: Record<st
   }
 }
 
-function getHost(url: string) {
-  const match = url.match(/https?:\/\/([^/]+)\//i)
+function getDomain(url: string) {
+  const match = url.match(/https?:\/\/([^/]+)\/?/i)
   let host = ''
   if (match && match[1])
     host = match[1]
@@ -92,5 +92,5 @@ function getHost(url: string) {
 export {
   fetchGet,
   fetchPost,
-  getHost,
+  getDomain,
 }

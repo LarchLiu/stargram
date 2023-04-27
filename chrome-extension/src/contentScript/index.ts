@@ -1,5 +1,5 @@
 import { getWebsiteInfo } from '@starnexus/core'
-import { GITHUB_DOMAIN, GITHUB_HOST, starFillSrc, starSrc } from '~/const'
+import { GITHUB_DOMAIN, GITHUB_URL, starFillSrc, starSrc } from '~/const'
 import type { ListenerSendResponse, PageData, SwRequest } from '~/types'
 
 let twinkTimer = null
@@ -13,7 +13,7 @@ function init() {
   if (button)
     return
 
-  if (location.host === GITHUB_HOST) {
+  if (location.host === GITHUB_DOMAIN) {
     const regexGithubPath = /https:\/\/github.com\/([^\/]*\/[^\/]*)/g // match github.com/user/repo/
     const pathMatch = regexGithubPath.exec(location.href)
     const path = pathMatch ? pathMatch[1] : ''
@@ -21,7 +21,7 @@ function init() {
       chrome.runtime.sendMessage(
         {
           action: 'checkStarred',
-          data: { url: `${GITHUB_DOMAIN}/${path}` },
+          data: { url: `${GITHUB_URL}/${path}` },
         },
       )
     }

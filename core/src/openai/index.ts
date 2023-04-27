@@ -7,7 +7,7 @@ async function summarizeContent(apiKey: string, websiteInfo: WebsiteInfo): Promi
     let summary = ''
     let category = ''
 
-    const openaiData = await fetchPost<any>(OPENAI_CHAT_API,
+    const openaiData = await fetchPost<any>(`${OPENAI_CHAT_API}/chat/completions`,
       {
         'Authorization': `Bearer ${apiKey}`,
         'Content-Type': 'application/json',

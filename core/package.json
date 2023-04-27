@@ -30,7 +30,8 @@
     "dev": "pnpm build",
     "build": "vite build && vue-tsc --declaration --emitDeclarationOnly",
     "clear": "rimraf dist",
-    "lint": "eslint src"
+    "lint": "eslint src",
+    "test": "vitest"
   },
   "devDependencies": {
     "vue-tsc": "^1.4.2"

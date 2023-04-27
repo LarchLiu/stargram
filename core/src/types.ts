@@ -6,7 +6,7 @@ interface WebsiteInfo {
 }
 
 interface WebsiteMeta {
-  host: string
+  domain: string
   website: string
 }
 

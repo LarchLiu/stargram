@@ -29,6 +29,8 @@
     "build:bots": "turbo run build --filter={./bots/*}...",
     "build:tg": "turbo run build --filter=telegram-bot...",
     "build:pic": "turbo run build --filter=picture-bed",
+    "test": "turbo run test",
+    "test:core": "turbo run test --filter=@starnexus/core",
     "lint": "turbo run lint",
     "up": "taze major -r",
     "up:w": "taze major -r -w"

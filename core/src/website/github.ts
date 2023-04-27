@@ -1,23 +1,23 @@
 import type { FetchError, FetchWebsite, GithubMeta, NotThrowError, SupabasePicBedRes } from '../types'
-import { GITHUB_HOST, GITHUB_RAW_DOMAIN, GITHUB_REPOS_API, PICTURE_BED_URL, USER_AGENT } from '../const'
+import { GITHUB_DOMAIN, GITHUB_RAW_URL, GITHUB_REPOS_API, PICTURE_BED_URL, USER_AGENT } from '../const'
 import { fetchGet } from '../utils'
 
 async function getGithubInfo(url: string, picBed?: string, header: Record<string, string> = { 'User-Agent': USER_AGENT }): Promise<FetchWebsite> {
   let title = ''
   let content = ''
-  const githubMeta: GithubMeta = { host: GITHUB_HOST, website: 'Github' }
-  const regexGithubPath = /https:\/\/github.com\/([^\/]*\/[^\/]*)/g // match github.com/user/repo/
-  const githubPathMatch = regexGithubPath.exec(url)
-  const githubPath = githubPathMatch ? githubPathMatch[1] : ''
+  const githubMeta: GithubMeta = { domain: GITHUB_DOMAIN, website: 'Github' }
+  const regexGithubRepo = /https:\/\/github.com\/([^\/]*\/[^\/]*)/g // match github.com/user/repo/
+  const githubRepoMatch = regexGithubRepo.exec(url)
+  const githubRepo = githubRepoMatch ? githubRepoMatch[1] : ''
 
   try {
-    if (githubPath) {
+    if (githubRepo) {
       // fetch repo info
-      const repoJson = await fetchGet<any>(`${GITHUB_REPOS_API}/${githubPath}`, header)
+      const repoJson = await fetchGet<any>(`${GITHUB_REPOS_API}/${githubRepo}`, header)
       // fetch languages
-      const languagesJson = await fetchGet(`${GITHUB_REPOS_API}/${githubPath}/languages`, header)
+      const languagesJson = await fetchGet(`${GITHUB_REPOS_API}/${githubRepo}/languages`, header)
       // fetch readme
-      const readmeRes = await fetchGet<string>(`${GITHUB_RAW_DOMAIN}/${githubPath}/${repoJson.default_branch}/README.md`, header, undefined, false)
+      const readmeRes = await fetchGet<string>(`${GITHUB_RAW_URL}/${githubRepo}/${repoJson.default_branch}/README.md`, header, undefined, false)
       const readme = (readmeRes as NotThrowError).error ? '' : readmeRes
 
       const description = repoJson.description ? repoJson.description.replace(/:\w+:/g, ' ') : ''
