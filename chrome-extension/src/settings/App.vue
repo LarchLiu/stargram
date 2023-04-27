@@ -56,7 +56,7 @@ onMounted(() => {
       <input id="notionPageLink" v-model="notionPageLinkInput" class="mb-6 mt-2 w-full" type="text" name="notionPageLink">
 
       <label for="openaiApiKey">{{ t('settings.openaiApiKey') }}</label>
-      <input id="openaiApiKey" v-model="openaiApiKeyInput" class="mt-2 mb-6 w-full" type="text" name="notionPageLink">
+      <input id="openaiApiKey" v-model="openaiApiKeyInput" class="mb-6 mt-2 w-full" type="text" name="notionPageLink">
 
       <label for="pictureBed">{{ t('settings.pictureBed') }}</label>
       <input id="pictureBed" v-model="pictureBedInput" class="mt-2 w-full" type="text" name="notionPageLink">
