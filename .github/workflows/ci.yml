@@ -47,3 +47,8 @@ jobs:
 
       - run: pnpm install
       - run: pnpm run test
+        env:
+          VITE_OPENAI_API_KEY: ${{secrets.VITE_OPENAI_API_KEY}}
+          VITE_NOTION_API_KEY: ${{secrets.VITE_NOTION_API_KEY}}
+          VITE_NOTION_DATABASE_ID: ${{secrets.VITE_NOTION_DATABASE_ID}}
+
