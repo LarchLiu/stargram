@@ -76,7 +76,7 @@ jobs:
       - run: pnpm run build
 
       - name: Save files action
-        uses: LarchLiu/actions-save-files@v1.0.2
+        uses: LarchLiu/actions-save-files@v1
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_branch: publish
