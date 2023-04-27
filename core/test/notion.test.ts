@@ -11,7 +11,6 @@ const webInfo = {
 }
 describe('notion', () => {
   test('save to notion', async () => {
-    console.error((import.meta.env.VITE_NOTION_API_KEY).includes('secret_'))
     const res = await saveToNotion(import.meta.env.VITE_NOTION_API_KEY, webInfo)
     expect(res.data?.notionPageId).toBeDefined()
     expect(res.data?.starred).toBeDefined()
