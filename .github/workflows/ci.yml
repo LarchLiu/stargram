@@ -28,6 +28,7 @@ jobs:
 
   test:
     runs-on: ${{ matrix.os }}
+    environment: ci test
 
     strategy:
       matrix:
