@@ -53,3 +53,33 @@ jobs:
           VITE_NOTION_API_KEY: ${{secrets.VITE_NOTION_API_KEY}}
           VITE_NOTION_DATABASE_ID: ${{secrets.VITE_NOTION_DATABASE_ID}}
 
+  build:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        node-version: [18.x]
+        os: [ubuntu-latest]
+      fail-fast: false
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: pnpm/action-setup@v2
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          registry-url: https://registry.npmjs.org/
+          cache: pnpm
+
+      - run: pnpm install
+      - run: pnpm run build
+
+      - name: Save files action
+        uses: LarchLiu/actions-save-files@v1.0.2
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: publish
+          publish_dir: ./bots/telegram/dist, ./chrome-extension/extension
+          full_commit_message: ${{ github.event.head_commit.message }}
+
