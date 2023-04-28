@@ -14,5 +14,5 @@ describe('openai', () => {
     const res = await summarizeContent(import.meta.env.VITE_OPENAI_API_KEY, webInfo)
     expect(res.data?.summary).toBeDefined()
     expect(res.data?.categories).toBeDefined()
-  })
+  }, 20000)
 })

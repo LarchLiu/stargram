@@ -6,7 +6,7 @@ describe('get website info', () => {
     const res = await getWebsiteInfo('https://github.com/LarchLiu/star-nexus/something')
     expect((res.data?.title)?.includes('star-nexus')).toBeTruthy()
     expect(res.data?.url).toBe('https://github.com/LarchLiu/star-nexus')
-  })
+  }, 20000)
   test('github repo path error', async () => {
     const res = await getWebsiteInfo('https://github.com/LarchLiu')
     expect(res.error).toMatchSnapshot()
