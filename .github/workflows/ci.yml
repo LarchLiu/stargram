@@ -2,12 +2,10 @@ name: CI
 
 on:
   workflow_call:
-    secrets:
-      VITE_OPENAI_API_KEY:
-        required: true
-      VITE_NOTION_API_KEY:
-        required: true
-      VITE_NOTION_DATABASE_ID:
+    inputs:
+      environment:
+        type: string
+        description: environment to deploy to
         required: true
 
   push:
@@ -35,9 +33,38 @@ jobs:
       - name: Lint
         run: pnpm run lint
 
-  test:
+  test-push-pr:
+    if: ${{github.event.action}} != 'workflow_call'
     runs-on: ${{ matrix.os }}
     environment: ci test
+
+    strategy:
+      matrix:
+        node-version: [18.x]
+        os: [ubuntu-latest]
+      fail-fast: false
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: pnpm/action-setup@v2
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          registry-url: https://registry.npmjs.org/
+          cache: pnpm
+
+      - run: pnpm install
+      - run: pnpm run test
+        env:
+          VITE_OPENAI_API_KEY: ${{secrets.VITE_OPENAI_API_KEY}}
+          VITE_NOTION_API_KEY: ${{secrets.VITE_NOTION_API_KEY}}
+          VITE_NOTION_DATABASE_ID: ${{secrets.VITE_NOTION_DATABASE_ID}}
+
+  test-workflow-call:
+    if: ${{github.event.action}} == 'workflow_call'
+    runs-on: ${{ matrix.os }}
+    environment: ${{ inputs.environment }}
 
     strategy:
       matrix:
