@@ -13,7 +13,7 @@ jobs:
     secrets: inherit
 
   build:
-    needs: tests
+    needs: workflow-call-tests
     runs-on: ${{ matrix.os }}
 
     strategy:
