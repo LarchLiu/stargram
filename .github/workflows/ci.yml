@@ -2,7 +2,14 @@ name: CI
 
 on:
   workflow_call:
-  
+    secrets:
+      VITE_OPENAI_API_KEY:
+        required: true
+      VITE_NOTION_API_KEY:
+        required: true
+      VITE_NOTION_DATABASE_ID:
+        required: true
+
   push:
     branches:
       - main
