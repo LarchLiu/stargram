@@ -10,6 +10,7 @@ const webInfo = {
 }
 describe('openai', () => {
   test('get summarize', async () => {
+    console.error(import.meta.env.VITE_OPENAI_API_KEY.includes('sk-'))
     const res = await summarizeContent(import.meta.env.VITE_OPENAI_API_KEY, webInfo)
     expect(res.data?.summary).toBeDefined()
     expect(res.data?.categories).toBeDefined()
