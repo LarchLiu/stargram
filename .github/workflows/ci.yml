@@ -34,7 +34,7 @@ jobs:
         run: pnpm run lint
 
   test-push-pr:
-    if: ${{github.event.action}} != 'workflow_call'
+    if: ${{ github.event_name != 'workflow_call' }}
     runs-on: ${{ matrix.os }}
     environment: ci test
 
@@ -62,7 +62,7 @@ jobs:
           VITE_NOTION_DATABASE_ID: ${{secrets.VITE_NOTION_DATABASE_ID}}
 
   test-workflow-call:
-    if: ${{github.event.action}} == 'workflow_call'
+    if: ${{ github.event_name == 'workflow_call' }}
     runs-on: ${{ matrix.os }}
     environment: ${{ inputs.environment }}
 
