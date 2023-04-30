@@ -13,26 +13,27 @@ export default async function handler(req: NextRequest) {
   if (req.method !== 'POST')
     return new Response(null, { status: 404, statusText: 'Not Found' })
 
-  const json = await req.json()
-  const username = json.username
-  const reponame = json.reponame
-  const discription = json.discription
-  const stargazers_count = json.stargazers_count
-  const issues = json.issues
-  const forks = json.forks
-  const language = json.language
-  let generatedImage: any
+  try {
+    const json = await req.json()
+    const username = json.username
+    const reponame = json.reponame
+    const discription = json.discription
+    const stargazers_count = json.stargazers_count
+    const issues = json.issues
+    const forks = json.forks
+    const language = json.language
+    let generatedImage: any
 
-  if (!username || !reponame) {
-    const storageResponse = await fetch(`${STORAGE_URL}/star-nexus.png?v=3`)
-    if (storageResponse.ok) {
-      return new Response(JSON.stringify({ url: `${STORAGE_URL}/star-nexus.png?v=3` }), {
-        headers: { 'Content-Type': 'application/json' },
-        status: 200,
-      })
-    }
-    else {
-      generatedImage = new ImageResponse(<div
+    if (!username || !reponame) {
+      const storageResponse = await fetch(`${STORAGE_URL}/star-nexus.png?v=3`)
+      if (storageResponse.ok) {
+        return new Response(JSON.stringify({ url: `${STORAGE_URL}/star-nexus.png?v=3` }), {
+          headers: { 'Content-Type': 'application/json' },
+          status: 200,
+        })
+      }
+      else {
+        generatedImage = new ImageResponse(<div
         style={{
           fontSize: 60,
           color: 'black',
@@ -47,17 +48,17 @@ export default async function handler(req: NextRequest) {
       >
         <p>StarNexus</p>
       </div>, {
-        width: 1200,
-        height: 630,
-      })
+          width: 1200,
+          height: 630,
+        })
+      }
     }
-  }
-  else {
+    else {
     // const storageResponse = await fetch(`${STORAGE_URL}/github/${username}/${reponame}.png?v=3`)
     // if (storageResponse.ok)
     //   return storageResponse
 
-    generatedImage = new ImageResponse(<div
+      generatedImage = new ImageResponse(<div
         lang="zh-CN"
         style={{
           fontSize: 60,
@@ -115,19 +116,18 @@ export default async function handler(req: NextRequest) {
           </div>
         </div>
       </div>,
-    {
-      width: 1200,
-      height: 630,
-      headers: {
-        'content-type': 'image/png',
-        'cache-control': 'public, max-age=31536000, s-maxage=31536000, no-transform, immutable',
-        'cdn-cache-control': 'max-age=31536000',
+      {
+        width: 1200,
+        height: 630,
+        headers: {
+          'content-type': 'image/png',
+          'cache-control': 'public, max-age=31536000, s-maxage=31536000, no-transform, immutable',
+          'cdn-cache-control': 'max-age=31536000',
+        },
       },
-    },
-    )
-  }
+      )
+    }
 
-  try {
     const supabaseAdminClient = createClient(
       process.env.SUPABASE_URL ?? '',
       process.env.SUPABASE_ANON_KEY ?? '',
