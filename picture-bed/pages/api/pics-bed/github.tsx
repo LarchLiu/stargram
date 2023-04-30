@@ -10,14 +10,17 @@ const SUPABASE_URL = process.env.SUPABASE_URL
 const STORAGE_URL = `${SUPABASE_URL}/storage/v1/object/public/pics-bed`
 
 export default async function handler(req: NextRequest) {
-  const { searchParams } = req.nextUrl
-  const username = searchParams.get('username')
-  const reponame = searchParams.get('reponame')
-  const discription = searchParams.get('description')
-  const stargazers_count = searchParams.get('stargazers_count')
-  const issues = searchParams.get('issues')
-  const forks = searchParams.get('forks')
-  const language = searchParams.get('language')
+  if (req.method !== 'POST')
+    return new Response(null, { status: 404, statusText: 'Not Found' })
+
+  const json = await req.json()
+  const username = json.username
+  const reponame = json.reponame
+  const discription = json.discription
+  const stargazers_count = json.stargazers_count
+  const issues = json.issues
+  const forks = json.forks
+  const language = json.language
   let generatedImage: any
 
   if (!username || !reponame) {

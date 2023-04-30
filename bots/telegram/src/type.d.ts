@@ -127,7 +127,7 @@ interface GithubMeta {
     website: 'Github'
     tags?: string[]
     languages?: string[]
-    socialPreview?: string
+    cover?: string
 }
 
 interface SavedResponse {

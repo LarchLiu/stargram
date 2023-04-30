@@ -53,7 +53,7 @@ async function saveToNotion(apiKey: string, info: NotionPage): Promise<FetchNoti
         },
       },
     }
-    let imageUrl = ''
+    let cover = ''
     if (info.meta && Object.keys(info.meta).length > 0 && info.meta.domain === GITHUB_DOMAIN) {
       const github = info.meta as GithubMeta
       body.properties = {
@@ -90,8 +90,8 @@ async function saveToNotion(apiKey: string, info: NotionPage): Promise<FetchNoti
           },
         }
       }
-      if (github.socialPreview)
-        imageUrl = github.socialPreview
+      if (github.cover)
+        cover = github.cover
     }
 
     // check notion page exists
@@ -140,6 +140,17 @@ async function saveToNotion(apiKey: string, info: NotionPage): Promise<FetchNoti
       return { data: { starred: !starred, notionPageId } }
     }
 
+    if (cover) {
+      const imageBlock = {
+        object: 'block',
+        image: {
+          external: {
+            url: cover,
+          },
+        },
+      }
+      body.children = [imageBlock]
+    }
     // create notion page
     const newPageResponse = await fetchPost<any>(`${NOTION_API_URL}/pages`,
       {
@@ -150,32 +161,6 @@ async function saveToNotion(apiKey: string, info: NotionPage): Promise<FetchNoti
     )
 
     notionPageId = newPageResponse.id // 获取新页面的 ID
-
-    if (!imageUrl)
-      return { data: { starred: !starred, notionPageId } }
-
-    const imageBlock = {
-      object: 'block',
-      type: 'image',
-      image: {
-        type: 'external',
-        external: {
-          url: imageUrl,
-        },
-      },
-    }
-
-    await fetchPost(`${NOTION_API_URL}/blocks/${notionPageId}/children`,
-      {
-        'Content-Type': 'application/json',
-        'Notion-Version': '2022-06-28',
-        'Authorization': `Bearer ${apiKey}`,
-      },
-      {
-        children: [imageBlock],
-      },
-      true,
-    )
 
     return { data: { starred: !starred, notionPageId } }
   }

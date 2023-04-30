@@ -1,3 +1,4 @@
+import GPT3Tokenizer from 'gpt3-tokenizer'
 import type { NotThrowError } from '../types'
 
 async function fetchGet<T>(url: string, headers?: HeadersInit, query?: Record<string, string>, throwError = true): Promise<T | NotThrowError> {
@@ -89,8 +90,41 @@ function getDomain(url: string) {
   return host
 }
 
+/**
+ * Word Count
+ *
+ * Word count in respect of CJK characters.
+ *
+ * Copyright (c) 2015 - 2016 by Hsiaoming Yang.
+ *
+ * https://github.com/yuehu/word-count
+ */
+const pattern = /[a-zA-Z0-9_\u0392-\u03C9\u00C0-\u00FF\u0600-\u06FF\u0400-\u04FF]+|[\u4E00-\u9FFF\u3400-\u4DBF\uF900-\uFAFF\u3040-\u309F\uAC00-\uD7AF]+/g
+function countWord(data: string): number {
+  const m = data.match(pattern)
+  let count = 0
+  if (!m)
+    return 0
+
+  for (let i = 0; i < m.length; i++) {
+    if (m[i].charCodeAt(0) >= 0x4E00)
+      count += m[i].length
+    else
+      count += 1
+  }
+  return count
+}
+
+const tokenizer = new GPT3Tokenizer({ type: 'gpt3' })
+function estimateTokens(str: string): number {
+  const encoded: { bpe: number[]; text: string[] } = tokenizer.encode(str)
+  return encoded.bpe.length
+}
+
 export {
   fetchGet,
   fetchPost,
   getDomain,
+  countWord,
+  estimateTokens,
 }

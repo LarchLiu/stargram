@@ -14,7 +14,13 @@ interface GithubMeta extends WebsiteMeta {
   website: 'Github'
   tags?: string[]
   languages?: string[]
-  socialPreview?: string
+  cover?: string
+}
+
+interface TwitterMeta extends WebsiteMeta {
+  website: 'Twitter'
+  tags?: string[]
+  cover?: string
 }
 
 type FetchError = string
@@ -64,13 +70,14 @@ interface FetchNotion {
   error?: FetchError
 }
 
-interface SupabasePicBedRes {
+interface PicBedRes {
   url: string
 }
 
 export type {
   WebsiteInfo,
   GithubMeta,
+  TwitterMeta,
   WebsiteLoader,
   FetchWebsite,
   FetchError,
@@ -79,5 +86,5 @@ export type {
   OpenaiSummarize,
   NotionPage,
   FetchNotion,
-  SupabasePicBedRes,
+  PicBedRes,
 }

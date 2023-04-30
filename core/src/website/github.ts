@@ -1,6 +1,6 @@
-import type { FetchError, FetchWebsite, GithubMeta, NotThrowError, SupabasePicBedRes } from '../types'
+import type { FetchError, FetchWebsite, GithubMeta, NotThrowError, PicBedRes } from '../types'
 import { GITHUB_DOMAIN, GITHUB_RAW_URL, GITHUB_REPOS_API, PICTURE_BED_URL, USER_AGENT } from '../const'
-import { fetchGet } from '../utils'
+import { fetchGet, fetchPost } from '../utils'
 
 async function getGithubInfo(url: string, picBed?: string, header: Record<string, string> = { 'User-Agent': USER_AGENT }): Promise<FetchWebsite> {
   let title = ''
@@ -35,16 +35,22 @@ async function getGithubInfo(url: string, picBed?: string, header: Record<string
       if (imageBaseUrl) {
         const user = repoJson.owner.login
         const repo = repoJson.name
-        const imageUrl = `${imageBaseUrl}?username=${user}&reponame=${repo}&stargazers_count=${repoJson.stargazers_count}&language=${repoJson.language}&issues=${repoJson.open_issues_count}&forks=${repoJson.forks_count}&description=${description}`
-        const imageJson = await fetchGet<SupabasePicBedRes>(imageUrl)
-        githubMeta.socialPreview = (imageJson as SupabasePicBedRes).url
+        const body = {
+          username: user,
+          reponame: repo,
+          stargazers_count: repoJson.stargazers_count,
+          language: repoJson.language,
+          issues: repoJson.open_issues_count,
+          forks: repoJson.forks_count,
+          description,
+        }
+        const imageUrl = `${imageBaseUrl}/github`
+        const imageJson = await fetchPost<PicBedRes>(imageUrl, { ...header, 'Content-Type': 'application/json' }, body)
+
+        githubMeta.cover = (imageJson as PicBedRes).url
       }
 
       content = `${title}\n\n${readme}`
-      if (content.length > 1000) {
-        content = content.substring(0, 1000)
-        content += '...'
-      }
     }
     else {
       return { error: 'Github error: Not supported website.' }
