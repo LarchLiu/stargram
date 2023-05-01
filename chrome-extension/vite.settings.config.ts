@@ -9,14 +9,14 @@ export default defineConfig({
     cssCodeSplit: false,
     emptyOutDir: false,
     sourcemap: false,
-    outDir: r(outputDir),
+    outDir: r(`${outputDir}/settings`),
     rollupOptions: {
       input: {
         settings: r('src/settings/index.ts'),
       },
       output: {
-        assetFileNames: 'settings/[name].[ext]',
-        entryFileNames: '[name]/index.js',
+        assetFileNames: '[name].[ext]',
+        entryFileNames: 'index.js',
         extend: true,
         format: 'es',
       },
