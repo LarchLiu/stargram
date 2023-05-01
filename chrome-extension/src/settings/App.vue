@@ -7,6 +7,7 @@ const notionApiKeyInput = ref('')
 const notionPageLinkInput = ref('')
 const openaiApiKeyInput = ref('')
 const pictureBedInput = ref('')
+const webHubInput = ref('')
 
 function extractDatabaseIdFromPageLink(pageLink: string) {
   const regex = /([a-f0-9]{32})/
@@ -27,6 +28,7 @@ function saveSettings() {
       notionApiKey: notionApiKeyInput.value,
       openaiApiKey: openaiApiKeyInput.value,
       pictureBed: pictureBedInput.value,
+      webHub: webHubInput.value,
       notionDatabaseId,
       notionPageLink,
     },
@@ -36,11 +38,12 @@ function saveSettings() {
   )
 }
 onMounted(() => {
-  chrome.storage.sync.get(['notionApiKey', 'notionPageLink', 'openaiApiKey', 'pictureBed'], (result) => {
+  chrome.storage.sync.get(['notionApiKey', 'notionPageLink', 'openaiApiKey', 'pictureBed', 'webHub'], (result) => {
     notionApiKeyInput.value = result.notionApiKey || ''
     notionPageLinkInput.value = result.notionPageLink || ''
     openaiApiKeyInput.value = result.openaiApiKey || ''
     pictureBedInput.value = result.pictureBed || ''
+    webHubInput.value = result.webHub || ''
   })
 })
 </script>
@@ -59,7 +62,10 @@ onMounted(() => {
       <input id="openaiApiKey" v-model="openaiApiKeyInput" class="mb-6 mt-2 w-full" type="text" name="notionPageLink">
 
       <label for="pictureBed">{{ t('settings.pictureBed') }}</label>
-      <input id="pictureBed" v-model="pictureBedInput" class="mt-2 w-full" type="text" name="notionPageLink">
+      <input id="pictureBed" v-model="pictureBedInput" class="mb-6 mt-2 w-full" type="text" name="notionPageLink">
+
+      <label for="webHub">{{ t('settings.starNexusHub') }}</label>
+      <input id="webHub" v-model="webHubInput" class="mt-2 w-full" type="text" name="notionPageLink">
 
       <button class="mt-6 btn" type="submit" @click="saveSettings">
         {{ t('settings.saveSettings') }}

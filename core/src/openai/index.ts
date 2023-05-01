@@ -1,5 +1,5 @@
 import type { FetchOpenai, WebsiteInfo } from '../types'
-import { countWord, estimateTokens, fetchPost } from '../utils'
+import { countWord, fetchPost } from '../utils'
 import { MAX_TOKEN_LENGTH, OPENAI_CHAT_API, SUMMARIZE_PROMPT } from '../const'
 
 async function summarizeContent(apiKey: string, websiteInfo: WebsiteInfo): Promise<FetchOpenai> {
@@ -10,14 +10,13 @@ async function summarizeContent(apiKey: string, websiteInfo: WebsiteInfo): Promi
     const wordCount = countWord(content)
 
     if (wordCount > 100) {
-      const systemLen = estimateTokens(SUMMARIZE_PROMPT)
+      const systemLen = countWord(SUMMARIZE_PROMPT)
       const maxTokens = MAX_TOKEN_LENGTH - systemLen
-      let wordToken = estimateTokens(content)
+      // let wordToken = estimateTokens(content)
 
-      while (wordToken > maxTokens) {
-        content = content.substring(0, content.length - (wordToken - maxTokens))
-        wordToken = estimateTokens(content)
-      }
+      if (wordCount > maxTokens)
+        content = content.substring(0, content.length - (wordCount - maxTokens))
+
       const openaiData = await fetchPost<any>(`${OPENAI_CHAT_API}/chat/completions`,
         {
           'Authorization': `Bearer ${apiKey}`,

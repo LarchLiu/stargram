@@ -1,10 +1,11 @@
-import type { FetchError, FetchWebsite, GithubMeta, NotThrowError, PicBedRes } from '../types'
+import type { FetchError, FetchWebsite, GithubMeta, LoaderUrls, NotThrowError, PicBedRes } from '../types'
 import { GITHUB_DOMAIN, GITHUB_RAW_URL, GITHUB_REPOS_API, PICTURE_BED_URL, USER_AGENT } from '../const'
 import { fetchGet, fetchPost } from '../utils'
 
-async function getGithubInfo(url: string, picBed?: string, header: Record<string, string> = { 'User-Agent': USER_AGENT }): Promise<FetchWebsite> {
+async function getGithubInfo(urls: LoaderUrls, header: Record<string, string> = { 'User-Agent': USER_AGENT }): Promise<FetchWebsite> {
   let title = ''
   let content = ''
+  let url = urls.webUrl
   const githubMeta: GithubMeta = { domain: GITHUB_DOMAIN, website: 'Github' }
   const regexGithubRepo = /https:\/\/github.com\/([^\/]*\/[^\/]*)/g // match github.com/user/repo/
   const githubRepoMatch = regexGithubRepo.exec(url)
@@ -31,7 +32,7 @@ async function getGithubInfo(url: string, picBed?: string, header: Record<string
       if (languagesJson)
         githubMeta.languages = Object.keys(languagesJson)
 
-      const imageBaseUrl = picBed || PICTURE_BED_URL
+      const imageBaseUrl = urls.picBed || PICTURE_BED_URL
       if (imageBaseUrl) {
         const user = repoJson.owner.login
         const repo = repoJson.name
@@ -45,7 +46,10 @@ async function getGithubInfo(url: string, picBed?: string, header: Record<string
           description,
         }
         const imageUrl = `${imageBaseUrl}/github`
-        const imageJson = await fetchPost<PicBedRes>(imageUrl, { ...header, 'Content-Type': 'application/json' }, body)
+        const imageJson = await fetchPost<PicBedRes>(imageUrl, {
+          ...header,
+          'Content-Type': 'application/json',
+        }, body)
 
         githubMeta.cover = (imageJson as PicBedRes).url
       }

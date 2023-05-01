@@ -34,7 +34,6 @@
     "test": "vitest"
   },
   "dependencies": {
-    "gpt3-tokenizer": "^1.1.5"
   },
   "devDependencies": {
     "vue-tsc": "^1.4.2"

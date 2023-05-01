@@ -1,10 +1,13 @@
 import type {
   FetchError,
+  FetchNotion,
   FetchOpenai,
   FetchWebsite,
   GithubMeta,
+  LoaderUrls,
   NotionPage,
   OpenaiSummarize,
+  PicBedRes,
   WebsiteInfo,
   WebsiteLoader,
 } from './types'
@@ -23,6 +26,9 @@ export {
   FetchOpenai,
   OpenaiSummarize,
   NotionPage,
+  FetchNotion,
+  PicBedRes,
+  LoaderUrls,
   // functions
   getWebsiteInfo,
   summarizeContent,

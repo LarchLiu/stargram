@@ -1,6 +1,6 @@
 import { fetchPost } from '../utils'
-import type { FetchNotion, GithubMeta, NotionPage } from '../types'
-import { GITHUB_DOMAIN, NOTION_API_URL } from '../const'
+import type { FetchNotion, GithubMeta, NotionPage, TwitterMeta } from '../types'
+import { GITHUB_DOMAIN, NOTION_API_URL, TWITTER_DOMAIN } from '../const'
 
 async function saveToNotion(apiKey: string, info: NotionPage): Promise<FetchNotion> {
   try {
@@ -54,44 +54,59 @@ async function saveToNotion(apiKey: string, info: NotionPage): Promise<FetchNoti
       },
     }
     let cover = ''
-    if (info.meta && Object.keys(info.meta).length > 0 && info.meta.domain === GITHUB_DOMAIN) {
-      const github = info.meta as GithubMeta
-      body.properties = {
-        ...body.properties,
-        Website: {
-          select: {
-            name: info.meta.website,
-          },
-        },
-      }
-      if (github.languages) {
-        const languages = github.languages.map((lang) => {
-          return {
-            name: lang,
-          }
-        })
+    if (info.meta && Object.keys(info.meta).length > 0) {
+      if (info.meta.domain === GITHUB_DOMAIN) {
+        const github = info.meta as GithubMeta
         body.properties = {
           ...body.properties,
-          Languages: {
-            multi_select: languages,
+          Website: {
+            select: {
+              name: info.meta.website,
+            },
           },
         }
-      }
-      if (github.tags) {
-        const tags = github.tags.map((tag) => {
-          return {
-            name: tag,
+        if (github.languages) {
+          const languages = github.languages.map((lang) => {
+            return {
+              name: lang,
+            }
+          })
+          body.properties = {
+            ...body.properties,
+            Languages: {
+              multi_select: languages,
+            },
           }
-        })
+        }
+        if (github.tags) {
+          const tags = github.tags.map((tag) => {
+            return {
+              name: tag,
+            }
+          })
+          body.properties = {
+            ...body.properties,
+            Tags: {
+              multi_select: tags,
+            },
+          }
+        }
+        if (github.cover)
+          cover = github.cover
+      }
+      else if (info.meta.domain === TWITTER_DOMAIN) {
+        const meta = info.meta as TwitterMeta
         body.properties = {
           ...body.properties,
-          Tags: {
-            multi_select: tags,
+          Website: {
+            select: {
+              name: info.meta.website,
+            },
           },
         }
+        if (meta.cover)
+          cover = meta.cover
       }
-      if (github.cover)
-        cover = github.cover
     }
 
     // check notion page exists

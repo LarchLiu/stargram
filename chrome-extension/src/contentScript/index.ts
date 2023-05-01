@@ -31,24 +31,31 @@ function init() {
 init()
 
 async function getDataFromPage(): Promise<{ data?: PageData; error?: string }> {
-  const result = await chrome.storage.sync.get(['pictureBed'])
+  const result = await chrome.storage.sync.get(['pictureBed', 'webHub'])
   const pictureBed = result.pictureBed ?? ''
-  const info = await getWebsiteInfo(location.href, pictureBed)
+  const webHub = result.webHub ?? ''
+  const info = await getWebsiteInfo({
+    webUrl: location.href,
+    picBed: pictureBed,
+    webHub,
+  })
 
   return { data: { ...info.data, notionPageId, starred }, error: info.error }
 }
 
 function startTwink() {
   const snBtn = document.querySelector(`#${id}`)
-  const icon = snBtn.querySelector('img')
-  twinkStarred = starred
-  twinkTimer = setInterval(() => {
-    twinkStarred = !twinkStarred
-    if (twinkStarred)
-      icon.src = starFillSrc
-    else
-      icon.src = starSrc
-  }, 500)
+  if (snBtn) {
+    const icon = snBtn.querySelector('img')
+    twinkStarred = starred
+    twinkTimer = setInterval(() => {
+      twinkStarred = !twinkStarred
+      if (twinkStarred)
+        icon.src = starFillSrc
+      else
+        icon.src = starSrc
+    }, 500)
+  }
 }
 
 async function handleSaveToNotion() {

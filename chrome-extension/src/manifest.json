@@ -8,13 +8,14 @@
     "storage",
     "scripting"
   ],
-  "host_permissions": ["https://api.notion.com/*", "https://github.com/*"],
+  "host_permissions": ["https://api.notion.com/*", "https://github.com/*", "https://*.vercel.app/*"],
   "content_scripts": [
     {
       "run_at": "document_idle",
       "js": ["/contentScript/index.js"],
       "matches": [
-        "https://github.com/*"
+        "https://github.com/*",
+        "https://twitter.com/*"
       ]
     }
   ],
@@ -38,7 +39,7 @@
   "web_accessible_resources": [
     {
       "resources": ["/background/index.js"],
-      "matches": ["https://api.notion.com/*"],
+      "matches": ["https://api.notion.com/*", "https://*.vercel.app/*"],
       "use_dynamic_url": true
     }
   ]

@@ -1,13 +1,13 @@
 import { websiteLoader } from '../const'
-import type { FetchWebsite } from '../types'
+import type { FetchWebsite, LoaderUrls } from '../types'
 import { getDomain } from '../utils'
 
-async function getWebsiteInfo(url: string, picBed?: string, header?: Record<string, string>): Promise<FetchWebsite> {
+async function getWebsiteInfo(urls: LoaderUrls, header?: Record<string, string>): Promise<FetchWebsite> {
   let info: FetchWebsite = {}
-  const host = getDomain(url)
+  const host = getDomain(urls.webUrl)
 
   if (websiteLoader[host])
-    info = await websiteLoader[host].loader(url, picBed, header)
+    info = await websiteLoader[host].loader(urls, header)
   else
     info.error = 'StarNexus error: Not supported website.'
 

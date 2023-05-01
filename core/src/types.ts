@@ -34,9 +34,15 @@ interface FetchWebsite {
   error?: FetchError
 }
 
+interface LoaderUrls {
+  webUrl: string
+  picBed?: string
+  webHub?: string
+}
+
 interface WebsiteLoader {
   [key: string]: {
-    loader: (url: string, picBed?: string, header?: Record<string, string>) => Promise<FetchWebsite>
+    loader: (urls: LoaderUrls, header?: Record<string, string>) => Promise<FetchWebsite>
   }
 }
 
@@ -87,4 +93,5 @@ export type {
   NotionPage,
   FetchNotion,
   PicBedRes,
+  LoaderUrls,
 }

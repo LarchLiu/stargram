@@ -1,4 +1,3 @@
-import GPT3Tokenizer from 'gpt3-tokenizer'
 import type { NotThrowError } from '../types'
 
 async function fetchGet<T>(url: string, headers?: HeadersInit, query?: Record<string, string>, throwError = true): Promise<T | NotThrowError> {
@@ -115,16 +114,9 @@ function countWord(data: string): number {
   return count
 }
 
-const tokenizer = new GPT3Tokenizer({ type: 'gpt3' })
-function estimateTokens(str: string): number {
-  const encoded: { bpe: number[]; text: string[] } = tokenizer.encode(str)
-  return encoded.bpe.length
-}
-
 export {
   fetchGet,
   fetchPost,
   getDomain,
   countWord,
-  estimateTokens,
 }

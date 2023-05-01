@@ -15,7 +15,11 @@ async function getWebsiteInfoFromText(text) {
   if (match) {
     for (let i = 0; i < match.length; i++) {
       const url = match[i]
-      const info = await getWebsiteInfo(url, ENV.PICTURE_BED_URL)
+      const info = await getWebsiteInfo({
+        webUrl: url,
+        picBed: ENV.PICTURE_BED_URL,
+        webHub: ENV.STAR_NEXUS_HUB_API,
+      })
 
       infoArr.push(info)
     }
