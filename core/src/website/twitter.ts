@@ -42,15 +42,18 @@ async function getTwitterInfo(urls: LoaderUrls, header: Record<string, string> =
 
       if (tweet) {
         const imageBaseUrl = urls.picBed || PICTURE_BED_URL
+
         if (imageBaseUrl) {
           const user = tweet.user
           const name = user.name
           const screenName = user.screen_name
           const avator = user.profile_image_url_https.replace('_normal', '')
           const content = tweet.full_text
+          const pubTime = new Date(tweet.created_at).toUTCString()
           const body = {
-            name, screenName, avator, content, status,
+            name, screenName, avator, content, status, pubTime,
           }
+
           const imageUrl = `${imageBaseUrl}/twitter`
           const imageJson = await fetchPost<PicBedRes>(imageUrl, { ...header, 'Content-Type': 'application/json' }, body)
           meta.cover = (imageJson as PicBedRes).url
