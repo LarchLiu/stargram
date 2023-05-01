@@ -114,9 +114,36 @@ function countWord(data: string): number {
   return count
 }
 
+function preprocessText(text: string) {
+  // 去除多余标点符号
+  text = text.replace(/,+,/g, ', ')
+  // 处理图片标签 <img src="..." />
+  const imgRegex = /<img src="(.+)" \/>/g
+  text = text.replace(imgRegex, '![$1]($1)')
+  // 处理超链接 <a href="...">...</a>
+  const linkRegex = /<a href="(.+)">(.+)<\/a>/g
+  text = text.replace(linkRegex, '[$2]($1)')
+  // 删除 Markdown 图片语法 ![alt](src)
+  text = text.replace(/!\[.+?\]\(.+?\)/g, '')
+  // 处理 HTML 标签
+  text = text.replace(/<(?:.|\n)*?>/gm, '')
+  text = text.replace(/<\/(?:.|\n)*?>/gm, '')
+  // 删除标题语法 #
+  text = text.replace(/#+\s/g, '')
+  // 删除中间多余的空格
+  text = text.replace(/\s+/g, ' ')
+  // 删除两行及两行以上的空行
+  text = text.replace(/\n{2,}/g, '\n')
+  // 去除空白符
+  text = text.trim()
+
+  return text
+}
+
 export {
   fetchGet,
   fetchPost,
   getDomain,
   countWord,
+  preprocessText,
 }

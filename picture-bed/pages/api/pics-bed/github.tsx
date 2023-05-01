@@ -133,13 +133,14 @@ export default async function handler(req: NextRequest) {
       process.env.SUPABASE_ANON_KEY ?? '',
     )
 
+    const imagePath = `github/${username}/${reponame}.png`
     // Upload image to storage.
     if (generatedImage?.body) {
-      const storageResponse = await fetch(`${STORAGE_URL}/github/${username}/${reponame}.png?v=3`)
+      const storageResponse = await fetch(`${STORAGE_URL}/${imagePath}?v=starnexus`)
       if (storageResponse.ok) {
         const { error } = await supabaseAdminClient.storage
           .from('pics-bed')
-          .update(`github/${username}/${reponame}.png`, generatedImage.body, {
+          .update(imagePath, generatedImage.body, {
             contentType: 'image/png',
             cacheControl: '31536000',
             upsert: false,
@@ -151,7 +152,7 @@ export default async function handler(req: NextRequest) {
       else {
         const { error } = await supabaseAdminClient.storage
           .from('pics-bed')
-          .upload(`github/${username}/${reponame}.png`, generatedImage.body, {
+          .upload(imagePath, generatedImage.body, {
             contentType: 'image/png',
             cacheControl: '31536000',
             upsert: false,
@@ -161,7 +162,7 @@ export default async function handler(req: NextRequest) {
           throw error
       }
 
-      return new Response(JSON.stringify({ url: `${STORAGE_URL}/github/${username}/${reponame}.png?v=3` }), {
+      return new Response(JSON.stringify({ url: `${STORAGE_URL}/${imagePath}?v=starnexus` }), {
         headers: { 'Content-Type': 'application/json' },
         status: 200,
       })

@@ -8,19 +8,18 @@ interface WebsiteInfo {
 interface WebsiteMeta {
   domain: string
   website: string
+  cover?: string
 }
 
 interface GithubMeta extends WebsiteMeta {
   website: 'Github'
   tags?: string[]
   languages?: string[]
-  cover?: string
 }
 
 interface TwitterMeta extends WebsiteMeta {
   website: 'Twitter'
   tags?: string[]
-  cover?: string
 }
 
 type FetchError = string

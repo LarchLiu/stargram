@@ -55,16 +55,26 @@ async function saveToNotion(apiKey: string, info: NotionPage): Promise<FetchNoti
     }
     let cover = ''
     if (info.meta && Object.keys(info.meta).length > 0) {
-      if (info.meta.domain === GITHUB_DOMAIN) {
-        const github = info.meta as GithubMeta
+      const meta = info.meta
+      if (meta.cover) {
+        cover = meta.cover
         body.properties = {
           ...body.properties,
-          Website: {
-            select: {
-              name: info.meta.website,
-            },
+          Cover: {
+            url: cover,
           },
         }
+      }
+      body.properties = {
+        ...body.properties,
+        Website: {
+          select: {
+            name: meta.website,
+          },
+        },
+      }
+      if (info.meta.domain === GITHUB_DOMAIN) {
+        const github = meta as GithubMeta
         if (github.languages) {
           const languages = github.languages.map((lang) => {
             return {
@@ -91,21 +101,22 @@ async function saveToNotion(apiKey: string, info: NotionPage): Promise<FetchNoti
             },
           }
         }
-        if (github.cover)
-          cover = github.cover
       }
       else if (info.meta.domain === TWITTER_DOMAIN) {
-        const meta = info.meta as TwitterMeta
-        body.properties = {
-          ...body.properties,
-          Website: {
-            select: {
-              name: info.meta.website,
+        const twitter = meta as TwitterMeta
+        if (twitter.tags) {
+          const tags = twitter.tags.map((tag) => {
+            return {
+              name: tag,
+            }
+          })
+          body.properties = {
+            ...body.properties,
+            Tags: {
+              multi_select: tags,
             },
-          },
+          }
         }
-        if (meta.cover)
-          cover = meta.cover
       }
     }
 

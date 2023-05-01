@@ -126,7 +126,7 @@ export default async function handler(req: NextRequest) {
 
     // Upload image to storage.
     if (generatedImage?.body) {
-      const storageResponse = await fetch(`${STORAGE_URL}/${pngPath}?v=3`)
+      const storageResponse = await fetch(`${STORAGE_URL}/${pngPath}?v=starnexus`)
       if (storageResponse.ok) {
         const { error } = await supabaseAdminClient.storage
           .from('pics-bed')
@@ -152,7 +152,7 @@ export default async function handler(req: NextRequest) {
           throw error
       }
 
-      return new Response(JSON.stringify({ url: `${STORAGE_URL}/${pngPath}?v=3` }), {
+      return new Response(JSON.stringify({ url: `${STORAGE_URL}/${pngPath}?v=starnexus` }), {
         headers: { 'Content-Type': 'application/json' },
         status: 200,
       })

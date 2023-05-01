@@ -16,8 +16,6 @@ async function getTwitterInfo(urls: LoaderUrls, header: Record<string, string> =
     if (path && webHub) {
       // fetch tweets info
       const resJson = await fetchGet<any>(`${webHub}/twitter/tweet/${path}/original=true`, header)
-      title = resJson.title
-
       const tweets = resJson.item as any[]
       const tweet = tweets.find(({ id_str }) => id_str === status)
       tweets.forEach((t) => {
@@ -41,12 +39,13 @@ async function getTwitterInfo(urls: LoaderUrls, header: Record<string, string> =
       })
 
       if (tweet) {
-        const imageBaseUrl = urls.picBed || PICTURE_BED_URL
+        const user = tweet.user
+        const name = user.name
+        const screenName = user.screen_name
+        title = `Twitter · ${name} @${screenName}`
 
+        const imageBaseUrl = urls.picBed || PICTURE_BED_URL
         if (imageBaseUrl) {
-          const user = tweet.user
-          const name = user.name
-          const screenName = user.screen_name
           const avator = user.profile_image_url_https.replace('_normal', '')
           const content = tweet.full_text
           const pubTime = new Date(tweet.created_at).toUTCString()
@@ -58,6 +57,9 @@ async function getTwitterInfo(urls: LoaderUrls, header: Record<string, string> =
           const imageJson = await fetchPost<PicBedRes>(imageUrl, { ...header, 'Content-Type': 'application/json' }, body)
           meta.cover = (imageJson as PicBedRes).url
         }
+        const hashtags = tweet.entities?.hashtags
+        if (hashtags)
+          meta.tags = hashtags.map((t: { text: string }) => t.text)
       }
     }
     else {
