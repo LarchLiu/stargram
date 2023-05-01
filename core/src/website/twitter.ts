@@ -17,7 +17,6 @@ async function getTwitterInfo(urls: LoaderUrls, header: Record<string, string> =
       // fetch tweets info
       const resJson = await fetchGet<any>(`${webHub}/twitter/tweet/${path}/original=true`, header)
       const tweets = resJson.item as any[]
-      const tweet = tweets.find(({ id_str }) => id_str === status)
       tweets.forEach((t) => {
         let fullText = t.full_text
         if (t.entities?.urls) {
@@ -37,6 +36,7 @@ async function getTwitterInfo(urls: LoaderUrls, header: Record<string, string> =
         }
         else { content += `${t.user.name}: ${fullText}\n` }
       })
+      const tweet = tweets.find(({ id_str }) => id_str === status)
 
       if (tweet) {
         const user = tweet.user
