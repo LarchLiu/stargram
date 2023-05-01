@@ -1,7 +1,6 @@
 import { ImageResponse } from '@vercel/og'
 import type { NextRequest } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
-import cors from '../../../lib/cors'
 
 export const config = {
   runtime: 'edge',
@@ -12,7 +11,7 @@ const STORAGE_URL = `${SUPABASE_URL}/storage/v1/object/public/pics-bed`
 
 export default async function handler(req: NextRequest) {
   if (req.method !== 'POST')
-    return cors(req, new Response(null, { status: 404, statusText: 'Not Found' }))
+    return new Response(null, { status: 404, statusText: 'Not Found' })
 
   try {
     const json = await req.json()
@@ -28,10 +27,10 @@ export default async function handler(req: NextRequest) {
     if (!username || !reponame) {
       const storageResponse = await fetch(`${STORAGE_URL}/star-nexus.png?v=3`)
       if (storageResponse.ok) {
-        return cors(req, new Response(JSON.stringify({ url: `${STORAGE_URL}/star-nexus.png?v=3` }), {
+        return new Response(JSON.stringify({ url: `${STORAGE_URL}/star-nexus.png?v=3` }), {
           headers: { 'Content-Type': 'application/json' },
           status: 200,
-        }))
+        })
       }
       else {
         generatedImage = new ImageResponse(<div
@@ -162,22 +161,22 @@ export default async function handler(req: NextRequest) {
           throw error
       }
 
-      return cors(req, new Response(JSON.stringify({ url: `${STORAGE_URL}/github/${username}/${reponame}.png?v=3` }), {
+      return new Response(JSON.stringify({ url: `${STORAGE_URL}/github/${username}/${reponame}.png?v=3` }), {
         headers: { 'Content-Type': 'application/json' },
         status: 200,
-      }))
+      })
     }
     else {
-      return cors(req, new Response(JSON.stringify({ url: `${STORAGE_URL}/star-nexus.png?v=3` }), {
+      return new Response(JSON.stringify({ url: `${STORAGE_URL}/star-nexus.png?v=3` }), {
         headers: { 'Content-Type': 'application/json' },
         status: 200,
-      }))
+      })
     }
   }
   catch (error) {
-    return cors(req, new Response(JSON.stringify({ error: error.message }), {
+    return new Response(JSON.stringify({ error: error.message }), {
       headers: { 'Content-Type': 'application/json' },
       status: 400,
-    }))
+    })
   }
 }
