@@ -8,14 +8,13 @@
     "storage",
     "scripting"
   ],
-  "host_permissions": ["https://api.notion.com/*", "https://github.com/*", "https://*.vercel.app/*"],
+  "host_permissions": ["https://*/*"],
   "content_scripts": [
     {
       "run_at": "document_idle",
       "js": ["/contentScript/index.js"],
       "matches": [
-        "https://github.com/*",
-        "https://twitter.com/*"
+        "https://*/*"
       ]
     }
   ],

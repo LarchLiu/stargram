@@ -1,6 +1,5 @@
-import { getWebsiteInfo } from '@starnexus/core'
 import { GITHUB_DOMAIN, GITHUB_URL, starFillSrc, starSrc } from '~/const'
-import type { ListenerSendResponse, PageData, SwRequest } from '~/types'
+import type { ListenerSendResponse, PageInfo, SwRequest } from '~/types'
 
 let twinkTimer = null
 let starred = false
@@ -21,7 +20,7 @@ function init() {
       chrome.runtime.sendMessage(
         {
           action: 'checkStarred',
-          data: { url: `${GITHUB_URL}/${path}` },
+          data: { webUrl: `${GITHUB_URL}/${path}` },
         },
       )
     }
@@ -30,17 +29,20 @@ function init() {
 
 init()
 
-async function getDataFromPage(): Promise<{ data?: PageData; error?: string }> {
+async function getDataFromPage(): Promise<{ data?: PageInfo; error?: string }> {
   const result = await chrome.storage.sync.get(['pictureBed', 'webHub'])
   const pictureBed = result.pictureBed ?? ''
   const webHub = result.webHub ?? ''
-  const info = await getWebsiteInfo({
-    webUrl: location.href,
-    picBed: pictureBed,
-    webHub,
-  })
 
-  return { data: { ...info.data, notionPageId, starred }, error: info.error }
+  return {
+    data: {
+      webUrl: location.href,
+      picBed: pictureBed,
+      webHub,
+      notionPageId,
+      starred,
+    },
+  }
 }
 
 function startTwink() {
@@ -59,10 +61,10 @@ function startTwink() {
 }
 
 async function handleSaveToNotion() {
-  // console.log('Handling save to Notion in the content script')
+  // console.log('Handling save to Notion in the content script', document)
   startTwink()
 
-  const { data: pageData, error } = await getDataFromPage()
+  const { data: pageInfo, error } = await getDataFromPage()
   if (error) {
     if (twinkTimer)
       clearInterval(twinkTimer)
@@ -73,7 +75,7 @@ async function handleSaveToNotion() {
   chrome.runtime.sendMessage(
     {
       action: 'saveToNotion',
-      data: pageData,
+      data: pageInfo,
     },
   )
 }
@@ -102,8 +104,6 @@ chrome.runtime.onMessage.addListener(async (request: SwRequest, sender, sendResp
     sendResponse({ message: 'ok', error: false })
   }
   else if (action === 'savedStatusToContent') {
-    const snBtn = document.querySelector(`#${id}`)
-    const icon = snBtn.querySelector('img')
     if (twinkTimer)
       clearInterval(twinkTimer)
     if (data) {
@@ -117,10 +117,14 @@ chrome.runtime.onMessage.addListener(async (request: SwRequest, sender, sendResp
       }
     }
 
-    if (starred)
-      icon.src = starFillSrc
-    else
-      icon.src = starSrc
+    const snBtn = document.querySelector(`#${id}`)
+    if (snBtn) {
+      const icon = snBtn.querySelector('img')
+      if (starred)
+        icon.src = starFillSrc
+      else
+        icon.src = starSrc
+    }
 
     sendResponse({ message: 'ok', error: false })
   }

@@ -1,5 +1,5 @@
-import { saveToNotion as saveNotion, summarizeContent } from '@starnexus/core'
-import type { ContentRequest, ListenerSendResponse, PageData, SwResponse } from '~/types'
+import { getWebsiteInfo, saveToNotion as saveNotion, summarizeContent } from '@starnexus/core'
+import type { ContentRequest, ListenerSendResponse, PageData, PageInfo, SwResponse } from '~/types'
 
 async function sendSavedStatus(res: SwResponse) {
   if (res.tabId) {
@@ -51,7 +51,7 @@ chrome.runtime.onMessage.addListener(async (request: ContentRequest, sender, sen
   }
   else if (action === 'checkStarred') {
     const tabId = sender.tab?.id
-    const url = request.data.url
+    const url = request.data.webUrl
 
     checkStarredStatus(url, tabId).then((res) => {
       sendStarredStatus(res)
@@ -111,12 +111,18 @@ async function saveProcess(pageData: PageData): Promise<SwResponse> {
   }
 }
 
-function saveToNotion(pageData: PageData): Promise<SwResponse> {
+function saveToNotion(pageInfo: PageInfo): Promise<SwResponse> {
   return new Promise((resolve, reject) => {
-    saveProcess(pageData).then((res) => {
-      resolve(res)
-    }).catch((error) => {
-      reject(error)
+    getWebsiteInfo(pageInfo).then((res) => {
+      if (res.error)
+        // eslint-disable-next-line prefer-promise-reject-errors
+        return reject({ tabId: pageInfo.tabId, notionPageId: pageInfo.notionPageId, starred: pageInfo.starred, error: res.error })
+
+      saveProcess({ ...res.data, tabId: pageInfo.tabId, notionPageId: pageInfo.notionPageId, starred: pageInfo.starred }).then((_res) => {
+        return resolve(_res)
+      }).catch((error) => {
+        return reject(error)
+      })
     })
   })
 }

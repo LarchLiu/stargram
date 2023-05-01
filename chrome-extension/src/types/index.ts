@@ -1,9 +1,16 @@
 import type {
   GithubMeta,
+  LoaderUrls,
   WebsiteInfo,
 } from '@starnexus/core'
 
 interface PageData extends WebsiteInfo {
+  starred: boolean
+  tabId?: number
+  notionPageId?: string
+}
+
+interface PageInfo extends LoaderUrls {
   starred: boolean
   tabId?: number
   notionPageId?: string
@@ -28,7 +35,7 @@ interface SwRequest {
 
 interface ContentRequest {
   action: string
-  data?: PageData
+  data?: PageInfo
 }
 
 type ListenerSendResponse = (response: ListenerResponse) => void
@@ -41,4 +48,6 @@ export type {
   SwRequest,
   ContentRequest,
   GithubMeta,
+  LoaderUrls,
+  PageInfo,
 }
