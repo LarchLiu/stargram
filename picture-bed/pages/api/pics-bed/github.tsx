@@ -17,7 +17,7 @@ export default async function handler(req: NextRequest) {
     const json = await req.json()
     const username = json.username
     const reponame = json.reponame
-    const discription = json.discription
+    const description = json.description
     const stargazers_count = json.stargazers_count
     const issues = json.issues
     const forks = json.forks
@@ -86,7 +86,7 @@ export default async function handler(req: NextRequest) {
           </div>
 
           <div style={{ display: 'flex', color: 'black', fontSize: 30, paddingTop: 30 }}>
-            {discription}
+            {description}
           </div>
         </div>
         <div style={{ fontSize: '24px', color: '#586069', display: 'flex', justifyContent: 'space-between' }}>
