@@ -1,6 +1,9 @@
 import { resolve } from 'node:path'
 import { defineConfig } from 'vite'
 import Vue from '@vitejs/plugin-vue'
+import AutoImport from 'unplugin-auto-import/vite'
+import Components from 'unplugin-vue-components/vite'
+import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 import Unocss from 'unocss/vite'
 import VueI18nPlugin from '@intlify/unplugin-vue-i18n/vite'
 import hotReloadBackground from './scripts/hot-reload/background'
@@ -53,6 +56,14 @@ export default defineConfig({
   },
   plugins: [
     ...plugins,
+    AutoImport({
+      resolvers: [ElementPlusResolver()],
+      dts: 'popup/auto-imports.d.ts',
+    }),
+    Components({
+      resolvers: [ElementPlusResolver()],
+      dts: 'popup/components.d.ts',
+    }),
     hotReloadBackground(),
   ],
 })

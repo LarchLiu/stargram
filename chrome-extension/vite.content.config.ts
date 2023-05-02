@@ -40,9 +40,11 @@ export default defineConfig({
     }),
     AutoImport({
       resolvers: [ElementPlusResolver()],
+      dts: 'contentScript/auto-imports.d.ts',
     }),
     Components({
       resolvers: [ElementPlusResolver()],
+      dts: 'contentScript/components.d.ts',
     }),
     hotReloadContent(),
   ],

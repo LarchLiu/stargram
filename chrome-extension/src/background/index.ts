@@ -21,13 +21,15 @@ async function sendSavedStatus(res: SwResponse) {
 }
 
 chrome.runtime.onInstalled.addListener(async () => {
-  const result = await chrome.storage.sync.get(['notionApiKey', 'notionDatabaseId', 'openaiApiKey', 'pictureBed', 'webHub'])
+  const result = await chrome.storage.sync.get(['notionApiKey', 'notionDatabaseId', 'openaiApiKey', 'pictureBed', 'webHub', 'uiLang', 'promptsLang'])
   const notionApiKey = result.notionApiKey ?? ''
   const notionDatabaseId = result.notionDatabaseId ?? ''
   const openaiApiKey = result.openaiApiKey ?? ''
   const pictureBed = result.pictureBed ?? ''
   const webHub = result.webHub ?? ''
-  await chrome.storage.sync.set({ notionApiKey, notionDatabaseId, openaiApiKey, pictureBed, webHub })
+  const uiLang = result.uiLang ?? 'en'
+  const promptsLang = result.promptsLang ?? 'en'
+  await chrome.storage.sync.set({ notionApiKey, notionDatabaseId, openaiApiKey, pictureBed, webHub, uiLang, promptsLang })
 })
 
 chrome.runtime.onMessage.addListener(async (request: ContentRequest, sender, sendResponse: ListenerSendResponse) => {
