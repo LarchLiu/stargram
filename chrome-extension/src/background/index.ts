@@ -2,6 +2,14 @@ import { getWebsiteInfo, saveToNotion as saveNotion, summarizeContent } from '@s
 import type { ContentRequest, ListenerSendResponse, PageData, PageInfo, SwResponse } from '~/types'
 
 async function sendSavedStatus(res: SwResponse) {
+  chrome.tabs.query({ active: true, lastFocusedWindow: true }, (tabs) => {
+    if (tabs.length && res.tabId && res.tabId !== tabs[0].id) {
+      chrome.tabs.sendMessage(tabs[0].id, {
+        action: 'savedStatusToContent',
+        data: res,
+      })
+    }
+  })
   if (res.tabId) {
     chrome.tabs.sendMessage(res.tabId, {
       action: 'savedStatusToContent',
@@ -9,7 +17,7 @@ async function sendSavedStatus(res: SwResponse) {
     })
   }
   else {
-    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+    chrome.tabs.query({ active: true, lastFocusedWindow: true }, (tabs) => {
       if (tabs.length === 0)
         return
       chrome.tabs.sendMessage(tabs[0].id, {
