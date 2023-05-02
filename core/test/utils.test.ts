@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest'
-import { countWord, getDomain, preprocessText } from '~/utils'
+import { countWord, getDomain, getPromptsByTemplate, preprocessText } from '~/utils'
 
 const host = 'github.com'
 describe('utils', () => {
@@ -12,6 +12,25 @@ describe('utils', () => {
     expect(res).toBe(host)
     res = getDomain('http://github.com/LarchLiu')
     expect(res).toBe(host)
+  })
+  test('get prompts by template', async () => {
+    const template = 'template test: {content}{language}'
+    const language = {
+      'en': ' in English.',
+      'zh-CN': '用简体中文。',
+    }
+    const kvEn = {
+      content: 'This is the replacement content',
+      language: language.en,
+    }
+    const kvZh = {
+      content: '这是替换的内容',
+      language: language['zh-CN'],
+    }
+    const valueEn = getPromptsByTemplate(template, kvEn)
+    expect(valueEn).toMatchSnapshot()
+    const valueZh = getPromptsByTemplate(template, kvZh)
+    expect(valueZh).toMatchSnapshot()
   })
   test('preprocess text', async () => {
     let text = `antfu/vitesse: 🏕 Opinionated Vite + Vue Starter Template

@@ -1,5 +1,9 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
+exports[`utils > get prompts by template 1`] = `"template test: This is the replacement content in English."`;
+
+exports[`utils > get prompts by template 2`] = `"template test: 这是替换的内容用简体中文。"`;
+
 exports[`utils > preprocess text 1`] = `1428`;
 
 exports[`utils > preprocess text 2`] = `10923`;

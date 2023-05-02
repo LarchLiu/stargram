@@ -1,4 +1,4 @@
-import type { WebsiteLoader } from './types'
+import type { PromptsLanguage, WebsiteLoader } from './types'
 import { getGithubInfo } from './website/github'
 import { getTwitterInfo } from './website/twitter'
 
@@ -12,17 +12,22 @@ const PICTURE_BED_URL = import.meta.env.VITE_PICTURE_BED
 const NOTION_API_URL = import.meta.env.VITE_NOTION_API_URL || 'https://api.notion.com/v1'
 const OPENAI_CHAT_API = import.meta.env.VITE_OPENAI_API_HOST || 'https://api.openai.com/v1'
 const MAX_TOKEN_LENGTH = 2048
-const SUMMARIZE_PROMPT = `Summarize this Content first and then Categorize it. 
-The Content is the *Markdown* format. In summary within 200 words. 
-Categories number must *less than 5* items. Category names should be short without additional explanatory text. 
-Multiple category names should be separated by commas, not other symbols.
-Return the *summary first* and then the categories like this:
-====
-Summary: {Summary}. // must start with Summary:
-Categories: XXX, YYY // must start with Categories:
-====
-The Content is: 
+const SUMMARIZE_PROMPTS = `Please summarize content within 300 words and then classify it to 1-5 types of classification. Classification names should be short and no explanation or description is needed. Separate the classification names with "#", not other symbols.
+Start the summary with "Summary:". Start the types classification with "Classification:". Return the summary first and then the types of classification. The format is as follows:
+
+Summary: This is the summary content. // must start with Summary:
+Classification: XXX#YYY#ZZZ // must start with Classification:
 `
+const USER_PROMPTS = `The Content is:
+=====
+{content}
+=====
+{language}`
+
+const ANSWER_IN_LANGUAGE: { [key in PromptsLanguage]: string } = {
+  'en': 'Please answer in English.',
+  'zh-CN': '请用中文回答。',
+}
 
 const USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.2 Safari/605.1.15'
 const websiteLoader: WebsiteLoader = {
@@ -40,7 +45,9 @@ export {
   GITHUB_API_URL,
   GITHUB_REPOS_API,
   GITHUB_RAW_URL,
-  SUMMARIZE_PROMPT,
+  SUMMARIZE_PROMPTS,
+  USER_PROMPTS,
+  ANSWER_IN_LANGUAGE,
   PICTURE_BED_URL,
   USER_AGENT,
   OPENAI_CHAT_API,

@@ -69,10 +69,11 @@ async function saveProcess(pageData: PageData): Promise<SwResponse> {
   try {
     let summary = ''
     let categories = ['Others']
-    const storage = await chrome.storage.sync.get(['notionApiKey', 'notionDatabaseId', 'openaiApiKey'])
+    const storage = await chrome.storage.sync.get(['notionApiKey', 'notionDatabaseId', 'openaiApiKey', 'promptsLang'])
     const notionApiKey = storage.notionApiKey ?? ''
     const databaseId = storage.notionDatabaseId ?? ''
     const openaiApiKey = storage.openaiApiKey ?? ''
+    const promptsLang = storage.promptsLang ?? 'en'
 
     if (!notionApiKey || !databaseId) {
       // console.log('Missing Notion API key or Database ID in settings.')
@@ -81,7 +82,7 @@ async function saveProcess(pageData: PageData): Promise<SwResponse> {
     }
 
     if (openaiApiKey) {
-      const { data, error } = await summarizeContent(openaiApiKey, pageData)
+      const { data, error } = await summarizeContent(openaiApiKey, pageData, promptsLang)
       if (error)
         return { tabId: pageData.tabId, starred: pageData.starred, notionPageId: pageData.notionPageId, error }
 

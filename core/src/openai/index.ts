@@ -1,8 +1,8 @@
-import type { FetchOpenai, WebsiteInfo } from '../types'
-import { countWord, fetchPost, preprocessText } from '../utils'
-import { MAX_TOKEN_LENGTH, OPENAI_CHAT_API, SUMMARIZE_PROMPT } from '../const'
+import type { FetchOpenai, PromptsLanguage, WebsiteInfo } from '../types'
+import { countWord, fetchPost, getPromptsByTemplate, preprocessText } from '../utils'
+import { ANSWER_IN_LANGUAGE, MAX_TOKEN_LENGTH, OPENAI_CHAT_API, SUMMARIZE_PROMPTS, USER_PROMPTS } from '../const'
 
-async function summarizeContent(apiKey: string, websiteInfo: WebsiteInfo): Promise<FetchOpenai> {
+async function summarizeContent(apiKey: string, websiteInfo: WebsiteInfo, language: PromptsLanguage = 'en'): Promise<FetchOpenai> {
   try {
     let summary = ''
     let category = ''
@@ -10,14 +10,19 @@ async function summarizeContent(apiKey: string, websiteInfo: WebsiteInfo): Promi
     content = preprocessText(content)
     const wordCount = countWord(content)
 
-    if (wordCount > 80) {
-      const systemLen = countWord(SUMMARIZE_PROMPT)
+    if (wordCount > 40) {
+      const systemLen = countWord(SUMMARIZE_PROMPTS)
       const maxTokens = MAX_TOKEN_LENGTH - systemLen
       // let wordToken = estimateTokens(content)
 
       if (wordCount > maxTokens)
         content = content.substring(0, content.length - (wordCount - maxTokens))
 
+      const kv = {
+        content,
+        language: ANSWER_IN_LANGUAGE[language],
+      }
+      const userPrompts = getPromptsByTemplate(USER_PROMPTS, kv)
       const openaiData = await fetchPost<any>(`${OPENAI_CHAT_API}/chat/completions`,
         {
           'Authorization': `Bearer ${apiKey}`,
@@ -28,22 +33,22 @@ async function summarizeContent(apiKey: string, websiteInfo: WebsiteInfo): Promi
           messages: [
             {
               role: 'system',
-              content: SUMMARIZE_PROMPT,
+              content: SUMMARIZE_PROMPTS,
             },
             {
               role: 'user',
-              content,
+              content: userPrompts,
             },
           ],
-          max_tokens: 400,
-          temperature: 0.5,
+          max_tokens: 800,
+          temperature: 0.4,
         },
       )
 
       let text = openaiData.choices[0].message.content
       text = text.replace(/\n/g, '')
-      const regexSummery = /Summary:(.*)Categories:/g
-      const regexCategory = /Categories:(.*)$/g
+      const regexSummery = /Summary:(.*)Classification:/g
+      const regexCategory = /Classification:(.*)$/g
       const summaryArr = regexSummery.exec(text)
       const categoryArr = regexCategory.exec(text)
       if (summaryArr)
@@ -55,7 +60,7 @@ async function summarizeContent(apiKey: string, websiteInfo: WebsiteInfo): Promi
     else {
       summary = content
     }
-    const catArry = (category || 'Others').split(',')
+    const catArry = (category || 'Others').split('#')
     return { data: { summary, categories: catArry } }
   }
   catch (err) {

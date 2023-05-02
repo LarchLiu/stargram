@@ -140,10 +140,20 @@ function preprocessText(text: string) {
   return text
 }
 
+function getPromptsByTemplate(template: string, kv: Record<string, string>) {
+  let prompts = template
+  if (template && Object.keys(kv).length) {
+    for (const key in kv)
+      prompts = prompts.replace(`{${key}}`, kv[key])
+  }
+  return prompts
+}
+
 export {
   fetchGet,
   fetchPost,
   getDomain,
   countWord,
   preprocessText,
+  getPromptsByTemplate,
 }

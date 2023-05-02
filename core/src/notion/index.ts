@@ -9,6 +9,7 @@ async function saveToNotion(apiKey: string, info: NotionPage): Promise<FetchNoti
     }]
 
     catOpt = info.categories.map((item) => {
+      item = item.trim()
       if (item.endsWith('.'))
         item = item.slice(0, -1)
 

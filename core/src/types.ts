@@ -79,6 +79,8 @@ interface PicBedRes {
   url: string
 }
 
+type PromptsLanguage = 'en' | 'zh-CN'
+
 export type {
   WebsiteInfo,
   GithubMeta,
@@ -93,4 +95,5 @@ export type {
   FetchNotion,
   PicBedRes,
   LoaderUrls,
+  PromptsLanguage,
 }

@@ -22,6 +22,7 @@ async function getTwitterInfo(urls: LoaderUrls, header: Record<string, string> =
         if (t.entities?.urls) {
           t.entities.urls.forEach((e: any) => {
             fullText = fullText.replace(e.url, e.expanded_url)
+            t.full_text = fullText
           })
         }
         if (t.quoted_status) {
@@ -29,6 +30,7 @@ async function getTwitterInfo(urls: LoaderUrls, header: Record<string, string> =
           if (t.quoted_status.entities?.urls) {
             t.quoted_status.entities.urls.forEach((e: any) => {
               quotedFullText = quotedFullText.replace(e.url, e.expanded_url)
+              t.quoted_status.full_text = quotedFullText
             })
           }
 

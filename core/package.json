@@ -27,7 +27,7 @@
     "dist"
   ],
   "scripts": {
-    "dev": "pnpm build",
+    "dev": "vite build --watch",
     "build": "vite build && vue-tsc --declaration --emitDeclarationOnly",
     "clear": "rimraf dist",
     "lint": "eslint src",
