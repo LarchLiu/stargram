@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { ref, onMounted, watch } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { starSrc,iconSetting, iconLanguage, iconGithub, version } from '~/const'
+import { iconGithub, iconLanguage, iconSetting, starSrc, version } from '~/const'
 import type { ListenerResponse } from '~/types'
 
 const { t, locale } = useI18n()
@@ -118,32 +118,32 @@ onMounted(() => {
 
 <template>
   <div w-240px>
-    <div flex justify-center m-5>
+    <div m-5 flex justify-center>
       <div target="_blank" class="gh-btn gh-btn-sm inline-flex items-center" @click="onSaveClick">
-        <img :src="starSrc" height=18><span ml-2>StarNexus</span>
+        <img :src="starSrc" height="18"><span ml-2>StarNexus</span>
       </div>
     </div>
-    <footer class="bg-[#f0f0f0] text-12px mt-2 p-2 flex flex-col">
+    <footer class="mt-2 flex flex-col bg-[#f0f0f0] p-2 text-12px">
       <div flex items-center justify-between>
         <div flex>
           <div class="setting" cursor-pointer @click="onSettingsClick">
-            <img :src="iconSetting" height=18>
+            <img :src="iconSetting" height="18">
           </div>
-          <div class="language" cursor-pointer ml-2 @click="onLanguageClick">
-            <img :src="iconLanguage" height=18>
+          <div class="language" ml-2 cursor-pointer @click="onLanguageClick">
+            <img :src="iconLanguage" height="18">
           </div>
         </div>
         <div flex items-center>
-          <div class="github" cursor-pointer mx-2>
-            <a href="https://github.com/LarchLiu/star-nexus" target="_blank"> 
-              <img :src="iconGithub" height=18>
+          <div class="github" mx-2 cursor-pointer>
+            <a href="https://github.com/LarchLiu/star-nexus" target="_blank">
+              <img :src="iconGithub" height="18">
             </a>
           </div>
-          <span text-gray>{{`v${version}`}}</span>
+          <span text-gray>{{ `v${version}` }}</span>
         </div>
       </div>
     </footer>
-    <div v-if="showSettings" flex flex-col text-14px bg-white p-2>
+    <div v-if="showSettings" flex flex-col bg-white p-2 text-14px>
       <label for="notionApiKey">{{ t('settings.notionApiKey') }}</label>
       <input id="notionApiKey" v-model="notionApiKeyInput" class="my-2" type="text" name="notionApiKey">
 
@@ -163,21 +163,29 @@ onMounted(() => {
         {{ t('settings.saveSettings') }}
       </button>
     </div>
-    <div v-if="showLanguage" text-14px bg-white p-2>
+    <div v-if="showLanguage" bg-white p-2 text-14px>
       <div>{{ t('settings.languageSettings') }}</div>
       <div class="divider" />
-      <div flex justify-between my-2>
-        <label class="inline-block h-5">{{t('settings.uiLanguage')}}</label>
-        <select autocomplete="off" class="min-select" v-model="uiLangSelect" style="max-width: 128px;">
-          <option value="en">English</option>
-          <option value="zh-CN">简体中文</option>
+      <div my-2 flex justify-between>
+        <label class="inline-block h-5">{{ t('settings.uiLanguage') }}</label>
+        <select v-model="uiLangSelect" autocomplete="off" class="min-select" style="max-width: 128px;">
+          <option value="en">
+            English
+          </option>
+          <option value="zh-CN">
+            简体中文
+          </option>
         </select>
       </div>
-      <div flex justify-between mb-2>
-        <label class="inline-block h-5">{{t('settings.promptsLanguage')}}</label>
-        <select autocomplete="off" class="min-select" v-model="promptsLangSelect" style="max-width: 128px;">
-          <option value="en">English</option>
-          <option value="zh-CN">简体中文</option>
+      <div mb-2 flex justify-between>
+        <label class="inline-block h-5">{{ t('settings.promptsLanguage') }}</label>
+        <select v-model="promptsLangSelect" autocomplete="off" class="min-select" style="max-width: 128px;">
+          <option value="en">
+            English
+          </option>
+          <option value="zh-CN">
+            简体中文
+          </option>
         </select>
       </div>
     </div>

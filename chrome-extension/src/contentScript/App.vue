@@ -178,13 +178,8 @@ const style = document.createElement('style')
 style.innerHTML = css
 document.head.appendChild(style)
 
-function updateButtonHref(button) {
-  // button.href = location.href.replace('https://github.com/', 'https://pr.new/')
-}
-
 function createButton(starred: boolean) {
   const a = document.createElement('a')
-  updateButtonHref(a)
   a.target = '_blank'
   a.classList.add('btn')
   a.classList.add('btn-sm')

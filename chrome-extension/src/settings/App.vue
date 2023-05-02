@@ -32,9 +32,6 @@ function saveSettings() {
       notionDatabaseId,
       notionPageLink,
     },
-    () => {
-      alert(t('settings.settingsSaved'))
-    },
   )
 }
 onMounted(() => {
