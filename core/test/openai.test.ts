@@ -14,11 +14,11 @@ describe('openai', () => {
     expect(res.data?.summary).toBeDefined()
     expect(res.data?.categories).toBeDefined()
     // expect(res)?.toMatchSnapshot()
-  }, 20000)
+  })
   test('summarize in en', async () => {
     const res = await summarizeContent(import.meta.env.VITE_OPENAI_API_KEY, webInfo, 'en')
     expect(res.data?.summary).toBeDefined()
     expect(res.data?.categories).toBeDefined()
     // expect(res)?.toMatchSnapshot()
-  }, 20000)
+  })
 })

@@ -20,15 +20,17 @@ async function onSaveClick() {
   await new Promise(resolve => setTimeout(resolve, 100))
 
   chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-    chrome.tabs.sendMessage(tabs[0].id, { action: 'saveToNotion' }, (response: ListenerResponse) => {
-      if (chrome.runtime.lastError) {
-        saveStatus.value = `${t('popup.error')}: ${chrome.runtime.lastError.message}`
-      }
-      else {
-        if (response && response.error)
-          saveStatus.value = `${t('popup.error')}: ${response.message}`
-      }
-    })
+    if (tabs.length && tabs[0].id) {
+      chrome.tabs.sendMessage(tabs[0].id, { action: 'saveToNotion' }, (response: ListenerResponse) => {
+        if (chrome.runtime.lastError) {
+          saveStatus.value = `${t('popup.error')}: ${chrome.runtime.lastError.message}`
+        }
+        else {
+          if (response && response.error)
+            saveStatus.value = `${t('popup.error')}: ${response.message}`
+        }
+      })
+    }
   })
 }
 

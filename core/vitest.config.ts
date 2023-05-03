@@ -11,5 +11,6 @@ export default defineProject({
     include: ['test/**/*.test.ts'],
     includeSource: ['src/**/*.{js,ts}'],
     environment: 'node',
+    testTimeout: 20000,
   },
 })

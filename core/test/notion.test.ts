@@ -19,5 +19,5 @@ describe('notion', () => {
     const res = await saveToNotion(import.meta.env.VITE_NOTION_API_KEY, notionPage)
     expect(res.data?.notionPageId).toBeDefined()
     expect(res.data?.starred).toBeDefined()
-  }, 20000)
+  })
 })

@@ -6,7 +6,7 @@ import type { ListenerSendResponse, PageInfo, SwRequest } from '~/types'
 const notification = ref()
 const offset = 100
 const duration = 3000
-let twinkTimer = null
+let twinkTimer: NodeJS.Timer
 let starred = false
 let twinkStarred = false
 let notionPageId = ''
@@ -58,9 +58,9 @@ function startTwink() {
     twinkTimer = setInterval(() => {
       twinkStarred = !twinkStarred
       if (twinkStarred)
-        icon.src = starFillSrc
+        icon!.src = starFillSrc
       else
-        icon.src = starSrc
+        icon!.src = starSrc
     }, 500)
   }
 }
@@ -102,22 +102,24 @@ chrome.runtime.onMessage.addListener(async (request: SwRequest, sender, sendResp
     sendResponse({ message: 'Handling save to Notion in the content script', error: false })
   }
   else if (action === 'starredStatusToContent') {
-    if (data && data.error) {
-      ElNotification({
-        title: 'StarNexus',
-        type: 'error',
-        message: data.error,
-        offset,
-        duration,
-        appendTo: notification.value,
-      })
-    }
-    else {
-      if (twinkTimer)
-        clearInterval(twinkTimer)
-      starred = data.starred
-      notionPageId = data.notionPageId
-      createStarButton(starred)
+    if (data) {
+      if (data.error) {
+        ElNotification({
+          title: 'StarNexus',
+          type: 'error',
+          message: data.error,
+          offset,
+          duration,
+          appendTo: notification.value,
+        })
+      }
+      else {
+        if (twinkTimer)
+          clearInterval(twinkTimer)
+        starred = data.starred
+        notionPageId = data.notionPageId!
+        createStarButton(starred)
+      }
     }
 
     sendResponse({ message: 'ok', error: false })
@@ -139,7 +141,7 @@ chrome.runtime.onMessage.addListener(async (request: SwRequest, sender, sendResp
       }
       else {
         starred = data.starred
-        notionPageId = data.notionPageId
+        notionPageId = data.notionPageId!
         ElNotification({
           title: 'StarNexus',
           type: 'success',
@@ -155,9 +157,9 @@ chrome.runtime.onMessage.addListener(async (request: SwRequest, sender, sendResp
     if (snBtn) {
       const icon = snBtn.querySelector('img')
       if (starred)
-        icon.src = starFillSrc
+        icon!.src = starFillSrc
       else
-        icon.src = starSrc
+        icon!.src = starSrc
     }
 
     sendResponse({ message: 'ok', error: false })

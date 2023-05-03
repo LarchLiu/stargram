@@ -12,4 +12,4 @@ const i18n = createI18n({
   messages,
 })
 const app = createApp(App)
-app.use(i18n).mount(document.querySelector('#app'))
+app.use(i18n).mount('#app')

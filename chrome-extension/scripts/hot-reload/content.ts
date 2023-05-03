@@ -3,7 +3,7 @@ import WebSocket from 'ws'
 import { __DEV__, bgUpdatePort } from '../../const'
 
 function hotReloadContent(): Plugin {
-  let wsClient = null
+  let wsClient: any = null
   let isReady = false
   const connectWs = () => {
     try {

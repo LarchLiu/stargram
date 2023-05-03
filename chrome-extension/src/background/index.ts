@@ -3,7 +3,7 @@ import type { ContentRequest, ListenerSendResponse, PageData, PageInfo, SwRespon
 
 async function sendSavedStatus(res: SwResponse) {
   chrome.tabs.query({ active: true, lastFocusedWindow: true }, (tabs) => {
-    if (tabs.length && res.tabId && res.tabId !== tabs[0].id) {
+    if (tabs.length && res.tabId && tabs[0].id && res.tabId !== tabs[0].id) {
       chrome.tabs.sendMessage(tabs[0].id, {
         action: 'savedStatusToContent',
         data: res,
@@ -20,10 +20,12 @@ async function sendSavedStatus(res: SwResponse) {
     chrome.tabs.query({ active: true, lastFocusedWindow: true }, (tabs) => {
       if (tabs.length === 0)
         return
-      chrome.tabs.sendMessage(tabs[0].id, {
-        action: 'sendResponseToContent',
-        data: res,
-      })
+      if (tabs[0].id) {
+        chrome.tabs.sendMessage(tabs[0].id, {
+          action: 'sendResponseToContent',
+          data: res,
+        })
+      }
     })
   }
 }
@@ -61,13 +63,15 @@ chrome.runtime.onMessage.addListener(async (request: ContentRequest, sender, sen
   }
   else if (action === 'checkStarred') {
     const tabId = sender.tab?.id
-    const url = request.data.webUrl
+    const url = request.data?.webUrl
 
-    checkStarredStatus(url, tabId).then((res) => {
-      sendStarredStatus(res)
-    }).catch((err) => {
-      sendStarredStatus(err)
-    })
+    if (url && tabId) {
+      checkStarredStatus(url, tabId).then((res) => {
+        sendStarredStatus(res)
+      }).catch((err) => {
+        sendStarredStatus(err)
+      })
+    }
     sendResponse({ message: 'checking' })
   }
   return true
@@ -93,9 +97,10 @@ async function saveProcess(pageData: PageData): Promise<SwResponse> {
       const { data, error } = await summarizeContent(openaiApiKey, pageData, promptsLang)
       if (error)
         return { tabId: pageData.tabId, starred: pageData.starred, notionPageId: pageData.notionPageId, error }
-
-      summary = data.summary
-      categories = data.categories
+      if (data) {
+        summary = data.summary
+        categories = data.categories
+      }
     }
     else {
       summary = pageData.content
@@ -115,9 +120,9 @@ async function saveProcess(pageData: PageData): Promise<SwResponse> {
     if (error)
       return { tabId: pageData.tabId, starred: pageData.starred, notionPageId: pageData.notionPageId, error }
 
-    return { tabId: pageData.tabId, starred: data.starred, notionPageId: data.notionPageId }
+    return { tabId: pageData.tabId, starred: data!.starred, notionPageId: data!.notionPageId }
   }
-  catch (error) {
+  catch (error: any) {
     return { tabId: pageData.tabId, starred: pageData.starred, notionPageId: pageData.notionPageId, error: error.message ? error.message : 'Error saving to Notion.' }
   }
 }
@@ -129,7 +134,7 @@ function saveToNotion(pageInfo: PageInfo): Promise<SwResponse> {
         // eslint-disable-next-line prefer-promise-reject-errors
         return reject({ tabId: pageInfo.tabId, notionPageId: pageInfo.notionPageId, starred: pageInfo.starred, error: res.error })
 
-      saveProcess({ ...res.data, tabId: pageInfo.tabId, notionPageId: pageInfo.notionPageId, starred: pageInfo.starred }).then((_res) => {
+      saveProcess({ ...res.data!, tabId: pageInfo.tabId, notionPageId: pageInfo.notionPageId, starred: pageInfo.starred }).then((_res) => {
         return resolve(_res)
       }).catch((error) => {
         return reject(error)
@@ -200,7 +205,7 @@ async function checkStarredStatus(url: string, tabId: number): Promise<SwRespons
       return ({ tabId, starred, notionPageId })
     }
   }
-  catch (err) {
+  catch (err: any) {
     return ({ tabId, starred, notionPageId, error: err.message ? err.message : 'Error check starred status.' })
   }
 }

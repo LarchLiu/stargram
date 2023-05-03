@@ -6,13 +6,13 @@ describe('get website info', () => {
     const res = await getWebsiteInfo({ webUrl: 'https://github.com/LarchLiu/star-nexus/something' })
     expect((res.data?.title)?.includes('star-nexus')).toBeTruthy()
     expect(res.data?.url).toBe('https://github.com/LarchLiu/star-nexus')
-  }, 20000)
+  })
 
   test('tweet info', async () => {
     const res = await getWebsiteInfo({ webUrl: 'https://twitter.com/LarchLiu/status/1594316498377621504' })
     expect((res.data?.title)?.includes('Alex Liu')).toBeTruthy()
     expect(res.data?.url).toBe('https://twitter.com/LarchLiu/status/1594316498377621504')
-  }, 20000)
+  })
 })
 
 describe('handle error', () => {

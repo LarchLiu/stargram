@@ -9,18 +9,18 @@ function hotReloadBackground(): Plugin {
   // 初始化websocket链接用于监听
   const initSocket = () => {
     wss = new WebSocketServer({ port: bgUpdatePort })
-    wss.on('connection', (ws) => {
+    wss.on('connection', (ws: any) => {
       // 启动心跳监听，便于重连
       ws.send('heartbeatMonitor')
       const interval = setInterval(() => {
         ws.send('heartbeat')
       }, 3000)
 
-      ws.on('message', (message) => {
+      ws.on('message', (message: any) => {
         const info = `${message}`
         // 监听contentScript代码变化，复用一个ws连接
         if (info === 'UPDATE_CONTENT_SCRIPT') {
-          wss.clients.forEach((ws) => {
+          wss.clients.forEach((ws: any) => {
             ws.send('UPDATE_CONTENT_SCRIPT')
           })
         }
@@ -50,7 +50,7 @@ function hotReloadBackground(): Plugin {
     writeBundle() {
       // 通过socket触发reload
       if (wss !== null) {
-        wss.clients.forEach((ws) => {
+        wss.clients.forEach((ws: any) => {
           ws.send('UPDATE_BG')
         })
       }
