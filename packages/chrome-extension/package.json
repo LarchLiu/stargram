@@ -1,6 +1,6 @@
 {
   "name": "chrome-extension",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Manage all your Starred Pages",
   "author": "Alex Liu <larch.liu@gmail.com>",
   "license": "MIT",
