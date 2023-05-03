@@ -1,7 +1,7 @@
 {
   "name": "@starnexus/core",
   "type": "module",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "StarNexus core package",
   "author": "Alex Liu <larch.liu@gmail.com>",
   "license": "MIT",
