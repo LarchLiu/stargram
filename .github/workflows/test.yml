@@ -1,13 +1,6 @@
-name: CI
+name: Test
 
 on:
-  workflow_call:
-    inputs:
-      environment:
-        type: string
-        description: environment to deploy to
-        required: true
-
   push:
     branches:
       - main
@@ -34,41 +27,9 @@ jobs:
       - name: Lint
         run: pnpm run lint
 
-  test-push-pr:
-    name: Test push and PR
-    if: ${{ github.event_name != 'workflow_call' }}
+  test:
     runs-on: ${{ matrix.os }}
     environment: ci test
-
-    strategy:
-      matrix:
-        node-version: [18.x]
-        os: [ubuntu-latest]
-      fail-fast: false
-
-    steps:
-      - uses: actions/checkout@v3
-      - uses: pnpm/action-setup@v2
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{ matrix.node-version }}
-          registry-url: https://registry.npmjs.org/
-          cache: pnpm
-
-      - run: pnpm install
-      - run: pnpm run test
-        env:
-          VITE_OPENAI_API_KEY: ${{secrets.VITE_OPENAI_API_KEY}}
-          VITE_NOTION_API_KEY: ${{secrets.VITE_NOTION_API_KEY}}
-          VITE_NOTION_DATABASE_ID: ${{secrets.VITE_NOTION_DATABASE_ID}}
-          VITE_STAR_NEXUS_HUB_API: ${{secrets.VITE_STAR_NEXUS_HUB_API}}
-
-  test-workflow-call:
-    name: Test workflow call
-    if: ${{ github.event_name == 'workflow_call' }}
-    runs-on: ${{ matrix.os }}
-    environment: ${{ inputs.environment }}
 
     strategy:
       matrix:
