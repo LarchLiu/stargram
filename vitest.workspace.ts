@@ -1,3 +1,3 @@
 export default [
-  'core',
+  'packages/*/vitest.config.ts',
 ]

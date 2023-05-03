@@ -1,6 +1,4 @@
 packages:
-  - "core"
-  - "chrome-extension"
-  - "picture-bed"
   - "docs"
-  - "bots/*"
+  - "packages/*"
+
