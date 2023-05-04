@@ -37,6 +37,9 @@ async function fetchGet<T>(url: string, headers?: HeadersInit, query?: Record<st
     return data as T
   }
   catch (err: any) {
+    if (!throwError)
+      return { error: err }
+
     throw new Error(err.message)
   }
 }
@@ -76,6 +79,9 @@ async function fetchPost<T>(url: string, headers?: HeadersInit, body?: Record<st
     return data as T
   }
   catch (err: any) {
+    if (!throwError)
+      return { error: err }
+
     throw new Error(err.message)
   }
 }
@@ -149,6 +155,22 @@ function getPromptsByTemplate(template: string, kv: Record<string, string>) {
   return prompts
 }
 
+function strNotEqualWith(key: string, values: string[]): boolean {
+  if (key) {
+    if (values.length === 0)
+      return true
+
+    for (let i = 0; i < values.length; i++) {
+      if (key === values[i])
+        return false
+    }
+    return true
+  }
+  else {
+    return false
+  }
+}
+
 export {
   fetchGet,
   fetchPost,
@@ -156,4 +178,5 @@ export {
   countWord,
   preprocessText,
   getPromptsByTemplate,
+  strNotEqualWith,
 }

@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest'
-import { saveToNotion } from '~/notion'
+import { saveToNotion } from '../src/notion'
 
 const notionPage = {
   databaseId: import.meta.env.VITE_NOTION_DATABASE_ID,

@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest'
-import { countWord, getDomain, getPromptsByTemplate, preprocessText } from '~/utils'
+import { countWord, getDomain, getPromptsByTemplate, preprocessText, strNotEqualWith } from '../src/utils'
 
 const host = 'github.com'
 describe('utils', () => {
@@ -12,6 +12,19 @@ describe('utils', () => {
     expect(res).toBe(host)
     res = getDomain('http://github.com/LarchLiu')
     expect(res).toBe(host)
+  })
+  test('strNotEqualWith', async () => {
+    let res = strNotEqualWith('', [])
+    expect(res).toBeFalsy()
+    const key = 'one'
+    res = strNotEqualWith(key, [])
+    expect(res).toBeTruthy()
+    const values = ['two']
+    res = strNotEqualWith(key, values)
+    expect(res).toBeTruthy()
+    values.push('one')
+    res = strNotEqualWith(key, values)
+    expect(res).toBeFalsy()
   })
   test('get prompts by template', async () => {
     const template = 'template test: {content}{language}'

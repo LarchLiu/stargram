@@ -1,8 +1,20 @@
-import type { FetchError, FetchWebsite, LoaderUrls, PicBedRes, TwitterMeta } from '../types'
-import { PICTURE_BED_URL, STAR_NEXUS_HUB_API, TWITTER_DOMAIN, USER_AGENT } from '../const'
-import { fetchGet, fetchPost } from '../utils'
+import type { FetchError, FetchWebsite, LoaderUrls, PathInfo, PicBedRes, TwitterMeta } from '../../../types'
+import { PICTURE_BED_URL, STAR_NEXUS_HUB_API, TWITTER_DOMAIN, USER_AGENT } from '../../../const'
+import { fetchGet, fetchPost, strNotEqualWith } from '../../../utils'
 
-async function getTwitterInfo(urls: LoaderUrls, header: Record<string, string> = { 'User-Agent': USER_AGENT }): Promise<FetchWebsite> {
+function tweetFilter(urls: LoaderUrls): LoaderUrls | undefined {
+  const regexPath = /twitter.com\/([^\/]*\/status\/[^\?]*)/g
+  const pathMatch = regexPath.exec(urls.webUrl)
+  const webPath = pathMatch ? pathMatch[1] : ''
+  const id = webPath.split('/')[0]
+
+  if (strNotEqualWith(id, ['home', 'explore', 'notifications', 'messages', 'search']))
+    return { ...urls, webPath }
+
+  return undefined
+}
+
+async function getTweetInfo(urls: LoaderUrls, header: Record<string, string> = { 'User-Agent': USER_AGENT }): Promise<FetchWebsite> {
   let title = ''
   let content = ''
   const url = urls.webUrl
@@ -74,4 +86,11 @@ async function getTwitterInfo(urls: LoaderUrls, header: Record<string, string> =
   }
 }
 
-export { getTwitterInfo }
+const pathInfo: PathInfo = {
+  author: '[StarNexus](https://github.com/LarchLiu/star-nexus)',
+  sample: 'LarchLiu/status/1635509927094677504',
+  filter: tweetFilter,
+  loader: getTweetInfo,
+}
+
+export default pathInfo

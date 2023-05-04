@@ -1,61 +1,65 @@
-interface WebsiteInfo {
+export interface WebsiteInfo {
   title: string
   url: string
   content: string
   meta?: WebsiteMeta
 }
 
-interface WebsiteMeta {
+export interface WebsiteMeta {
   domain: string
   website: string
   cover?: string
+  prompts?: string
 }
 
-interface GithubMeta extends WebsiteMeta {
+export interface GithubMeta extends WebsiteMeta {
   website: 'Github'
   tags?: string[]
   languages?: string[]
 }
 
-interface TwitterMeta extends WebsiteMeta {
+export interface TwitterMeta extends WebsiteMeta {
   website: 'Twitter'
   tags?: string[]
 }
 
-type FetchError = string
+export type FetchError = string
 
-interface NotThrowError {
+export interface NotThrowError {
   error: FetchError
 }
 
-interface FetchWebsite {
+export interface FetchWebsite {
   data?: WebsiteInfo
   error?: FetchError
 }
 
-interface LoaderUrls {
+export type WebPath = string
+
+export interface LoaderUrls {
   webUrl: string
   picBed?: string
   webHub?: string
+  webPath?: WebPath
 }
 
-interface WebsiteLoader {
+export interface WebsiteLoader {
   [key: string]: {
     loader: (urls: LoaderUrls, header?: Record<string, string>) => Promise<FetchWebsite>
   }
 }
 
-interface FetchOpenai {
+export interface FetchOpenai {
   data?: OpenaiSummarize
   error?: FetchError
 }
 
-interface OpenaiSummarize {
+export interface OpenaiSummarize {
   summary: string
   categories: string[]
 }
 
-interface NotionPage {
+export interface NotionPage {
   databaseId: string
   title: string
   summary: string
@@ -65,35 +69,38 @@ interface NotionPage {
   meta?: WebsiteMeta
 }
 
-interface SavedNotion {
+export interface SavedNotion {
   starred: boolean
   notionPageId: string
 }
 
-interface FetchNotion {
+export interface FetchNotion {
   data?: SavedNotion
   error?: FetchError
 }
 
-interface PicBedRes {
+export interface PicBedRes {
   url: string
 }
 
-type PromptsLanguage = 'en' | 'zh-CN'
+export type PromptsLanguage = 'en' | 'zh-CN'
 
-export type {
-  WebsiteInfo,
-  GithubMeta,
-  TwitterMeta,
-  WebsiteLoader,
-  FetchWebsite,
-  FetchError,
-  NotThrowError,
-  FetchOpenai,
-  OpenaiSummarize,
-  NotionPage,
-  FetchNotion,
-  PicBedRes,
-  LoaderUrls,
-  PromptsLanguage,
+export interface PathInfo {
+  name?: string
+  author: string
+  sample: string
+  prompts?: string
+  filter: (urls: LoaderUrls) => LoaderUrls | undefined
+  loader: (urls: LoaderUrls, header?: Record<string, string>) => Promise<FetchWebsite>
+}
+
+export interface Router {
+  name: string
+  author: string
+  category: string | string[] // TODO: defined const categories
+  paths?: PathInfo[]
+}
+
+export interface Routes {
+  [name: string]: Router
 }

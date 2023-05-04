@@ -1,16 +1,31 @@
-import type { FetchError, FetchWebsite, GithubMeta, LoaderUrls, NotThrowError, PicBedRes } from '../types'
-import { GITHUB_DOMAIN, GITHUB_RAW_URL, GITHUB_REPOS_API, PICTURE_BED_URL, USER_AGENT } from '../const'
-import { fetchGet, fetchPost } from '../utils'
+import type { FetchError, FetchWebsite, GithubMeta, LoaderUrls, NotThrowError, PathInfo, PicBedRes } from '../../../types'
+import { GITHUB_DOMAIN, GITHUB_RAW_URL, GITHUB_REPOS_API, PICTURE_BED_URL, USER_AGENT } from '../../../const'
+import { fetchGet, fetchPost, strNotEqualWith } from '../../../utils'
 
-async function getGithubInfo(urls: LoaderUrls, header: Record<string, string> = { 'User-Agent': USER_AGENT }): Promise<FetchWebsite> {
+function repoFilter(urls: LoaderUrls): LoaderUrls | undefined {
+  const regexPath = /github.com\/([^\/]*\/[^\/]*)/g
+  const pathMatch = regexPath.exec(urls.webUrl)
+  const webPath = pathMatch ? pathMatch[1] : ''
+  const id = webPath.split('/')[0]
+
+  if (strNotEqualWith(id, [
+    'issues', 'pulls', 'marketplace', 'explore', 'settings',
+    'notifications', 'discussions', 'sponsors', 'organizations',
+  ]))
+    return { ...urls, webPath }
+
+  return undefined
+}
+
+async function getRepoInfo(urls: LoaderUrls, header: Record<string, string> = { 'User-Agent': USER_AGENT }): Promise<FetchWebsite> {
   let title = ''
   let content = ''
   let url = urls.webUrl
   const githubMeta: GithubMeta = { domain: GITHUB_DOMAIN, website: 'Github' }
-  const regexGithubRepo = /https:\/\/github.com\/([^\/]*\/[^\/]*)/g // match github.com/user/repo/
-  const githubRepoMatch = regexGithubRepo.exec(url)
-  const githubRepo = githubRepoMatch ? githubRepoMatch[1] : ''
-
+  // const regexGithubRepo = /https:\/\/github.com\/([^\/]*\/[^\/]*)/g // match github.com/user/repo/
+  // const githubRepoMatch = regexGithubRepo.exec(url)
+  // const githubRepo = githubRepoMatch ? githubRepoMatch[1] : ''
+  const githubRepo = urls.webPath
   try {
     if (githubRepo) {
       // fetch repo info
@@ -66,4 +81,11 @@ async function getGithubInfo(urls: LoaderUrls, header: Record<string, string> = 
   }
 }
 
-export { getGithubInfo }
+const pathInfo: PathInfo = {
+  author: '[StarNexus](https://github.com/LarchLiu/star-nexus)',
+  sample: 'LarchLiu/star-nexus',
+  filter: repoFilter,
+  loader: getRepoInfo,
+}
+
+export default pathInfo

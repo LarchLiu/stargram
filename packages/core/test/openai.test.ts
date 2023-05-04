@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest'
-import { summarizeContent } from '~/openai'
+import { summarizeContent } from '../src/openai'
 
 const webInfo = {
   domain: 'github.com',

@@ -1,9 +1,9 @@
 import { describe, expect, test } from 'vitest'
-import { getWebsiteInfo } from '~/website'
+import { getWebsiteInfo } from '../src/website'
 
 describe('get website info', () => {
   test('github info', async () => {
-    const res = await getWebsiteInfo({ webUrl: 'https://github.com/LarchLiu/star-nexus/something' })
+    const res = await getWebsiteInfo({ webUrl: 'https://github.com/LarchLiu/star-nexus' })
     expect((res.data?.title)?.includes('star-nexus')).toBeTruthy()
     expect(res.data?.url).toBe('https://github.com/LarchLiu/star-nexus')
   })
