@@ -1,13 +1,7 @@
 import type { Router } from '../../types'
-import repo from './paths/repo'
 
-const router: Router = {
+export const router: Router = {
   name: 'Github',
   category: 'Code',
-  author: 'StarNexus',
-  paths: [
-    repo,
-  ],
+  author: '[StarNexus](https://github.com/LarchLiu/star-nexus)',
 }
-
-export default router

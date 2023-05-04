@@ -1,5 +1,5 @@
 import type { FetchError, FetchWebsite, LoaderUrls, PathInfo, PicBedRes, TwitterMeta } from '../../../types'
-import { PICTURE_BED_URL, STAR_NEXUS_HUB_API, TWITTER_DOMAIN, USER_AGENT } from '../../../const'
+import { PICTURE_BED_URL, STAR_NEXUS_HUB_API, USER_AGENT } from '../../../const'
 import { fetchGet, fetchPost, strNotEqualWith } from '../../../utils'
 
 function tweetFilter(urls: LoaderUrls): LoaderUrls | undefined {
@@ -18,7 +18,7 @@ async function getTweetInfo(urls: LoaderUrls, header: Record<string, string> = {
   let title = ''
   let content = ''
   const url = urls.webUrl
-  const meta: TwitterMeta = { domain: TWITTER_DOMAIN, website: 'Twitter' }
+  const meta: TwitterMeta = { domain: '', website: '' }
   const regexPath = /https:\/\/twitter.com\/([^\/]*\/status\/[^\?]*)/g // match github.com/user/repo/
   const pathMatch = regexPath.exec(url)
   const path = pathMatch ? pathMatch[1] : ''
@@ -86,11 +86,10 @@ async function getTweetInfo(urls: LoaderUrls, header: Record<string, string> = {
   }
 }
 
-const pathInfo: PathInfo = {
+export const pathInfo: PathInfo = {
+  name: 'Tweet Detail',
   author: '[StarNexus](https://github.com/LarchLiu/star-nexus)',
   sample: 'LarchLiu/status/1635509927094677504',
   filter: tweetFilter,
   loader: getTweetInfo,
 }
-
-export default pathInfo

@@ -1,5 +1,5 @@
 import type { FetchError, FetchWebsite, GithubMeta, LoaderUrls, NotThrowError, PathInfo, PicBedRes } from '../../../types'
-import { GITHUB_DOMAIN, GITHUB_RAW_URL, GITHUB_REPOS_API, PICTURE_BED_URL, USER_AGENT } from '../../../const'
+import { GITHUB_RAW_URL, GITHUB_REPOS_API, PICTURE_BED_URL, USER_AGENT } from '../../../const'
 import { fetchGet, fetchPost, strNotEqualWith } from '../../../utils'
 
 function repoFilter(urls: LoaderUrls): LoaderUrls | undefined {
@@ -21,10 +21,10 @@ async function getRepoInfo(urls: LoaderUrls, header: Record<string, string> = { 
   let title = ''
   let content = ''
   let url = urls.webUrl
-  const githubMeta: GithubMeta = { domain: GITHUB_DOMAIN, website: 'Github' }
-  // const regexGithubRepo = /https:\/\/github.com\/([^\/]*\/[^\/]*)/g // match github.com/user/repo/
-  // const githubRepoMatch = regexGithubRepo.exec(url)
-  // const githubRepo = githubRepoMatch ? githubRepoMatch[1] : ''
+  const githubMeta: GithubMeta = {
+    domain: '',
+    website: '',
+  }
   const githubRepo = urls.webPath
   try {
     if (githubRepo) {
@@ -81,11 +81,10 @@ async function getRepoInfo(urls: LoaderUrls, header: Record<string, string> = { 
   }
 }
 
-const pathInfo: PathInfo = {
+export const pathInfo: PathInfo = {
+  name: 'Repo Info',
   author: '[StarNexus](https://github.com/LarchLiu/star-nexus)',
   sample: 'LarchLiu/star-nexus',
   filter: repoFilter,
   loader: getRepoInfo,
 }
-
-export default pathInfo

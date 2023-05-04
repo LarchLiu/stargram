@@ -1,5 +1,6 @@
 import { resolve } from 'node:path'
 import { defineConfig } from 'vite'
+import AutoImport from '@starnexus/import-routes/vite'
 
 export default defineConfig({
   define: {
@@ -16,4 +17,10 @@ export default defineConfig({
       fileName: 'index',
     },
   },
+  plugins: [
+    AutoImport({
+      dirs: ['src/website/**/*'],
+      routesExportPath: 'src/website/routes-auto-imports.ts',
+    }),
+  ],
 })

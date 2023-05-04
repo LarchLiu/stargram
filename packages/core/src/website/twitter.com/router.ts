@@ -1,11 +1,7 @@
 import type { Router } from '../../types'
-import tweet from './paths/tweet'
 
-const router: Router = {
+export const router: Router = {
   name: 'Twitter',
   category: 'Social Media',
-  author: 'StarNexus',
-  paths: [tweet],
+  author: '[StarNexus](https://github.com/LarchLiu/star-nexus)',
 }
-
-export default router

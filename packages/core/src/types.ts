@@ -2,7 +2,7 @@ export interface WebsiteInfo {
   title: string
   url: string
   content: string
-  meta?: WebsiteMeta
+  meta: WebsiteMeta
 }
 
 export interface WebsiteMeta {
@@ -13,13 +13,11 @@ export interface WebsiteMeta {
 }
 
 export interface GithubMeta extends WebsiteMeta {
-  website: 'Github'
   tags?: string[]
   languages?: string[]
 }
 
 export interface TwitterMeta extends WebsiteMeta {
-  website: 'Twitter'
   tags?: string[]
 }
 
@@ -86,10 +84,11 @@ export interface PicBedRes {
 export type PromptsLanguage = 'en' | 'zh-CN'
 
 export interface PathInfo {
-  name?: string
+  name: string
   author: string
   sample: string
   prompts?: string
+  sequence?: number
   filter: (urls: LoaderUrls) => LoaderUrls | undefined
   loader: (urls: LoaderUrls, header?: Record<string, string>) => Promise<FetchWebsite>
 }
