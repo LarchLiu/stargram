@@ -33,7 +33,7 @@
     "test:core": "turbo run test --filter=@starnexus/core",
     "tscheck": "turbo run tscheck",
     "lint": "eslint --cache .",
-    "lint:fix": "turbo run lint -- --fix",
+    "lint:fix": "nr lint --fix",
     "up": "taze major -r",
     "up:w": "taze major -r -w"
   },
