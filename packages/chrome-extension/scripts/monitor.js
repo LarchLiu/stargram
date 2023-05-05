@@ -31,7 +31,7 @@ async function copyIndexHtml() {
     data = data.replace(/\.ts/g, '.js')
     await fs.writeFile(r(`${outputDir}/${view}/index.html`), data, 'utf-8')
   }
-  console.log('复制html文件成功')
+  // console.log('复制html文件成功')
 }
 function copyAssets() {
   fs.copy(origin.assets, target.assets)

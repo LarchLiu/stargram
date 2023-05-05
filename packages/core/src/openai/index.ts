@@ -2,7 +2,7 @@ import type { FetchOpenai, PromptsLanguage, WebsiteInfo } from '../types'
 import { countWord, fetchPost, getPromptsByTemplate, preprocessText } from '../utils'
 import { ANSWER_IN_LANGUAGE, MAX_TOKEN_LENGTH, OPENAI_CHAT_API, SUMMARIZE_PROMPTS, USER_PROMPTS } from '../const'
 
-async function summarizeContent(apiKey: string, websiteInfo: WebsiteInfo, language: PromptsLanguage = 'en'): Promise<FetchOpenai> {
+async function summarizeContent(apiKey: string, websiteInfo: WebsiteInfo, language: PromptsLanguage = 'zh-CN'): Promise<FetchOpenai> {
   try {
     let summary = ''
     let category = ''

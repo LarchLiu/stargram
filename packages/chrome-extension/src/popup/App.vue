@@ -124,7 +124,7 @@ function animateButton() {
   saveBtn.value?.classList.remove('star-animate')
   saveBtn.value?.classList.remove('bubbly-animate')
   saveBtn.value?.classList.add('star-animate')
-  
+
   starTimer = setTimeout(() => {
     saveBtn.value?.classList.add('bubbly-animate')
     bubblyTimer = setTimeout(() => {

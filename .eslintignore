@@ -1,3 +1,7 @@
 dist
+extension
+local
 node_modules
-test/fixtures*
+*.d.ts
+.next
+.turbo

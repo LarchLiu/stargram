@@ -5,7 +5,6 @@ import Components from 'unplugin-vue-components/vite'
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 import { commonConfig, plugins, r } from './vite.config'
 import { __DEV__, outputDir } from './const'
-import hotReloadContent from './scripts/hot-reload/content'
 
 // bundling the content script
 export default defineConfig({
@@ -46,6 +45,5 @@ export default defineConfig({
       resolvers: [ElementPlusResolver()],
       dts: 'contentScript/components.d.ts',
     }),
-    hotReloadContent(),
   ],
 })

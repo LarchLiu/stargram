@@ -6,7 +6,6 @@ import Components from 'unplugin-vue-components/vite'
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 import Unocss from 'unocss/vite'
 import VueI18nPlugin from '@intlify/unplugin-vue-i18n/vite'
-import hotReloadBackground from './scripts/hot-reload/background'
 import { __DEV__, outputDir } from './const'
 
 export function r(...args: string[]) {
@@ -64,6 +63,5 @@ export default defineConfig({
       resolvers: [ElementPlusResolver()],
       dts: 'popup/components.d.ts',
     }),
-    hotReloadBackground(),
   ],
 })
