@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "baseUrl": ".",
+    "declaration": false,
     "types": [
       "chrome",
       "element-plus/global"

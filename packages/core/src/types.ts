@@ -81,7 +81,7 @@ export interface PicBedRes {
   url: string
 }
 
-export type PromptsLanguage = 'en' | 'zh-CN'
+export type PromptsLanguage = 'de' | 'en' | 'es' | 'fr' | 'kr' | 'ja' | 'it' | 'nl' | 'pt' | 'ru' | 'zh-CN'
 
 export interface PathInfo {
   name: string

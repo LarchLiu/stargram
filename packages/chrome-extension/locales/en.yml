@@ -14,3 +14,14 @@ settings:
   uiLanguage: UI
   promptsLanguage: Prompts
   languageSettings: Languages
+  de: German
+  en: English
+  es: Spanish
+  fr: Franch
+  kr: Korean
+  nl: Dutch
+  it: Italian
+  ja: Japanese
+  pt: Portuguese
+  ru: Russian
+  zhCN: Chinese

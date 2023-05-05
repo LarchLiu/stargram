@@ -15,8 +15,27 @@ const showSettings = ref(false)
 const showLanguage = ref(false)
 const uiLangSelect = ref('en')
 const promptsLangSelect = ref('en')
+const saveBtn = ref<HTMLDivElement>()
+const saveBtnEnable = ref(true)
+let starTimer: NodeJS.Timeout
+let bubblyTimer: NodeJS.Timeout
+const colorPreset = [
+  '#264653', '#2a9d8f', '#e9c46a', '#f4a261', '#e76f51',
+  '#ffbe0b', '#fb5607', '#ff006e', '#8338ec', '#3a86ff',
+  '#ef476f', '#ffd166', '#06d6a0', '#118ab2', '#073b4c',
+  '#5f0f40', '#9a031e', '#fb8b24', '#e36414', '#0f4c5c',
+]
+const randomColor1 = ref('#ff0000')
+const randomColor2 = ref('#ff0000')
+const randomColor3 = ref('#ff0000')
+const randomColor4 = ref('#ff0000')
+const randomColor5 = ref('#ff0000')
 
 async function onSaveClick() {
+  if (!saveBtnEnable.value)
+    return
+
+  animateButton()
   await new Promise(resolve => setTimeout(resolve, 100))
 
   chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
@@ -87,6 +106,35 @@ function onLanguageClick() {
   }
 }
 
+function genRandomColor() {
+  randomColor1.value = colorPreset[Math.floor(Math.random() * 20)]
+  randomColor2.value = colorPreset[Math.floor(Math.random() * 20)]
+  randomColor3.value = colorPreset[Math.floor(Math.random() * 20)]
+  randomColor4.value = colorPreset[Math.floor(Math.random() * 20)]
+  randomColor5.value = colorPreset[Math.floor(Math.random() * 20)]
+}
+function animateButton() {
+  genRandomColor()
+  if (starTimer)
+    clearTimeout(starTimer)
+  if (bubblyTimer)
+    clearTimeout(bubblyTimer)
+
+  saveBtnEnable.value = false
+  saveBtn.value?.classList.remove('star-animate')
+  saveBtn.value?.classList.remove('bubbly-animate')
+  saveBtn.value?.classList.add('star-animate')
+  
+  starTimer = setTimeout(() => {
+    saveBtn.value?.classList.add('bubbly-animate')
+    bubblyTimer = setTimeout(() => {
+      saveBtnEnable.value = true
+      saveBtn.value?.classList.remove('star-animate')
+      saveBtn.value?.classList.remove('bubbly-animate')
+    }, 900)
+  }, 900)
+}
+
 watch(uiLangSelect, (n, _) => {
   locale.value = n
   chrome.storage.sync.set(
@@ -121,9 +169,14 @@ onMounted(() => {
 <template>
   <div w-240px>
     <div m-5 flex justify-center>
-      <div target="_blank" class="gh-btn gh-btn-sm inline-flex items-center" @click="onSaveClick">
+      <button
+        ref="saveBtn"
+        :disabled="!saveBtnEnable"
+        class="gh-btn gh-btn-sm inline-flex items-center disabled:cursor-not-allowed"
+        @click="onSaveClick"
+      >
         <img :src="starSrc" height="18"><span ml-2>StarNexus</span>
-      </div>
+      </button>
     </div>
     <footer class="mt-2 flex flex-col bg-[#f0f0f0] p-2 text-12px">
       <div flex items-center justify-between>
@@ -172,10 +225,10 @@ onMounted(() => {
         <label class="inline-block h-5">{{ t('settings.uiLanguage') }}</label>
         <select v-model="uiLangSelect" autocomplete="off" class="min-select" style="max-width: 128px;">
           <option value="en">
-            English
+            {{ t('settings.en') }}
           </option>
           <option value="zh-CN">
-            简体中文
+            {{ t('settings.zhCN') }}
           </option>
         </select>
       </div>
@@ -183,10 +236,37 @@ onMounted(() => {
         <label class="inline-block h-5">{{ t('settings.promptsLanguage') }}</label>
         <select v-model="promptsLangSelect" autocomplete="off" class="min-select" style="max-width: 128px;">
           <option value="en">
-            English
+            {{ t('settings.en') }}
           </option>
           <option value="zh-CN">
-            简体中文
+            {{ t('settings.zhCN') }}
+          </option>
+          <option value="de">
+            {{ t('settings.de') }}
+          </option>
+          <option value="es">
+            {{ t('settings.es') }}
+          </option>
+          <option value="fr">
+            {{ t('settings.fr') }}
+          </option>
+          <option value="kr">
+            {{ t('settings.kr') }}
+          </option>
+          <option value="nl">
+            {{ t('settings.nl') }}
+          </option>
+          <option value="it">
+            {{ t('settings.it') }}
+          </option>
+          <option value="ja">
+            {{ t('settings.ja') }}
+          </option>
+          <option value="pt">
+            {{ t('settings.pt') }}
+          </option>
+          <option value="ru">
+            {{ t('settings.ru') }}
           </option>
         </select>
       </div>
@@ -194,22 +274,87 @@ onMounted(() => {
   </div>
 </template>
 
-<style scoped>
+<style lang="scss" scoped>
 .gh-btn {
+  position: relative;
   color: var(--color-btn-text);
   background-color: var(--color-btn-bg);
   border-color: var(--color-btn-border) !important;
   box-shadow: var(--color-btn-shadow),var(--color-btn-inset-shadow);
   transition: 80ms cubic-bezier(0.33, 1, 0.68, 1);
   transition-property: color,background-color,box-shadow,border-color;
+
+  &:before, &:after{
+    position: absolute;
+    content: '';
+    display: block;
+    width: 140%;
+    height: 100%;
+    left: -20%;
+    z-index: -1000;
+    transition: all ease-in-out 0.5s;
+    background-repeat: no-repeat;
+  }
+
+  &:before{
+    display: none;
+    top: -75%;
+    background-image:
+      radial-gradient(circle, v-bind(randomColor1) 20%, transparent 20%),
+      radial-gradient(circle,  transparent 20%, v-bind(randomColor2) 20%, transparent 30%),
+      radial-gradient(circle, v-bind(randomColor3) 20%, transparent 20%),
+      radial-gradient(circle, v-bind(randomColor4) 20%, transparent 20%),
+      radial-gradient(circle,  transparent 10%, v-bind(randomColor5) 15%, transparent 20%),
+      radial-gradient(circle, v-bind(randomColor1) 20%, transparent 20%),
+      radial-gradient(circle, v-bind(randomColor2) 20%, transparent 20%),
+      radial-gradient(circle, v-bind(randomColor3) 20%, transparent 20%),
+      radial-gradient(circle, v-bind(randomColor4) 20%, transparent 20%);
+    background-size: 10% 10%, 20% 20%, 15% 15%, 20% 20%, 18% 18%, 10% 10%, 15% 15%, 10% 10%, 18% 18%;
+    //background-position: 0% 80%, -5% 20%, 10% 40%, 20% 0%, 30% 30%, 22% 50%, 50% 50%, 65% 20%, 85% 30%;
+  }
+
+  &:after{
+    display: none;
+    bottom: -75%;
+    background-image:
+      radial-gradient(circle, v-bind(randomColor5) 20%, transparent 20%),
+      radial-gradient(circle, v-bind(randomColor1) 20%, transparent 20%),
+      radial-gradient(circle,  transparent 10%, v-bind(randomColor2) 15%, transparent 20%),
+      radial-gradient(circle, v-bind(randomColor3) 20%, transparent 20%),
+      radial-gradient(circle, v-bind(randomColor4) 20%, transparent 20%),
+      radial-gradient(circle, v-bind(randomColor5) 20%, transparent 20%),
+      radial-gradient(circle, v-bind(randomColor1) 20%, transparent 20%);
+    background-size: 15% 15%, 20% 20%, 18% 18%, 20% 20%, 15% 15%, 10% 10%, 20% 20%;
+    //background-position: 5% 90%, 10% 90%, 10% 90%, 15% 90%, 25% 90%, 25% 90%, 40% 90%, 55% 90%, 70% 90%;
+  }
+
+  &:hover {
+    img {
+      animation: twink 0.5s 0.25s;
+    }
+    background-color: var(--color-btn-hover-bg);
+    border-color: var(--color-btn-hover-border) !important;
+  }
+  &:enabled:active {
+    transform: scale(0.9);
+  }
+  &.star-animate {
+    img {
+      animation: star-emit 1.8s;
+    }
+  }
+  &.bubbly-animate {
+    &:before{
+      display: block;
+      animation: topBubbles ease-in-out 0.75s forwards;
+    }
+    &:after{
+      display: block;
+      animation: bottomBubbles ease-in-out 0.75s forwards;
+    }
+  }
 }
-.gh-btn:hover {
-  background-color: var(---color-btn-hover-bg);
-  border-color: var(--color-btn-hover-border) !important;
-}
-.gh-btn:hover img {
-  animation: twink 0.75s 0.5s;
-}
+
 .setting:hover img {
   animation: spin 0.5s 0.5s;
 }
@@ -263,7 +408,7 @@ select.min-select {
 }
 @keyframes twink {
   0% {
-    transform: translate(0px)
+    transform: translate(-5px)
   }
   25% {
     transform: translate(5px)
@@ -274,7 +419,30 @@ select.min-select {
   75% {
     transform: translate(5px)
   }
+  100% {
+    transform: translate(0px)
+  }
+}
+@keyframes star-emit {
+  0% {
+    transform: translate(3px, -3px)
+  }
   10% {
+    transform: translate(0px)
+  }
+  20% {
+    transform: translate(5px, -5px)
+  }
+  35% {
+    transform: translate(0px)
+  }
+  50% {
+    transform: translate(100px, -100px)
+  }
+  99% {
+    transform: translate(90px, -90px)
+  }
+  100% {
     transform: translate(0px)
   }
 }
@@ -289,6 +457,29 @@ select.min-select {
 @keyframes ping {
   100% {
     transform: scale(1.2);
+  }
+}
+@keyframes topBubbles {
+  0%{
+    background-position: 5% 90%, 10% 90%, 10% 90%, 15% 90%, 25% 90%, 25% 90%, 40% 90%, 55% 90%, 70% 90%;
+  }
+  50% {
+    background-position: 0% 80%, 0% 20%, 10% 40%, 20% 0%, 30% 30%, 22% 50%, 50% 50%, 65% 20%, 90% 30%;}
+  100% {
+    background-position: 0% 70%, 0% 10%, 10% 30%, 20% -10%, 30% 20%, 22% 40%, 50% 40%, 65% 10%, 90% 20%;
+    background-size: 0% 0%, 0% 0%,  0% 0%,  0% 0%,  0% 0%,  0% 0%;
+  }
+}
+
+@keyframes bottomBubbles {
+  0%{
+    background-position: 10% -10%, 30% 10%, 55% -10%, 70% -10%, 85% -10%, 70% -10%, 70% 0%;
+  }
+  50% {
+    background-position: 0% 80%, 20% 80%, 45% 60%, 60% 100%, 75% 70%, 95% 60%, 105% 0%;}
+  100% {
+    background-position: 0% 90%, 20% 90%, 45% 70%, 60% 110%, 75% 80%, 95% 70%, 110% 10%;
+    background-size: 0% 0%, 0% 0%,  0% 0%,  0% 0%,  0% 0%,  0% 0%;
   }
 }
 </style>

@@ -16,15 +16,24 @@ Start the summary with "Summary:". Start the types classification with "Classifi
 Summary: This is the summary content. // must start with Summary:
 Classification: XXX#YYY#ZZZ // must start with Classification:
 `
-export const USER_PROMPTS = `The Content is:
+export const USER_PROMPTS = `Please answer in {language}. The Content is:
 =====
 {content}
 =====
-{language}`
+Please answer in {language}.`
 
 export const ANSWER_IN_LANGUAGE: { [key in PromptsLanguage]: string } = {
-  'en': 'Please answer in English.',
-  'zh-CN': '请用中文回答。',
+  'de': 'German',
+  'en': 'English',
+  'es': 'Spanish',
+  'fr': 'Franch',
+  'kr': 'Korean',
+  'nl': 'Dutch',
+  'it': 'Italian',
+  'ja': 'Japanese',
+  'pt': 'Portuguese',
+  'ru': 'Russian',
+  'zh-CN': 'Chinese',
 }
 
 export const USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.2 Safari/605.1.15'

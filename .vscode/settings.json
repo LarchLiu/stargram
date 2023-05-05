@@ -1,5 +1,5 @@
 {
   "unocss.root": [
-    "chrome-extension"
+    "packages/chrome-extension"
   ]
 }
