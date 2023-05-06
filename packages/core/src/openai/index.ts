@@ -8,15 +8,17 @@ async function summarizeContent(apiKey: string, websiteInfo: WebsiteInfo, langua
     let category = ''
     let content = websiteInfo.content
     content = preprocessText(content)
-    const wordCount = countWord(content)
+    let wordCount = countWord(content)
 
     if (wordCount > 40) {
       const systemLen = countWord(SUMMARIZE_PROMPTS)
       const maxTokens = MAX_TOKEN_LENGTH - systemLen
       // let wordToken = estimateTokens(content)
 
-      if (wordCount > maxTokens)
+      while (wordCount > maxTokens) {
         content = content.substring(0, content.length - (wordCount - maxTokens))
+        wordCount = countWord(content)
+      }
 
       const kv = {
         content,

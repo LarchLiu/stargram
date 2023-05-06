@@ -13,8 +13,8 @@ export const MAX_TOKEN_LENGTH = 2048
 export const SUMMARIZE_PROMPTS = `Please summarize content within 300 words and then classify it to 1-5 types of classification. Classification names should be short and no explanation or description is needed. Separate the classification names with "#", not other symbols.
 Start the summary with "Summary:". Start the types classification with "Classification:". Return the summary first and then the types of classification. The format is as follows:
 
-Summary: This is the summary content. // must start with Summary:
-Classification: XXX#YYY#ZZZ // must start with Classification:
+Summary: This is the summary content. // must start with English word of "Summary:"
+Classification: XXX#YYY#ZZZ // must start with English word of "Classification:"
 `
 export const USER_PROMPTS = `Please answer in {language}. The Content is:
 =====

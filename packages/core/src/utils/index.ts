@@ -143,6 +143,7 @@ function preprocessText(text: string) {
   // 去除空白符
   text = text.trim()
 
+  text = replaceHtmlReservedCharacters(text)
   return text
 }
 
@@ -171,6 +172,15 @@ function strNotEqualWith(key: string, values: string[]): boolean {
   }
 }
 
+function replaceHtmlReservedCharacters(str: string) {
+  const replaced = str.replaceAll('&lt;', '<').replaceAll('&gt;', '>').replace('&le;', '≤').replace('&ge;', '≥')
+    .replaceAll('&quot;', '"').replaceAll('&nbsp;', ' ').replaceAll('&trade;', '™').replaceAll('&asymp;', '≈')
+    .replaceAll('&ndash;', '-').replaceAll('&mdash;', '—').replace('&copy;', '©').replace('&reg;', '®')
+    .replaceAll('&ne;', '≠').replaceAll('&pound;', '£').replace('&euro;', '€').replace('&deg;', '°')
+
+  return replaced
+}
+
 export {
   fetchGet,
   fetchPost,
@@ -179,4 +189,5 @@ export {
   preprocessText,
   getPromptsByTemplate,
   strNotEqualWith,
+  replaceHtmlReservedCharacters,
 }

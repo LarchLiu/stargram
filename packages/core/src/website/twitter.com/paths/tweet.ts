@@ -1,6 +1,6 @@
 import type { FetchError, FetchWebsite, LoaderUrls, PathInfo, PicBedRes, TwitterMeta } from '../../../types'
 import { PICTURE_BED_URL, STAR_NEXUS_HUB_API, USER_AGENT } from '../../../const'
-import { fetchGet, fetchPost, strNotEqualWith } from '../../../utils'
+import { fetchGet, fetchPost, replaceHtmlReservedCharacters, strNotEqualWith } from '../../../utils'
 
 function tweetFilter(urls: LoaderUrls): LoaderUrls | undefined {
   const regexPath = /twitter.com\/([^\/]*\/status\/[^\?]*)/g
@@ -56,12 +56,12 @@ async function getTweetInfo(urls: LoaderUrls, header: Record<string, string> = {
         const user = tweet.user
         const name = user.name
         const screenName = user.screen_name
-        title = `Twitter · ${name} @${screenName}`
+        title = `Tweet · ${name} @${screenName}`
 
         const imageBaseUrl = urls.picBed || PICTURE_BED_URL
         if (imageBaseUrl) {
           const avator = user.profile_image_url_https.replace('_normal', '')
-          const content = tweet.full_text
+          const content = replaceHtmlReservedCharacters(tweet.full_text)
           const pubTime = new Date(tweet.created_at).toUTCString()
           const body = {
             name, screenName, avator, content, status, pubTime,
