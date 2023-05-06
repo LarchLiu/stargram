@@ -1,51 +1,20 @@
-import { promises as fs } from 'node:fs'
-import { fileURLToPath } from 'node:url'
-import path from 'node:path'
 import { ImageResponse } from '@vercel/og'
-import type { NextApiRequest, NextApiResponse } from 'next'
+import type { NextRequest } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
+
+export const config = {
+  runtime: 'edge',
+}
 
 const SUPABASE_URL = process.env.SUPABASE_URL
 const STORAGE_URL = `${SUPABASE_URL}/storage/v1/object/public/pics-bed`
 
-const NotoSansJPData = fs.readFile(
-  path.join(fileURLToPath(import.meta.url), '../../../../assets/NotoSansJP-Regular.ttf'),
-)
-const NotoSansSCData = fs.readFile(
-  path.join(fileURLToPath(import.meta.url), '../../../../assets/NotoSansSC-Regular.otf'),
-)
-const UnifontData = fs.readFile(
-  path.join(fileURLToPath(import.meta.url), '../../../../assets/unifont-15.0.01.otf'),
-)
-
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(req: NextRequest) {
   if (req.method !== 'POST')
-    return res.status(404)
+    return new Response(null, { status: 404, statusText: 'Not Found' })
 
   try {
-    const json = req.body
-    const NotoSansSC = await NotoSansJPData
-    const NotoSansJP = await NotoSansSCData
-    const Unifont = await UnifontData
-
-    const fonts = [
-      {
-        name: 'Noto Sans SC',
-        data: NotoSansSC,
-        style: 'normal' as const,
-      },
-      {
-        name: 'Noto Sans JP',
-        data: NotoSansJP,
-        style: 'normal' as const,
-      },
-      {
-        name: 'Unifont',
-        data: Unifont,
-        style: 'normal' as const,
-      },
-    ]
-    const fontsData = fonts
+    const json = await req.json()
     const username = json.username
     const reponame = json.reponame
     const description = json.description
@@ -58,7 +27,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (!username || !reponame) {
       const storageResponse = await fetch(`${STORAGE_URL}/star-nexus.png?v=3`)
       if (storageResponse.ok) {
-        return res.json({ url: `${STORAGE_URL}/star-nexus.png?v=3` })
+        return new Response(JSON.stringify({ url: `${STORAGE_URL}/star-nexus.png?v=3` }), {
+          headers: { 'Content-Type': 'application/json' },
+          status: 200,
+        })
       }
       else {
         generatedImage = new ImageResponse(<div
@@ -87,9 +59,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     //   return storageResponse
 
       generatedImage = new ImageResponse(<div
+        lang="zh-CN"
         style={{
           fontSize: 60,
-          fontFamily: '"Noto Sans SC", "Noto Sans JP", Unifont',
           background: 'white',
           width: '100%',
           height: '100%',
@@ -149,8 +121,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         height: 630,
         headers: {
           'content-type': 'image/png',
+          'cache-control': 'public, max-age=31536000, s-maxage=31536000, no-transform, immutable',
+          'cdn-cache-control': 'max-age=31536000',
         },
-        fonts: fontsData,
       },
       )
     }
@@ -158,15 +131,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const supabaseAdminClient = createClient(
       process.env.SUPABASE_URL ?? '',
       process.env.SUPABASE_ANON_KEY ?? '',
-      {
-        global: {
-          fetch: (input, init) => {
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-expect-error
-            return fetch(input, { ...init, duplex: 'half' })
-          },
-        },
-      },
     )
 
     const imagePath = `github/${username}/${reponame}.png`
@@ -178,7 +142,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           .from('pics-bed')
           .update(imagePath, generatedImage.body, {
             contentType: 'image/png',
-            cacheControl: '86400',
+            cacheControl: '31536000',
             upsert: false,
           })
 
@@ -190,7 +154,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           .from('pics-bed')
           .upload(imagePath, generatedImage.body, {
             contentType: 'image/png',
-            cacheControl: '86400',
+            cacheControl: '31536000',
             upsert: false,
           })
 
@@ -198,14 +162,22 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           throw error
       }
 
-      return res.json({ url: `${STORAGE_URL}/${imagePath}?v=starnexus` })
+      return new Response(JSON.stringify({ url: `${STORAGE_URL}/${imagePath}?v=starnexus` }), {
+        headers: { 'Content-Type': 'application/json' },
+        status: 200,
+      })
     }
     else {
-      return res.json({ url: `${STORAGE_URL}/star-nexus.png?v=3` })
+      return new Response(JSON.stringify({ url: `${STORAGE_URL}/star-nexus.png?v=3` }), {
+        headers: { 'Content-Type': 'application/json' },
+        status: 200,
+      })
     }
   }
   catch (error) {
-    res.status(400)
-    return res.json({ error: error.message })
+    return new Response(JSON.stringify({ error: error.message }), {
+      headers: { 'Content-Type': 'application/json' },
+      status: 400,
+    })
   }
 }
