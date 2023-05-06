@@ -1,28 +1,20 @@
 import { ImageResponse } from '@vercel/og'
-import type { NextRequest } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
-
-export const config = {
-  runtime: 'edge',
-}
+import type { NextApiRequest, NextApiResponse } from 'next'
+import { NotoSansJPData, NotoSansSCData, UnifontData } from './fonts'
 
 const SUPABASE_URL = process.env.SUPABASE_URL
 const STORAGE_URL = `${SUPABASE_URL}/storage/v1/object/public/pics-bed`
 
-export default async function handler(req: NextRequest) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST')
-    return new Response(null, { status: 404, statusText: 'Not Found' })
+    return res.status(404)
 
-  async function getFontsData() {
-    const NotoSansJP = await fetch(new URL('../../assets/NotoSansJP-Regular.ttf', import.meta.url)).then(
-      res => res.arrayBuffer(),
-    )
-    const NotoSansSC = await fetch(new URL('../../assets/NotoSansSC-Regular.otf', import.meta.url)).then(
-      res => res.arrayBuffer(),
-    )
-    const Unifont = await fetch(new URL('../../assets/unifont-15.0.01.otf', import.meta.url)).then(
-      res => res.arrayBuffer(),
-    )
+  try {
+    const json = req.body
+    const NotoSansSC = await NotoSansJPData
+    const NotoSansJP = await NotoSansSCData
+    const Unifont = await UnifontData
 
     const fonts = [
       {
@@ -41,14 +33,7 @@ export default async function handler(req: NextRequest) {
         style: 'normal' as const,
       },
     ]
-
-    return fonts
-  }
-
-  try {
-    const fontsData = await getFontsData()
-    const json = await req.json()
-
+    const fontsData = fonts
     const name = json.name
     const screenName = json.screenName
     const avator = json.avator
@@ -60,10 +45,7 @@ export default async function handler(req: NextRequest) {
     if (!name || !screenName) {
       const storageResponse = await fetch(`${STORAGE_URL}/star-nexus.png?v=3`)
       if (storageResponse.ok) {
-        return new Response(JSON.stringify({ url: `${STORAGE_URL}/star-nexus.png?v=3` }), {
-          headers: { 'Content-Type': 'application/json' },
-          status: 200,
-        })
+        return res.json({ url: `${STORAGE_URL}/star-nexus.png?v=3` })
       }
       else {
         generatedImage = new ImageResponse(<div
@@ -153,18 +135,27 @@ export default async function handler(req: NextRequest) {
     const supabaseAdminClient = createClient(
       process.env.SUPABASE_URL ?? '',
       process.env.SUPABASE_ANON_KEY ?? '',
+      {
+        global: {
+          fetch: (input, init) => {
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-expect-error
+            return fetch(input, { ...init, duplex: 'half' })
+          },
+        },
+      },
     )
-    const pngPath = `twitter/${screenName}/${status}.png`
+    const imagePath = `twitter/${screenName}/${status}.png`
 
     // Upload image to storage.
     if (generatedImage?.body) {
-      const storageResponse = await fetch(`${STORAGE_URL}/${pngPath}?v=starnexus`)
+      const storageResponse = await fetch(`${STORAGE_URL}/${imagePath}?v=starnexus`)
       if (storageResponse.ok) {
         const { error } = await supabaseAdminClient.storage
           .from('pics-bed')
-          .update(pngPath, generatedImage.body, {
+          .update(imagePath, generatedImage.body, {
             contentType: 'image/png',
-            cacheControl: '31536000',
+            cacheControl: '86400',
             upsert: false,
           })
 
@@ -174,9 +165,9 @@ export default async function handler(req: NextRequest) {
       else {
         const { error } = await supabaseAdminClient.storage
           .from('pics-bed')
-          .upload(pngPath, generatedImage.body, {
+          .upload(imagePath, generatedImage.body, {
             contentType: 'image/png',
-            cacheControl: '31536000',
+            cacheControl: '86400',
             upsert: false,
           })
 
@@ -184,22 +175,14 @@ export default async function handler(req: NextRequest) {
           throw error
       }
 
-      return new Response(JSON.stringify({ url: `${STORAGE_URL}/${pngPath}?v=starnexus` }), {
-        headers: { 'Content-Type': 'application/json' },
-        status: 200,
-      })
+      return res.json({ url: `${STORAGE_URL}/${imagePath}?v=starnexus` })
     }
     else {
-      return new Response(JSON.stringify({ url: `${STORAGE_URL}/star-nexus.png?v=3` }), {
-        headers: { 'Content-Type': 'application/json' },
-        status: 200,
-      })
+      return res.json({ url: `${STORAGE_URL}/star-nexus.png?v=3` })
     }
   }
   catch (error) {
-    return new Response(JSON.stringify({ error: error.message }), {
-      headers: { 'Content-Type': 'application/json' },
-      status: 400,
-    })
+    res.status(400)
+    return res.json({ error: error.message })
   }
 }
