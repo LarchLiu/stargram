@@ -36,7 +36,7 @@ async function getRepoInfo(urls: LoaderUrls, header: Record<string, string> = { 
       const readmeRes = await fetchGet<string>(`${GITHUB_RAW_URL}/${githubRepo}/${repoJson.default_branch}/README.md`, header, undefined, false)
       const readme = (readmeRes as NotThrowError).error ? '' : readmeRes
 
-      const description = repoJson.description
+      const description = repoJson.description.replace(/:\w+:/g, ' ')
       title = `Repo · ${repoJson.full_name}`
       url = repoJson.html_url
       const tags = repoJson.topics

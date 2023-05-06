@@ -1,10 +1,22 @@
+import { promises as fs } from 'node:fs'
+import { fileURLToPath } from 'node:url'
+import path from 'node:path'
 import { ImageResponse } from '@vercel/og'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { createClient } from '@supabase/supabase-js'
-import { NotoSansJPData, NotoSansSCData, UnifontData } from './fonts'
 
 const SUPABASE_URL = process.env.SUPABASE_URL
 const STORAGE_URL = `${SUPABASE_URL}/storage/v1/object/public/pics-bed`
+
+const NotoSansJPData = fs.readFile(
+  path.join(fileURLToPath(import.meta.url), '../../../../assets/NotoSansJP-Regular.ttf'),
+)
+const NotoSansSCData = fs.readFile(
+  path.join(fileURLToPath(import.meta.url), '../../../../assets/NotoSansSC-Regular.otf'),
+)
+const UnifontData = fs.readFile(
+  path.join(fileURLToPath(import.meta.url), '../../../../assets/unifont-15.0.01.otf'),
+)
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST')
