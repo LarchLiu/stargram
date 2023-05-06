@@ -19,7 +19,7 @@ export default async function handler(req: NextRequest) {
     const name = json.name
     const screenName = json.screenName
     const avator = json.avator
-    const content = json.content
+    const content = json.content.replaceAll('˗', '-').replaceAll('♡', '🤍').replaceAll('／', '/').replaceAll('＼', '\\').replaceAll('｜', '|')
     const status = json.status
     const pubTime = json.pubTime
     let generatedImage: any
