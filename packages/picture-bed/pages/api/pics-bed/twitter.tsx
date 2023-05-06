@@ -1,7 +1,6 @@
 import { ImageResponse } from '@vercel/og'
 import type { NextRequest } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
-import { getFontsData } from './fonts'
 
 export const config = {
   runtime: 'edge',
@@ -13,6 +12,38 @@ const STORAGE_URL = `${SUPABASE_URL}/storage/v1/object/public/pics-bed`
 export default async function handler(req: NextRequest) {
   if (req.method !== 'POST')
     return new Response(null, { status: 404, statusText: 'Not Found' })
+
+  async function getFontsData() {
+    const NotoSansJP = await fetch(new URL('../../assets/NotoSansJP-Regular.ttf', import.meta.url)).then(
+      res => res.arrayBuffer(),
+    )
+    const NotoSansSC = await fetch(new URL('../../assets/NotoSansSC-Regular.otf', import.meta.url)).then(
+      res => res.arrayBuffer(),
+    )
+    const Unifont = await fetch(new URL('../../assets/unifont-15.0.01.otf', import.meta.url)).then(
+      res => res.arrayBuffer(),
+    )
+
+    const fonts = [
+      {
+        name: 'Noto Sans SC',
+        data: NotoSansSC,
+        style: 'normal' as const,
+      },
+      {
+        name: 'Noto Sans JP',
+        data: NotoSansJP,
+        style: 'normal' as const,
+      },
+      {
+        name: 'Unifont',
+        data: Unifont,
+        style: 'normal' as const,
+      },
+    ]
+
+    return fonts
+  }
 
   try {
     const fontsData = await getFontsData()
