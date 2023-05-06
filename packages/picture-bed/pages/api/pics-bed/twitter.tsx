@@ -1,6 +1,7 @@
 import { ImageResponse } from '@vercel/og'
 import type { NextRequest } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
+import { getFontsData } from './fonts'
 
 export const config = {
   runtime: 'edge',
@@ -14,6 +15,7 @@ export default async function handler(req: NextRequest) {
     return new Response(null, { status: 404, statusText: 'Not Found' })
 
   try {
+    const fontsData = await getFontsData()
     const json = await req.json()
 
     const name = json.name
@@ -59,9 +61,9 @@ export default async function handler(req: NextRequest) {
       //   return storageResponse
 
       generatedImage = new ImageResponse(<div
-          lang="zh-CN"
           style={{
             fontSize: 60,
+            fontFamily: '"Noto Sans SC", "Noto Sans JP", Unifont',
             background: 'white',
             width: '100%',
             height: '100%',
@@ -111,9 +113,8 @@ export default async function handler(req: NextRequest) {
         height: 630,
         headers: {
           'content-type': 'image/png',
-          'cache-control': 'public, max-age=31536000, s-maxage=31536000, no-transform, immutable',
-          'cdn-cache-control': 'max-age=31536000',
         },
+        fonts: fontsData,
       },
       )
     }
