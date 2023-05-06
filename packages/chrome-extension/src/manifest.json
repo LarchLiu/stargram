@@ -9,13 +9,13 @@
     "storage",
     "scripting"
   ],
-  "host_permissions": ["https://*/*"],
+  "host_permissions": ["https://*/*", "http://*/*"],
   "content_scripts": [
     {
       "run_at": "document_end",
       "js": ["/contentScript/index.js"],
       "matches": [
-        "https://*/*"
+        "https://*/*", "http://*/*"
       ]
     }
   ],
@@ -38,7 +38,7 @@
   "web_accessible_resources": [
     {
       "resources": ["contentScript/style.css"],
-      "matches": ["https://*/*"],
+      "matches": ["https://*/*", "http://*/*"],
       "use_dynamic_url": true
     }
   ]
