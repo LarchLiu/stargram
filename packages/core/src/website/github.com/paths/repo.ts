@@ -21,10 +21,7 @@ async function getRepoInfo(urls: LoaderUrls, header: Record<string, string> = { 
   let title = ''
   let content = ''
   let url = urls.webUrl
-  const githubMeta: GithubMeta = {
-    domain: '',
-    website: '',
-  }
+  const githubMeta: GithubMeta = {}
   const githubRepo = urls.webPath
   try {
     if (githubRepo) {

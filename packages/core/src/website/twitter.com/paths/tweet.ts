@@ -18,14 +18,12 @@ async function getTweetInfo(urls: LoaderUrls, header: Record<string, string> = {
   let title = ''
   let content = ''
   const url = urls.webUrl
-  const meta: TwitterMeta = { domain: '', website: '' }
-  const regexPath = /https:\/\/twitter.com\/([^\/]*\/status\/[^\?]*)/g // match github.com/user/repo/
-  const pathMatch = regexPath.exec(url)
-  const path = pathMatch ? pathMatch[1] : ''
-  const status = path.split('/')[2]
+  const meta: TwitterMeta = {}
+  const path = urls.webPath
   const webHub = urls.webHub || STAR_NEXUS_HUB_API
   try {
     if (path && webHub) {
+      const status = path.split('/')[2]
       // fetch tweets info
       const resJson = await fetchGet<any>(`${webHub}/twitter/tweet/${path}/original=true`, header)
       const tweets = resJson.item as any[]

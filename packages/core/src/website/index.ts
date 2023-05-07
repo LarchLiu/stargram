@@ -1,5 +1,5 @@
 import type { FetchWebsite, LoaderUrls, Routes } from '../types'
-import { getDomain } from '../utils'
+import { fetchPost, getDomain } from '../utils'
 import { routes } from './routes-auto-imports'
 
 export async function getWebsiteInfo(urls: LoaderUrls, header?: Record<string, string>, otherRoutes: Routes = {}): Promise<FetchWebsite> {
@@ -28,4 +28,19 @@ export async function getWebsiteInfo(urls: LoaderUrls, header?: Record<string, s
   }
 
   return info
+}
+
+export async function getWebsiteInfoByApi(urls: LoaderUrls, header?: Record<string, string>): Promise<FetchWebsite> {
+  try {
+    if (!urls.webHub)
+      return { error: 'StarNexus error: No WebHub Url' }
+
+    const info: FetchWebsite = await fetchPost(`${urls.webHub}/api/webinfo`, header, {
+      webUrl: urls.webUrl,
+    })
+    return info
+  }
+  catch (error: any) {
+    return { error: error.message }
+  }
 }

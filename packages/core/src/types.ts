@@ -6,8 +6,8 @@ export interface WebsiteInfo {
 }
 
 export interface WebsiteMeta {
-  domain: string
-  website: string
+  domain?: string
+  website?: string
   cover?: string
   prompts?: string
 }
