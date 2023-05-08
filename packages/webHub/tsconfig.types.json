@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "outDir": "dist",
+    "baseUrl": ".",
+    "types": [
+      "vitest",
+      "vitest/importMeta"
+    ],
+    "paths": {
+      "~/*": ["./src/*"]
+    }
+  },
+  "extends": "../../tsconfig.json",
+  "include": ["./src/**/*.ts"],
+  "exclude": ["dist", "node_modules"]
+}

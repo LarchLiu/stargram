@@ -1,5 +1,6 @@
 import { resolve } from 'node:path'
 import { defineConfig } from 'vite'
+import GenerateRoutes from '@starnexus/generate-routes/vite'
 
 export default defineConfig({
   define: {
@@ -16,4 +17,10 @@ export default defineConfig({
       fileName: 'index',
     },
   },
+  plugins: [
+    GenerateRoutes({
+      dirs: ['src/**/*'],
+      routesExportPath: 'src/routes-auto-generate.ts',
+    }),
+  ],
 })

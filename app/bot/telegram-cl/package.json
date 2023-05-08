@@ -1,9 +1,8 @@
 {
-  "name": "@starnexus/core",
+  "name": "telegram-cl-bot",
   "type": "module",
   "version": "0.0.5",
-  "packageManager": "pnpm@8.3.0",
-  "description": "StarNexus core package",
+  "description": "Manage all your starred pages.",
   "author": "Alex Liu <larch.liu@gmail.com>",
   "license": "MIT",
   "homepage": "https://github.com/LarchLiu/star-nexus",
@@ -16,29 +15,28 @@
   },
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "require": "./dist/index.umd.cjs",
+      "require": "./dist/index.cjs",
       "import": "./dist/index.js"
     }
   },
-  "main": "./dist/index.js",
+  "main": "./dist/index.cjs",
   "module": "./dist/index.js",
-  "types": "./dist/index.d.ts",
   "files": [
     "dist"
   ],
-  "engines": {
-    "node": ">=18.0.0"
-  },
   "scripts": {
-    "dev": "vite build --watch",
-    "build": "pnpm clear && vite build && tsc --declaration -p tsconfig.types.json --emitDeclarationOnly",
-    "clear": "rimraf dist",
     "lint": "eslint src",
-    "tscheck": "tsc --noEmit",
-    "test": "vitest"
+    "build": "zx scripts/pre-build.mjs && vite build && zx scripts/move-file.mjs",
+    "debug": "wrangler dev --local",
+    "wrangler": "wrangler2",
+    "deploy:dist": "wrangler2 publish",
+    "deploy:build": "npm run build && wrangler2 publish"
   },
-  "dependencies": {},
+  "dependencies": {
+    "@starnexus/core": "workspace:*"
+  },
   "devDependencies": {
+    "wrangler": "^2.12.0",
+    "zx": "^7.2.1"
   }
 }

@@ -1,7 +1,8 @@
-import type { FetchWebsite, LoaderUrls, Routes } from '../types'
-import { fetchPost, getDomain } from '../utils'
+import type { FetchWebsite, LoaderUrls } from '@starnexus/core'
+import { getDomain } from '@starnexus/core'
+import { routes } from '../src/routes-auto-generate'
 
-export async function getWebsiteInfo(urls: LoaderUrls, routes: Routes, header?: Record<string, string>): Promise<FetchWebsite> {
+export async function getWebsiteInfo(urls: LoaderUrls, header?: Record<string, string>): Promise<FetchWebsite> {
   let info: FetchWebsite = { error: 'StarNexus error: Not supported website.' }
   const domain = getDomain(urls.webUrl)
 
@@ -26,19 +27,4 @@ export async function getWebsiteInfo(urls: LoaderUrls, routes: Routes, header?: 
   }
 
   return info
-}
-
-export async function getWebsiteInfoByApi(urls: LoaderUrls, header?: Record<string, string>): Promise<FetchWebsite> {
-  try {
-    if (!urls.webHub)
-      return { error: 'StarNexus error: No WebHub Url' }
-
-    const info: FetchWebsite = await fetchPost(`${urls.webHub}/api/webinfo`, header, {
-      webUrl: urls.webUrl,
-    })
-    return info
-  }
-  catch (error: any) {
-    return { error: error.message }
-  }
 }
