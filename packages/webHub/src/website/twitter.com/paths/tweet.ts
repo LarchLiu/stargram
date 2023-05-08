@@ -1,6 +1,7 @@
 import type { FetchError, FetchWebsite, LoaderUrls, PathInfo, PicBedRes, TwitterMeta } from '@starnexus/core'
-import { fetchGet, fetchPost, replaceHtmlReservedCharacters, strNotEqualWith } from '@starnexus/core'
-import { PICTURE_BED_URL, STAR_NEXUS_HUB_API, USER_AGENT } from '../../const'
+import { fetchPost, replaceHtmlReservedCharacters, strNotEqualWith } from '@starnexus/core'
+import { PICTURE_BED_URL, USER_AGENT } from '../../../const'
+import { getTweetByStatus } from '../twitterApi'
 
 function tweetFilter(urls: LoaderUrls): LoaderUrls | undefined {
   const regexPath = /twitter.com\/([^\/]*\/status\/[^\?]*)/g
@@ -20,13 +21,12 @@ async function getTweetInfo(urls: LoaderUrls, header: Record<string, string> = {
   const url = urls.webUrl
   const meta: TwitterMeta = {}
   const path = urls.webPath
-  const webHub = urls.webHub || STAR_NEXUS_HUB_API
   try {
-    if (path && webHub) {
+    if (path) {
       const status = path.split('/')[2]
       // fetch tweets info
-      const resJson = await fetchGet<any>(`${webHub}/twitter/tweet/${path}/original=true`, header)
-      const tweets = resJson.item as any[]
+      const resJson = await getTweetByStatus(status) //  await fetchGet<any>(`${webHub}/twitter/tweet/${path}/original=true`, header)
+      const tweets = resJson as any[]
       tweets.forEach((t) => {
         let fullText = t.full_text
         if (t.entities?.urls) {

@@ -12,14 +12,14 @@ export default defineConfig({
     lib: {
       // Could also be a dictionary or array of multiple entry points
       entry: resolve(__dirname, 'src/index.ts'),
-      name: '@starnexus/core',
+      name: '@starnexus/web-hub',
       // the proper extensions will be added
       fileName: 'index',
     },
   },
   plugins: [
     GenerateRoutes({
-      dirs: ['src/**/*'],
+      dirs: ['src/website/**/*'],
       routesExportPath: 'src/routes-auto-generate.ts',
     }),
   ],

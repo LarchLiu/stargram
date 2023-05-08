@@ -12,6 +12,7 @@ describe('get website info', () => {
     const res = await getWebsiteInfo('https://twitter.com/LarchLiu/status/1594316498377621504')
     expect((res.data?.title)?.includes('Alex Liu')).toBeTruthy()
     expect(res.data?.url).toBe('https://twitter.com/LarchLiu/status/1594316498377621504')
+    // expect(res).toMatchSnapshot()
   })
 })
 

@@ -1,6 +1,6 @@
 import type { FetchError, FetchWebsite, GithubMeta, LoaderUrls, NotThrowError, PathInfo, PicBedRes } from '@starnexus/core'
 import { fetchGet, fetchPost, strNotEqualWith } from '@starnexus/core'
-import { GITHUB_RAW_URL, GITHUB_REPOS_API, PICTURE_BED_URL, USER_AGENT } from '../../const'
+import { GITHUB_RAW_URL, GITHUB_REPOS_API, PICTURE_BED_URL, USER_AGENT } from '../../../const'
 
 function repoFilter(urls: LoaderUrls): LoaderUrls | undefined {
   const regexPath = /github.com\/([^\/]*\/[^\/]*)/g
