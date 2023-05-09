@@ -1,8 +1,8 @@
-import type { FetchOpenai, PromptsLanguage, WebsiteInfo } from '../types'
+import type { FetchRes, OpenaiSummarize, PromptsLanguage, WebsiteInfo } from '../types'
 import { countWord, fetchPost, getPromptsByTemplate, preprocessText } from '../utils'
 import { ANSWER_IN_LANGUAGE, MAX_TOKEN_LENGTH, OPENAI_CHAT_API, SUMMARIZE_PROMPTS, USER_PROMPTS } from '../const'
 
-async function summarizeContent(apiKey: string, websiteInfo: WebsiteInfo, language: PromptsLanguage = 'zh-CN'): Promise<FetchOpenai> {
+async function summarizeContent(apiKey: string, websiteInfo: WebsiteInfo, language: PromptsLanguage = 'zh-CN'): Promise<FetchRes<OpenaiSummarize>> {
   try {
     let summary = ''
     let category = ''
@@ -25,7 +25,7 @@ async function summarizeContent(apiKey: string, websiteInfo: WebsiteInfo, langua
         language: ANSWER_IN_LANGUAGE[language],
       }
       const userPrompts = getPromptsByTemplate(USER_PROMPTS, kv)
-      const openaiData = await fetchPost<any>(`${OPENAI_CHAT_API}/chat/completions`,
+      const { data: openaiData } = await fetchPost<any>(`${OPENAI_CHAT_API}/chat/completions`,
         {
           'Authorization': `Bearer ${apiKey}`,
           'Content-Type': 'application/json',

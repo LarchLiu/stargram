@@ -1,6 +1,5 @@
-import type { FetchError, FetchWebsite, LoaderUrls, PathInfo, PicBedRes, TwitterMeta } from '@starnexus/core'
-import { fetchPost, replaceHtmlReservedCharacters, strNotEqualWith } from '@starnexus/core'
-import { PICTURE_BED_URL, USER_AGENT } from '../../../const'
+import type { FetchError, FetchRes, LoaderUrls, PathInfo, TwitterMeta, WebsiteInfo } from '@starnexus/core'
+import { replaceHtmlReservedCharacters, strNotEqualWith } from '@starnexus/core'
 import { getTweetByStatus } from '../twitterApi'
 
 function tweetFilter(urls: LoaderUrls): LoaderUrls | undefined {
@@ -15,7 +14,7 @@ function tweetFilter(urls: LoaderUrls): LoaderUrls | undefined {
   return undefined
 }
 
-async function getTweetInfo(urls: LoaderUrls, header: Record<string, string> = { 'User-Agent': USER_AGENT }): Promise<FetchWebsite> {
+async function getTweetInfo(urls: LoaderUrls): Promise<FetchRes<WebsiteInfo>> {
   let title = ''
   let content = ''
   const url = urls.webUrl
@@ -55,20 +54,15 @@ async function getTweetInfo(urls: LoaderUrls, header: Record<string, string> = {
         const name = user.name
         const screenName = user.screen_name
         title = `Tweet · ${name} @${screenName}`
+        const avator = user.profile_image_url_https.replace('_normal', '')
+        const content = replaceHtmlReservedCharacters(tweet.full_text)
+        const pubTime = new Date(tweet.created_at).toUTCString()
 
-        const imageBaseUrl = urls.picBed || PICTURE_BED_URL
-        if (imageBaseUrl) {
-          const avator = user.profile_image_url_https.replace('_normal', '')
-          const content = replaceHtmlReservedCharacters(tweet.full_text)
-          const pubTime = new Date(tweet.created_at).toUTCString()
-          const body = {
-            name, screenName, avator, content, status, pubTime,
-          }
-
-          const imageUrl = `${imageBaseUrl}/twitter`
-          const imageJson = await fetchPost<PicBedRes>(imageUrl, { ...header, 'Content-Type': 'application/json' }, body)
-          meta.cover = (imageJson as PicBedRes).url
-        }
+        meta.name = name
+        meta.screenName = screenName
+        meta.avator = avator
+        meta.content = content
+        meta.pubTime = pubTime
         const hashtags = tweet.entities?.hashtags
         if (hashtags)
           meta.tags = hashtags.map((t: { text: string }) => t.text)

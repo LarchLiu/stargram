@@ -1,8 +1,8 @@
 import { fetchPost } from '../utils'
-import type { FetchNotion, GithubMeta, NotionPage, TwitterMeta } from '../types'
+import type { FetchRes, GithubMeta, NotionPage, SavedNotion, TwitterMeta } from '../types'
 import { GITHUB_DOMAIN, NOTION_API_URL, TWITTER_DOMAIN } from '../const'
 
-async function saveToNotion(apiKey: string, info: NotionPage): Promise<FetchNotion> {
+async function saveToNotion(apiKey: string, info: NotionPage): Promise<FetchRes<SavedNotion>> {
   try {
     let catOpt = [{
       name: 'Others',
@@ -140,10 +140,10 @@ async function saveToNotion(apiKey: string, info: NotionPage): Promise<FetchNoti
 
     let notionPageId = ''
     let starred = false
-    if (checkData.results.length > 0) {
-      if (checkData.results[0].properties.Status.select.name === 'Starred')
+    if (checkData.data?.results.length > 0) {
+      if (checkData.data.results[0].properties.Status.select.name === 'Starred')
         starred = true
-      notionPageId = checkData.results[0].id
+      notionPageId = checkData.data.results[0].id
     }
 
     if (notionPageId) {
@@ -187,7 +187,7 @@ async function saveToNotion(apiKey: string, info: NotionPage): Promise<FetchNoti
       }, body,
     )
 
-    notionPageId = newPageResponse.id // 获取新页面的 ID
+    notionPageId = newPageResponse.data?.id // 获取新页面的 ID
 
     return { data: { starred: !starred, notionPageId } }
   }

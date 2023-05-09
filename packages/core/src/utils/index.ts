@@ -1,6 +1,6 @@
-import type { NotThrowError } from '../types'
+import type { FetchRes } from '../types'
 
-async function fetchGet<T>(url: string, headers?: HeadersInit, query?: Record<string, string>, throwError = true): Promise<T | NotThrowError> {
+async function fetchGet<T>(url: string, headers?: HeadersInit, query?: Record<string, string>, throwError = true): Promise<FetchRes<T>> {
   try {
     const reqOpt: RequestInit = {
       method: 'GET',
@@ -34,7 +34,7 @@ async function fetchGet<T>(url: string, headers?: HeadersInit, query?: Record<st
       data = await res.json()
     else if (type && type.includes('text/'))
       data = await res.text()
-    return data as T
+    return { data }
   }
   catch (err: any) {
     if (!throwError)
@@ -44,7 +44,7 @@ async function fetchGet<T>(url: string, headers?: HeadersInit, query?: Record<st
   }
 }
 
-async function fetchPost<T>(url: string, headers?: HeadersInit, body?: Record<string, any>, patch?: boolean, throwError = true): Promise<T | NotThrowError> {
+async function fetchPost<T>(url: string, headers?: HeadersInit, body?: Record<string, any>, patch?: boolean, throwError = true): Promise<FetchRes<T>> {
   try {
     const reqOpt: RequestInit = {
       method: patch ? 'PATCH' : 'POST',
@@ -76,7 +76,7 @@ async function fetchPost<T>(url: string, headers?: HeadersInit, body?: Record<st
       data = await res.json()
     else if (type && type.includes('text/'))
       data = await res.text()
-    return data as T
+    return { data }
   }
   catch (err: any) {
     if (!throwError)

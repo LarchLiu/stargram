@@ -1,8 +1,8 @@
-import type { FetchWebsite, LoaderUrls, Routes } from '../types'
+import type { FetchRes, LoaderUrls, Routes, WebsiteInfo } from '../types'
 import { fetchPost, getDomain } from '../utils'
 
-export async function getWebsiteInfo(urls: LoaderUrls, routes: Routes, header?: Record<string, string>): Promise<FetchWebsite> {
-  let info: FetchWebsite = { error: 'StarNexus error: Not supported website.' }
+export async function getWebsiteInfo(urls: LoaderUrls, routes: Routes, headers?: Record<string, string>): Promise<FetchRes<WebsiteInfo>> {
+  let info: FetchRes<WebsiteInfo> = { error: 'StarNexus error: Not supported website.' }
   const domain = getDomain(urls.webUrl)
 
   if (routes[domain]) {
@@ -12,7 +12,7 @@ export async function getWebsiteInfo(urls: LoaderUrls, routes: Routes, header?: 
         const pathInfo = router.paths[i]
         const loaderUrls = pathInfo.filter(urls)
         if (loaderUrls) {
-          info = await pathInfo.loader(loaderUrls, header)
+          info = await pathInfo.loader(loaderUrls, headers)
           if (info.data) {
             info.data.meta.domain = domain
             info.data.meta.website = router.name
@@ -28,12 +28,12 @@ export async function getWebsiteInfo(urls: LoaderUrls, routes: Routes, header?: 
   return info
 }
 
-export async function getWebsiteInfoByApi(urls: LoaderUrls, header?: Record<string, string>): Promise<FetchWebsite> {
+export async function getWebsiteInfoByApi(urls: LoaderUrls, headers?: Record<string, string>): Promise<FetchRes<WebsiteInfo>> {
   try {
     if (!urls.webHub)
       return { error: 'StarNexus error: No WebHub Url' }
 
-    const info: FetchWebsite = await fetchPost(`${urls.webHub}/api/webinfo`, header, {
+    const info = await fetchPost<WebsiteInfo>(`${urls.webHub}/api/webInfo`, headers, {
       webUrl: urls.webUrl,
     })
     return info

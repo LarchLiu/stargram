@@ -5,6 +5,10 @@ export interface WebsiteInfo {
   meta: WebsiteMeta
 }
 
+export interface WebSiteCard {
+  url: string
+}
+
 export interface WebsiteMeta {
   domain?: string
   website?: string
@@ -13,22 +17,27 @@ export interface WebsiteMeta {
 }
 
 export interface GithubMeta extends WebsiteMeta {
+  username?: string
+  reponame?: string
+  description?: string
   tags?: string[]
   languages?: string[]
 }
 
 export interface TwitterMeta extends WebsiteMeta {
+  name?: string
+  screenName?: string
+  avator?: string
+  content?: string
+  status?: string
+  pubTime?: string
   tags?: string[]
 }
 
 export type FetchError = string
 
-export interface NotThrowError {
-  error: FetchError
-}
-
-export interface FetchWebsite {
-  data?: WebsiteInfo
+export interface FetchRes<T> {
+  data?: T
   error?: FetchError
 }
 
@@ -36,20 +45,8 @@ export type WebPath = string
 
 export interface LoaderUrls {
   webUrl: string
-  picBed?: string
   webHub?: string
   webPath?: WebPath
-}
-
-export interface WebsiteLoader {
-  [key: string]: {
-    loader: (urls: LoaderUrls, header?: Record<string, string>) => Promise<FetchWebsite>
-  }
-}
-
-export interface FetchOpenai {
-  data?: OpenaiSummarize
-  error?: FetchError
 }
 
 export interface OpenaiSummarize {
@@ -72,11 +69,6 @@ export interface SavedNotion {
   notionPageId: string
 }
 
-export interface FetchNotion {
-  data?: SavedNotion
-  error?: FetchError
-}
-
 export interface PicBedRes {
   url: string
 }
@@ -90,7 +82,7 @@ export interface PathInfo {
   prompts?: string
   sequence?: number
   filter: (urls: LoaderUrls) => LoaderUrls | undefined
-  loader: (urls: LoaderUrls, header?: Record<string, string>) => Promise<FetchWebsite>
+  loader: (urls: LoaderUrls, headers?: Record<string, string>) => Promise<FetchRes<WebsiteInfo>>
 }
 
 export interface Router {
