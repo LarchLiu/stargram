@@ -169,7 +169,7 @@ importers:
   server/nuxt3:
     dependencies:
       '@starnexus/core':
-        specifier: 'workspace: *'
+        specifier: workspace:*
         version: link:../../packages/core
       satori:
         specifier: ^0.7.4
