@@ -1,4 +1,4 @@
-import type { FetchError, FetchRes, LoaderUrls, PathInfo, TwitterMeta, WebsiteInfo } from '@starnexus/core'
+import type { FetchError, FetchRes, LoaderUrls, PathInfo, TwitterTweetMeta, WebsiteInfo } from '@starnexus/core'
 import { replaceHtmlReservedCharacters, strNotEqualWith } from '@starnexus/core'
 import { getTweetByStatus } from '../twitterApi'
 
@@ -18,7 +18,7 @@ async function getTweetInfo(urls: LoaderUrls): Promise<FetchRes<WebsiteInfo>> {
   let title = ''
   let content = ''
   const url = urls.webUrl
-  const meta: TwitterMeta = {}
+  const meta: TwitterTweetMeta = {}
   const path = urls.webPath
   try {
     if (path) {

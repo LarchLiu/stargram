@@ -1,5 +1,14 @@
 {
+  "prettier.enable": false,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  },
+  "files.associations": {
+    "*.css": "postcss"
+  },
+  "editor.formatOnSave": false,
   "unocss.root": [
-    "packages/chrome-extension"
+    "app/extension/chrome",
+    "server/nuxt3"
   ]
 }

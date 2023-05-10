@@ -2,11 +2,18 @@
 
 # dependencies
 node_modules
-.pnp
-.pnp.js
+
+# local files
+dist
+.idea/
+.eslintcache
 
 # testing
 coverage
+
+#nuxt
+.output
+.nuxt
 
 # next.js
 .next/
@@ -32,7 +39,3 @@ yarn-error.log*
 
 # turbo
 .turbo
-
-.eslintcache
-
-dist

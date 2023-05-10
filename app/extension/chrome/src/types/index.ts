@@ -1,5 +1,5 @@
 import type {
-  GithubMeta,
+  GithubRepoMeta,
   LoaderUrls,
   WebsiteInfo,
 } from '@starnexus/core'
@@ -47,7 +47,7 @@ export type {
   SwResponse,
   SwRequest,
   ContentRequest,
-  GithubMeta,
+  GithubRepoMeta,
   LoaderUrls,
   PageInfo,
 }

@@ -33,7 +33,7 @@ export async function getWebsiteInfoByApi(urls: LoaderUrls, headers?: Record<str
     if (!urls.webHub)
       return { error: 'StarNexus error: No WebHub Url' }
 
-    const info = await fetchPost<WebsiteInfo>(`${urls.webHub}/api/webInfo`, headers, {
+    const info = await fetchPost<WebsiteInfo>(`${urls.webHub}/api/webinfo`, headers, {
       webUrl: urls.webUrl,
     })
     return info

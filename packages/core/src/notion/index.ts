@@ -1,5 +1,5 @@
 import { fetchPost } from '../utils'
-import type { FetchRes, GithubMeta, NotionPage, SavedNotion, TwitterMeta } from '../types'
+import type { FetchRes, GithubRepoMeta, NotionPage, SavedNotion, TwitterTweetMeta } from '../types'
 import { GITHUB_DOMAIN, NOTION_API_URL, TWITTER_DOMAIN } from '../const'
 
 async function saveToNotion(apiKey: string, info: NotionPage): Promise<FetchRes<SavedNotion>> {
@@ -75,7 +75,7 @@ async function saveToNotion(apiKey: string, info: NotionPage): Promise<FetchRes<
         },
       }
       if (info.meta.domain === GITHUB_DOMAIN) {
-        const github = meta as GithubMeta
+        const github = meta as GithubRepoMeta
         if (github.languages) {
           const languages = github.languages.map((lang) => {
             return {
@@ -104,7 +104,7 @@ async function saveToNotion(apiKey: string, info: NotionPage): Promise<FetchRes<
         }
       }
       else if (info.meta.domain === TWITTER_DOMAIN) {
-        const twitter = meta as TwitterMeta
+        const twitter = meta as TwitterTweetMeta
         if (twitter.tags) {
           const tags = twitter.tags.map((tag) => {
             return {

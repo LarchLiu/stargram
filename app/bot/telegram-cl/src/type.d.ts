@@ -119,10 +119,10 @@ interface WebsiteInfo {
     title: string
     url: string
     content: string
-    meta?: GithubMeta
+    meta?: GithubRepoMeta
 }
 
-interface GithubMeta {
+interface GithubRepoMeta {
     host: string
     website: 'Github'
     tags?: string[]
@@ -136,6 +136,6 @@ interface SavedResponse {
 }
 
 export { TelegramWebhookRequest, TelegramMessage, TelegramUser, 
-    TelegramChat, TelegramMessageEntity, WebsiteInfo, GithubMeta, 
+    TelegramChat, TelegramMessageEntity, WebsiteInfo, GithubRepoMeta, 
     SavedResponse, FetchWebsite, FetchError
 };

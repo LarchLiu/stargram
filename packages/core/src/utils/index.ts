@@ -173,10 +173,15 @@ function strNotEqualWith(key: string, values: string[]): boolean {
 }
 
 function replaceHtmlReservedCharacters(str: string) {
-  const replaced = str.replaceAll('&lt;', '<').replaceAll('&gt;', '>').replace('&le;', '≤').replace('&ge;', '≥')
-    .replaceAll('&quot;', '"').replaceAll('&nbsp;', ' ').replaceAll('&trade;', '™').replaceAll('&asymp;', '≈')
-    .replaceAll('&ndash;', '-').replaceAll('&mdash;', '—').replace('&copy;', '©').replace('&reg;', '®')
-    .replaceAll('&ne;', '≠').replaceAll('&pound;', '£').replace('&euro;', '€').replace('&deg;', '°')
+  const replaced = str.replaceAll(/(&lt;)|(&#60;)/g, '<').replaceAll(/(&gt;)|(&#62;)/g, '>')
+    .replaceAll(/(&le;)|(&#8804;)/g, '≤')
+    .replaceAll(/(&ge;)|(&#8805;)/g, '≥').replaceAll(/(&quot;)|(&#34;)/g, '"')
+    .replaceAll(/(&trade;)|(&#8482;)/g, '™').replaceAll(/(&asymp;)|(&#8776;)/g, '≈')
+    .replaceAll(/(&ndash;)|(&#8211;)/g, '-').replaceAll(/(&mdash;)|(&#8212;)/g, '—')
+    .replaceAll(/(&copy;)|(&#169;)/g, '©').replaceAll(/(&reg;)|(&#174;)/g, '®')
+    .replaceAll(/(&ne;)|(&#8800;)/g, '≠').replaceAll(/(&pound;)|(&#163;)/g, '£')
+    .replaceAll(/(&euro;)|(&#8364;)/g, '€').replaceAll(/(&deg;)|(&#176;)/g, '°')
+    .replaceAll(/(&#39;)|(&apos;)/g, '\'').replaceAll(/(&nbsp;)|(&#160;)/g, ' ')
 
   return replaced
 }

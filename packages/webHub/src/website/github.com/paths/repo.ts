@@ -1,4 +1,4 @@
-import type { FetchError, FetchRes, GithubMeta, LoaderUrls, PathInfo, WebsiteInfo } from '@starnexus/core'
+import type { FetchError, FetchRes, GithubRepoMeta, LoaderUrls, PathInfo, WebsiteInfo } from '@starnexus/core'
 import { fetchGet, strNotEqualWith } from '@starnexus/core'
 import { GITHUB_RAW_URL, GITHUB_REPOS_API, USER_AGENT } from '../../../const'
 
@@ -21,32 +21,32 @@ async function getRepoInfo(urls: LoaderUrls, headers: Record<string, string> = {
   let title = ''
   let content = ''
   let url = urls.webUrl
-  const githubMeta: GithubMeta = {}
-  const githubRepo = urls.webPath
+  const meta: GithubRepoMeta = {}
+  const repo = urls.webPath
   try {
-    if (githubRepo) {
+    if (repo) {
       // fetch repo info
-      const { data: repoJson } = await fetchGet<Record<string, any>>(`${GITHUB_REPOS_API}/${githubRepo}`, headers)
+      const { data: repoJson } = await fetchGet<Record<string, any>>(`${GITHUB_REPOS_API}/${repo}`, headers)
       // fetch languages
-      const { data: languagesJson } = await fetchGet<Record<string, string>>(`${GITHUB_REPOS_API}/${githubRepo}/languages`, headers)
+      const { data: languagesJson } = await fetchGet<Record<string, string>>(`${GITHUB_REPOS_API}/${repo}/languages`, headers)
       if (repoJson) {
       // fetch readme
-        const readmeRes = await fetchGet<string>(`${GITHUB_RAW_URL}/${githubRepo}/${repoJson.default_branch}/README.md`, headers, undefined, false)
+        const readmeRes = await fetchGet<string>(`${GITHUB_RAW_URL}/${repo}/${repoJson.default_branch}/README.md`, headers, undefined, false)
         const readme = readmeRes.error ? '' : readmeRes.data
 
         const description = repoJson.description.replace(/:\w+:/g, ' ')
         title = `Repo · ${repoJson.full_name}`
         url = repoJson.html_url
-        githubMeta.username = repoJson.owner.login
-        githubMeta.reponame = repoJson.name
-        githubMeta.description = description
+        meta.username = repoJson.owner.login
+        meta.reponame = repoJson.name
+        meta.description = description
 
         const tags = repoJson.topics
         if (tags && tags.length > 0)
-          githubMeta.tags = tags
+          meta.tags = tags
 
         if (languagesJson)
-          githubMeta.languages = Object.keys(languagesJson)
+          meta.languages = Object.keys(languagesJson)
 
         content = `${title}\n\n${readme}`
       }
@@ -54,7 +54,7 @@ async function getRepoInfo(urls: LoaderUrls, headers: Record<string, string> = {
     else {
       return { error: 'Github error: Not supported website.' }
     }
-    return { data: { title, url, content, meta: githubMeta } }
+    return { data: { title, url, content, meta } }
   }
   catch (error) {
     return { error: `Github error: ${error as FetchError}` }

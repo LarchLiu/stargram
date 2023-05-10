@@ -16,7 +16,7 @@ export interface WebsiteMeta {
   prompts?: string
 }
 
-export interface GithubMeta extends WebsiteMeta {
+export interface GithubRepoMeta extends WebsiteMeta {
   username?: string
   reponame?: string
   description?: string
@@ -24,7 +24,7 @@ export interface GithubMeta extends WebsiteMeta {
   languages?: string[]
 }
 
-export interface TwitterMeta extends WebsiteMeta {
+export interface TwitterTweetMeta extends WebsiteMeta {
   name?: string
   screenName?: string
   avator?: string
