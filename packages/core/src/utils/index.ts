@@ -172,18 +172,49 @@ function strNotEqualWith(key: string, values: string[]): boolean {
   }
 }
 
-function replaceHtmlReservedCharacters(str: string) {
-  const replaced = str.replaceAll(/(&lt;)|(&#60;)/g, '<').replaceAll(/(&gt;)|(&#62;)/g, '>')
-    .replaceAll(/(&le;)|(&#8804;)/g, '≤')
-    .replaceAll(/(&ge;)|(&#8805;)/g, '≥').replaceAll(/(&quot;)|(&#34;)/g, '"')
-    .replaceAll(/(&trade;)|(&#8482;)/g, '™').replaceAll(/(&asymp;)|(&#8776;)/g, '≈')
-    .replaceAll(/(&ndash;)|(&#8211;)/g, '-').replaceAll(/(&mdash;)|(&#8212;)/g, '—')
-    .replaceAll(/(&copy;)|(&#169;)/g, '©').replaceAll(/(&reg;)|(&#174;)/g, '®')
-    .replaceAll(/(&ne;)|(&#8800;)/g, '≠').replaceAll(/(&pound;)|(&#163;)/g, '£')
-    .replaceAll(/(&euro;)|(&#8364;)/g, '€').replaceAll(/(&deg;)|(&#176;)/g, '°')
-    .replaceAll(/(&#39;)|(&apos;)/g, '\'').replaceAll(/(&nbsp;)|(&#160;)/g, ' ')
+const ESCAPE_CHARS: Record<string, string> = {
+  '&amp;': '&',
+  '&lt;': '<',
+  '&gt;': '>',
+  '&#60;': '<',
+  '&#62;': '>',
+  '&le;': '≤',
+  '&#8804;': '≤',
+  '&ge;': '≥',
+  '&#8805;': '≥',
+  '&quot;': '"',
+  '&#34;': '"',
+  '&trade;': '™',
+  '&#8482;': '™',
+  '&asymp;': '≈',
+  '&#8776;': '≈',
+  '&ndash;': '-',
+  '&#8211;': '-',
+  '&mdash;': '—',
+  '&#8212;': '—',
+  '&copy;': '©',
+  '&#169;': '©',
+  '&reg;': '®',
+  '&#174;': '®',
+  '&ne;': '≠',
+  '&#8800;': '≠',
+  '&pound;': '£',
+  '&#163;': '£',
+  '&euro;': '€',
+  '&#8364;': '€',
+  '&deg;': '°',
+  '&#176;': '°',
+  '&#39;': '\'',
+  '&apos;': '\'',
+  '&nbsp;': ' ',
+  '&#160;': ' ',
+}
+function escapeHTML(str: string): string {
+  return str.replace(/(&amp;|&lt;|&#60;|&gt;|&#62;|&le;|&#8804;|&ge;|&#8805;|&quot;|&#34;|&trade;|&#8482;|&asymp;|&#8776;|&ndash;|&#8211;|&mdash;|&#8212;|&copy;|&#169;|&reg;|&#174;|&ne;|&#8800;|&pound;|&#163;|&euro;|&#8364;|&deg;|&#176;|&#39;|&apos;|&nbsp;|&#160;|&quot;|&#34;|&trade;|&#8482;|&asymp;|&#8776;|&ndash;|&#8211;|&mdash;|&#8212;|&copy;|&#169;|&reg;|&#174;|&ne;|&#8800;|&pound;|&#163;|&euro;|&#8364;|&deg;|&#176;|&#39;|&apos;|&nbsp;|&#160;)/g, c => ESCAPE_CHARS[c] || c)
+}
 
-  return replaced
+function replaceHtmlReservedCharacters(str: string) {
+  return escapeHTML(str)
 }
 
 export {

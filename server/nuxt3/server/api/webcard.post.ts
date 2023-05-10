@@ -2,17 +2,23 @@
 
 import { unfurl } from 'unfurl.js'
 import type { SatoriOptions } from 'satori'
+import { createClient } from '@supabase/supabase-js'
 import type { TwitterTweetMeta, WebsiteInfo } from '@starnexus/core'
 import { satori } from '~/composables/satori'
 import WebCard from '~/components/WebCard/WebCard.vue'
 import { initBaseFonts, languageFontMap, loadDynamicFont } from '~/composables/font'
 import { getIconCode, loadEmoji } from '~/composables/twemoji'
 
+const SUPABASE_URL = process.env.SUPABASE_URL
+const STORAGE_URL = `${SUPABASE_URL}/storage/v1/object/public/pics-bed`
+
 export default eventHandler(async (event) => {
   const webInfo = await readBody<WebsiteInfo>(event)
   const webMeta = webInfo.meta
   let meta
   let props
+  let screenName = ''
+  let status = ''
   const res = await unfurl(webInfo.url)
 
   if (webMeta.website === 'Github') {
@@ -20,6 +26,8 @@ export default eventHandler(async (event) => {
   }
   else if (webMeta.website === 'Twitter') {
     meta = webMeta as TwitterTweetMeta
+    screenName = meta.screenName!
+    status = meta.status!
     const content = meta.content!
     let contentArr = content.split('\n').filter((l: string) => l !== '').map((l: string, i: number) =>
       i < 7 ? l : '...')
@@ -112,8 +120,53 @@ export default eventHandler(async (event) => {
       }
     },
   })
+  // setHeader(event, 'Content-Type', 'image/svg+xml')
 
-  setHeader(event, 'Content-Type', 'image/svg+xml')
+  // return svg
 
-  return svg
+  setHeader(event, 'Content-Type', 'application/json')
+
+  try {
+    const supabaseAdminClient = createClient(
+      process.env.SUPABASE_URL ?? '',
+      process.env.SUPABASE_ANON_KEY ?? '',
+    )
+    const pngPath = `twitter/${screenName}/${status}.svg`
+
+    // Upload image to storage.
+    if (svg) {
+      const storageResponse = await fetch(`${STORAGE_URL}/${pngPath}?v=starnexus`)
+      if (storageResponse.ok) {
+        return {
+          url: `${STORAGE_URL}/${pngPath}?v=starnexus`,
+        }
+      }
+      else {
+        const { error } = await supabaseAdminClient.storage
+          .from(process.env.SUPABASE_STORAGE_BUCKET || 'pics-bed')
+          .upload(pngPath, svg, {
+            contentType: 'image/svg+xml',
+            cacheControl: '31536000',
+            upsert: false,
+          })
+
+        if (error)
+          throw error
+      }
+
+      return {
+        url: `${STORAGE_URL}/${pngPath}?v=starnexus`,
+      }
+    }
+    else {
+      return {
+        url: `${STORAGE_URL}/star-nexus.png?v=3`,
+      }
+    }
+  }
+  catch (error: any) {
+    setResponseStatus(event, 400)
+
+    return { error: error.message }
+  }
 })

@@ -171,6 +171,9 @@ importers:
       '@starnexus/core':
         specifier: workspace:*
         version: link:../../packages/core
+      '@supabase/supabase-js':
+        specifier: ^2.21.0
+        version: 2.21.0
       satori:
         specifier: ^0.7.4
         version: 0.7.4

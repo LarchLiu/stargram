@@ -235,11 +235,11 @@ export async function initBaseFonts() {
   // const NotoSansSC = await fs.readFile(scPath)
   // const NotoSansJP = await fs.readFile(jpPath)
   // const Unifont = await fs.readFile(uniPath)
-  const path = join(process.cwd(), 'public', 'fonts', 'MPLUSRounded1c-Regular.ttf')
+  const path = join(process.cwd(), 'public', 'fonts', 'MPLUS1p-Regular.ttf')
   const fontData = await fs.readFile(path)
   return [
     {
-      name: 'Rounded Mplus 1c',
+      name: 'M Plus 1p',
       data: fontData,
       weight: 400,
       style: 'normal',
