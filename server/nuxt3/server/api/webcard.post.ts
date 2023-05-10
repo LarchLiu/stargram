@@ -22,7 +22,11 @@ export default eventHandler(async (event) => {
   const res = await unfurl(webInfo.url)
 
   if (webMeta.website === 'Github') {
-    //
+    if (res.open_graph && res.open_graph.images) {
+      return {
+        url: res.open_graph.images[0].url,
+      }
+    }
   }
   else if (webMeta.website === 'Twitter') {
     meta = webMeta as TwitterTweetMeta
