@@ -9,6 +9,7 @@ const webInfo: WebsiteInfo = {
   meta: {
     domain: '',
     website: '',
+    prompts: 'The Github repo info',
   },
 }
 describe('openai', () => {

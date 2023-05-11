@@ -1,5 +1,11 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
+exports[`get website info > tweet info 1`] = `
+{
+  "error": "Twitter error: Not Found",
+}
+`;
+
 exports[`handle error > github repo path error 1`] = `"Github error: Not supported website."`;
 
 exports[`handle error > twitter path error 1`] = `"Twitter error: Not supported website."`;

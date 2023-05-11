@@ -64,31 +64,43 @@ async function paginationTweets(endpoint: string, userId: string, variables = {}
     userId,
   }
 
-  const res = await fetch(`https://twitter.com/i/api${endpoint}?variables=${encodeURI(JSON.stringify(params))}`, {
-    headers,
-    method: 'GET',
-  })
-  const { data } = await res.json()
-
-  let instructions: any
-  if (!path) {
-    instructions = data.user.result.timeline.timeline.instructions
-  }
-  else {
-    instructions = data
-    path.forEach((p) => {
-      instructions = instructions[p]
+  try {
+    const res = await fetch(`https://twitter.com/i/api${endpoint}?variables=${encodeURI(JSON.stringify(params))}`, {
+      headers,
+      method: 'GET',
     })
-    instructions = instructions.instructions
+
+    if (!res.ok)
+      throw new Error(res.statusText)
+
+    const { data } = await res.json()
+
+    if (data && Object.keys(data).length) {
+      let instructions: any
+      if (!path) {
+        instructions = data.user.result.timeline.timeline.instructions
+      }
+      else {
+        instructions = data
+        path.forEach((p) => {
+          instructions = instructions[p]
+        })
+        instructions = instructions.instructions
+      }
+      return instructions.filter((i: any) => i.type === 'TimelineAddEntries')[0].entries
+    }
+    throw new Error('Not Found')
   }
-  return instructions.filter((i: any) => i.type === 'TimelineAddEntries')[0].entries
+  catch (error: any) {
+    throw new Error(error.message || error.code || error.status || error.statusText)
+  }
 }
 
 // https://github.com/mikf/gallery-dl/blob/a53cfc845e12d9e98fefd07e43ebffaec488c18f/gallery_dl/extractor/twitter.py#L795-L805
 function tweetDetail(status: string) {
   return paginationTweets(
     '/graphql/ItejhtHVxU7ksltgMmyaLA/TweetDetail',
-    'LarchLiu',
+    '',
     {
       focalTweetId: status,
       with_rux_injections: false,
@@ -153,5 +165,13 @@ function gatherLegacyFromData(entries: any, filter = 'tweet-') {
 }
 
 export async function getTweetByStatus(status: string) {
-  return gatherLegacyFromData(await tweetDetail(status), 'none')
+  if (!status)
+    throw new Error('No Status Id')
+  try {
+    const tweets = await tweetDetail(status)
+    return gatherLegacyFromData(tweets, 'none')
+  }
+  catch (error: any) {
+    throw new Error(error.message || error.statusText)
+  }
 }

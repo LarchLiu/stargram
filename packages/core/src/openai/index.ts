@@ -5,7 +5,7 @@ import { ANSWER_IN_LANGUAGE, MAX_TOKEN_LENGTH, OPENAI_CHAT_API, SUMMARIZE_PROMPT
 async function summarizeContent(apiKey: string, websiteInfo: WebsiteInfo, language: PromptsLanguage = 'zh-CN'): Promise<FetchRes<OpenaiSummarize>> {
   try {
     let summary = ''
-    let category = ''
+    let categories = []
     let content = websiteInfo.content
     content = preprocessText(content)
     let wordCount = countWord(content)
@@ -23,6 +23,7 @@ async function summarizeContent(apiKey: string, websiteInfo: WebsiteInfo, langua
       const kv = {
         content,
         language: ANSWER_IN_LANGUAGE[language],
+        webprompts: websiteInfo.meta.prompts || '',
       }
       const userPrompts = getPromptsByTemplate(USER_PROMPTS, kv)
       const { data: openaiData } = await fetchPost<any>(`${OPENAI_CHAT_API}/chat/completions`,
@@ -43,26 +44,19 @@ async function summarizeContent(apiKey: string, websiteInfo: WebsiteInfo, langua
             },
           ],
           max_tokens: 800,
-          temperature: 0.4,
+          temperature: 0.3,
         },
       )
 
-      let text = openaiData.choices[0].message.content
-      text = text.replace(/\n/g, '')
-      const regexSummery = /Summary:(.*)Classification:/g
-      const regexCategory = /Classification:(.*)$/g
-      const summaryArr = regexSummery.exec(text)
-      const categoryArr = regexCategory.exec(text)
-      if (summaryArr)
-        summary = summaryArr[1].trim()
-
-      if (categoryArr)
-        category = categoryArr[1].trim()
+      const text = openaiData.choices[0].message.content
+      const json = JSON.parse(text)
+      summary = json.summary
+      categories = json.categories
     }
     else {
       summary = content
     }
-    const catArry = (category || 'Others').split('#')
+    const catArry = (categories && categories.length) ? categories : ['Others']
     return { data: { summary, categories: catArry } }
   }
   catch (err) {

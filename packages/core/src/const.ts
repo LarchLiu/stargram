@@ -10,13 +10,16 @@ export const PICTURE_BED_URL = import.meta.env.VITE_PICTURE_BED
 export const NOTION_API_URL = import.meta.env.VITE_NOTION_API_URL || 'https://api.notion.com/v1'
 export const OPENAI_CHAT_API = import.meta.env.VITE_OPENAI_API_HOST || 'https://api.openai.com/v1'
 export const MAX_TOKEN_LENGTH = 2048
-export const SUMMARIZE_PROMPTS = `Please summarize content within 300 words and then classify it to 1-5 types of classification. Classification names should be short and no explanation or description is needed. Separate the classification names with "#", not other symbols.
-Start the summary with "Summary:". Start the types classification with "Classification:". Return the summary first and then the types of classification. The format is as follows:
-
-Summary: This is the summary content. // must start with English word of "Summary:"
-Classification: XXX#YYY#ZZZ // must start with English word of "Classification:"
+export const SUMMARIZE_PROMPTS = `Please summarize content within 300 words and then classify it to 1-5 types of classification. Classification names should be short and no explanation or description is needed.
+You only speak JSON. Do not write text that isn't JSON. The JSON keys must be English word of "summary" and "categories".
+Classification names used with array data.
+The JSON format must be:
+{
+  "summary": "This is the summary content."
+  "categories": ["XXX","YYY","ZZZ"]
+}
 `
-export const USER_PROMPTS = `Please answer in {language}. The Content is:
+export const USER_PROMPTS = `Please answer in {language}. The Content is {webprompts}:
 =====
 {content}
 =====

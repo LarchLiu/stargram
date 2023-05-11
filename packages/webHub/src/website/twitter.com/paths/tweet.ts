@@ -23,6 +23,7 @@ async function getTweetInfo(urls: LoaderUrls): Promise<FetchRes<WebsiteInfo>> {
   try {
     if (path) {
       const status = path.split('/')[2]
+      meta.prompts = 'The tweet and retweet info'
       // fetch tweets info
       const resJson = await getTweetByStatus(status) //  await fetchGet<any>(`${webHub}/twitter/tweet/${path}/original=true`, header)
       const tweets = resJson as any[]
@@ -73,13 +74,13 @@ async function getTweetInfo(urls: LoaderUrls): Promise<FetchRes<WebsiteInfo>> {
     }
     return { data: { title, url, content, meta } }
   }
-  catch (error) {
-    return { error: `Twitter error: ${error as FetchError}` }
+  catch (error: any) {
+    return { error: `Twitter error: ${error.message as FetchError}` }
   }
 }
 
 export const pathInfo: PathInfo = {
-  name: 'Tweet Detail',
+  name: 'Tweet Details',
   author: '[StarNexus](https://github.com/LarchLiu/star-nexus)',
   sample: 'LarchLiu/status/1635509927094677504',
   filter: tweetFilter,

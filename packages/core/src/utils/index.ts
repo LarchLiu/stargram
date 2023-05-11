@@ -58,7 +58,7 @@ async function fetchPost<T>(url: string, headers?: HeadersInit, body?: Record<st
       const type = res.headers.get('content-type')
       if (type && type.includes('application/json')) {
         const json = await res.json()
-        message = json.error?.message || json.message || res.statusText
+        message = json.error?.message || json.message || json.error || res.statusText
       }
       else if (type && type.includes('text/')) {
         const text = await res.text()

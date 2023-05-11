@@ -25,6 +25,7 @@ async function getRepoInfo(urls: LoaderUrls, headers: Record<string, string> = {
   const repo = urls.webPath
   try {
     if (repo) {
+      meta.prompts = 'The Github repo info'
       // fetch repo info
       const { data: repoJson } = await fetchGet<Record<string, any>>(`${GITHUB_REPOS_API}/${repo}`, headers)
       // fetch languages
@@ -62,7 +63,7 @@ async function getRepoInfo(urls: LoaderUrls, headers: Record<string, string> = {
 }
 
 export const pathInfo: PathInfo = {
-  name: 'Repo Info',
+  name: 'Github Repo Info',
   author: '[StarNexus](https://github.com/LarchLiu/star-nexus)',
   sample: 'LarchLiu/star-nexus',
   filter: repoFilter,
