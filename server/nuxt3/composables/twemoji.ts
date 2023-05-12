@@ -51,7 +51,7 @@ export const apis = {
     }_flat.svg`,
 }
 
-const emojiCache: Record<string, Promise<any>> = {}
+const emojiCache: Record<string, Promise<string>> = {}
 
 export function loadEmoji(type: keyof typeof apis, code: string) {
   const key = `${type}:${code}`
@@ -63,9 +63,7 @@ export function loadEmoji(type: keyof typeof apis, code: string) {
 
   const api = apis[type]
   if (typeof api === 'function')
-    return (emojiCache[key] = fetch(api(code)).then(r => r.text()))
+    return (emojiCache[key] = $fetch(api(code), { responseType: 'text' }))
 
-  return (emojiCache[key] = fetch(`${api}${code.toUpperCase()}.svg`).then(r =>
-    r.text(),
-  ))
+  return (emojiCache[key] = $fetch(`${api}${code.toUpperCase()}.svg`, { responseType: 'text' }))
 }
