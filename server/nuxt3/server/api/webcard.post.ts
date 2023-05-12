@@ -4,56 +4,81 @@ import { unfurl } from 'unfurl.js'
 import type { SatoriOptions } from 'satori'
 import { createClient } from '@supabase/supabase-js'
 import type { TwitterTweetMeta, WebsiteInfo } from '@starnexus/core'
-import { satori } from '~/composables/satori'
-import WebCard from '~/components/WebCard/WebCard.vue'
-import { initBaseFonts, languageFontMap, loadDynamicFont } from '~/composables/font'
-import { getIconCode, loadEmoji } from '~/composables/twemoji'
+import type { Component } from 'vue'
+import { satori } from '../utils/WebCard/satori'
+import { initBaseFonts, languageFontMap, loadDynamicFont } from '../utils/WebCard/font'
+import { getIconCode, loadEmoji } from '../utils/WebCard/twemoji'
+import TweetCard from '../utils/WebCard/TweetCard.vue'
+import CommonCard from '../utils/WebCard/CommonCard.vue'
 
 const SUPABASE_URL = process.env.SUPABASE_URL
 const STORAGE_URL = `${SUPABASE_URL}/storage/v1/object/public/pics-bed`
 
 export default eventHandler(async (event) => {
-  const webInfo = await readBody<WebsiteInfo>(event)
-  const webMeta = webInfo.meta
-  let pngPath = ''
-  let meta
-  let props
-  let screenName = ''
-  let status = ''
-  const res = await unfurl(webInfo.url)
+  try {
+    const webInfo = await readBody<WebsiteInfo>(event)
+    const webMeta = webInfo.meta
+    let imgPath = ''
+    let meta
+    let props
+    let card: Component | undefined
+    const res = await unfurl(webInfo.url)
 
-  if (webMeta.website === 'Github') {
-    if (res.open_graph && res.open_graph.images) {
-      return {
-        url: res.open_graph.images[0].url,
+    if (webMeta.website === 'Github') {
+      if (res.open_graph && res.open_graph.images) {
+        return {
+          url: res.open_graph.images[0].url,
+        }
       }
     }
-  }
-  else if (webMeta.website === 'Twitter') {
-    meta = webMeta as TwitterTweetMeta
-    screenName = meta.screenName!
-    status = meta.status!
-    pngPath = `twitter/${screenName}/${status}.svg`
-    const content = meta.content!
-    let contentArr = content.split('\n').filter((l: string) => l !== '').map((l: string, i: number) =>
-      i < 7 ? l : '...')
+    else if (webMeta.website === 'Twitter') {
+      card = TweetCard
+      meta = webMeta as TwitterTweetMeta
+      const screenName = meta.screenName!
+      const status = meta.status!
+      imgPath = `${webMeta.domain}/${screenName}/${status}.svg`
+      const content = meta.content!
+      let contentArr = content.split('\n').filter((l: string) => l !== '').map((l: string, i: number) =>
+        i < 7 ? l : '...')
 
-    if (contentArr.length > 7)
-      contentArr = contentArr.slice(0, 8)
+      if (contentArr.length > 7)
+        contentArr = contentArr.slice(0, 8)
 
-    props = {
-      avator: meta.avator,
-      name: meta.name,
-      screenName: meta.screenName,
-      content: contentArr,
-      pubTime: meta.pubTime,
-      favicon: res.favicon,
+      props = {
+        avator: meta.avator,
+        name: meta.name,
+        screenName: meta.screenName,
+        content: contentArr,
+        pubTime: meta.pubTime,
+        favicon: res.favicon,
+      }
     }
-  }
-  try {
-    const storageResponse = await $fetch(`${STORAGE_URL}/${pngPath}?v=starnexus`)
+    else {
+      card = CommonCard
+      const content = res.description || webInfo.content || 'No Content'
+      let contentArr = content.split('\n').filter((l: string) => l !== '').map((l: string, i: number) =>
+        i < 7 ? l : '...')
+
+      if (contentArr.length > 7)
+        contentArr = contentArr.slice(0, 8)
+
+      const favicon = (res.favicon && !res.favicon.endsWith('.ico')) ? res.favicon : ''
+      props = {
+        title: res.title || webInfo.title,
+        content: contentArr,
+        favicon,
+      }
+      const url = webInfo.url.replace(/https?:\/\/[^/]+\/?/, '')
+      const filename = url.replace(/[<|>|:|"|\\|\/|\.|?|*|#|&|%|'|"]/g, '')
+      imgPath = `${webMeta.domain}/${filename}.svg`
+    }
+
+    if (!imgPath)
+      throw new Error(`No image path for ${webMeta.website}`)
+
+    const storageResponse = await $fetch(`${STORAGE_URL}/${imgPath}?v=starnexus`)
       .then((_) => {
-        return `${STORAGE_URL}/${pngPath}?v=starnexus`
+        return `${STORAGE_URL}/${imgPath}?v=starnexus`
       })
       .catch((_) => {
         return ''
@@ -63,9 +88,11 @@ export default eventHandler(async (event) => {
         url: storageResponse,
       }
     }
+    if (!card)
+      throw new Error(`No WebCard template for ${webMeta.website}`)
 
     const fonts = await initBaseFonts()
-    const svg = await satori(WebCard, {
+    const svg = await satori(card, {
       props,
       width: 1200,
       height: 630,
@@ -73,8 +100,7 @@ export default eventHandler(async (event) => {
       loadAdditionalAsset: async (code, text) => {
         if (code === 'emoji') {
           return (
-          `data:image/svg+xml;base64,${
-         btoa(await loadEmoji('twemoji', getIconCode(text)))}`
+          `data:image/svg+xml;base64,${btoa(await loadEmoji('twemoji', getIconCode(text)))}`
           )
         }
         // return fonts
@@ -153,7 +179,7 @@ export default eventHandler(async (event) => {
     if (svg) {
       const { error } = await supabaseAdminClient.storage
         .from(process.env.SUPABASE_STORAGE_BUCKET || 'pics-bed')
-        .upload(pngPath, svg, {
+        .upload(imgPath, svg, {
           contentType: 'image/svg+xml',
           cacheControl: '31536000',
           upsert: false,
@@ -163,7 +189,7 @@ export default eventHandler(async (event) => {
         throw error
 
       return {
-        url: `${STORAGE_URL}/${pngPath}?v=starnexus`,
+        url: `${STORAGE_URL}/${imgPath}?v=starnexus`,
       }
     }
     else {
