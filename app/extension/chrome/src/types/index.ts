@@ -1,6 +1,6 @@
 import type {
   GithubRepoMeta,
-  LoaderUrls,
+  WebLoaderUrls,
   WebsiteInfo,
 } from '@starnexus/core'
 
@@ -10,7 +10,7 @@ interface PageData extends WebsiteInfo {
   notionPageId?: string
 }
 
-interface PageInfo extends LoaderUrls {
+interface PageInfo extends WebLoaderUrls {
   starred: boolean
   tabId?: number
   notionPageId?: string
@@ -48,6 +48,6 @@ export type {
   SwRequest,
   ContentRequest,
   GithubRepoMeta,
-  LoaderUrls,
+  WebLoaderUrls,
   PageInfo,
 }

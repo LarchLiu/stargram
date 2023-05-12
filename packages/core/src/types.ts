@@ -5,7 +5,7 @@ export interface WebsiteInfo {
   meta: WebsiteMeta
 }
 
-export interface WebSiteCard {
+export interface WebsiteCard {
   url: string
 }
 
@@ -34,19 +34,10 @@ export interface TwitterTweetMeta extends WebsiteMeta {
   tags?: string[]
 }
 
-export type FetchError = string
-
-export interface FetchRes<T> {
-  data?: T
-  error?: FetchError
-}
-
-export type WebPath = string
-
-export interface LoaderUrls {
+export interface WebLoaderUrls {
   webUrl: string
-  webHub?: string
-  webPath?: WebPath
+  webPath?: string
+  starNexusHub?: string
 }
 
 export interface OpenaiSummarize {
@@ -81,8 +72,8 @@ export interface PathInfo {
   sample: string
   prompts?: string
   sequence?: number
-  filter: (urls: LoaderUrls) => LoaderUrls | undefined
-  loader: (urls: LoaderUrls, headers?: Record<string, string>) => Promise<FetchRes<WebsiteInfo>>
+  filter: (urls: WebLoaderUrls) => WebLoaderUrls | undefined
+  loader: (urls: WebLoaderUrls, headers?: Record<string, string>) => Promise<WebsiteInfo>
 }
 
 export interface Router {

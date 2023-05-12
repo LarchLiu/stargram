@@ -1,5 +1,6 @@
 export * from './types'
 export * from './utils/index'
+export * from './webCard'
 export * from './webInfo'
 export * from './openai'
 export * from './notion'

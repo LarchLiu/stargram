@@ -31,15 +31,15 @@ async function sendSavedStatus(res: SwResponse) {
 }
 
 chrome.runtime.onInstalled.addListener(async () => {
-  const result = await chrome.storage.sync.get(['notionApiKey', 'notionDatabaseId', 'openaiApiKey', 'pictureBed', 'webHub', 'uiLang', 'promptsLang'])
+  const result = await chrome.storage.sync.get(['notionApiKey', 'notionDatabaseId', 'openaiApiKey', 'pictureBed', 'starNexusHub', 'uiLang', 'promptsLang'])
   const notionApiKey = result.notionApiKey ?? ''
   const notionDatabaseId = result.notionDatabaseId ?? ''
   const openaiApiKey = result.openaiApiKey ?? ''
   const pictureBed = result.pictureBed ?? ''
-  const webHub = result.webHub ?? ''
+  const starNexusHub = result.starNexusHub ?? ''
   const uiLang = result.uiLang ?? 'en'
   const promptsLang = result.promptsLang ?? 'en'
-  await chrome.storage.sync.set({ notionApiKey, notionDatabaseId, openaiApiKey, pictureBed, webHub, uiLang, promptsLang })
+  await chrome.storage.sync.set({ notionApiKey, notionDatabaseId, openaiApiKey, pictureBed, starNexusHub, uiLang, promptsLang })
 })
 
 chrome.runtime.onMessage.addListener(async (request: ContentRequest, sender, sendResponse: ListenerSendResponse) => {
@@ -94,9 +94,7 @@ async function saveProcess(pageData: PageData): Promise<SwResponse> {
     }
 
     if (openaiApiKey) {
-      const { data, error } = await summarizeContent(openaiApiKey, pageData, promptsLang)
-      if (error)
-        return { tabId: pageData.tabId, starred: pageData.starred, notionPageId: pageData.notionPageId, error }
+      const data = await summarizeContent(openaiApiKey, pageData, promptsLang)
       if (data) {
         summary = data.summary
         categories = data.categories
@@ -116,10 +114,7 @@ async function saveProcess(pageData: PageData): Promise<SwResponse> {
       meta: pageData.meta,
     }
 
-    const { data, error } = await saveNotion(notionApiKey, notionPage)
-    if (error)
-      return { tabId: pageData.tabId, starred: pageData.starred, notionPageId: pageData.notionPageId, error }
-
+    const data = await saveNotion(notionApiKey, notionPage)
     return { tabId: pageData.tabId, starred: data!.starred, notionPageId: data!.notionPageId }
   }
   catch (error: any) {
@@ -130,14 +125,10 @@ async function saveProcess(pageData: PageData): Promise<SwResponse> {
 function saveToNotion(pageInfo: PageInfo): Promise<SwResponse> {
   return new Promise((resolve, reject) => {
     getWebsiteInfoByApi(pageInfo).then((res) => {
-      if (res.error)
-        // eslint-disable-next-line prefer-promise-reject-errors
-        return reject({ tabId: pageInfo.tabId, notionPageId: pageInfo.notionPageId, starred: pageInfo.starred, error: res.error })
-
-      saveProcess({ ...res.data!, tabId: pageInfo.tabId, notionPageId: pageInfo.notionPageId, starred: pageInfo.starred }).then((_res) => {
+      saveProcess({ ...res, tabId: pageInfo.tabId, notionPageId: pageInfo.notionPageId, starred: pageInfo.starred }).then((_res) => {
         return resolve(_res)
       }).catch((error) => {
-        return reject(error)
+        return reject({ tabId: pageInfo.tabId, notionPageId: pageInfo.notionPageId, starred: pageInfo.starred, error: error.message })
       })
     })
   })

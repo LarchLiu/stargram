@@ -8,8 +8,7 @@ const { t, locale } = useI18n()
 const notionApiKeyInput = ref('')
 const notionPageLinkInput = ref('')
 const openaiApiKeyInput = ref('')
-const pictureBedInput = ref('')
-const webHubInput = ref('')
+const starNexusHubInput = ref('')
 const saveStatus = ref('')
 const showSettings = ref(false)
 const showLanguage = ref(false)
@@ -71,8 +70,7 @@ function saveSettings() {
     {
       notionApiKey: notionApiKeyInput.value,
       openaiApiKey: openaiApiKeyInput.value,
-      pictureBed: pictureBedInput.value,
-      webHub: webHubInput.value,
+      starNexusHub: starNexusHubInput.value,
       notionDatabaseId,
       notionPageLink,
     },
@@ -86,12 +84,11 @@ function onSettingsClick() {
   showLanguage.value = false
   showSettings.value = !showSettings.value
   if (showSettings.value) {
-    chrome.storage.sync.get(['notionApiKey', 'notionPageLink', 'openaiApiKey', 'pictureBed', 'webHub'], (result) => {
+    chrome.storage.sync.get(['notionApiKey', 'notionPageLink', 'openaiApiKey', 'starNexusHub'], (result) => {
       notionApiKeyInput.value = result.notionApiKey || ''
       notionPageLinkInput.value = result.notionPageLink || ''
       openaiApiKeyInput.value = result.openaiApiKey || ''
-      pictureBedInput.value = result.pictureBed || ''
-      webHubInput.value = result.webHub || ''
+      starNexusHubInput.value = result.starNexusHub || ''
     })
   }
 }
@@ -153,12 +150,11 @@ watch(promptsLangSelect, (n, _) => {
 })
 
 onMounted(() => {
-  chrome.storage.sync.get(['notionApiKey', 'notionPageLink', 'openaiApiKey', 'pictureBed', 'webHub', 'uiLang', 'promptsLang'], (result) => {
+  chrome.storage.sync.get(['notionApiKey', 'notionPageLink', 'openaiApiKey', 'starNexusHub', 'uiLang', 'promptsLang'], (result) => {
     notionApiKeyInput.value = result.notionApiKey || ''
     notionPageLinkInput.value = result.notionPageLink || ''
     openaiApiKeyInput.value = result.openaiApiKey || ''
-    pictureBedInput.value = result.pictureBed || ''
-    webHubInput.value = result.webHub || ''
+    starNexusHubInput.value = result.starNexusHub || ''
     uiLangSelect.value = result.uiLang || 'en'
     promptsLangSelect.value = result.promptsLang || 'en'
     locale.value = uiLangSelect.value
@@ -208,11 +204,8 @@ onMounted(() => {
       <label for="openaiApiKey">{{ t('settings.openaiApiKey') }}</label>
       <input id="openaiApiKey" v-model="openaiApiKeyInput" class="my-2" type="text" name="notionPageLink">
 
-      <label for="pictureBed">{{ t('settings.pictureBed') }}</label>
-      <input id="pictureBed" v-model="pictureBedInput" class="my-2" type="text" name="notionPageLink">
-
-      <label for="webHub">{{ t('settings.starNexusHub') }}</label>
-      <input id="webHub" v-model="webHubInput" class="my-2" type="text" name="notionPageLink">
+      <label for="starNexusHub">{{ t('settings.starNexusHub') }}</label>
+      <input id="starNexusHub" v-model="starNexusHubInput" class="my-2" type="text" name="notionPageLink">
 
       <button class="gh-btn mt-2" type="submit" @click="saveSettings">
         {{ t('settings.saveSettings') }}

@@ -1,23 +1,23 @@
-import type { FetchRes, WebSiteCard, WebsiteInfo } from '../types'
-import { fetchPost } from '../utils'
+import { $fetch } from 'ofetch'
+import type { WebsiteCard, WebsiteInfo } from '../types'
 
 export class WebCard {
-  apiUrl = '/api/webcard'
-  webInfo?: WebsiteInfo = undefined
-  headers?: Record<string, string> = undefined
-  constructor(webInfo: WebsiteInfo, headers: Record<string, string>, webHub?: string) {
-    this.apiUrl = (webHub || '') + this.apiUrl
+  constructor(webInfo: WebsiteInfo, headers?: Record<string, string>, starNexusHub?: string) {
+    this.apiUrl = (starNexusHub || '') + this.apiUrl
     this.webInfo = webInfo
     this.headers = headers
   }
 
-  async getWebCardUrl(): Promise<FetchRes<WebSiteCard>> {
-    try {
-      const res = await fetchPost<WebSiteCard>(this.apiUrl, this.headers, this.webInfo)
-      return res
-    }
-    catch (error: any) {
-      return { error: error.message }
-    }
+  private apiUrl = '/api/webcard'
+  private headers?: Record<string, string> = undefined
+  private webInfo?: WebsiteInfo = undefined
+
+  async getWebCardUrl() {
+    const res = await $fetch<WebsiteCard>(this.apiUrl, {
+      method: 'POST',
+      headers: this.headers,
+      body: this.webInfo,
+    })
+    return res
   }
 }

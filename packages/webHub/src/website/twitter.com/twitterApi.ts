@@ -1,3 +1,5 @@
+import { $fetch } from 'ofetch'
+
 // https://github.com/mikf/gallery-dl/blob/a53cfc845e12d9e98fefd07e43ebffaec488c18f/gallery_dl/extractor/twitter.py#L716-L726
 const headers = {
   'authorization': 'Bearer AAAAAAAAAAAAAAAAAAAAAPYXBAAAAAAACLXUNDekMxqa8h%2F40K4moUkGsoc%3DTYfbDKbT3jJPCEVnMYqilB28NHfOPqkca3qaAxGfsyKCs0wRbw',
@@ -10,29 +12,18 @@ const headers = {
 }
 
 async function newGuestToken() {
-  let apiAttempts = 0
   let guestToken = ''
-  while (apiAttempts < 3) {
-    apiAttempts++
-    try {
-      const activate = await fetch(
-        'https://api.twitter.com/1.1/guest/activate.json',
-        {
-          method: 'POST',
-          headers: {
-            Authorization: headers.authorization,
-          },
-          body: '',
-        },
-      )
-      const activateJson = (await activate.json()) // as { guest_token: string }
-      guestToken = activateJson.guest_token
-    }
-    catch (err: unknown) {
-      continue
-    }
-  }
-
+  const activate = await $fetch(
+    'https://api.twitter.com/1.1/guest/activate.json',
+    {
+      method: 'POST',
+      headers: {
+        Authorization: headers.authorization,
+      },
+      retry: 3,
+    },
+  )
+  guestToken = activate.guest_token
   headers['x-guest-token'] = guestToken
 }
 // https://github.com/mikf/gallery-dl/blob/a53cfc845e12d9e98fefd07e43ebffaec488c18f/gallery_dl/extractor/twitter.py#L756--L770
@@ -64,36 +55,26 @@ async function paginationTweets(endpoint: string, userId: string, variables = {}
     userId,
   }
 
-  try {
-    const res = await fetch(`https://twitter.com/i/api${endpoint}?variables=${encodeURI(JSON.stringify(params))}`, {
-      headers,
-      method: 'GET',
-    })
+  const { data } = await $fetch(`https://twitter.com/i/api${endpoint}?variables=${encodeURI(JSON.stringify(params))}`, {
+    headers,
+    method: 'GET',
+  })
 
-    if (!res.ok)
-      throw new Error(res.statusText)
-
-    const { data } = await res.json()
-
-    if (data && Object.keys(data).length) {
-      let instructions: any
-      if (!path) {
-        instructions = data.user.result.timeline.timeline.instructions
-      }
-      else {
-        instructions = data
-        path.forEach((p) => {
-          instructions = instructions[p]
-        })
-        instructions = instructions.instructions
-      }
-      return instructions.filter((i: any) => i.type === 'TimelineAddEntries')[0].entries
+  if (data && Object.keys(data).length) {
+    let instructions: any
+    if (!path) {
+      instructions = data.user.result.timeline.timeline.instructions
     }
-    throw new Error('Not Found')
+    else {
+      instructions = data
+      path.forEach((p) => {
+        instructions = instructions[p]
+      })
+      instructions = instructions.instructions
+    }
+    return instructions.filter((i: any) => i.type === 'TimelineAddEntries')[0].entries
   }
-  catch (error: any) {
-    throw new Error(error.message || error.code || error.status || error.statusText)
-  }
+  throw new Error('Twitter error: Tweet Not Found')
 }
 
 // https://github.com/mikf/gallery-dl/blob/a53cfc845e12d9e98fefd07e43ebffaec488c18f/gallery_dl/extractor/twitter.py#L795-L805
@@ -165,13 +146,11 @@ function gatherLegacyFromData(entries: any, filter = 'tweet-') {
 }
 
 export async function getTweetByStatus(status: string) {
-  if (!status)
-    throw new Error('No Status Id')
   try {
     const tweets = await tweetDetail(status)
     return gatherLegacyFromData(tweets, 'none')
   }
   catch (error: any) {
-    throw new Error(error.message || error.statusText)
+    throw new Error(`Twitter API error: ${error.message || error.statusText}`)
   }
 }

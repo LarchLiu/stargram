@@ -38,7 +38,9 @@
     "tscheck": "tsc --noEmit",
     "test": "vitest"
   },
-  "dependencies": {},
+  "dependencies": {
+    "ofetch": "^1.0.1"
+  },
   "devDependencies": {
     "@starnexus/core": "workspace:*",
     "@starnexus/generate-routes": "workspace:*"

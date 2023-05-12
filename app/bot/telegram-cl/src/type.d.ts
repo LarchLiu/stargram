@@ -108,11 +108,11 @@ interface TelegramMessageEntity {
   user?: TelegramUser;
 }
 
-type FetchError = string
+// type FetchError = string
 
 interface FetchWebsite {
   data?: WebsiteInfo
-  error?: FetchError
+  error?: string
 }
 
 interface WebsiteInfo {

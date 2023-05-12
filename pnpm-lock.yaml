@@ -133,7 +133,11 @@ importers:
         specifier: ^8.9.0
         version: 8.9.0
 
-  packages/core: {}
+  packages/core:
+    dependencies:
+      ofetch:
+        specifier: ^1.0.1
+        version: 1.0.1
 
   packages/plugins/generate-routes:
     dependencies:
@@ -158,6 +162,10 @@ importers:
         version: 6.7.0(typescript@5.0.3)
 
   packages/webHub:
+    dependencies:
+      ofetch:
+        specifier: ^1.0.1
+        version: 1.0.1
     devDependencies:
       '@starnexus/core':
         specifier: workspace:*
@@ -6042,7 +6050,6 @@ packages:
 
   /destr@1.2.2:
     resolution: {integrity: sha512-lrbCJwD9saUQrqUfXvl6qoM+QN3W7tLV5pAOs+OqOmopCCz/JkE05MHedJR1xfk4IAnZuJXPVuN5+7jNA2ZCiA==}
-    dev: true
 
   /destroy@1.2.0:
     resolution: {integrity: sha512-2sJGJTaXIIaR1w4iJSNoN0hnMY7Gpc/n8D4qSCJw8QqFWXf7cuAgnEHxBpweaVcPevC2l3KpjYCx3NypQQgaJg==}
@@ -9193,7 +9200,6 @@ packages:
 
   /node-fetch-native@1.1.1:
     resolution: {integrity: sha512-9VvspTSUp2Sxbl+9vbZTlFGq9lHwE8GDVVekxx6YsNd1YH59sb3Ba8v3Y3cD8PkLNcileGGcA21PFjVl0jzDaw==}
-    dev: true
 
   /node-fetch@2.6.11:
     resolution: {integrity: sha512-4I6pdBY1EthSqDmJkiNk3JIT8cswwR9nfeW/cPdUagJYEQG7R95WRH74wpz7ma8Gh/9dI9FP+OU+0E4FvtA55w==}
@@ -9596,7 +9602,6 @@ packages:
       destr: 1.2.2
       node-fetch-native: 1.1.1
       ufo: 1.1.2
-    dev: true
 
   /ohash@1.1.2:
     resolution: {integrity: sha512-9CIOSq5945rI045GFtcO3uudyOkYVY1nyfFxVQp+9BRgslr8jPNiSSrsFGg/BNTUFOLqx0P5tng6G32brIPw0w==}

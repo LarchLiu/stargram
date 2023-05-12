@@ -17,8 +17,7 @@ async function getWebsiteInfoFromText(text) {
       const url = match[i]
       const info = await getWebsiteInfoByApi({
         webUrl: url,
-        picBed: ENV.PICTURE_BED_URL,
-        webHub: ENV.STAR_NEXUS_HUB_API,
+        starNexusHub: ENV.STAR_NEXUS_HUB_API,
       })
 
       infoArr.push(info)
@@ -48,9 +47,7 @@ async function saveToNotion(websiteInfo) {
   }
 
   if (openaiApiKey) {
-    const { data, error } = await summarizeContent(openaiApiKey, websiteInfo)
-    if (error)
-      return { error }
+    const data = await summarizeContent(openaiApiKey, websiteInfo)
 
     summary = data.summary
 
@@ -70,10 +67,7 @@ async function saveToNotion(websiteInfo) {
     meta: websiteInfo.meta,
   }
 
-  const { error } = await saveNotion(notionApiKey, notionPage)
-  if (error)
-    return { error }
-
+  await saveNotion(notionApiKey, notionPage)
   return ({ message: 'success' })
 }
 

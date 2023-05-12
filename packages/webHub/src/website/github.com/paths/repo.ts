@@ -1,8 +1,9 @@
-import type { FetchError, FetchRes, GithubRepoMeta, LoaderUrls, PathInfo, WebsiteInfo } from '@starnexus/core'
-import { fetchGet, strNotEqualWith } from '@starnexus/core'
+import type { GithubRepoMeta, PathInfo, WebLoaderUrls, WebsiteInfo } from '@starnexus/core'
+import { strNotEqualWith } from '@starnexus/core'
+import { $fetch } from 'ofetch'
 import { GITHUB_RAW_URL, GITHUB_REPOS_API, USER_AGENT } from '../../../const'
 
-function repoFilter(urls: LoaderUrls): LoaderUrls | undefined {
+function repoFilter(urls: WebLoaderUrls): WebLoaderUrls | undefined {
   const regexPath = /github.com\/([^\/]*\/[^\/]*)/g
   const pathMatch = regexPath.exec(urls.webUrl)
   const webPath = pathMatch ? pathMatch[1] : ''
@@ -17,49 +18,47 @@ function repoFilter(urls: LoaderUrls): LoaderUrls | undefined {
   return undefined
 }
 
-async function getRepoInfo(urls: LoaderUrls, headers: Record<string, string> = { 'User-Agent': USER_AGENT }): Promise<FetchRes<WebsiteInfo>> {
+async function getRepoInfo(urls: WebLoaderUrls, headers: Record<string, string> = { 'User-Agent': USER_AGENT }): Promise<WebsiteInfo> {
   let title = ''
   let content = ''
   let url = urls.webUrl
   const meta: GithubRepoMeta = {}
   const repo = urls.webPath
-  try {
-    if (repo) {
-      meta.prompts = 'The Github repo info'
-      // fetch repo info
-      const { data: repoJson } = await fetchGet<Record<string, any>>(`${GITHUB_REPOS_API}/${repo}`, headers)
-      // fetch languages
-      const { data: languagesJson } = await fetchGet<Record<string, string>>(`${GITHUB_REPOS_API}/${repo}/languages`, headers)
-      if (repoJson) {
+
+  if (repo) {
+    meta.prompts = 'The Github repo info'
+    // fetch repo info
+    const repoJson = await $fetch<Record<string, any>>(`${GITHUB_REPOS_API}/${repo}`, { method: 'GET', headers })
+    // fetch languages
+    const languagesJson = await $fetch<Record<string, string>>(`${GITHUB_REPOS_API}/${repo}/languages`, { method: 'GET', headers })
+    if (repoJson) {
       // fetch readme
-        const readmeRes = await fetchGet<string>(`${GITHUB_RAW_URL}/${repo}/${repoJson.default_branch}/README.md`, headers, undefined, false)
-        const readme = readmeRes.error ? '' : readmeRes.data
+      let readme = ''
+      const readmeRes = await $fetch<string>(`${GITHUB_RAW_URL}/${repo}/${repoJson.default_branch}/README.md`, { method: 'GET', headers })
+        .catch(_ => '')
+      readme = readmeRes
 
-        const description = repoJson.description.replace(/:\w+:/g, ' ')
-        title = `Repo · ${repoJson.full_name}`
-        url = repoJson.html_url
-        meta.username = repoJson.owner.login
-        meta.reponame = repoJson.name
-        meta.description = description
+      const description = repoJson.description.replace(/:\w+:/g, ' ')
+      title = `Repo · ${repoJson.full_name}`
+      url = repoJson.html_url
+      meta.username = repoJson.owner.login
+      meta.reponame = repoJson.name
+      meta.description = description
 
-        const tags = repoJson.topics
-        if (tags && tags.length > 0)
-          meta.tags = tags
+      const tags = repoJson.topics
+      if (tags && tags.length > 0)
+        meta.tags = tags
 
-        if (languagesJson)
-          meta.languages = Object.keys(languagesJson)
+      if (languagesJson)
+        meta.languages = Object.keys(languagesJson)
 
-        content = `${title}\n\n${readme}`
-      }
+      content = `${title}\n\n${readme}`
     }
-    else {
-      return { error: 'Github error: Not supported website.' }
-    }
-    return { data: { title, url, content, meta } }
   }
-  catch (error) {
-    return { error: `Github error: ${error as FetchError}` }
+  else {
+    throw new Error('Github Repo error: No repo path.')
   }
+  return { title, url, content, meta }
 }
 
 export const pathInfo: PathInfo = {
