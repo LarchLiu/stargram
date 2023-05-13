@@ -1,4 +1,3 @@
-import fs from 'node:fs/promises'
 import { $fetch } from 'ofetch'
 import type { SatoriOptions } from 'satori'
 import type { apis } from './twemoji'
@@ -310,36 +309,37 @@ export const loadDynamicAsset = withCache(loadAsset)
 
 export async function initBaseFonts() {
   // const interRegPath = join(process.cwd(), 'public', 'fonts', 'Inter-Regular.ttf')
-  const InterReg = await fs.readFile('public/fonts/Inter-Regular.ttf')
+  // const InterReg = await fs.readFile(resolve(__dirname, '../../../assets/fonts/Inter-Regular.ttf'))
   // const interBoldPath = join(process.cwd(), 'public', 'fonts', 'Inter-Bold.ttf')
-  const InterBold = await fs.readFile('public/fonts/Inter-Bold.ttf')
+  // const InterBold = await fs.readFile(resolve(__dirname, '../../../assets/fonts/Inter-Bold.ttf'))
   // const scPath = join(process.cwd(), 'public', 'fonts', 'NotoSansSC-Regular.otf')
-  const NotoSansSC = await fs.readFile('public/fonts/NotoSansSC-Regular.otf')
+  // const NotoSansSC = await fs.readFile(resolve(__dirname, '../../../assets/fonts/NotoSansSC-Regular.otf'))
   // const jpPath = join(process.cwd(), 'public', 'fonts', 'NotoSansJP-Regular.ttf')
   // const NotoSansJP = await fs.readFile(jpPath)
   // const uniPath = join(process.cwd(), 'public', 'fonts', 'unifont-15.0.01.otf')
   // const Unifont = await fs.readFile(uniPath)
   // const path = join(process.cwd(), 'public', 'fonts', 'MPLUS1p-Regular.ttf')
   // const fontData = await fs.readFile(path)
+  const fontData = await $fetch('https://unpkg.com/@fontsource/inter@4.5.2/files/inter-latin-ext-400-normal.woff', { responseType: 'arrayBuffer' })
   return [
+    // {
+    //   name: 'Noto Sans SC',
+    //   data: NotoSansSC,
+    //   weight: 400,
+    //   style: 'normal',
+    // },
     {
-      name: 'Noto Sans SC',
-      data: NotoSansSC,
+      name: 'Inter',
+      data: fontData,
       weight: 400,
       style: 'normal',
     },
-    {
-      name: 'Inter',
-      data: InterReg,
-      weight: 400,
-      style: 'normal',
-    },
-    {
-      name: 'Inter',
-      data: InterBold,
-      weight: 700,
-      style: 'normal',
-    },
+    // {
+    //   name: 'Inter',
+    //   data: InterBold,
+    //   weight: 700,
+    //   style: 'normal',
+    // },
     // {
     //   name: 'M Plus 1p',
     //   data: fontData,
