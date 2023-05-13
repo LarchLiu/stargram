@@ -28,6 +28,7 @@
     "build:ext-chrome": "turbo run build --filter=chrome-extension...",
     "build:tg-cl": "turbo run build --filter=telegram-cl-bot...",
     "build:pic": "turbo run build --filter=picture-bed",
+    "build:nuxt": "turbo run build --filter=@server/nuxt3...",
     "release": "bumpp package.json packages/**/package.json --commit --push --tag",
     "test": "vitest run",
     "test:core": "turbo run test --filter=@starnexus/core",

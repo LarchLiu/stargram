@@ -4,6 +4,7 @@
   "packageManager": "pnpm@8.5.0",
   "scripts": {
     "build": "nuxi build",
+    "build:turbo": "turbo run build --filter=@server/nuxt3...",
     "dev": "nuxi dev",
     "dev:pwa": "VITE_PLUGIN_PWA=true nuxi dev",
     "start": "node .output/server/index.mjs",
