@@ -20,13 +20,13 @@
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.21.0",
-    "@vercel/og": "0.5.3",
-    "next": "13.3.1",
+    "@vercel/og": "0.5.4",
+    "next": "13.4.2",
     "react": "18.2.0",
     "react-dom": "18.2.0"
   },
   "devDependencies": {
-    "@types/node": "^18.15.5",
-    "@types/react": "^18.0.28"
+    "@types/node": "^18.16.8",
+    "@types/react": "^18.2.6"
   }
 }
