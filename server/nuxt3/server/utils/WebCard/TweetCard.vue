@@ -6,6 +6,7 @@ defineProps({
   content: Array<String>,
   pubTime: String,
   favicon: String,
+  lang: String,
 })
 </script>
 
@@ -21,13 +22,13 @@ defineProps({
           class="rounded-full"
         >
         <div class="ml-20px flex flex-col text-40px">
-          <span>{{ name }}</span>
-          <span>{{ `@${screenName}` }}</span>
+          <span :lang="lang ? lang : 'zh-CN'">{{ name }}</span>
+          <span :lang="lang ? lang : 'zh-CN'">{{ `@${screenName}` }}</span>
         </div>
       </div>
 
       <div class="h-320px flex flex-col overflow-hidden pt-30px text-30px">
-        <div v-for="(c, i) in content" :key="i" class="flex">
+        <div v-for="(c, i) in content" :key="i" class="flex" :lang="lang ? lang : 'zh-CN'">
           {{ c }}
         </div>
       </div>

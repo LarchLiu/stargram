@@ -1,8 +1,11 @@
 function getDomain(url: string) {
-  const match = url.match(/https?:\/\/([^/]+)\/?/i)
+  const match = url.match(/(https?:\/\/)?([a-zA-Z0-9][-a-zA-Z0-9]{0,62}(\.[a-zA-Z0-9][-a-zA-Z0-9]{0,62})+(:[0-9]{1,5})?)[-a-zA-Z0-9()@:%_\\\+\.~#?&//=]*/i)
   let host = ''
-  if (match && match[1])
-    host = match[1]
+  if (match && match[2])
+    host = match[2]
+
+  const arr = host.split('.')
+  host = arr.slice(-2).join('.')
 
   return host
 }

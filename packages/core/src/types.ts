@@ -15,7 +15,7 @@ export interface WebsiteMeta {
   cover?: string
   prompts?: string
 }
-
+// TODO: remove web meta type to webHub
 export interface GithubRepoMeta extends WebsiteMeta {
   username?: string
   reponame?: string
@@ -31,6 +31,7 @@ export interface TwitterTweetMeta extends WebsiteMeta {
   content?: string
   status?: string
   pubTime?: string
+  lang?: string
   tags?: string[]
 }
 

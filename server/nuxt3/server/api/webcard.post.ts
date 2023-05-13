@@ -1,13 +1,11 @@
 // server/api/webcard.ts
 
 import { unfurl } from 'unfurl.js'
-import type { SatoriOptions } from 'satori'
 import { createClient } from '@supabase/supabase-js'
 import type { TwitterTweetMeta, WebsiteInfo } from '@starnexus/core'
 import type { Component } from 'vue'
 import { satori } from '../utils/WebCard/satori'
-import { initBaseFonts, languageFontMap, loadDynamicFont } from '../utils/WebCard/font'
-import { getIconCode, loadEmoji } from '../utils/WebCard/twemoji'
+import { initBaseFonts, loadDynamicAsset } from '../utils/WebCard/font'
 import TweetCard from '../utils/WebCard/TweetCard.vue'
 import CommonCard from '../utils/WebCard/CommonCard.vue'
 
@@ -50,12 +48,13 @@ export default eventHandler(async (event) => {
         screenName: meta.screenName,
         content: contentArr,
         pubTime: meta.pubTime,
+        lang: meta.lang,
         favicon: res.favicon,
       }
     }
     else {
       card = CommonCard
-      const content = res.description || webInfo.content || 'No Content'
+      const content = webInfo.content // res.description || webInfo.content || 'No Content'
       let contentArr = content.split('\n').filter((l: string) => l !== '').map((l: string, i: number) =>
         i < 7 ? l : '...')
 
@@ -69,7 +68,7 @@ export default eventHandler(async (event) => {
         favicon,
       }
       const url = webInfo.url.replace(/https?:\/\/[^/]+\/?/, '')
-      const filename = url.replace(/[<|>|:|"|\\|\/|\.|?|*|#|&|%|'|"]/g, '')
+      const filename = url.replace(/[<|>|:|"|\\|\/|\.|?|*|#|&|%|~|'|"]/g, '')
       imgPath = `${webMeta.domain}/${filename}.svg`
     }
 
@@ -97,72 +96,7 @@ export default eventHandler(async (event) => {
       width: 1200,
       height: 630,
       fonts,
-      loadAdditionalAsset: async (code, text) => {
-        if (code === 'emoji') {
-          return (
-          `data:image/svg+xml;base64,${btoa(await loadEmoji('twemoji', getIconCode(text)))}`
-          )
-        }
-        // return fonts
-        const codes = code.split('|')
-
-        // Try to load from Google Fonts.
-        const names = codes
-          .map(code => languageFontMap[code as keyof typeof languageFontMap])
-          .filter(Boolean)
-
-        if (names.length === 0)
-          return [] as SatoriOptions['fonts']
-
-        const fontsName: string[] = []
-        for (const name of names.flat())
-          fontsName.push(name)
-
-        try {
-          const data = await loadDynamicFont(text, fontsName)
-          const fonts: SatoriOptions['fonts'] = []
-
-          // Decode the encoded font format.
-          const decodeFontInfoFromArrayBuffer = (buffer: ArrayBuffer) => {
-            let offset = 0
-            const bufferView = new Uint8Array(buffer)
-
-            while (offset < bufferView.length) {
-            // 1 byte for font name length.
-              const languageCodeLength = bufferView[offset]
-
-              offset += 1
-              let languageCode = ''
-              for (let i = 0; i < languageCodeLength; i++)
-                languageCode += String.fromCharCode(bufferView[offset + i])
-
-              offset += languageCodeLength
-
-              // 4 bytes for font data length.
-              const fontDataLength = new DataView(buffer).getUint32(offset, false)
-              offset += 4
-              const fontData = buffer.slice(offset, offset + fontDataLength)
-              offset += fontDataLength
-
-              fonts.push({
-                name: `satori_${languageCode}_fallback_${text}`,
-                data: fontData,
-                weight: 400,
-                style: 'normal',
-                lang: languageCode === 'unknown' ? undefined : languageCode,
-              })
-            }
-          }
-
-          decodeFontInfoFromArrayBuffer(data)
-
-          return fonts
-        }
-        catch (e) {
-          console.error('Failed to load dynamic font for', text, '. Error:', e)
-          return []
-        }
-      },
+      loadAdditionalAsset: async (code, text) => loadDynamicAsset('twemoji', code, text),
     })
     // setHeader(event, 'Content-Type', 'image/svg+xml')
 

@@ -66,6 +66,7 @@ async function getTweetInfo(urls: WebLoaderUrls): Promise<WebsiteInfo> {
       meta.avator = avator
       meta.content = content
       meta.pubTime = pubTime
+      meta.lang = tweet.lang
       const hashtags = tweet.entities?.hashtags
       if (hashtags)
         meta.tags = hashtags.map((t: { text: string }) => t.text)

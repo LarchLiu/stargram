@@ -2,6 +2,8 @@ import fs from 'node:fs/promises'
 import { join } from 'node:path'
 import { $fetch } from 'ofetch'
 import type { SatoriOptions } from 'satori'
+import type { apis } from './twemoji'
+import { getIconCode, loadEmoji } from './twemoji'
 
 type UnicodeRange = Array<number | number[]>
 
@@ -117,11 +119,11 @@ function checkSegmentInRange(segment: string, range: UnicodeRange): boolean {
 // than built-in.
 // @TODO: Cover most languages with Noto Sans.
 export const languageFontMap = {
-  'ja-JP': 'Noto+Sans+JP',
-  'ko-KR': 'Noto+Sans+KR',
   'zh-CN': 'Noto+Sans+SC',
   'zh-TW': 'Noto+Sans+TC',
   'zh-HK': 'Noto+Sans+HK',
+  'ja-JP': 'Noto+Sans+JP',
+  'ko-KR': 'Noto+Sans+KR',
   'th-TH': 'Noto+Sans+Thai',
   'bn-IN': 'Noto+Sans+Bengali',
   'ar-AR': 'Noto+Sans+Arabic',
@@ -185,7 +187,7 @@ async function fetchFont(
   if (!resource)
     return null
 
-  const res: ArrayBuffer = await $fetch(resource[1])
+  const res: ArrayBuffer = await $fetch(resource[1], { responseType: 'arrayBuffer' })
 
   return res // arrayBuffer()
 }
@@ -225,20 +227,112 @@ export async function loadDynamicFont(text: string, fonts: string[]) {
   return responseBuffer
 }
 
+const cache = new Map()
+
+function withCache(fn: Function) {
+  return async (emojiType: string, code: string, text: string) => {
+    const key = `${emojiType}:${code}:${text}`
+    if (cache.has(key))
+      return cache.get(key)
+    const result = await fn(emojiType, code, text)
+    cache.set(key, result)
+    return result
+  }
+}
+
+async function loadAsset(emojiType: keyof typeof apis, code: string, text: string) {
+  if (code === 'emoji') {
+    return (
+    `data:image/svg+xml;base64,${btoa(await loadEmoji(emojiType, getIconCode(text)))}`
+    )
+  }
+  // return fonts
+  const codes = code.split('|')
+
+  // Try to load from Google Fonts.
+  const names = codes
+    .map(code => languageFontMap[code as keyof typeof languageFontMap])
+    .filter(Boolean)
+
+  if (names.length === 0)
+    return [] as SatoriOptions['fonts']
+
+  const fontsName: string[] = []
+  for (const name of names.flat())
+    fontsName.push(name)
+
+  try {
+    const fonts: SatoriOptions['fonts'] = []
+    // const data = await loadDynamicFont(text, fontsName)
+    // Decode the encoded font format.
+    const decodeFontInfoFromArrayBuffer = (buffer: ArrayBuffer) => {
+      let offset = 0
+      const bufferView = new Uint8Array(buffer)
+
+      while (offset < bufferView.length) {
+      // 1 byte for font name length.
+        const languageCodeLength = bufferView[offset]
+
+        offset += 1
+        let languageCode = ''
+        for (let i = 0; i < languageCodeLength; i++)
+          languageCode += String.fromCharCode(bufferView[offset + i])
+
+        offset += languageCodeLength
+
+        // 4 bytes for font data length.
+        const fontDataLength = new DataView(buffer).getUint32(offset, false)
+        offset += 4
+        const fontData = buffer.slice(offset, offset + fontDataLength)
+        offset += fontDataLength
+
+        fonts.push({
+          name: `satori_${languageCode}_fallback_${text}`,
+          data: fontData,
+          weight: 400,
+          style: 'normal',
+          lang: languageCode === 'unknown' ? undefined : languageCode,
+        })
+      }
+    }
+
+    const data = await loadDynamicFont(text, fontsName)
+    decodeFontInfoFromArrayBuffer(data)
+
+    return fonts
+  }
+  catch (e) {
+    console.error('Failed to load dynamic font for', text, '. Error:', e)
+    return []
+  }
+}
+
+export const loadDynamicAsset = withCache(loadAsset)
+
 export async function initBaseFonts() {
+  const interRegPath = join(process.cwd(), 'public', 'fonts', 'Inter-Regular.ttf')
+  const InterReg = await fs.readFile(interRegPath)
+  const interBoldPath = join(process.cwd(), 'public', 'fonts', 'Inter-Bold.ttf')
+  const InterBold = await fs.readFile(interBoldPath)
   const scPath = join(process.cwd(), 'public', 'fonts', 'NotoSansSC-Regular.otf')
-  // const jpPath = join(process.cwd(), 'public', 'fonts', 'NotoSansJP-Regular.ttf')
-  // const uniPath = join(process.cwd(), 'public', 'fonts', 'unifont-15.0.01.otf')
   const NotoSansSC = await fs.readFile(scPath)
+  // const jpPath = join(process.cwd(), 'public', 'fonts', 'NotoSansJP-Regular.ttf')
   // const NotoSansJP = await fs.readFile(jpPath)
+  // const uniPath = join(process.cwd(), 'public', 'fonts', 'unifont-15.0.01.otf')
   // const Unifont = await fs.readFile(uniPath)
-  const path = join(process.cwd(), 'public', 'fonts', 'MPLUS1p-Regular.ttf')
-  const fontData = await fs.readFile(path)
+  // const path = join(process.cwd(), 'public', 'fonts', 'MPLUS1p-Regular.ttf')
+  // const fontData = await fs.readFile(path)
   return [
     {
-      name: 'M Plus 1p',
-      data: fontData,
+      name: 'Inter',
+      data: InterReg,
       weight: 400,
+      style: 'normal',
+    },
+    {
+      name: 'Inter',
+      data: InterBold,
+      weight: 700,
       style: 'normal',
     },
     {
@@ -247,5 +341,11 @@ export async function initBaseFonts() {
       weight: 400,
       style: 'normal',
     },
+    // {
+    //   name: 'M Plus 1p',
+    //   data: fontData,
+    //   weight: 400,
+    //   style: 'normal',
+    // },
   ] as SatoriOptions['fonts']
 }
