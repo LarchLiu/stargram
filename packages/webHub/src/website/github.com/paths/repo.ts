@@ -1,4 +1,4 @@
-import type { GithubRepoMeta, PathInfo, WebLoaderUrls, WebsiteInfo } from '@starnexus/core'
+import type { GithubRepoMeta, PathInfo, WebInfoData, WebLoaderUrls } from '@starnexus/core'
 import { strNotEqualWith } from '@starnexus/core'
 import { $fetch } from 'ofetch'
 import { GITHUB_RAW_URL, GITHUB_REPOS_API, USER_AGENT } from '../../../const'
@@ -18,7 +18,7 @@ function repoFilter(urls: WebLoaderUrls): WebLoaderUrls | undefined {
   return undefined
 }
 
-async function getRepoInfo(urls: WebLoaderUrls, headers: Record<string, string> = { 'User-Agent': USER_AGENT }): Promise<WebsiteInfo> {
+async function getRepoInfo(urls: WebLoaderUrls, headers: Record<string, string> = { 'User-Agent': USER_AGENT }): Promise<WebInfoData> {
   let title = ''
   let content = ''
   let url = urls.webUrl

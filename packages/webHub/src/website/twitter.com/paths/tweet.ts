@@ -1,4 +1,4 @@
-import type { PathInfo, TwitterTweetMeta, WebLoaderUrls, WebsiteInfo } from '@starnexus/core'
+import type { PathInfo, TwitterTweetMeta, WebInfoData, WebLoaderUrls } from '@starnexus/core'
 import { replaceHtmlReservedCharacters, strNotEqualWith } from '@starnexus/core'
 import { getTweetByStatus } from '../twitterApi'
 
@@ -14,7 +14,7 @@ function tweetFilter(urls: WebLoaderUrls): WebLoaderUrls | undefined {
   return undefined
 }
 
-async function getTweetInfo(urls: WebLoaderUrls): Promise<WebsiteInfo> {
+async function getTweetInfo(urls: WebLoaderUrls): Promise<WebInfoData> {
   let title = ''
   let content = ''
   const url = urls.webUrl
@@ -67,6 +67,7 @@ async function getTweetInfo(urls: WebLoaderUrls): Promise<WebsiteInfo> {
       meta.content = content
       meta.pubTime = pubTime
       meta.lang = tweet.lang
+      meta.status = status
       const hashtags = tweet.entities?.hashtags
       if (hashtags)
         meta.tags = hashtags.map((t: { text: string }) => t.text)

@@ -1,39 +1,75 @@
 import { $fetch } from 'ofetch'
-import type { Routes, WebLoaderUrls, WebsiteInfo } from '../types'
+import type { Routes, WebInfoData, WebLoaderUrls } from '../types'
 import { getDomain } from '../utils'
 
-export async function getWebsiteInfo(urls: WebLoaderUrls, routes: Routes, headers?: Record<string, string>): Promise<WebsiteInfo> {
-  const domain = getDomain(urls.webUrl)
-
-  if (routes[domain]) {
-    const router = routes[domain]
-    if (router.paths) {
-      for (let i = 0; i < router.paths.length; i++) {
-        const pathInfo = router.paths[i]
-        const loaderUrls = pathInfo.filter(urls)
-        if (loaderUrls) {
-          const info = await pathInfo.loader(loaderUrls, headers)
-          info.meta.domain = domain
-          info.meta.website = router.name
-
-          return info
-        }
-      }
-    }
-    throw new Error(`${router.name} error: Not supported website.`)
+export class WebInfoByApi {
+  constructor(fields: { urls: WebLoaderUrls; starNexusHub: string; headers?: Record<string, string> }) {
+    this.webUrl = fields.urls.webUrl
+    this.headers = fields.headers
+    this.starNexusHub = fields.starNexusHub || ''
   }
 
-  throw new Error('StarNexus error: Not supported website.')
+  private webUrl = ''
+  private apiUrl = '/api/webinfo'
+  private starNexusHub = ''
+  private headers?: Record<string, string>
+
+  async call() {
+    if (!this.starNexusHub)
+      throw new Error('StarNexus error: No StarNexusHub API.')
+
+    const info = await $fetch<WebInfoData>(this.starNexusHub + this.apiUrl,
+      {
+        method: 'POST',
+        headers: this.headers,
+        body: {
+          webUrl: this.webUrl,
+        },
+      })
+    return info
+  }
+
+  getStarNuxesApi() {
+    return this.starNexusHub
+  }
 }
 
-export async function getWebsiteInfoByApi(urls: WebLoaderUrls, headers?: Record<string, string>): Promise<WebsiteInfo> {
-  const info = await $fetch<WebsiteInfo>(`${urls.starNexusHub}/api/webinfo`,
-    {
-      method: 'POST',
-      headers,
-      body: {
-        webUrl: urls.webUrl,
-      },
-    })
-  return info
+export class WebInfo {
+  constructor(fields: { urls: WebLoaderUrls; routes: Routes; headers?: Record<string, string> }) {
+    this.urls = fields.urls
+    this.headers = fields.headers
+    this.routes = fields.routes
+  }
+
+  private urls: WebLoaderUrls
+  private routes: Routes
+  private headers?: Record<string, string>
+
+  async call() {
+    const domain = getDomain(this.urls.webUrl)
+
+    if (this.routes[domain]) {
+      const router = this.routes[domain]
+      if (router.paths) {
+        for (let i = 0; i < router.paths.length; i++) {
+          const pathInfo = router.paths[i]
+          const loaderUrls = pathInfo.filter(this.urls)
+          if (loaderUrls) {
+            const info = await pathInfo.loader(loaderUrls, this.headers)
+            info.meta.domain = domain
+            info.meta.website = router.name
+
+            return info
+          }
+        }
+      }
+      throw new Error(`${router.name} error: Not supported website.`)
+    }
+
+    throw new Error('StarNexus error: Not supported website.')
+  }
+
+  getStarNuxesApi() {
+    return ''
+  }
 }

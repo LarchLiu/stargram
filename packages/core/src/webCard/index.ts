@@ -1,23 +1,29 @@
 import { $fetch } from 'ofetch'
-import type { WebsiteCard, WebsiteInfo } from '../types'
+import type { WebCardData, WebInfoData } from '../types'
 
 export class WebCard {
-  constructor(webInfo: WebsiteInfo, headers?: Record<string, string>, starNexusHub?: string) {
-    this.apiUrl = (starNexusHub || '') + this.apiUrl
-    this.webInfo = webInfo
-    this.headers = headers
+  constructor(fields: { webData?: WebInfoData; starNexusHub: string; headers?: Record<string, string>; imgStorage?: string }) {
+    this.apiUrl = (fields.starNexusHub || '') + this.apiUrl
+    this.webData = fields.webData
+    this.headers = fields.headers
   }
 
   private apiUrl = '/api/webcard'
-  private headers?: Record<string, string> = undefined
-  private webInfo?: WebsiteInfo = undefined
+  private headers?: Record<string, string>
+  public webData?: WebInfoData
 
-  async getWebCardUrl() {
-    const res = await $fetch<WebsiteCard>(this.apiUrl, {
+  async call(webData?: WebInfoData) {
+    if (!webData && !this.webData)
+      throw new Error('WebCard error: No WebInfo Data')
+
+    const body = webData || this.webData
+    const res = await $fetch<WebCardData>(this.apiUrl, {
       method: 'POST',
       headers: this.headers,
-      body: this.webInfo,
+      body,
     })
-    return res
+    const data = body!
+    data.meta.cover = res.url
+    return data
   }
 }

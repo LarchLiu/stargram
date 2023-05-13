@@ -111,11 +111,11 @@ interface TelegramMessageEntity {
 // type FetchError = string
 
 interface FetchWebsite {
-  data?: WebsiteInfo
+  data?: WebInfoData
   error?: string
 }
 
-interface WebsiteInfo {
+interface WebInfoData {
     title: string
     url: string
     content: string
@@ -136,6 +136,6 @@ interface SavedResponse {
 }
 
 export { TelegramWebhookRequest, TelegramMessage, TelegramUser, 
-    TelegramChat, TelegramMessageEntity, WebsiteInfo, GithubRepoMeta, 
+    TelegramChat, TelegramMessageEntity, WebInfoData, GithubRepoMeta, 
     SavedResponse, FetchWebsite, FetchError
 };

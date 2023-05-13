@@ -324,6 +324,12 @@ export async function initBaseFonts() {
   // const fontData = await fs.readFile(path)
   return [
     {
+      name: 'Noto Sans SC',
+      data: NotoSansSC,
+      weight: 400,
+      style: 'normal',
+    },
+    {
       name: 'Inter',
       data: InterReg,
       weight: 400,
@@ -333,12 +339,6 @@ export async function initBaseFonts() {
       name: 'Inter',
       data: InterBold,
       weight: 700,
-      style: 'normal',
-    },
-    {
-      name: 'Noto Sans SC',
-      data: NotoSansSC,
-      weight: 400,
       style: 'normal',
     },
     // {

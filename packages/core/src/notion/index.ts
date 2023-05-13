@@ -1,8 +1,36 @@
 import { $fetch } from 'ofetch'
-import type { GithubRepoMeta, NotionPage, SavedNotion, TwitterTweetMeta } from '../types'
+import type { GithubRepoMeta, NotionConfig, NotionPage, SavedNotion, SummarizeData, TwitterTweetMeta, WebInfoData } from '../types'
 import { GITHUB_DOMAIN, NOTION_API_URL, TWITTER_DOMAIN } from '../const'
 
-async function saveToNotion(apiKey: string, info: NotionPage): Promise<SavedNotion> {
+export class NotionStorage {
+  constructor(fields: { config: { apiKey: string; databaseId: string }; data?: WebInfoData & SummarizeData }) {
+    this.config = fields.config
+    this.data = fields.data
+  }
+
+  private config
+  private data
+
+  async call(data?: WebInfoData & SummarizeData) {
+    if (!data && !this.data)
+      throw new Error('DataStorage error: No Storage Data')
+
+    const storageData = (data || this.data)!
+
+    const notion: NotionPage = {
+      title: storageData.title,
+      summary: storageData.summary,
+      url: storageData.url,
+      categories: storageData.categories,
+      status: 'Starred',
+      meta: storageData.meta,
+    }
+    return await saveToNotion(this.config, notion)
+  }
+}
+
+export async function saveToNotion(config: NotionConfig, info: NotionPage): Promise<SavedNotion> {
+  const apiKey = config.apiKey
   let catOpt = [{
     name: 'Others',
   }]
@@ -19,7 +47,7 @@ async function saveToNotion(apiKey: string, info: NotionPage): Promise<SavedNoti
 
   const body: Record<string, any> = {
     parent: {
-      database_id: info.databaseId,
+      database_id: config.databaseId,
     },
     properties: {
       Title: {
@@ -121,7 +149,7 @@ async function saveToNotion(apiKey: string, info: NotionPage): Promise<SavedNoti
   }
 
   // check notion page exists
-  const checkData = await $fetch<any>(`${NOTION_API_URL}/databases/${info.databaseId}/query`, {
+  const checkData = await $fetch<any>(`${NOTION_API_URL}/databases/${config.databaseId}/query`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -194,8 +222,4 @@ async function saveToNotion(apiKey: string, info: NotionPage): Promise<SavedNoti
   notionPageId = newPageResponse.id // 获取新页面的 ID
 
   return { starred: !starred, notionPageId }
-}
-
-export {
-  saveToNotion,
 }

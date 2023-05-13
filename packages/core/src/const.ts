@@ -2,11 +2,9 @@ import type { PromptsLanguage } from './types'
 
 export const GITHUB_DOMAIN = 'github.com'
 export const TWITTER_DOMAIN = 'twitter.com'
-export const STAR_NEXUS_HUB_API = import.meta.env.VITE_STAR_NEXUS_HUB_API
 export const GITHUB_API_URL = import.meta.env.VITE_GITHUB_API_HOST || 'https://api.github.com'
 export const GITHUB_REPOS_API = `${GITHUB_API_URL}/repos`
 export const GITHUB_RAW_URL = import.meta.env.VITE_GITHUB_RAW_HOST || 'https://raw.githubusercontent.com'
-export const PICTURE_BED_URL = import.meta.env.VITE_PICTURE_BED
 export const NOTION_API_URL = import.meta.env.VITE_NOTION_API_URL || 'https://api.notion.com/v1'
 export const OPENAI_CHAT_API = import.meta.env.VITE_OPENAI_API_HOST || 'https://api.openai.com/v1'
 export const MAX_TOKEN_LENGTH = 2048

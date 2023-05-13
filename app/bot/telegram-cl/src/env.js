@@ -9,7 +9,6 @@ export const ENV = {
   NOTION_API_KEY: null,
   NOTION_DATABASE_ID: null,
 
-  PICTURE_BED_URL: null,
   STAR_NEXUS_HUB_API: null,
 
   // 允许访问的Telegram Token， 设置时以逗号分隔
@@ -85,7 +84,6 @@ const ENV_VALUE_TYPE = {
   API_KEY: 'string',
   NOTION_API_KEY: 'string',
   NOTION_DATABASE_ID: 'string',
-  PICTURE_BED_URL: 'string',
   STAR_NEXUS_HUB_API: 'string',
 }
 

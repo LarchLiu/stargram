@@ -1,4 +1,4 @@
-import { getWebsiteInfoByApi, saveToNotion as saveNotion, summarizeContent } from '@starnexus/core'
+import { NotionStorage, SaveWebInfoChain, SummarizeContent, WebCard, WebInfoByApi } from '@starnexus/core'
 import { ENV } from './env.js'
 
 /**
@@ -7,71 +7,45 @@ import { ENV } from './env.js'
  * @param {string} text - The text input by user.
  * @return {Promise<FetchWebsite[]>} - A Promise that resolves to the fetched information.
  */
-async function getWebsiteInfoFromText(text) {
-  const regex = /https?:\/\/(github.com|twitter.com|m.weibo.cn)\/[-A-Za-z0-9+&@#\/%?=~_|!:,.;]+[-A-Za-z0-9+&@#\/%=~_|]/g
-  // const hostRegex = /https?:\/\/(github.com|twitter.com|m.weibo.cn)\//g
+async function saveToNotion(text) {
+  const regex = /(http(s)?:\/\/)?[a-zA-Z0-9][-a-zA-Z0-9]{0,62}(\.[a-zA-Z0-9][-a-zA-Z0-9]{0,62})+(:[0-9]{1,5})?[-a-zA-Z0-9()@:%_\\\+\.~#?&//=]*/g
   const match = text.match(regex)
-  const infoArr = []
   if (match) {
     for (let i = 0; i < match.length; i++) {
+      const notionApiKey = ENV.NOTION_API_KEY
+      const databaseId = ENV.NOTION_DATABASE_ID
+      const openaiApiKey = ENV.API_KEY
+      const starNexusHub = ENV.STAR_NEXUS_HUB_API
       const url = match[i]
-      const info = await getWebsiteInfoByApi({
-        webUrl: url,
-        starNexusHub: ENV.STAR_NEXUS_HUB_API,
+      const webInfo = new WebInfoByApi({
+        urls: {
+          webUrl: url,
+        },
+        starNexusHub,
       })
 
-      infoArr.push(info)
+      const webCard = new WebCard({ starNexusHub })
+
+      const summarize = new SummarizeContent({ apiKey: openaiApiKey })
+      const notion = new NotionStorage({
+        config: {
+          apiKey: notionApiKey || '',
+          databaseId,
+        },
+      })
+
+      const chain = new SaveWebInfoChain({
+        webInfo,
+        webCard,
+        summarizeContent: summarize,
+        dataStorage: notion,
+      })
+
+      await chain.call()
     }
   }
-  return infoArr
-}
-
-/**
- * Saves page data to Notion database and returns an object with updated info or an error message.
- * @async
- * @param {WebsiteInfo} websiteInfo - Object containing data for the page to be saved.
- * @return {Promise<SavedResponse>} - Object containing updated page info or an error message.
- */
-async function saveToNotion(websiteInfo) {
-  let summary = ''
-  let categories = ['Others']
-
-  const notionApiKey = ENV.NOTION_API_KEY
-  const databaseId = ENV.NOTION_DATABASE_ID
-  const openaiApiKey = ENV.API_KEY
-
-  if (!notionApiKey || !databaseId) {
-    // console.log('Missing Notion API key or Database ID in settings.')
-    const error = { error: 'Missing Notion API key or Database ID in settings.' }
-    return error
-  }
-
-  if (openaiApiKey) {
-    const data = await summarizeContent(openaiApiKey, websiteInfo)
-
-    summary = data.summary
-
-    categories = data.categories
-  }
-  else {
-    summary = websiteInfo.content
-  }
-
-  const notionPage = {
-    databaseId,
-    title: websiteInfo.title,
-    summary,
-    url: websiteInfo.url,
-    categories,
-    status: 'Starred',
-    meta: websiteInfo.meta,
-  }
-
-  await saveNotion(notionApiKey, notionPage)
-  return ({ message: 'success' })
 }
 
 export {
-  getWebsiteInfoFromText,
   saveToNotion,
 }

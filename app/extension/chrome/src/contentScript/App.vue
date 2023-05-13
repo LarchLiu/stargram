@@ -35,15 +35,9 @@ function init() {
 init()
 
 async function getDataFromPage(): Promise<{ data?: PageInfo; error?: string }> {
-  const result = await chrome.storage.sync.get(['pictureBed', 'starNexusHub'])
-  // const pictureBed = result.pictureBed ?? ''
-  const starNexusHub = result.starNexusHub ?? ''
-
   return {
     data: {
       webUrl: location.href,
-      // picBed: pictureBed,
-      starNexusHub,
       notionPageId,
       starred,
     },

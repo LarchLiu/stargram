@@ -1,10 +1,10 @@
 import type {
   GithubRepoMeta,
   WebLoaderUrls,
-  WebsiteInfo,
+  WebInfoData,
 } from '@starnexus/core'
 
-interface PageData extends WebsiteInfo {
+interface PageData extends WebInfoData {
   starred: boolean
   tabId?: number
   notionPageId?: string

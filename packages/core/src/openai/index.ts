@@ -1,9 +1,29 @@
 import { $fetch } from 'ofetch'
-import type { OpenaiSummarize, PromptsLanguage, WebsiteInfo } from '../types'
+import type { PromptsLanguage, SummarizeData, WebInfoData } from '../types'
 import { countWord, getPromptsByTemplate, preprocessText } from '../utils'
 import { ANSWER_IN_LANGUAGE, MAX_TOKEN_LENGTH, OPENAI_CHAT_API, SUMMARIZE_PROMPTS, USER_PROMPTS } from '../const'
 
-async function summarizeContent(apiKey: string, websiteInfo: WebsiteInfo, language: PromptsLanguage = 'zh-CN'): Promise<OpenaiSummarize> {
+export class SummarizeContent {
+  constructor(fields: { apiKey: string; webData?: WebInfoData; lang?: PromptsLanguage }) {
+    this.apiKey = fields.apiKey
+    this.webData = fields.webData
+    this.lang = fields.lang
+  }
+
+  private apiKey
+  private webData
+  private lang
+
+  async call(webData?: WebInfoData) {
+    if (!webData && !this.webData)
+      throw new Error('SummarizeContent error: No WebInfo Data')
+
+    const info = webData || this.webData
+    return await summarizeContent(this.apiKey, info!, this.lang)
+  }
+}
+
+export async function summarizeContent(apiKey: string, websiteInfo: WebInfoData, language: PromptsLanguage = 'zh-CN'): Promise<SummarizeData> {
   let summary = ''
   let categories = []
   let content = websiteInfo.content
@@ -59,8 +79,4 @@ async function summarizeContent(apiKey: string, websiteInfo: WebsiteInfo, langua
   }
   const catArry = (categories && categories.length) ? categories : ['Others']
   return { summary, categories: catArry }
-}
-
-export {
-  summarizeContent,
 }

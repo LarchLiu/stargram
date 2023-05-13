@@ -2,7 +2,7 @@
 
 import { unfurl } from 'unfurl.js'
 import { createClient } from '@supabase/supabase-js'
-import type { TwitterTweetMeta, WebsiteInfo } from '@starnexus/core'
+import type { TwitterTweetMeta, WebInfoData } from '@starnexus/core'
 import type { Component } from 'vue'
 import { satori } from '../utils/WebCard/satori'
 import { initBaseFonts, loadDynamicAsset } from '../utils/WebCard/font'
@@ -14,7 +14,7 @@ const STORAGE_URL = `${SUPABASE_URL}/storage/v1/object/public/pics-bed`
 
 export default eventHandler(async (event) => {
   try {
-    const webInfo = await readBody<WebsiteInfo>(event)
+    const webInfo = await readBody<WebInfoData>(event)
     const webMeta = webInfo.meta
     let imgPath = ''
     let meta

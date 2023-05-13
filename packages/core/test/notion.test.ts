@@ -2,7 +2,6 @@ import { describe, expect, test } from 'vitest'
 import { saveToNotion } from '../src/notion'
 
 const notionPage = {
-  databaseId: import.meta.env.VITE_NOTION_DATABASE_ID,
   categories: ['Cool', 'Awesome'],
   status: 'Starred' as const,
   title: 'star-nexus',
@@ -16,7 +15,7 @@ const notionPage = {
 }
 describe('notion', () => {
   test('save to notion', async () => {
-    const res = await saveToNotion(import.meta.env.VITE_NOTION_API_KEY, notionPage)
+    const res = await saveToNotion({ apiKey: import.meta.env.VITE_NOTION_API_KEY, databaseId: import.meta.env.VITE_NOTION_DATABASE_ID }, notionPage)
     expect(res.notionPageId).toBeDefined()
     expect(res.starred).toBeDefined()
     // expect(res).matchSnapshot()

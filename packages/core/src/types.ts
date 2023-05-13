@@ -1,11 +1,11 @@
-export interface WebsiteInfo {
+export interface WebInfoData {
   title: string
   url: string
   content: string
   meta: WebsiteMeta
 }
 
-export interface WebsiteCard {
+export interface WebCardData {
   url: string
 }
 
@@ -38,16 +38,19 @@ export interface TwitterTweetMeta extends WebsiteMeta {
 export interface WebLoaderUrls {
   webUrl: string
   webPath?: string
-  starNexusHub?: string
 }
 
-export interface OpenaiSummarize {
+export interface SummarizeData {
   summary: string
   categories: string[]
 }
 
-export interface NotionPage {
+export interface NotionConfig {
+  apiKey: string
   databaseId: string
+}
+
+export interface NotionPage {
   title: string
   summary: string
   url: string
@@ -74,7 +77,7 @@ export interface PathInfo {
   prompts?: string
   sequence?: number
   filter: (urls: WebLoaderUrls) => WebLoaderUrls | undefined
-  loader: (urls: WebLoaderUrls, headers?: Record<string, string>) => Promise<WebsiteInfo>
+  loader: (urls: WebLoaderUrls, headers?: Record<string, string>) => Promise<WebInfoData>
 }
 
 export interface Router {

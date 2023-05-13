@@ -1,8 +1,14 @@
-import { getWebsiteInfo as getInfo } from '@starnexus/core'
+import { WebInfo } from '@starnexus/core'
 import { routes } from '../src/routes-auto-generate'
 
 export async function getWebsiteInfo(url: string) {
-  const info = getInfo({ webUrl: url }, routes)
+  const webInfo = new WebInfo({
+    urls: {
+      webUrl: url,
+    },
+    routes,
+  })
+  const info = webInfo.call()
 
   return info
 }

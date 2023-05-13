@@ -2,5 +2,3 @@ export const GITHUB_API_URL = import.meta.env.VITE_GITHUB_API_HOST || 'https://a
 export const GITHUB_REPOS_API = `${GITHUB_API_URL}/repos`
 export const GITHUB_RAW_URL = import.meta.env.VITE_GITHUB_RAW_HOST || 'https://raw.githubusercontent.com'
 export const USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.2 Safari/605.1.15'
-export const PICTURE_BED_URL = import.meta.env.VITE_PICTURE_BED
-export const STAR_NEXUS_HUB_API = import.meta.env.VITE_STAR_NEXUS_HUB_API

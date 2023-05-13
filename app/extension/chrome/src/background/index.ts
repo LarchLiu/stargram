@@ -1,5 +1,5 @@
-import { getWebsiteInfoByApi, saveToNotion as saveNotion, summarizeContent } from '@starnexus/core'
-import type { ContentRequest, ListenerSendResponse, PageData, PageInfo, SwResponse } from '~/types'
+import { NotionStorage, SaveWebInfoChain, SummarizeContent, WebCard, WebInfoByApi } from '@starnexus/core'
+import type { ContentRequest, ListenerSendResponse, PageInfo, SwResponse } from '~/types'
 
 async function sendSavedStatus(res: SwResponse) {
   chrome.tabs.query({ active: true, lastFocusedWindow: true }, (tabs) => {
@@ -31,15 +31,14 @@ async function sendSavedStatus(res: SwResponse) {
 }
 
 chrome.runtime.onInstalled.addListener(async () => {
-  const result = await chrome.storage.sync.get(['notionApiKey', 'notionDatabaseId', 'openaiApiKey', 'pictureBed', 'starNexusHub', 'uiLang', 'promptsLang'])
+  const result = await chrome.storage.sync.get(['notionApiKey', 'notionDatabaseId', 'openaiApiKey', 'starNexusHub', 'uiLang', 'promptsLang'])
   const notionApiKey = result.notionApiKey ?? ''
   const notionDatabaseId = result.notionDatabaseId ?? ''
   const openaiApiKey = result.openaiApiKey ?? ''
-  const pictureBed = result.pictureBed ?? ''
   const starNexusHub = result.starNexusHub ?? ''
   const uiLang = result.uiLang ?? 'en'
   const promptsLang = result.promptsLang ?? 'en'
-  await chrome.storage.sync.set({ notionApiKey, notionDatabaseId, openaiApiKey, pictureBed, starNexusHub, uiLang, promptsLang })
+  await chrome.storage.sync.set({ notionApiKey, notionDatabaseId, openaiApiKey, starNexusHub, uiLang, promptsLang })
 })
 
 chrome.runtime.onMessage.addListener(async (request: ContentRequest, sender, sendResponse: ListenerSendResponse) => {
@@ -77,61 +76,107 @@ chrome.runtime.onMessage.addListener(async (request: ContentRequest, sender, sen
   return true
 })
 
-async function saveProcess(pageData: PageData): Promise<SwResponse> {
-  try {
-    let summary = ''
-    let categories = ['Others']
-    const storage = await chrome.storage.sync.get(['notionApiKey', 'notionDatabaseId', 'openaiApiKey', 'promptsLang'])
-    const notionApiKey = storage.notionApiKey ?? ''
-    const databaseId = storage.notionDatabaseId ?? ''
-    const openaiApiKey = storage.openaiApiKey ?? ''
-    const promptsLang = storage.promptsLang ?? 'en'
+// async function saveProcess(pageData: PageData): Promise<SwResponse> {
+//   try {
+//     let summary = ''
+//     let categories = ['Others']
+//     const storage = await chrome.storage.sync.get(['notionApiKey', 'notionDatabaseId', 'openaiApiKey', 'promptsLang'])
+//     const notionApiKey = storage.notionApiKey ?? ''
+//     const databaseId = storage.notionDatabaseId ?? ''
+//     const openaiApiKey = storage.openaiApiKey ?? ''
+//     const promptsLang = storage.promptsLang ?? 'en'
 
-    if (!notionApiKey || !databaseId) {
-      // console.log('Missing Notion API key or Database ID in settings.')
-      const error = { tabId: pageData.tabId, starred: pageData.starred, notionPageId: pageData.notionPageId, error: 'Missing Notion API key or Database ID in settings.' }
-      return error
-    }
+//     if (!notionApiKey || !databaseId) {
+//       // console.log('Missing Notion API key or Database ID in settings.')
+//       const error = { tabId: pageData.tabId, starred: pageData.starred, notionPageId: pageData.notionPageId, error: 'Missing Notion API key or Database ID in settings.' }
+//       return error
+//     }
 
-    if (openaiApiKey) {
-      const data = await summarizeContent(openaiApiKey, pageData, promptsLang)
-      if (data) {
-        summary = data.summary
-        categories = data.categories
-      }
-    }
-    else {
-      summary = pageData.content
-    }
+//     if (openaiApiKey) {
+//       const data = await summarizeContent(openaiApiKey, pageData, promptsLang)
+//       if (data) {
+//         summary = data.summary
+//         categories = data.categories
+//       }
+//     }
+//     else {
+//       summary = pageData.content
+//     }
 
-    const notionPage = {
-      databaseId: databaseId as string,
-      title: pageData.title,
-      summary,
-      url: pageData.url,
-      categories,
-      status: 'Starred' as const,
-      meta: pageData.meta,
-    }
+//     const notionPage = {
+//       databaseId: databaseId as string,
+//       title: pageData.title,
+//       summary,
+//       url: pageData.url,
+//       categories,
+//       status: 'Starred' as const,
+//       meta: pageData.meta,
+//     }
 
-    const data = await saveNotion(notionApiKey, notionPage)
-    return { tabId: pageData.tabId, starred: data!.starred, notionPageId: data!.notionPageId }
+//     const data = await saveNotion(notionApiKey, notionPage)
+//     return { tabId: pageData.tabId, starred: data!.starred, notionPageId: data!.notionPageId }
+//   }
+//   catch (error: any) {
+//     return { tabId: pageData.tabId, starred: pageData.starred, notionPageId: pageData.notionPageId, error: error.message ? error.message : 'Error saving to Notion.' }
+//   }
+// }
+
+async function saveToNotion(pageInfo: PageInfo): Promise<SwResponse> {
+  const storage = await chrome.storage.sync.get(['notionApiKey', 'notionDatabaseId', 'openaiApiKey', 'promptsLang', 'starNexusHub'])
+  const notionApiKey = storage.notionApiKey ?? ''
+  const databaseId = storage.notionDatabaseId ?? ''
+  const openaiApiKey = storage.openaiApiKey ?? ''
+  const promptsLang = storage.promptsLang ?? 'en'
+  const starNexusHub = storage.starNexusHub ?? ''
+
+  if (!notionApiKey || !databaseId) {
+    // console.log('Missing Notion API key or Database ID in settings.')
+    const error = { tabId: pageInfo.tabId, starred: pageInfo.starred, notionPageId: pageInfo.notionPageId, error: 'Missing Notion API key or Database ID in settings.' }
+    return error
   }
-  catch (error: any) {
-    return { tabId: pageData.tabId, starred: pageData.starred, notionPageId: pageData.notionPageId, error: error.message ? error.message : 'Error saving to Notion.' }
-  }
-}
 
-function saveToNotion(pageInfo: PageInfo): Promise<SwResponse> {
-  return new Promise((resolve, reject) => {
-    getWebsiteInfoByApi(pageInfo).then((res) => {
-      saveProcess({ ...res, tabId: pageInfo.tabId, notionPageId: pageInfo.notionPageId, starred: pageInfo.starred }).then((_res) => {
-        return resolve(_res)
-      }).catch((error) => {
-        return reject({ tabId: pageInfo.tabId, notionPageId: pageInfo.notionPageId, starred: pageInfo.starred, error: error.message })
-      })
-    })
+  const url = pageInfo.webUrl
+  const webInfo = new WebInfoByApi({
+    urls: {
+      webUrl: url,
+    },
+    starNexusHub,
   })
+
+  const webCard = new WebCard({ starNexusHub })
+
+  const summarize = new SummarizeContent({ apiKey: openaiApiKey, lang: promptsLang })
+  const notion = new NotionStorage({
+    config: {
+      apiKey: notionApiKey,
+      databaseId,
+    },
+  })
+
+  const chain = new SaveWebInfoChain({
+    webInfo,
+    webCard,
+    summarizeContent: summarize,
+    dataStorage: notion,
+  })
+
+  try {
+    const info = await chain.call()
+    return { tabId: pageInfo.tabId, starred: info.starred, notionPageId: info.notionPageId }
+  }
+  catch(error: any) {
+    return { tabId: pageInfo.tabId, starred: pageInfo.starred, notionPageId: pageInfo.notionPageId, error: error.message }
+  }
+
+  // return new Promise((resolve, reject) => {
+  //   getWebsiteInfoByApi(pageInfo).then((res) => {
+  //     saveProcess({ ...res, tabId: pageInfo.tabId, notionPageId: pageInfo.notionPageId, starred: pageInfo.starred }).then((_res) => {
+  //       return resolve(_res)
+  //     }).catch((error) => {
+  //       return reject({ tabId: pageInfo.tabId, notionPageId: pageInfo.notionPageId, starred: pageInfo.starred, error: error.message })
+  //     })
+  //   })
+  // })
 }
 
 async function sendStarredStatus(status: SwResponse) {
