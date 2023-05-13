@@ -1,5 +1,4 @@
 import fs from 'node:fs/promises'
-import { join } from 'node:path'
 import { $fetch } from 'ofetch'
 import type { SatoriOptions } from 'satori'
 import type { apis } from './twemoji'
@@ -310,12 +309,12 @@ async function loadAsset(emojiType: keyof typeof apis, code: string, text: strin
 export const loadDynamicAsset = withCache(loadAsset)
 
 export async function initBaseFonts() {
-  const interRegPath = join(process.cwd(), 'public', 'fonts', 'Inter-Regular.ttf')
-  const InterReg = await fs.readFile(interRegPath)
-  const interBoldPath = join(process.cwd(), 'public', 'fonts', 'Inter-Bold.ttf')
-  const InterBold = await fs.readFile(interBoldPath)
-  const scPath = join(process.cwd(), 'public', 'fonts', 'NotoSansSC-Regular.otf')
-  const NotoSansSC = await fs.readFile(scPath)
+  // const interRegPath = join(process.cwd(), 'public', 'fonts', 'Inter-Regular.ttf')
+  const InterReg = await fs.readFile('public/fonts/Inter-Regular.ttf')
+  // const interBoldPath = join(process.cwd(), 'public', 'fonts', 'Inter-Bold.ttf')
+  const InterBold = await fs.readFile('public/fonts/Inter-Bold.ttf')
+  // const scPath = join(process.cwd(), 'public', 'fonts', 'NotoSansSC-Regular.otf')
+  const NotoSansSC = await fs.readFile('public/fonts/NotoSansSC-Regular.otf')
   // const jpPath = join(process.cwd(), 'public', 'fonts', 'NotoSansJP-Regular.ttf')
   // const NotoSansJP = await fs.readFile(jpPath)
   // const uniPath = join(process.cwd(), 'public', 'fonts', 'unifont-15.0.01.otf')
