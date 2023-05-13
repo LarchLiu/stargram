@@ -21,7 +21,7 @@ defineProps({
       </div>
     </div>
     <div class="flex items-center justify-end text-24px">
-      <div class="i-ph:shooting-star-light?64" />
+      <div class="icon-ph:shooting-star-light?w=64&h=64" />
       <img
         v-if="favicon"
         alt="favicon"

@@ -21,14 +21,18 @@ export async function html(component: Component, props: any) {
   else
     Root = createApp(component)
   let strComponent = await renderToString(Root)
-  const regex = /<div class="i-([a-z0-9:_-]+)(?:\?(\d+))?.*?"><\/div>/g
+  // <div class="icon-ph:shooting-star-light?w=120&amp;h=64"></div>
+  const regex = /<div class="icon-([a-z0-9:_-]+)(?:\?(w=(\d+)&amp;h=(\d+)))?.*?"><\/div>/gi
   const matchs = strComponent.matchAll(regex)
   for (const match of matchs) {
     const [collection, name] = match[1].split(':')
-    const size = match[2] || 48
+    const width = match[3] || 48
+    const height = match[4] || 48
     let icon = await loadNodeIcon(collection, name)
     if (icon) {
-      icon = icon.replace('width="1em" height="1em"', `width="${size}" height="${size}"`)
+      icon = icon.replace(/width="(\d+(em)?)" height="(\d+(em)?)"/, (_) => {
+        return `width="${width}" height="${height}"`
+      })
       strComponent = strComponent.replaceAll(match[0], icon)
       // console.log(strComponent)
     }
