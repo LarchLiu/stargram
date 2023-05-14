@@ -18,6 +18,7 @@
     "@starnexus/core": "workspace:*",
     "@starnexus/web-hub": "workspace:*",
     "@supabase/supabase-js": "^2.21.0",
+    "@vercel/kv": "^0.2.0",
     "satori": "^0.8.1",
     "satori-html": "^0.3.2",
     "unfurl.js": "^6.3.2",
