@@ -4,6 +4,7 @@ import { unfurl } from 'unfurl.js'
 import { $fetch } from 'ofetch'
 import { createClient } from '@supabase/supabase-js'
 import type { GithubRepoMeta, TwitterTweetMeta, WebInfoData } from '@starnexus/core'
+import { errorMessage } from '@starnexus/core'
 import type { Component } from 'vue'
 import { satori } from '../utils/WebCard/satori'
 import { initBaseFonts, loadDynamicAsset } from '../utils/WebCard/font'
@@ -25,13 +26,13 @@ export default eventHandler(async (event) => {
     let png
     const res = await unfurl(webInfo.url)
 
-    if (webMeta.website === 'Github') {
+    if (webMeta.siteName === 'Github') {
       meta = webMeta as GithubRepoMeta
       imgPath = `${webMeta.domain}/${meta.username}/${meta.reponame}.png`
       if (res.open_graph && res.open_graph.images)
         png = await $fetch(res.open_graph.images[0].url, { responseType: 'blob' })
     }
-    else if (webMeta.website === 'Twitter') {
+    else if (webMeta.siteName === 'Twitter') {
       card = TweetCard
       meta = webMeta as TwitterTweetMeta
       const screenName = meta.screenName!
@@ -62,7 +63,8 @@ export default eventHandler(async (event) => {
       if (contentArr.length > 7)
         contentArr = contentArr.slice(0, 8)
 
-      const favicon = (res.favicon && !res.favicon.includes('.ico')) ? res.favicon : ''
+      const faviconPath = res.favicon?.split('/')
+      const favicon = (faviconPath && !faviconPath[faviconPath.length - 1].includes('.ico')) ? res.favicon : ''
       props = {
         title: res.title || webInfo.title,
         content: contentArr,
@@ -74,7 +76,7 @@ export default eventHandler(async (event) => {
     }
 
     if (!imgPath)
-      throw new Error(`No image path for ${webMeta.website}`)
+      throw new Error(`No image path for ${webMeta.siteName}`)
 
     // const storageResponse = await $fetch(`${STORAGE_URL}/${imgPath}?v=starnexus`)
     //   .then((_) => {
@@ -90,7 +92,7 @@ export default eventHandler(async (event) => {
     // }
     if (!png) {
       if (!card)
-        throw new Error(`No WebCard template for ${webMeta.website}`)
+        throw new Error(`No WebCard template for ${webMeta.siteName}`)
 
       const fonts = await initBaseFonts()
       svg = await satori(card, {
@@ -154,9 +156,7 @@ export default eventHandler(async (event) => {
   catch (error: any) {
     setResponseStatus(event, 400)
 
-    let message = error.message || ''
-    if (error.data)
-      message = JSON.stringify(error.data)
+    const message = errorMessage(error)
     return { error: message }
   }
 })

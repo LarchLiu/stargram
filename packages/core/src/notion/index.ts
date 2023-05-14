@@ -97,7 +97,7 @@ export async function saveToNotion(config: NotionConfig, info: NotionPage): Prom
       ...body.properties,
       Website: {
         select: {
-          name: meta.website,
+          name: meta.siteName,
         },
       },
     }

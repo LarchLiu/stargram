@@ -11,7 +11,7 @@ export interface WebCardData {
 
 export interface WebsiteMeta {
   domain?: string
-  website?: string
+  siteName?: string
   cover?: string
   prompts?: string
 }

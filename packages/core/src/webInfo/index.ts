@@ -62,7 +62,7 @@ export class WebInfo {
           if (loaderUrls) {
             const info = await pathInfo.loader(loaderUrls, this.headers)
             info.meta.domain = domain
-            info.meta.website = router.name
+            info.meta.siteName = router.name
 
             return info
           }

@@ -1,15 +1,17 @@
 import type { WebInfoData } from '../types'
 
-export type OGInfoFun = () => Promise< WebInfoData>
+export type OGInfoFun = (url: string) => Promise< WebInfoData>
 
 export class OGInfo {
-  constructor(fun: OGInfoFun) {
-    this.fun = fun
+  constructor(fields: { fun: OGInfoFun; url: string }) {
+    this.fun = fields.fun
+    this.url = fields.url
   }
 
   private fun
+  private url
 
   async call() {
-    return await this.fun()
+    return await this.fun(this.url)
   }
 }

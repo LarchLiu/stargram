@@ -9,7 +9,7 @@ const notionPage = {
   url: 'https://github.com/LarchLiu/star-nexus',
   meta: {
     domain: 'github.com',
-    website: 'Github',
+    siteName: 'Github',
     cover: 'https://kiafhufrshqyrvlpsdqg.supabase.co/storage/v1/object/public/pics-bed/star-nexus.png?v=3',
   },
 }

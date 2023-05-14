@@ -124,7 +124,7 @@ interface WebInfoData {
 
 interface GithubRepoMeta {
     host: string
-    website: 'Github'
+    siteName: 'Github'
     tags?: string[]
     languages?: string[]
     cover?: string

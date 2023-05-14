@@ -1,4 +1,4 @@
-import { NotionStorage, SaveWebInfoChain, SummarizeContent, WebCard, WebInfoByApi } from '@starnexus/core'
+import { NotionStorage, SaveWebInfoChain, SummarizeContent, WebCard, WebInfoByApi, errorMessage } from '@starnexus/core'
 import type { ContentRequest, ListenerSendResponse, PageInfo, SwResponse } from '~/types'
 
 async function sendSavedStatus(res: SwResponse) {
@@ -120,9 +120,7 @@ async function saveToNotion(pageInfo: PageInfo): Promise<SwResponse> {
     return { tabId: pageInfo.tabId, starred: info.starred, notionPageId: info.notionPageId }
   }
   catch(error: any) {
-    let message = error.message || ''
-    if (error.data)
-      message = JSON.stringify(error.data)
+    const message = errorMessage(error)
     return { tabId: pageInfo.tabId, starred: pageInfo.starred, notionPageId: pageInfo.notionPageId, error: message }
   }
 }

@@ -8,7 +8,7 @@ const webInfo: WebInfoData = {
   url: 'https://github.com/LarchLiu/star-nexus',
   meta: {
     domain: '',
-    website: '',
+    siteName: '',
     prompts: 'The Github repo info',
   },
 }

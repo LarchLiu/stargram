@@ -1,3 +1,4 @@
+import { errorMessage } from '@starnexus/core'
 import { $fetch } from 'ofetch'
 
 // https://github.com/mikf/gallery-dl/blob/a53cfc845e12d9e98fefd07e43ebffaec488c18f/gallery_dl/extractor/twitter.py#L716-L726
@@ -151,9 +152,7 @@ export async function getTweetByStatus(status: string) {
     return gatherLegacyFromData(tweets, 'none')
   }
   catch (error: any) {
-    let message = error.message || ''
-    if (error.data)
-      message = JSON.stringify(error.data)
+    const message = errorMessage(error)
     throw new Error(`Twitter API error: ${message || error.statusText}`)
   }
 }

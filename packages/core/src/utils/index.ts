@@ -132,6 +132,14 @@ function replaceHtmlReservedCharacters(str: string) {
   return escapeHTML(str)
 }
 
+function errorMessage(error: any) {
+  let message = error.message || ''
+  if (error.data)
+    message += JSON.stringify(error.data)
+
+  return message
+}
+
 export {
   getDomain,
   countWord,
@@ -139,4 +147,5 @@ export {
   getPromptsByTemplate,
   strNotEqualWith,
   replaceHtmlReservedCharacters,
+  errorMessage,
 }
