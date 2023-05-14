@@ -35,7 +35,7 @@ defineProps({
     </div>
     <div class="flex items-center justify-between text-24px text-[#1DA1F2]">
       <span class="text-[#586069]">{{ pubTime }}</span>
-      <div class="icon-carbon:logo-twitter?w=64&h=64" />
+      <div class="icon-carbon:logo-twitter?w=64&h=64 flex" />
     </div>
   </div>
 </template>

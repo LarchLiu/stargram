@@ -5,7 +5,6 @@ import { html as _html } from 'satori-html'
 import _satori from 'satori'
 import type { SatoriOptions } from 'satori'
 import { replaceHtmlReservedCharacters } from '@starnexus/core'
-import { loadNodeIcon } from '@iconify/utils/lib/loader/node-loader'
 
 export type ExtractComponentProps<TComponent> =
   TComponent extends new () => {
@@ -28,7 +27,7 @@ export async function html(component: Component, props: any) {
     const [collection, name] = match[1].split(':')
     const width = match[3] || 48
     const height = match[4] || 48
-    let icon = await loadNodeIcon(collection, name)
+    let icon = await $fetch<string>(`${process.env.ICONIFY_API}/${collection}:${name}.svg`, { responseType: 'text' })
     if (icon) {
       icon = icon.replace(/width="(\d+(em)?)" height="(\d+(em)?)"/, (_) => {
         return `width="${width}" height="${height}"`

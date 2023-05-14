@@ -38,7 +38,7 @@ async function getRepoInfo(urls: WebLoaderUrls, headers: Record<string, string> 
         .catch(_ => '')
       readme = readmeRes
 
-      const description = repoJson.description.replace(/:\w+:/g, ' ')
+      const description = repoJson.description ? repoJson.description.replace(/:\w+:/g, ' ') : ''
       title = `Repo · ${repoJson.full_name}`
       url = repoJson.html_url
       meta.username = repoJson.owner.login

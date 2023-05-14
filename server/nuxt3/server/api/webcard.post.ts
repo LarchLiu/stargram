@@ -1,8 +1,9 @@
 // server/api/webcard.ts
 
 import { unfurl } from 'unfurl.js'
+import { $fetch } from 'ofetch'
 import { createClient } from '@supabase/supabase-js'
-import type { TwitterTweetMeta, WebInfoData } from '@starnexus/core'
+import type { GithubRepoMeta, TwitterTweetMeta, WebInfoData } from '@starnexus/core'
 import type { Component } from 'vue'
 import { satori } from '../utils/WebCard/satori'
 import { initBaseFonts, loadDynamicAsset } from '../utils/WebCard/font'
@@ -20,14 +21,15 @@ export default eventHandler(async (event) => {
     let meta
     let props
     let card: Component | undefined
+    let svg = ''
+    let png
     const res = await unfurl(webInfo.url)
 
     if (webMeta.website === 'Github') {
-      if (res.open_graph && res.open_graph.images) {
-        return {
-          url: res.open_graph.images[0].url,
-        }
-      }
+      meta = webMeta as GithubRepoMeta
+      imgPath = `${webMeta.domain}/${meta.username}/${meta.reponame}.png`
+      if (res.open_graph && res.open_graph.images)
+        png = await $fetch(res.open_graph.images[0].url, { responseType: 'blob' })
     }
     else if (webMeta.website === 'Twitter') {
       card = TweetCard
@@ -75,29 +77,31 @@ export default eventHandler(async (event) => {
     if (!imgPath)
       throw new Error(`No image path for ${webMeta.website}`)
 
-    const storageResponse = await $fetch(`${STORAGE_URL}/${imgPath}?v=starnexus`)
-      .then((_) => {
-        return `${STORAGE_URL}/${imgPath}?v=starnexus`
-      })
-      .catch((_) => {
-        return ''
-      })
-    if (storageResponse) {
-      return {
-        url: storageResponse,
-      }
-    }
-    if (!card)
-      throw new Error(`No WebCard template for ${webMeta.website}`)
+    // const storageResponse = await $fetch(`${STORAGE_URL}/${imgPath}?v=starnexus`)
+    //   .then((_) => {
+    //     return `${STORAGE_URL}/${imgPath}?v=starnexus`
+    //   })
+    //   .catch((_) => {
+    //     return ''
+    //   })
+    // if (storageResponse) {
+    //   return {
+    //     url: storageResponse,
+    //   }
+    // }
+    if (!png) {
+      if (!card)
+        throw new Error(`No WebCard template for ${webMeta.website}`)
 
-    const fonts = await initBaseFonts()
-    const svg = await satori(card, {
-      props,
-      width: 1200,
-      height: 630,
-      fonts,
-      loadAdditionalAsset: async (code, text) => loadDynamicAsset('twemoji', code, text),
-    })
+      const fonts = await initBaseFonts()
+      svg = await satori(card, {
+        props,
+        width: 1200,
+        height: 630,
+        fonts,
+        loadAdditionalAsset: async (code, text) => loadDynamicAsset('twemoji', code, text),
+      })
+    }
     // setHeader(event, 'Content-Type', 'image/svg+xml')
 
     // return svg
@@ -116,7 +120,23 @@ export default eventHandler(async (event) => {
         .upload(imgPath, svg, {
           contentType: 'image/svg+xml',
           cacheControl: '31536000',
-          upsert: false,
+          upsert: true,
+        })
+
+      if (error)
+        throw error
+
+      return {
+        url: `${STORAGE_URL}/${imgPath}?v=starnexus`,
+      }
+    }
+    else if (png) {
+      const { error } = await supabaseAdminClient.storage
+        .from(process.env.SUPABASE_STORAGE_BUCKET || 'pics-bed')
+        .upload(imgPath, png, {
+          contentType: 'image/svg+xml',
+          cacheControl: '31536000',
+          upsert: true,
         })
 
       if (error)
