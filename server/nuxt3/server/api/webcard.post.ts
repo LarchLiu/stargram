@@ -7,7 +7,7 @@ import type { GithubRepoMeta, TwitterTweetMeta, WebInfoData } from '@starnexus/c
 import { errorMessage } from '@starnexus/core'
 import type { Component } from 'vue'
 import { satori } from '../utils/WebCard/satori'
-import { initBaseFonts, loadDynamicAsset } from '../utils/WebCard/font'
+import { initBasicFonts, loadDynamicAsset } from '../utils/WebCard/font'
 import TweetCard from '../utils/WebCard/TweetCard.vue'
 import CommonCard from '../utils/WebCard/CommonCard.vue'
 
@@ -94,7 +94,7 @@ export default eventHandler(async (event) => {
       if (!card)
         throw new Error(`No WebCard template for ${webMeta.siteName}`)
 
-      const fonts = await initBaseFonts()
+      const fonts = await initBasicFonts()
       svg = await satori(card, {
         props,
         width: 1200,

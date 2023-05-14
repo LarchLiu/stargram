@@ -307,7 +307,10 @@ async function loadAsset(emojiType: keyof typeof apis, code: string, text: strin
 
 export const loadDynamicAsset = withCache(loadAsset)
 
-export async function initBaseFonts() {
+const basicFonts: SatoriOptions['fonts'] = []
+export async function initBasicFonts() {
+  if (basicFonts.length)
+    return basicFonts
   // const interRegPath = join(process.cwd(), 'public', 'fonts', 'Inter-Regular.ttf')
   // const InterReg = await fs.readFile(resolve(__dirname, '../../../assets/fonts/Inter-Regular.ttf'))
   // const interBoldPath = join(process.cwd(), 'public', 'fonts', 'Inter-Bold.ttf')
@@ -324,30 +327,18 @@ export async function initBaseFonts() {
   // https://unpkg.com/browse/@fontsource/inter@4.5.2/files/
   const interRegular = await $fetch('https://unpkg.com/@fontsource/inter@4.5.2/files/inter-all-400-normal.woff', { responseType: 'arrayBuffer' })
   const InterBold = await $fetch('https://unpkg.com/@fontsource/inter@4.5.2/files/inter-all-700-normal.woff', { responseType: 'arrayBuffer' })
-  return [
-    // {
-    //   name: 'Noto Sans SC',
-    //   data: NotoSansSC,
-    //   weight: 400,
-    //   style: 'normal',
-    // },
-    {
-      name: 'Inter',
-      data: interRegular,
-      weight: 400,
-      style: 'normal',
-    },
-    {
-      name: 'Inter',
-      data: InterBold,
-      weight: 700,
-      style: 'normal',
-    },
-    // {
-    //   name: 'M Plus 1p',
-    //   data: fontData,
-    //   weight: 400,
-    //   style: 'normal',
-    // },
-  ] as SatoriOptions['fonts']
+
+  basicFonts.push({
+    name: 'Inter',
+    data: interRegular,
+    weight: 400,
+    style: 'normal',
+  })
+  basicFonts.push({
+    name: 'Inter',
+    data: InterBold,
+    weight: 700,
+    style: 'normal',
+  })
+  return basicFonts as SatoriOptions['fonts']
 }
