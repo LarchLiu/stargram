@@ -5,7 +5,6 @@ defineProps({
   screenName: String,
   content: Array<String>,
   pubTime: String,
-  favicon: String,
   lang: String,
 })
 </script>

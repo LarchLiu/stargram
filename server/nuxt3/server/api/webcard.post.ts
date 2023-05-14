@@ -50,20 +50,19 @@ export default eventHandler(async (event) => {
         screenName: meta.screenName,
         content: contentArr,
         pubTime: meta.pubTime,
-        lang: meta.lang,
-        favicon: res.favicon,
+        lang: meta.lang, // TODO: change to satori lang type
       }
     }
     else {
       card = CommonCard
-      const content = webInfo.content // res.description || webInfo.content || 'No Content'
+      const content = webInfo.content || res.description || 'No Content'
       let contentArr = content.split('\n').filter((l: string) => l !== '').map((l: string, i: number) =>
         i < 7 ? l : '...')
 
       if (contentArr.length > 7)
         contentArr = contentArr.slice(0, 8)
 
-      const favicon = (res.favicon && !res.favicon.endsWith('.ico')) ? res.favicon : ''
+      const favicon = (res.favicon && !res.favicon.includes('.ico')) ? res.favicon : ''
       props = {
         title: res.title || webInfo.title,
         content: contentArr,
@@ -155,6 +154,9 @@ export default eventHandler(async (event) => {
   catch (error: any) {
     setResponseStatus(event, 400)
 
-    return { error: error.message }
+    let message = error.message || ''
+    if (error.data)
+      message = JSON.stringify(error.data)
+    return { error: message }
   }
 })

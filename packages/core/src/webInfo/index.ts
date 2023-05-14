@@ -1,6 +1,9 @@
 import { $fetch } from 'ofetch'
 import type { Routes, WebInfoData, WebLoaderUrls } from '../types'
 import { getDomain } from '../utils'
+import type { OGInfo } from './ogInfo'
+
+export * from './ogInfo'
 
 export class WebInfoByApi {
   constructor(fields: { urls: WebLoaderUrls; starNexusHub: string; headers?: Record<string, string> }) {
@@ -35,15 +38,17 @@ export class WebInfoByApi {
 }
 
 export class WebInfo {
-  constructor(fields: { urls: WebLoaderUrls; routes: Routes; headers?: Record<string, string> }) {
+  constructor(fields: { urls: WebLoaderUrls; routes: Routes; headers?: Record<string, string>; ogInfo?: OGInfo }) {
     this.urls = fields.urls
     this.headers = fields.headers
     this.routes = fields.routes
+    this.ogInfo = fields.ogInfo
   }
 
   private urls: WebLoaderUrls
   private routes: Routes
   private headers?: Record<string, string>
+  private ogInfo
 
   async call() {
     const domain = getDomain(this.urls.webUrl)
@@ -64,6 +69,9 @@ export class WebInfo {
         }
       }
       throw new Error(`${router.name} error: Not supported website.`)
+    }
+    else if (this.ogInfo) {
+      return await this.ogInfo.call()
     }
 
     throw new Error('StarNexus error: Not supported website.')

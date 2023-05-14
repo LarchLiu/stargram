@@ -76,51 +76,6 @@ chrome.runtime.onMessage.addListener(async (request: ContentRequest, sender, sen
   return true
 })
 
-// async function saveProcess(pageData: PageData): Promise<SwResponse> {
-//   try {
-//     let summary = ''
-//     let categories = ['Others']
-//     const storage = await chrome.storage.sync.get(['notionApiKey', 'notionDatabaseId', 'openaiApiKey', 'promptsLang'])
-//     const notionApiKey = storage.notionApiKey ?? ''
-//     const databaseId = storage.notionDatabaseId ?? ''
-//     const openaiApiKey = storage.openaiApiKey ?? ''
-//     const promptsLang = storage.promptsLang ?? 'en'
-
-//     if (!notionApiKey || !databaseId) {
-//       // console.log('Missing Notion API key or Database ID in settings.')
-//       const error = { tabId: pageData.tabId, starred: pageData.starred, notionPageId: pageData.notionPageId, error: 'Missing Notion API key or Database ID in settings.' }
-//       return error
-//     }
-
-//     if (openaiApiKey) {
-//       const data = await summarizeContent(openaiApiKey, pageData, promptsLang)
-//       if (data) {
-//         summary = data.summary
-//         categories = data.categories
-//       }
-//     }
-//     else {
-//       summary = pageData.content
-//     }
-
-//     const notionPage = {
-//       databaseId: databaseId as string,
-//       title: pageData.title,
-//       summary,
-//       url: pageData.url,
-//       categories,
-//       status: 'Starred' as const,
-//       meta: pageData.meta,
-//     }
-
-//     const data = await saveNotion(notionApiKey, notionPage)
-//     return { tabId: pageData.tabId, starred: data!.starred, notionPageId: data!.notionPageId }
-//   }
-//   catch (error: any) {
-//     return { tabId: pageData.tabId, starred: pageData.starred, notionPageId: pageData.notionPageId, error: error.message ? error.message : 'Error saving to Notion.' }
-//   }
-// }
-
 async function saveToNotion(pageInfo: PageInfo): Promise<SwResponse> {
   const storage = await chrome.storage.sync.get(['notionApiKey', 'notionDatabaseId', 'openaiApiKey', 'promptsLang', 'starNexusHub'])
   const notionApiKey = storage.notionApiKey ?? ''
@@ -165,18 +120,11 @@ async function saveToNotion(pageInfo: PageInfo): Promise<SwResponse> {
     return { tabId: pageInfo.tabId, starred: info.starred, notionPageId: info.notionPageId }
   }
   catch(error: any) {
-    return { tabId: pageInfo.tabId, starred: pageInfo.starred, notionPageId: pageInfo.notionPageId, error: error.message }
+    let message = error.message || ''
+    if (error.data)
+      message = JSON.stringify(error.data)
+    return { tabId: pageInfo.tabId, starred: pageInfo.starred, notionPageId: pageInfo.notionPageId, error: message }
   }
-
-  // return new Promise((resolve, reject) => {
-  //   getWebsiteInfoByApi(pageInfo).then((res) => {
-  //     saveProcess({ ...res, tabId: pageInfo.tabId, notionPageId: pageInfo.notionPageId, starred: pageInfo.starred }).then((_res) => {
-  //       return resolve(_res)
-  //     }).catch((error) => {
-  //       return reject({ tabId: pageInfo.tabId, notionPageId: pageInfo.notionPageId, starred: pageInfo.starred, error: error.message })
-  //     })
-  //   })
-  // })
 }
 
 async function sendStarredStatus(status: SwResponse) {

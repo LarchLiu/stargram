@@ -74,7 +74,7 @@ async function paginationTweets(endpoint: string, userId: string, variables = {}
     }
     return instructions.filter((i: any) => i.type === 'TimelineAddEntries')[0].entries
   }
-  throw new Error('Twitter error: Tweet Not Found')
+  throw new Error('Tweet Not Found')
 }
 
 // https://github.com/mikf/gallery-dl/blob/a53cfc845e12d9e98fefd07e43ebffaec488c18f/gallery_dl/extractor/twitter.py#L795-L805
@@ -151,6 +151,9 @@ export async function getTweetByStatus(status: string) {
     return gatherLegacyFromData(tweets, 'none')
   }
   catch (error: any) {
-    throw new Error(`Twitter API error: ${error.message || error.statusText}`)
+    let message = error.message || ''
+    if (error.data)
+      message = JSON.stringify(error.data)
+    throw new Error(`Twitter API error: ${message || error.statusText}`)
   }
 }
