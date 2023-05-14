@@ -320,7 +320,10 @@ export async function initBaseFonts() {
   // const Unifont = await fs.readFile(uniPath)
   // const path = join(process.cwd(), 'public', 'fonts', 'MPLUS1p-Regular.ttf')
   // const fontData = await fs.readFile(path)
-  const fontData = await $fetch('https://unpkg.com/@fontsource/inter@4.5.2/files/inter-latin-ext-400-normal.woff', { responseType: 'arrayBuffer' })
+
+  // https://unpkg.com/browse/@fontsource/inter@4.5.2/files/
+  const interRegular = await $fetch('https://unpkg.com/@fontsource/inter@4.5.2/files/inter-all-400-normal.woff', { responseType: 'arrayBuffer' })
+  const InterBold = await $fetch('https://unpkg.com/@fontsource/inter@4.5.2/files/inter-all-700-normal.woff', { responseType: 'arrayBuffer' })
   return [
     // {
     //   name: 'Noto Sans SC',
@@ -330,16 +333,16 @@ export async function initBaseFonts() {
     // },
     {
       name: 'Inter',
-      data: fontData,
+      data: interRegular,
       weight: 400,
       style: 'normal',
     },
-    // {
-    //   name: 'Inter',
-    //   data: InterBold,
-    //   weight: 700,
-    //   style: 'normal',
-    // },
+    {
+      name: 'Inter',
+      data: InterBold,
+      weight: 700,
+      style: 'normal',
+    },
     // {
     //   name: 'M Plus 1p',
     //   data: fontData,
