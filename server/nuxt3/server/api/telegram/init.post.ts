@@ -4,7 +4,7 @@ import { TG_CONFIG, TG_TOKENS, tgEnvDefault } from '~/server/utils/tgBot/env'
 export default eventHandler(async (event) => {
   const result: Record<string, any> = {}
   const body = await readBody(event)
-  const domain = 'https://d150-2401-c080-1000-45c9-5400-4ff-fe5e-1038.ngrok-free.app' // `${getRequestProtocol(event)}://${getRequestHost(event)}`
+  const domain = `${getRequestProtocol(event)}://${getRequestHost(event)}`
   const token = body.tgToken.trim()
   const botName = body.botName
   const test = /(\d+:[A-Za-z0-9_-]{35})/.test(token)
