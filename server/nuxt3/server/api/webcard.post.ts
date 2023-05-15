@@ -2,7 +2,6 @@
 
 import type { WebInfoData } from '@starnexus/core'
 import { errorMessage } from '@starnexus/core'
-import { createWebCard } from '../utils/webCard'
 
 export default eventHandler(async (event) => {
   try {
