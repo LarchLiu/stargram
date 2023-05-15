@@ -54,4 +54,3 @@ jobs:
           VITE_OPENAI_API_KEY: ${{secrets.VITE_OPENAI_API_KEY}}
           VITE_NOTION_API_KEY: ${{secrets.VITE_NOTION_API_KEY}}
           VITE_NOTION_DATABASE_ID: ${{secrets.VITE_NOTION_DATABASE_ID}}
-          VITE_STAR_NEXUS_HUB_API: ${{secrets.VITE_STAR_NEXUS_HUB_API}}
