@@ -2,7 +2,7 @@ import { unfurl } from 'unfurl.js'
 import type { WebInfoData } from '@starnexus/core'
 import { getDomain } from '@starnexus/core'
 
-export async function ogInfoFun(webUrl: string) {
+export async function ogInfoFn(webUrl: string) {
   const res = await unfurl(webUrl)
   let content = res.description || ''
   let title = res.title || ''
