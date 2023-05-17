@@ -32,12 +32,12 @@ export default defineNuxtConfig({
     //   baseName: 'fonts',
     //   dir: './assets/fonts', // Relative to `srcDir` (`server/` for nuxt)
     // }],
-    storage: {
-      fs: {
-        driver: 'fs',
-        base: './server/assets/fonts',
-      },
-    },
+    // storage: {
+    //   fs: {
+    //     driver: 'fs',
+    //     base: './server/assets/fonts',
+    //   },
+    // },
     esbuild: {
       options: {
         target: 'esnext',

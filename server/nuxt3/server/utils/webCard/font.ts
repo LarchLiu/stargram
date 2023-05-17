@@ -1,5 +1,3 @@
-import { join, resolve } from 'node:path'
-import { promises as fsPromises } from 'node:fs'
 import { $fetch } from 'ofetch'
 import type { SatoriOptions } from 'satori'
 import type { apis } from './twemoji'
@@ -315,20 +313,20 @@ export async function initBasicFonts() {
     return basicFonts
 
   // https://unpkg.com/browse/@fontsource/inter@4.5.2/files/
-  // const interRegular = await $fetch('https://unpkg.com/@fontsource/inter@4.5.2/files/inter-all-400-normal.woff', { responseType: 'arrayBuffer' })
-  // const InterBold = await $fetch('https://unpkg.com/@fontsource/inter@4.5.2/files/inter-all-700-normal.woff', { responseType: 'arrayBuffer' })
+  const InterRegular = await $fetch('https://unpkg.com/@fontsource/inter@4.5.2/files/inter-all-400-normal.woff', { responseType: 'arrayBuffer' })
+  const InterBold = await $fetch('https://unpkg.com/@fontsource/inter@4.5.2/files/inter-all-700-normal.woff', { responseType: 'arrayBuffer' })
   // const notoScRegular = await $fetch('https://unpkg.com/@fontsource/noto-sans-sc@4.5.12/files/noto-sans-sc-chinese-simplified-400-normal.woff', { responseType: 'arrayBuffer' })
-  const base = resolve('./server/assets/fonts')
-  const r = (key: string) => {
-    const resolved = join(resolve(base), key)
-    return resolved
-  }
-  // const InterRegular = await useStorage('fs').getItemRaw('Inter-Regular.ttf')
+  // const base = resolve('./server/assets/fonts')
+  // const r = (key: string) => {
+  //   const resolved = join(resolve(base), key)
+  //   return resolved
+  // }
+  // const InterRegular = await useStorage('assets:fonts').getItemRaw('Inter-Regular.ttf')
   // const InterBold = await useStorage('fs').getItemRaw('test.json')
   // const NotoSansSC = await useStorage('assets:fonts').getItem('NotoSansSC-Regular.otf')
 
-  const InterRegular = await fsPromises.readFile(r('Inter-Regular.ttf'))
-  const InterBold = await fsPromises.readFile(r('Inter-Bold.ttf'))
+  // const InterRegular = await fsPromises.readFile(r('Inter-Regular.ttf'))
+  // const InterBold = await fsPromises.readFile(r('Inter-Bold.ttf'))
   // const NotoSansSC = await fsPromises.readFile(r('NotoSansSC-Regular.otf'))
   // const NotoEmoji = await fsPromises.readFile(r('NotoColorEmoji-Regular.ttf'))
 
