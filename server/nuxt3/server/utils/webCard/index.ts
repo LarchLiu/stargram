@@ -1,15 +1,13 @@
-import type { GithubRepoMeta, TwitterTweetMeta, WebCardData, WebInfoData } from '@starnexus/core'
-import { createClient } from '@supabase/supabase-js'
+import type { GithubRepoMeta, StorageImage, TwitterTweetMeta, WebInfoData } from '@starnexus/core'
 import { unfurl } from 'unfurl.js'
-
 import { errorMessage } from '@starnexus/core'
 import TweetCard from './TweetCard.vue'
 import CommonCard from './CommonCard.vue'
 
-const SUPABASE_URL = process.env.SUPABASE_URL
-const STORAGE_URL = `${SUPABASE_URL}/storage/v1/object/public/pics-bed`
+// const SUPABASE_URL = process.env.SUPABASE_URL
+// const STORAGE_URL = `${SUPABASE_URL}/storage/v1/object/public/pics-bed`
 
-export async function createWebCard(webInfo: WebInfoData): Promise<WebCardData> {
+export async function createWebCard(webInfo: WebInfoData): Promise<StorageImage> {
   try {
     const webMeta = webInfo.meta
     let imgPath = ''
@@ -96,54 +94,61 @@ export async function createWebCard(webInfo: WebInfoData): Promise<WebCardData> 
         fonts,
         loadAdditionalAsset: async (code, text) => loadDynamicAsset('twemoji', code, text),
       })
+      return {
+        imgData: svg,
+        imgPath,
+      }
     }
     // setHeader(event, 'Content-Type', 'image/svg+xml')
 
-    // return svg
-
-    const supabaseAdminClient = createClient(
-      process.env.SUPABASE_URL ?? '',
-      process.env.SUPABASE_ANON_KEY ?? '',
-    )
-
-    // Upload image to storage.
-    if (svg) {
-      const { error } = await supabaseAdminClient.storage
-        .from(process.env.SUPABASE_STORAGE_BUCKET || 'pics-bed')
-        .upload(imgPath, svg, {
-          contentType: 'image/svg+xml',
-          cacheControl: '31536000',
-          upsert: true,
-        })
-
-      if (error)
-        throw error
-
-      return {
-        url: `${STORAGE_URL}/${imgPath}?v=starnexus`,
-      }
+    return {
+      imgData: png,
+      imgPath,
     }
-    else if (png) {
-      const { error } = await supabaseAdminClient.storage
-        .from(process.env.SUPABASE_STORAGE_BUCKET || 'pics-bed')
-        .upload(imgPath, png, {
-          contentType: 'image/svg+xml',
-          cacheControl: '31536000',
-          upsert: true,
-        })
 
-      if (error)
-        throw error
+    // const supabaseAdminClient = createClient(
+    //   process.env.SUPABASE_URL ?? '',
+    //   process.env.SUPABASE_ANON_KEY ?? '',
+    // )
 
-      return {
-        url: `${STORAGE_URL}/${imgPath}?v=starnexus`,
-      }
-    }
-    else {
-      return {
-        url: `${STORAGE_URL}/star-nexus.png?v=3`,
-      }
-    }
+    // // Upload image to storage.
+    // if (svg) {
+    //   const { error } = await supabaseAdminClient.storage
+    //     .from(process.env.SUPABASE_STORAGE_BUCKET || 'pics-bed')
+    //     .upload(imgPath, svg, {
+    //       contentType: 'image/svg+xml',
+    //       cacheControl: '31536000',
+    //       upsert: true,
+    //     })
+
+    //   if (error)
+    //     throw error
+
+    //   return {
+    //     url: `${STORAGE_URL}/${imgPath}?v=starnexusogimage`,
+    //   }
+    // }
+    // else if (png) {
+    //   const { error } = await supabaseAdminClient.storage
+    //     .from(process.env.SUPABASE_STORAGE_BUCKET || 'pics-bed')
+    //     .upload(imgPath, png, {
+    //       contentType: 'image/svg+xml',
+    //       cacheControl: '31536000',
+    //       upsert: true,
+    //     })
+
+    //   if (error)
+    //     throw error
+
+    //   return {
+    //     url: `${STORAGE_URL}/${imgPath}?v=starnexusogimage`,
+    //   }
+    // }
+    // else {
+    //   return {
+    //     url: `${STORAGE_URL}/star-nexus.png?v=starnexusogimage`,
+    //   }
+    // }
   }
   catch (error) {
     const message = errorMessage(error)

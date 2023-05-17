@@ -9,6 +9,10 @@ export const ENV = {
   NOTION_API_KEY: null,
   NOTION_DATABASE_ID: null,
 
+  SUPABASE_URL: null,
+  SUPABASE_ANON_KEY: null,
+  SUPABASE_STORAGE_BUCKET: null,
+
   STAR_NEXUS_HUB_API: null,
 
   // 允许访问的Telegram Token， 设置时以逗号分隔

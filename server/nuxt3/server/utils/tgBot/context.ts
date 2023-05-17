@@ -28,6 +28,7 @@ export class Context {
 
   // 共享上下文
   SHARE_CONTEXT = {
+    currentHost: '',
     currentBotId: '', // 当前机器人 ID
     currentBotToken: '', // 当前机器人 Token
     currentBotName: '', // 当前机器人名称: xxx_bot
@@ -74,9 +75,9 @@ export class Context {
     }
   }
 
-  initTelegramContext(pathname: string) {
+  initTelegramContext(url: URL) {
     let token = ''
-    const match = pathname.match(
+    const match = url.pathname.match(
       /^\/api\/telegram\/(\d+:[A-Za-z0-9_-]{35})\/webhook/,
     )
     if (match)
@@ -85,6 +86,7 @@ export class Context {
     if (telegramIndex === -1)
       throw new Error('Token not allowed')
 
+    this.SHARE_CONTEXT.currentHost = `${url.protocol}//${url.host}`
     this.SHARE_CONTEXT.currentBotToken = token
     this.SHARE_CONTEXT.currentBotId = token.split(':')[0]
     this.SHARE_CONTEXT.currentBotName = TG_TOKENS()[token]

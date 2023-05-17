@@ -1,17 +1,15 @@
 import { $fetch } from 'ofetch'
-import type { GithubRepoMeta, NotionConfig, NotionPage, SavedNotion, SummarizeData, TwitterTweetMeta, WebInfoData } from '../types'
-import { GITHUB_DOMAIN, NOTION_API_URL, TWITTER_DOMAIN } from '../const'
+import type { GithubRepoMeta, NotionConfig, NotionPage, SavedNotion, TwitterTweetMeta } from '../../types'
+import { GITHUB_DOMAIN, NOTION_API_URL, TWITTER_DOMAIN } from '../../const'
+import { DataStorage } from '../types'
+import type { StorageData, StorageType } from '../types'
 
-export class NotionStorage {
-  constructor(fields: { config: { apiKey: string; databaseId: string }; data?: WebInfoData & SummarizeData }) {
-    this.config = fields.config
-    this.data = fields.data
+export class NotionDataStorage extends DataStorage<NotionConfig, SavedNotion> {
+  constructor(config: NotionConfig, data?: StorageData) {
+    super(config, data)
   }
 
-  private config
-  private data
-
-  async call(data?: WebInfoData & SummarizeData) {
+  async create(data?: StorageData) {
     if (!data && !this.data)
       throw new Error('DataStorage error: No Storage Data')
 
@@ -26,6 +24,21 @@ export class NotionStorage {
       meta: storageData.meta,
     }
     return await saveToNotion(this.config, notion)
+  }
+
+  async updateOgImage(info: SavedNotion, url: string) {
+    updateOgImage(this.config, info.storageId, url)
+  }
+
+  getConfig(): NotionConfig {
+    return this.config
+  }
+
+  getType(): StorageType {
+    return {
+      type: 'DataStorage',
+      name: 'NotionDataStorage',
+    }
   }
 }
 
@@ -81,17 +94,17 @@ export async function saveToNotion(config: NotionConfig, info: NotionPage): Prom
       },
     },
   }
-  let cover = ''
+  let ogImage = config.defaultOgImage
   if (info.meta && Object.keys(info.meta).length > 0) {
     const meta = info.meta
-    if (meta.cover) {
-      cover = meta.cover
-      body.properties = {
-        ...body.properties,
-        Cover: {
-          url: cover,
-        },
-      }
+    if (meta.ogImage)
+      ogImage = meta.ogImage
+
+    body.properties = {
+      ...body.properties,
+      OgImage: {
+        url: ogImage,
+      },
     }
     body.properties = {
       ...body.properties,
@@ -166,15 +179,15 @@ export async function saveToNotion(config: NotionConfig, info: NotionPage): Prom
     },
   })
 
-  let notionPageId = ''
+  let storageId = ''
   let starred = false
   if (checkData.results.length > 0) {
     if (checkData.results[0].properties.Status.select.name === 'Starred')
       starred = true
-    notionPageId = checkData.results[0].id
+    storageId = checkData.results[0].id
   }
 
-  if (notionPageId) {
+  if (storageId) {
     body.properties = {
       ...body.properties,
       Status: {
@@ -184,7 +197,7 @@ export async function saveToNotion(config: NotionConfig, info: NotionPage): Prom
       },
     }
     // update notion page info
-    await $fetch(`${NOTION_API_URL}/pages/${notionPageId}`, {
+    await $fetch(`${NOTION_API_URL}/pages/${storageId}`, {
       method: 'PATCH',
       headers: {
         'Authorization': `Bearer ${apiKey}`,
@@ -194,15 +207,15 @@ export async function saveToNotion(config: NotionConfig, info: NotionPage): Prom
       body,
     })
 
-    return { starred: !starred, notionPageId }
+    return { starred: !starred, storageId }
   }
 
-  if (cover) {
+  if (ogImage) {
     const imageBlock = {
       object: 'block',
       image: {
         external: {
-          url: cover,
+          url: ogImage,
         },
       },
     }
@@ -219,7 +232,62 @@ export async function saveToNotion(config: NotionConfig, info: NotionPage): Prom
     body,
   })
 
-  notionPageId = newPageResponse.id // 获取新页面的 ID
+  storageId = newPageResponse.id
 
-  return { starred: !starred, notionPageId }
+  return { starred: !starred, storageId }
+}
+
+export async function updateOgImage(config: NotionConfig, storageId: string, url: string) {
+  const checkData = await $fetch<any>(`${NOTION_API_URL}/blocks/${storageId}/children`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      'Notion-Version': '2022-06-28',
+      'Authorization': `Bearer ${config.apiKey}`,
+    },
+  })
+
+  let blockId = ''
+  if (checkData.results.length > 0) {
+    const data = checkData.results
+    const len = data.length
+    for (let i = 0; i < len; i++) {
+      if (data[i].type === 'image' && data[i].image.type === 'external' && data[i].image.external.url.includes('starnexusogimage')) {
+        blockId = data[i].id
+        break
+      }
+    }
+  }
+  await $fetch(`${NOTION_API_URL}/pages/${storageId}`, {
+    method: 'PATCH',
+    headers: {
+      'Authorization': `Bearer ${config.apiKey}`,
+      'Notion-Version': '2022-06-28',
+      'Content-Type': 'application/json',
+    },
+    body: {
+      properties: {
+        OgImage: {
+          url,
+        },
+      },
+    },
+  })
+  if (blockId) {
+    await $fetch(`${NOTION_API_URL}/blocks/${blockId}`, {
+      method: 'PATCH',
+      headers: {
+        'Authorization': `Bearer ${config.apiKey}`,
+        'Notion-Version': '2022-06-28',
+        'Content-Type': 'application/json',
+      },
+      body: {
+        image: {
+          external: {
+            url,
+          },
+        },
+      },
+    })
+  }
 }

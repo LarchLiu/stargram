@@ -1,3 +1,5 @@
+import { join, resolve } from 'node:path'
+import { promises as fsPromises } from 'node:fs'
 import { $fetch } from 'ofetch'
 import type { SatoriOptions } from 'satori'
 import type { apis } from './twemoji'
@@ -311,26 +313,28 @@ const basicFonts: SatoriOptions['fonts'] = []
 export async function initBasicFonts() {
   if (basicFonts.length)
     return basicFonts
-  // const interRegPath = join(process.cwd(), 'public', 'fonts', 'Inter-Regular.ttf')
-  // const InterReg = await fs.readFile(resolve(__dirname, '../../../assets/fonts/Inter-Regular.ttf'))
-  // const interBoldPath = join(process.cwd(), 'public', 'fonts', 'Inter-Bold.ttf')
-  // const InterBold = await fs.readFile(resolve(__dirname, '../../../assets/fonts/Inter-Bold.ttf'))
-  // const scPath = join(process.cwd(), 'public', 'fonts', 'NotoSansSC-Regular.otf')
-  // const NotoSansSC = await fs.readFile(resolve(__dirname, '../../../assets/fonts/NotoSansSC-Regular.otf'))
-  // const jpPath = join(process.cwd(), 'public', 'fonts', 'NotoSansJP-Regular.ttf')
-  // const NotoSansJP = await fs.readFile(jpPath)
-  // const uniPath = join(process.cwd(), 'public', 'fonts', 'unifont-15.0.01.otf')
-  // const Unifont = await fs.readFile(uniPath)
-  // const path = join(process.cwd(), 'public', 'fonts', 'MPLUS1p-Regular.ttf')
-  // const fontData = await fs.readFile(path)
 
   // https://unpkg.com/browse/@fontsource/inter@4.5.2/files/
-  const interRegular = await $fetch('https://unpkg.com/@fontsource/inter@4.5.2/files/inter-all-400-normal.woff', { responseType: 'arrayBuffer' })
-  const InterBold = await $fetch('https://unpkg.com/@fontsource/inter@4.5.2/files/inter-all-700-normal.woff', { responseType: 'arrayBuffer' })
+  // const interRegular = await $fetch('https://unpkg.com/@fontsource/inter@4.5.2/files/inter-all-400-normal.woff', { responseType: 'arrayBuffer' })
+  // const InterBold = await $fetch('https://unpkg.com/@fontsource/inter@4.5.2/files/inter-all-700-normal.woff', { responseType: 'arrayBuffer' })
+  // const notoScRegular = await $fetch('https://unpkg.com/@fontsource/noto-sans-sc@4.5.12/files/noto-sans-sc-chinese-simplified-400-normal.woff', { responseType: 'arrayBuffer' })
+  const base = resolve('./server/assets/fonts')
+  const r = (key: string) => {
+    const resolved = join(resolve(base), key)
+    return resolved
+  }
+  // const InterRegular = await useStorage('fs').getItemRaw('Inter-Regular.ttf')
+  // const InterBold = await useStorage('fs').getItemRaw('test.json')
+  // const NotoSansSC = await useStorage('assets:fonts').getItem('NotoSansSC-Regular.otf')
+
+  const InterRegular = await fsPromises.readFile(r('Inter-Regular.ttf'))
+  const InterBold = await fsPromises.readFile(r('Inter-Bold.ttf'))
+  // const NotoSansSC = await fsPromises.readFile(r('NotoSansSC-Regular.otf'))
+  // const NotoEmoji = await fsPromises.readFile(r('NotoColorEmoji-Regular.ttf'))
 
   basicFonts.push({
     name: 'Inter',
-    data: interRegular,
+    data: InterRegular,
     weight: 400,
     style: 'normal',
   })
@@ -340,5 +344,18 @@ export async function initBasicFonts() {
     weight: 700,
     style: 'normal',
   })
+  // basicFonts.push({
+  //   name: 'Noto Sans SC',
+  //   data: NotoSansSC,
+  //   weight: 400,
+  //   style: 'normal',
+  // })
+  // basicFonts.push({
+  //   name: 'Noto Color Emoji',
+  //   data: NotoEmoji,
+  //   weight: 400,
+  //   style: 'normal',
+  // })
+  // console.log(buffer)
   return basicFonts as SatoriOptions['fonts']
 }

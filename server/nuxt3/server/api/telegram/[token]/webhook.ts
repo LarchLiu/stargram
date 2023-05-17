@@ -1,8 +1,8 @@
 export default eventHandler(async (event) => {
   try {
     const raw = await readBody(event)
-    const { pathname } = getRequestURL(event)
-    return makeResponse200(await handleMessage(pathname, raw))
+    const url = getRequestURL(event)
+    return makeResponse200(await handleMessage(url, raw))
   }
   catch (error) {
     console.error(error)

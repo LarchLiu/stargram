@@ -1,4 +1,4 @@
-import { NotionStorage, SaveWebInfoChain, SummarizeContent, WebCard, WebInfoByApi, errorMessage } from '@starnexus/core'
+import { NotionDataStorage, SaveWebInfoChain, SavedNotion, SummarizeContent, SupabaseImageStorage, WebCard, WebInfoByApi, errorMessage } from '@starnexus/core'
 import type { ContentRequest, ListenerSendResponse, PageInfo, SwResponse } from '~/types'
 
 async function sendSavedStatus(res: SwResponse) {
@@ -86,7 +86,7 @@ async function saveToNotion(pageInfo: PageInfo): Promise<SwResponse> {
 
   if (!notionApiKey || !databaseId) {
     // console.log('Missing Notion API key or Database ID in settings.')
-    const error = { tabId: pageInfo.tabId, starred: pageInfo.starred, notionPageId: pageInfo.notionPageId, error: 'Missing Notion API key or Database ID in settings.' }
+    const error = { tabId: pageInfo.tabId, starred: pageInfo.starred, notionPageId: pageInfo.storageId, error: 'Missing Notion API key or Database ID in settings.' }
     return error
   }
 
@@ -97,16 +97,23 @@ async function saveToNotion(pageInfo: PageInfo): Promise<SwResponse> {
     },
     starNexusHub,
   })
+  const supabaseImgStorage = new SupabaseImageStorage({
+    url: process.env.SUPABASE_URL || '',
+    anonKey: process.env.SUPABASE_ANON_KEY || '',
+    bucket: process.env.SUPABASE_STORAGE_BUCKET || '',
+    upsert: true,
+  })
 
-  const webCard = new WebCard({ starNexusHub })
+  const webCard = new WebCard({ starNexusHub, imgStorage: supabaseImgStorage })
 
   const summarize = new SummarizeContent({ apiKey: openaiApiKey, lang: promptsLang })
-  const notion = new NotionStorage({
-    config: {
+  const notion = new NotionDataStorage(
+    {
       apiKey: notionApiKey,
       databaseId,
+      defaultOgImage: 'https://kiafhufrshqyrvlpsdqg.supabase.co/storage/v1/object/public/pics-bed/star-nexus.png?v=starnexusogimage',
     },
-  })
+  )
 
   const chain = new SaveWebInfoChain({
     webInfo,
@@ -116,12 +123,12 @@ async function saveToNotion(pageInfo: PageInfo): Promise<SwResponse> {
   })
 
   try {
-    const info = await chain.call()
-    return { tabId: pageInfo.tabId, starred: info.starred, notionPageId: info.notionPageId }
+    const info = await chain.call() as SavedNotion
+    return { tabId: pageInfo.tabId, starred: info.starred, storageId: info.storageId }
   }
   catch(error: any) {
     const message = errorMessage(error)
-    return { tabId: pageInfo.tabId, starred: pageInfo.starred, notionPageId: pageInfo.notionPageId, error: message }
+    return { tabId: pageInfo.tabId, starred: pageInfo.starred, storageId: pageInfo.storageId, error: message }
   }
 }
 
@@ -139,10 +146,10 @@ async function checkStarredStatus(url: string, tabId: number): Promise<SwRespons
   const notionApiKey = storage.notionApiKey ?? ''
   const databaseId = storage.notionDatabaseId ?? ''
   let starred = false
-  let notionPageId = ''
+  let storageId = ''
 
   if (!notionApiKey || !databaseId)
-    return ({ tabId, notionPageId, starred, error: 'Missing Notion API key or Database ID in settings.' })
+    return ({ tabId, storageId, starred, error: 'Missing Notion API key or Database ID in settings.' })
 
   try {
     const response = await fetch(
@@ -173,7 +180,7 @@ async function checkStarredStatus(url: string, tabId: number): Promise<SwRespons
       else
         error += response.status.toString()
 
-      return ({ tabId, starred, notionPageId, error })
+      return ({ tabId, starred, storageId, error })
     }
     else {
       const data = await response.json()
@@ -181,13 +188,13 @@ async function checkStarredStatus(url: string, tabId: number): Promise<SwRespons
       if (data.results.length > 0) {
         if (data.results[0].properties.Status.select.name === 'Starred')
           starred = true
-        notionPageId = data.results[0].id
+          storageId = data.results[0].id
       }
 
-      return ({ tabId, starred, notionPageId })
+      return ({ tabId, starred, storageId })
     }
   }
   catch (err: any) {
-    return ({ tabId, starred, notionPageId, error: err.message ? err.message : 'Error check starred status.' })
+    return ({ tabId, starred, storageId, error: err.message ? err.message : 'Error check starred status.' })
   }
 }

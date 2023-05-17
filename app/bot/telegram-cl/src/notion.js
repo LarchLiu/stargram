@@ -1,4 +1,4 @@
-import { NotionStorage, SaveWebInfoChain, SummarizeContent, WebCard, WebInfoByApi } from '@starnexus/core'
+import { NotionDataStorage, SaveWebInfoChain, SummarizeContent, SupabaseImageStorage, WebCard, WebInfoByApi } from '@starnexus/core'
 import { ENV } from './env.js'
 
 /**
@@ -27,15 +27,23 @@ async function saveToNotion(text) {
         starNexusHub,
       })
 
-      const webCard = new WebCard({ starNexusHub })
+      const supabaseImgStorage = new SupabaseImageStorage({
+        url: ENV.SUPABASE_URL || '',
+        anonKey: ENV.SUPABASE_ANON_KEY || '',
+        bucket: ENV.SUPABASE_STORAGE_BUCKET || '',
+        upsert: true,
+      })
+
+      const webCard = new WebCard({ starNexusHub, imgStorage: supabaseImgStorage })
 
       const summarize = new SummarizeContent({ apiKey: openaiApiKey })
-      const notion = new NotionStorage({
-        config: {
-          apiKey: notionApiKey || '',
+      const notion = new NotionDataStorage(
+        {
+          apiKey: notionApiKey,
           databaseId,
+          defaultOgImage: 'https://kiafhufrshqyrvlpsdqg.supabase.co/storage/v1/object/public/pics-bed/star-nexus.png?v=starnexusogimage',
         },
-      })
+      )
 
       const chain = new SaveWebInfoChain({
         webInfo,

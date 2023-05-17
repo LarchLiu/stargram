@@ -1,7 +1,7 @@
 /* eslint-disable no-prototype-builtins */
 import { errorMessage } from '@starnexus/core'
 import { kv } from '@vercel/kv'
-import { StarNexusSaveWebInfoChain } from '../makeChain'
+import { StarNexusSaveWebInfoChain } from './makeChain'
 import { CONST, ENV, TG_CONFIG } from './env'
 import { Context } from './context'
 import { sendChatActionToTelegramWithContext, sendMessageToTelegramWithContext } from './telegram.js'
@@ -164,7 +164,7 @@ async function msgProcessByStarNuxts(message: any, context: Context) {
   try {
     // console.log(`Ask:${message.text}` || '')
     setTimeout(() => sendChatActionToTelegramWithContext(context)('typing').catch(console.error), 0)
-    const res = await StarNexusSaveWebInfoChain(message.text, context.USER_CONFIG)
+    const res = await StarNexusSaveWebInfoChain(context.SHARE_CONTEXT.currentHost, message.text, context)
     return sendMessageToTelegramWithContext(context)(res)
   }
   catch (e) {
@@ -233,9 +233,9 @@ async function loadMessage(raw: any) {
     throw new Error('Invalid message')
 }
 
-export async function handleMessage(path: string, raw: any) {
+export async function handleMessage(url: URL, raw: any) {
   const context = new Context()
-  context.initTelegramContext(path)
+  context.initTelegramContext(url)
   const message = await loadMessage(raw)
 
   // 消息处理中间件

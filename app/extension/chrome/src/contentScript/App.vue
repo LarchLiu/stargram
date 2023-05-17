@@ -9,7 +9,7 @@ const duration = 3000
 let twinkTimer: NodeJS.Timer
 let starred = false
 let twinkStarred = false
-let notionPageId = ''
+let storageId = ''
 const id = 'star-nexus'
 
 function init() {
@@ -38,7 +38,7 @@ async function getDataFromPage(): Promise<{ data?: PageInfo; error?: string }> {
   return {
     data: {
       webUrl: location.href,
-      notionPageId,
+      storageId,
       starred,
     },
   }
@@ -111,7 +111,7 @@ chrome.runtime.onMessage.addListener(async (request: SwRequest, sender, sendResp
         if (twinkTimer)
           clearInterval(twinkTimer)
         starred = data.starred
-        notionPageId = data.notionPageId!
+        storageId = data.storageId!
         createStarButton(starred)
       }
     }
@@ -135,7 +135,7 @@ chrome.runtime.onMessage.addListener(async (request: SwRequest, sender, sendResp
       }
       else {
         starred = data.starred
-        notionPageId = data.notionPageId!
+        storageId = data.storageId!
         ElNotification({
           title: 'StarNexus',
           type: 'success',

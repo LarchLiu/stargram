@@ -7,20 +7,20 @@ import type {
 interface PageData extends WebInfoData {
   starred: boolean
   tabId?: number
-  notionPageId?: string
+  storageId?: string
 }
 
 interface PageInfo extends WebLoaderUrls {
   starred: boolean
   tabId?: number
-  notionPageId?: string
+  storageId?: string
 }
 
 interface SwResponse {
   starred: boolean
   error?: string
   tabId?: number
-  notionPageId?: string
+  storageId?: string
 }
 
 interface ListenerResponse {

@@ -12,7 +12,7 @@ export interface WebCardData {
 export interface WebsiteMeta {
   domain?: string
   siteName?: string
-  cover?: string
+  ogImage?: string
   prompts?: string
 }
 // TODO: remove web meta type to webHub
@@ -48,6 +48,7 @@ export interface SummarizeData {
 export interface NotionConfig {
   apiKey: string
   databaseId: string
+  defaultOgImage: string
 }
 
 export interface NotionPage {
@@ -61,7 +62,7 @@ export interface NotionPage {
 
 export interface SavedNotion {
   starred: boolean
-  notionPageId: string
+  storageId: string
 }
 
 export interface PicBedRes {

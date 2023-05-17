@@ -127,7 +127,7 @@ interface GithubRepoMeta {
     siteName: 'Github'
     tags?: string[]
     languages?: string[]
-    cover?: string
+    ogImage?: string
 }
 
 interface SavedResponse {

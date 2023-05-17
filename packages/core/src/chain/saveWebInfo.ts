@@ -2,14 +2,14 @@ import type { WebInfo, WebInfoByApi } from '../webInfo'
 import type { WebCard } from '../webCard'
 import type { SummarizeContent } from '../openai'
 import type { SummarizeData } from '../types'
-import type { NotionStorage } from '../notion'
+import type { IDataStorage } from '../storage'
 
 export class SaveWebInfoChain {
   constructor(fields: {
     webInfo: WebInfo | WebInfoByApi
     webCard?: WebCard
     summarizeContent?: SummarizeContent
-    dataStorage: NotionStorage
+    dataStorage: IDataStorage
   }) {
     this.webInfo = fields.webInfo
     this.webCard = fields.webCard
@@ -23,10 +23,7 @@ export class SaveWebInfoChain {
   private dataStorage
 
   async call() {
-    let webData = await this.webInfo.call()
-    if (this.webCard)
-      webData = await this.webCard.call(webData)
-
+    const webData = await this.webInfo.call()
     let summarizeData: SummarizeData = {
       summary: webData.content,
       categories: ['Others'],
@@ -35,6 +32,14 @@ export class SaveWebInfoChain {
     if (this.summarizeContent)
       summarizeData = await this.summarizeContent.call(webData)
 
-    return await this.dataStorage.call({ ...webData, ...summarizeData })
+    const savedData = await this.dataStorage.create({ ...webData, ...summarizeData })
+    // if there is no localFn just use api to generate webCard and update to data storage, don't mind the result
+    // DO NOT USE AWAIT to avoid severless timeout, generate webCard need long time
+    if (this.webCard && !this.webCard.localFn) {
+      // eslint-disable-next-line no-console
+      this.webCard.call({ dataStorage: this.dataStorage, webData, savedData }).then(res => console.log(res))
+    }
+
+    return savedData
   }
 }
