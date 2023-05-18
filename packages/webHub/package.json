@@ -33,9 +33,10 @@
   "scripts": {
     "dev": "vite build --watch",
     "build": "pnpm clear && vite build && tsc --declaration -p tsconfig.types.json --emitDeclarationOnly",
+    "build:turbo": "turbo run build --filter=@server/web-hub...",
     "clear": "rimraf dist",
     "lint": "eslint src",
-    "prepublishOnly": "pnpm build",
+    "prepublishOnly": "pnpm build:turbo",
     "tscheck": "tsc --noEmit",
     "test": "vitest"
   },
