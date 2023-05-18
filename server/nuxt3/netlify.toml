@@ -3,6 +3,6 @@
 
 [build]
   publish = "dist"
-  edge_functions = "netlify/edge-functions"
+  functions = "netlify/functions"
   command = "pnpm run build:turbo"
 
