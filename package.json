@@ -1,6 +1,6 @@
 {
   "name": "star-nexus",
-  "version": "0.0.7-beta.0",
+  "version": "0.0.7-beta.1",
   "private": true,
   "packageManager": "pnpm@8.5.0",
   "description": "Manage all your starred pages.",
