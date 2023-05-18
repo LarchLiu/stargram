@@ -35,6 +35,7 @@
     "build": "pnpm clear && vite build && tsc --declaration -p tsconfig.types.json --emitDeclarationOnly",
     "clear": "rimraf dist",
     "lint": "eslint src",
+    "prepublishOnly": "pnpm build",
     "tscheck": "tsc --noEmit",
     "test": "vitest"
   },

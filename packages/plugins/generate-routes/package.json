@@ -58,7 +58,7 @@
     "lint": "eslint .",
     "lint:fix": "nr lint --fix",
     "play": "npm -C ../core run dev",
-    "prepublishOnly": "nr build"
+    "prepublishOnly": "pnpm build"
   },
   "dependencies": {
     "@antfu/utils": "^0.7.2",
