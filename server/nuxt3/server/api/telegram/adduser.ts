@@ -3,6 +3,7 @@ import { TG_CONFIG } from '~/server/utils/tgBot/env'
 
 export default eventHandler(async (event) => {
   const body = await readBody(event)
+  await initEnv()
   const token = body.tgToken.trim()
   const userId = body.userId.trim()
   const test = /(\d+:[A-Za-z0-9_-]{35})/.test(token)

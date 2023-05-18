@@ -4,6 +4,7 @@ import { TG_CONFIG, TG_TOKENS, tgEnvDefault } from '~/server/utils/tgBot/env'
 export default eventHandler(async (event) => {
   const result: Record<string, any> = {}
   const body = await readBody(event)
+  await initEnv()
   const domain = `${getRequestProtocol(event)}://${getRequestHost(event)}`
   const token = body.tgToken.trim()
   const botName = body.botName
