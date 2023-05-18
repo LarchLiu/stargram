@@ -183,11 +183,11 @@ importers:
   server/nuxt3:
     dependencies:
       '@starnexus/core':
-        specifier: 0.0.7-beta.3
-        version: 0.0.7-beta.3
+        specifier: workspace:*
+        version: link:../../packages/core
       '@starnexus/web-hub':
-        specifier: 0.0.7-beta.3
-        version: 0.0.7-beta.3
+        specifier: workspace:*
+        version: link:../../packages/webHub
       '@vercel/kv':
         specifier: ^0.2.1
         version: 0.2.1
@@ -3239,25 +3239,6 @@ packages:
     resolution: {integrity: sha512-a31EnjuIDSX8IXBUib3cYLDRlPMU36AWX4xS8ysLaNu4ZzUesDiPt83pgrW2X1YLMe5L2HbDyaKK5BrL4cNKaQ==}
     engines: {node: ^14.17.0 || ^16.13.0 || >=18.0.0}
     dev: true
-
-  /@starnexus/core@0.0.7-beta.3:
-    resolution: {integrity: sha512-+M9uB+vpn0KJsTBFWIUo5qkOlqrdWNrr9uhLsKSHmjKeR0LF2vIL6L1C+HAbkDJS54WHI+4jrdWqXhER09DFyQ==}
-    engines: {node: '>=18.0.0'}
-    dependencies:
-      '@supabase/supabase-js': 2.22.0
-      gpt3-tokenizer: 1.1.5
-      ofetch: 1.0.1
-    transitivePeerDependencies:
-      - encoding
-      - supports-color
-    dev: false
-
-  /@starnexus/web-hub@0.0.7-beta.3:
-    resolution: {integrity: sha512-ZGFr7ilyYGxBn5ajxpeohHpCFZP5RnypA9ly255T+sNnYFvwP1KNf/4S4ziM5S5dCglLAn7yfjjuECsNgVG5YA==}
-    engines: {node: '>=18.0.0'}
-    dependencies:
-      ofetch: 1.0.1
-    dev: false
 
   /@supabase/functions-js@2.1.1:
     resolution: {integrity: sha512-bIR1Puae6W+1/MzPfYBWOG/SCWGo4B5CB7c0ZZksvliNEAzhxNBJ0UFKYINcGdGtxG8ZC+1xr3utWpNZNwnoRw==}
