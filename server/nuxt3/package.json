@@ -16,8 +16,8 @@
     "start:generate": "npx serve .output/public"
   },
   "dependencies": {
-    "@starnexus/core": "workspace:*",
-    "@starnexus/web-hub": "workspace:*",
+    "@starnexus/core": "^0.0.7-beta.3",
+    "@starnexus/web-hub": "^0.0.7-beta.3",
     "@vercel/kv": "^0.2.0",
     "satori": "^0.8.1",
     "satori-html": "^0.3.2",
