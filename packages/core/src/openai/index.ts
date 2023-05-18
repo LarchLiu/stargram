@@ -1,7 +1,8 @@
 import { $fetch } from 'ofetch'
 import type { PromptsLanguage, SummarizeData, WebInfoData } from '../types'
 import { countWord, getPromptsByTemplate, preprocessText } from '../utils'
-import { ANSWER_IN_LANGUAGE, MAX_TOKEN_LENGTH, OPENAI_CHAT_API, SUMMARIZE_PROMPTS, USER_PROMPTS } from '../const'
+import { ANSWER_IN_LANGUAGE, OPENAI_CHAT_API, SUMMARIZE_PROMPTS, USER_PROMPTS } from '../const'
+import { ProviderType, getSummaryPrompt } from './prompt'
 
 export class SummarizeContent {
   constructor(fields: { apiKey: string; webData?: WebInfoData; lang?: PromptsLanguage }) {
@@ -28,17 +29,10 @@ export async function summarizeContent(apiKey: string, websiteInfo: WebInfoData,
   let categories = []
   let content = websiteInfo.content
   content = preprocessText(content)
-  let wordCount = countWord(content)
+  const wordCount = countWord(content)
 
   if (wordCount > 40) {
-    const systemLen = countWord(SUMMARIZE_PROMPTS)
-    const maxTokens = MAX_TOKEN_LENGTH - systemLen
-    // let wordToken = estimateTokens(content)
-
-    while (wordCount > maxTokens) {
-      content = content.substring(0, content.length - (wordCount - maxTokens))
-      wordCount = countWord(content)
-    }
+    content = getSummaryPrompt(content, ProviderType.GPT3)
 
     const kv = {
       content,

@@ -39,6 +39,7 @@
     "test": "vitest"
   },
   "dependencies": {
+    "gpt3-tokenizer": "^1.1.5",
     "ofetch": "^1.0.1"
   },
   "devDependencies": {}
