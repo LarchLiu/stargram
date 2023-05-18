@@ -17,12 +17,10 @@
   "dependencies": {
     "@starnexus/core": "workspace:*",
     "@starnexus/web-hub": "workspace:*",
-    "@supabase/supabase-js": "^2.21.0",
     "@vercel/kv": "^0.2.0",
     "satori": "^0.8.1",
     "satori-html": "^0.3.2",
-    "unfurl.js": "^6.3.2",
-    "vue-tsc": "^1.6.5"
+    "unfurl.js": "^6.3.2"
   },
   "devDependencies": {
     "@antfu/eslint-config": "^0.38.6",
@@ -41,6 +39,7 @@
     "eslint": "^8.40.0",
     "nuxt": "^3.4.3",
     "pinia": "^2.0.36",
-    "typescript": "^5.0.4"
+    "typescript": "^5.0.4",
+    "vue-tsc": "^1.6.5"
   }
 }
