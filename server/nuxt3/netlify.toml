@@ -3,6 +3,8 @@
 
 [build]
   publish = "dist"
-  functions = "server/api"
   command = "pnpm run build:turbo"
 
+[functions]
+  directory = "server/"
+  included_files = ["api/**"]
