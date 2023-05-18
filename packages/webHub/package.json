@@ -2,7 +2,6 @@
   "name": "@starnexus/web-hub",
   "type": "module",
   "version": "0.0.7-beta.3",
-  "packageManager": "pnpm@8.5.0",
   "description": "StarNexus core package",
   "author": "Alex Liu <larch.liu@gmail.com>",
   "license": "MIT",
