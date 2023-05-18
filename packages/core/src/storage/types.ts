@@ -21,7 +21,7 @@ export interface SavedImage {
 
 export interface IDataStorage {
   create(data?: StorageData): Promise<SavedData>
-  updateOgImage(info: SavedData, url: string): Promise<any>
+  updateOgImage(info: SavedData, url: string): Promise<SavedImage>
   getType(): StorageType
   getConfig(): any
 }
@@ -36,7 +36,7 @@ export abstract class DataStorage<T, R extends SavedData> implements IDataStorag
   protected data?: StorageData
 
   abstract create(data?: StorageData): Promise<R>
-  abstract updateOgImage(info: R, url: string): Promise<any>
+  abstract updateOgImage(info: R, url: string): Promise<SavedImage>
   abstract getType(): StorageType
   abstract getConfig(): T
 }

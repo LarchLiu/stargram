@@ -27,7 +27,7 @@ export class NotionDataStorage extends DataStorage<NotionConfig, SavedNotion> {
   }
 
   async updateOgImage(info: SavedNotion, url: string) {
-    updateOgImage(this.config, info.storageId, url)
+    return await updateOgImage(this.config, info.storageId, url)
   }
 
   getConfig(): NotionConfig {
@@ -289,5 +289,8 @@ export async function updateOgImage(config: NotionConfig, storageId: string, url
         },
       },
     })
+  }
+  return {
+    url,
   }
 }

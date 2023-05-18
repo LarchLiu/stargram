@@ -1,3 +1,3 @@
-export default defineNitroPlugin((nitroApp) => {
-  initEnv()
+export default defineNitroPlugin(async (nitroApp) => {
+  await initEnv()
 })
