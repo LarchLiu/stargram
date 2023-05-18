@@ -1,3 +1,3 @@
-export default defineNitroPlugin(async (nitroApp) => {
+export default defineNitroPlugin(async (_nitroApp) => {
   await initBasicFonts()
 })
