@@ -2,9 +2,6 @@ import { kv } from '@vercel/kv'
 import i18n from './i18n'
 
 export interface TgBotEnv {
-  // NOTION_CONFIG: { apiKey: string; databaseId: string }
-  TELEGRAM_AVAILABLE_TOKENS: string[]
-  TELEGRAM_BOT_NAME: string[]
   CHAT_WHITE_LIST: string[]
   CHAT_GROUP_WHITE_LIST: string[]
   HIDE_COMMAND_BUTTONS: string[]
@@ -16,10 +13,6 @@ export interface TgBotConfig {
 }
 type TgAvailableTokens = Record<string, string>
 export const tgEnvDefault: TgBotEnv = {
-  // 允许访问的Telegram Token， 设置时以逗号分隔
-  TELEGRAM_AVAILABLE_TOKENS: [],
-  // 允许访问的Telegram Token 对应的Bot Name， 设置时以逗号分隔
-  TELEGRAM_BOT_NAME: [],
   // 白名单
   CHAT_WHITE_LIST: [],
   // 群组白名单

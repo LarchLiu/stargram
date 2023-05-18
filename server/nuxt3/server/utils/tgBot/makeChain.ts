@@ -1,4 +1,4 @@
-import { errorMessage } from '~/../../packages/core/dist'
+import { errorMessage } from '@starnexus/core'
 import type { Context } from './context'
 
 export interface UserConfig {
