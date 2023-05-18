@@ -3,6 +3,7 @@ import type { WebCard } from '../webCard'
 import type { SummarizeContent } from '../openai'
 import type { SummarizeData } from '../types'
 import type { IDataStorage } from '../storage'
+import { errorMessage } from '../utils'
 
 export class SaveWebInfoChain {
   constructor(fields: {
@@ -33,11 +34,17 @@ export class SaveWebInfoChain {
       summarizeData = await this.summarizeContent.call(webData)
 
     const savedData = await this.dataStorage.create({ ...webData, ...summarizeData })
-    // if there is no localFn just use api to generate webCard and update to data storage, don't mind the result
-    // DO NOT USE AWAIT to avoid severless timeout, generate webCard need long time
-    if (this.webCard && !this.webCard.localFn) {
+
+    if (this.webCard) {
+      if (!this.webCard.localFn) {
+      // if there is no localFn just use api to generate webCard and update to data storage, don't mind the result
+      // DO NOT USE AWAIT to avoid severless timeout, generate webCard need long time
       // eslint-disable-next-line no-console
-      this.webCard.call({ dataStorage: this.dataStorage, webData, savedData }).then(res => console.log(res))
+        this.webCard.call({ dataStorage: this.dataStorage, webData, savedData }).then(res => console.log(res)).catch(e => console.error(errorMessage(e)))
+      }
+      else {
+        await this.webCard.call({ dataStorage: this.dataStorage, webData, savedData })
+      }
     }
 
     return savedData

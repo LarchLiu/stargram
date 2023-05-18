@@ -48,7 +48,13 @@ export default eventHandler(async (event) => {
   if (typeof info === 'boolean')
     message = `Saved to StarNexus 🎉. ${url}\n`
   else
-    message = `## Save failed 🐛. ${url}\nError Info: ${info}\n`
+    message = `Save failed 🐛. ${url}\nError Info: ${info}\n`
 
-  return sendMessageToTelegramWithContext(context)(message)
+  try {
+    return (await sendMessageToTelegramWithContext(context)(message))
+  }
+  catch (error) {
+    console.error(error)
+    return new Response(errorToString(error), { status: 200 })
+  }
 })

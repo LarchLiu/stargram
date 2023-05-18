@@ -1,3 +1,4 @@
+import { errorMessage } from '~/../../packages/core/dist'
 import type { Context } from './context'
 
 export interface UserConfig {
@@ -28,7 +29,7 @@ export async function StarNexusSaveWebInfoChain(starNexusHub: string, text: stri
           url,
           starNexusHub,
         },
-      })
+      }).catch(e => console.error(errorMessage(e)))
       i += 1
       // const ogInfo = new OGInfo({ fn: ogInfoFn, url })
       // const webInfo = new WebInfo({
