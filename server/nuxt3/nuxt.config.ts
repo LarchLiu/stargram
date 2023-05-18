@@ -28,6 +28,7 @@ export default defineNuxtConfig({
   },
 
   nitro: {
+    preset: 'vercel-edge',
     // serverAssets: [{
     //   baseName: 'fonts',
     //   dir: './assets/fonts', // Relative to `srcDir` (`server/` for nuxt)
