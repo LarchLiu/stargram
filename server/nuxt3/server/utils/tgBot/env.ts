@@ -60,6 +60,8 @@ let TgTokens: TgAvailableTokens
 export const TG_CONFIG = () => TgConfig
 export const TG_TOKENS = () => TgTokens
 export async function initEnv() {
-  TgConfig = await kv.get<TgBotConfig>(CONST.CONFIG_KEY) || {}
-  TgTokens = await kv.get<TgAvailableTokens>(CONST.TOKENS_KEY) || {}
+  if (!TgConfig)
+    TgConfig = await kv.get<TgBotConfig>(CONST.CONFIG_KEY) || {}
+  if (!TgTokens)
+    TgTokens = await kv.get<TgAvailableTokens>(CONST.TOKENS_KEY) || {}
 }
