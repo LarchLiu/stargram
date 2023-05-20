@@ -5,6 +5,7 @@
   "scripts": {
     "build": "nuxi build",
     "build:turbo": "turbo run build --filter=@server/nuxt3...",
+    "build:netlify": "NITRO_PRESET=netlify-edge turbo run build --filter=@server/nuxt3...",
     "dev": "nuxi dev",
     "dev:pwa": "VITE_PLUGIN_PWA=true nuxi dev",
     "start": "node .output/server/index.mjs",

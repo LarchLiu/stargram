@@ -3,8 +3,7 @@
 
 [build]
   publish = "dist"
-  command = "pnpm run build:turbo"
+  command = "pnpm run build:netlify"
 
 [functions]
-  directory = "server/"
-  included_files = ["api/**"]
+  directory = ".netlify/edge-functions/"
