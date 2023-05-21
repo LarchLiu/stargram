@@ -1,0 +1,16 @@
+name = "star-nexus"
+send_metrics = false
+compatibility_date = "2023-03-04"
+main = "./.output/server/index.mjs"
+workers_dev = true
+
+[vars]
+SUPABASE_URL=
+SUPABASE_STORAGE_BUCKET=
+SUPABASE_OG_IMAGE=
+SUPABASE_ANON_KEY=
+KV_URL=
+KV_REST_API_URL=
+KV_REST_API_TOKEN=
+KV_REST_API_READ_ONLY_TOKEN=
+

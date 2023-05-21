@@ -1,6 +1,6 @@
 import type { GithubRepoMeta, PathInfo, WebInfoData, WebLoaderUrls } from '@starnexus/core'
-import { strNotEqualWith } from '@starnexus/core'
-import { $fetch } from 'ofetch'
+import { strNotEqualWith } from '@starnexus/core/utils'
+import { $fetch } from '@starnexus/core'
 import { GITHUB_RAW_URL, GITHUB_REPOS_API, USER_AGENT } from '../../../const'
 
 function repoFilter(urls: WebLoaderUrls): WebLoaderUrls | undefined {

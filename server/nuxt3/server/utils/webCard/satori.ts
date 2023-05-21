@@ -4,7 +4,7 @@ import { renderToString } from 'vue/server-renderer'
 import { html as _html } from 'satori-html'
 import _satori from 'satori'
 import type { SatoriOptions } from 'satori'
-import { replaceHtmlReservedCharacters } from '@starnexus/core'
+import { replaceHtmlReservedCharacters } from '@starnexus/core/utils'
 
 export type ExtractComponentProps<TComponent> =
   TComponent extends new () => {

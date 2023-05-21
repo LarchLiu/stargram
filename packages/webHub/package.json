@@ -38,11 +38,15 @@
     "tscheck": "tsc --noEmit",
     "test": "vitest"
   },
-  "dependencies": {
-    "ofetch": "^1.0.1"
+  "peerDependencies": {
+    "@starnexus/core": "workspace:*"
+  },
+  "peerDependenciesMeta": {
+    "@starnexus/core": {
+      "optional": false
+    }
   },
   "devDependencies": {
-    "@starnexus/core": "workspace:*",
     "@starnexus/generate-routes": "workspace:*"
   }
 }

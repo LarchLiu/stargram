@@ -1,4 +1,4 @@
-import { errorMessage } from '@starnexus/core'
+import { errorMessage } from '@starnexus/core/utils'
 import type { Context } from './context'
 
 export interface UserConfig {

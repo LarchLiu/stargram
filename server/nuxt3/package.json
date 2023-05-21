@@ -6,8 +6,12 @@
     "build": "nuxi build",
     "build:turbo": "turbo run build --filter=@server/nuxt3...",
     "build:netlify": "NITRO_PRESET=netlify-edge turbo run build --filter=@server/nuxt3...",
+    "build:cl": "NITRO_PRESET=cloudflare turbo run build --filter=@server/nuxt3...",
+    "build:vercel": "NITRO_PRESET=vercel-edge turbo run build --filter=@server/nuxt3",
     "dev": "nuxi dev",
+    "dev:cl": "wrangler dev .output/server/index.mjs --site .output/public --local",
     "dev:pwa": "VITE_PLUGIN_PWA=true nuxi dev",
+    "publish:cl": "wrangler2 publish",
     "start": "node .output/server/index.mjs",
     "typecheck": "vue-tsc --noEmit",
     "lint": "eslint .",
@@ -42,6 +46,7 @@
     "pinia": "^2.1.2",
     "turbo": "^1.9.8",
     "typescript": "^5.0.4",
-    "vue-tsc": "^1.6.5"
+    "vue-tsc": "^1.6.5",
+    "wrangler": "^2.20.0"
   }
 }

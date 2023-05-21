@@ -1,5 +1,5 @@
 import type { PathInfo, TwitterTweetMeta, WebInfoData, WebLoaderUrls } from '@starnexus/core'
-import { replaceHtmlReservedCharacters, strNotEqualWith } from '@starnexus/core'
+import { replaceHtmlReservedCharacters, strNotEqualWith } from '@starnexus/core/utils'
 import { getTweetByStatus } from '../twitterApi'
 
 function tweetFilter(urls: WebLoaderUrls): WebLoaderUrls | undefined {

@@ -1,4 +1,11 @@
-import { NotionDataStorage, SaveWebInfoChain, SavedNotion, SummarizeContent, SupabaseImageStorage, WebCard, WebInfoByApi, errorMessage } from '@starnexus/core'
+import { errorMessage } from '@starnexus/core/utils'
+import { NotionDataStorage } from '@starnexus/core/storage/notion'
+import { SupabaseImageStorage } from '@starnexus/core/storage/supabase'
+import { WebCard } from '@starnexus/core/webCard'
+import { WebInfoByApi } from '@starnexus/core/webInfo'
+import { SummarizeContent } from '@starnexus/core/openai'
+import { SaveWebInfoChain } from '@starnexus/core/chain/saveWebInfo'
+import type { SavedNotion } from '@starnexus/core'
 import type { ContentRequest, ListenerSendResponse, PageInfo, SwResponse } from '~/types'
 
 async function sendSavedStatus(res: SwResponse) {

@@ -1,5 +1,5 @@
 /* eslint-disable no-prototype-builtins */
-import { errorMessage } from '@starnexus/core'
+import { errorMessage } from '@starnexus/core/utils'
 import { CONST, DATABASE, ENV } from './env.js'
 import { Context } from './context.js'
 import { sendChatActionToTelegramWithContext, sendMessageToTelegramWithContext } from './telegram.js'

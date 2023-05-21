@@ -1,5 +1,11 @@
-import { NotionDataStorage, OGInfo, SaveWebInfoChain, SummarizeContent, SupabaseImageStorage, WebCard, WebInfo, errorMessage } from '@starnexus/core'
+import { OGInfo, WebInfo } from '@starnexus/core/webInfo'
+import { SupabaseImageStorage } from '@starnexus/core/storage/supabase'
+import { NotionDataStorage } from '@starnexus/core/storage/notion'
+import { WebCard } from '@starnexus/core/webCard'
+import { SummarizeContent } from '@starnexus/core/openai'
+import { errorMessage } from '@starnexus/core/utils'
 import { routes } from '@starnexus/web-hub'
+import { SaveWebInfoChain } from '@starnexus/core/chain/saveWebInfo'
 import type { UserConfig } from '../../utils/tgBot/makeChain'
 import type { Context } from '~/server/utils/tgBot/context'
 

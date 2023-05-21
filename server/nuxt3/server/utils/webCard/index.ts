@@ -1,6 +1,8 @@
-import type { GithubRepoMeta, StorageImage, TwitterTweetMeta, WebInfoData } from '@starnexus/core'
+import { $fetch } from 'ofetch'
+import type { GithubRepoMeta, TwitterTweetMeta, WebInfoData } from '@starnexus/core'
+import type { StorageImage } from '@starnexus/core/storage'
 import { unfurl } from 'unfurl.js'
-import { errorMessage } from '@starnexus/core'
+import { errorMessage } from '@starnexus/core/utils'
 import TweetCard from './TweetCard.vue'
 import CommonCard from './CommonCard.vue'
 

@@ -1,6 +1,6 @@
 import { unfurl } from 'unfurl.js'
 import type { WebInfoData } from '@starnexus/core'
-import { getDomain } from '@starnexus/core'
+import { getDomain } from '@starnexus/core/utils'
 
 export async function ogInfoFn(webUrl: string) {
   const res = await unfurl(webUrl)

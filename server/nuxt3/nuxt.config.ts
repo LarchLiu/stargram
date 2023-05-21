@@ -1,14 +1,13 @@
 import vue from '@vitejs/plugin-vue'
-import { pwa } from './config/pwa'
 import { appDescription } from './constants/index'
 
 export default defineNuxtConfig({
   modules: [
-    '@vueuse/nuxt',
-    '@unocss/nuxt',
-    '@pinia/nuxt',
-    '@nuxtjs/color-mode',
-    '@vite-pwa/nuxt',
+    // '@vueuse/nuxt',
+    // '@unocss/nuxt',
+    // '@pinia/nuxt',
+    // '@nuxtjs/color-mode',
+    // '@vite-pwa/nuxt',
   ],
 
   experimental: {
@@ -16,16 +15,16 @@ export default defineNuxtConfig({
     // but missing on offline, disabling extraction it until fixed
     payloadExtraction: false,
     inlineSSRStyles: false,
-    renderJsonPayloads: true,
+    renderJsonPayloads: false,
   },
 
-  css: [
-    '@unocss/reset/tailwind.css',
-  ],
+  // css: [
+  //   '@unocss/reset/tailwind.css',
+  // ],
 
-  colorMode: {
-    classSuffix: '',
-  },
+  // colorMode: {
+  //   classSuffix: '',
+  // },
 
   nitro: {
     // preset: 'netlify-edge',
@@ -60,8 +59,6 @@ export default defineNuxtConfig({
       viewport: 'width=device-width,initial-scale=1',
       link: [
         { rel: 'icon', href: '/favicon.ico', sizes: 'any' },
-        { rel: 'icon', type: 'image/svg+xml', href: '/nuxt.svg' },
-        { rel: 'apple-touch-icon', href: '/apple-touch-icon.png' },
       ],
       meta: [
         { name: 'viewport', content: 'width=device-width, initial-scale=1' },
@@ -71,7 +68,7 @@ export default defineNuxtConfig({
     },
   },
 
-  pwa,
+  // pwa,
 
   devtools: {
     enabled: true,

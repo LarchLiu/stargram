@@ -15,33 +15,124 @@
   },
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "require": "./dist/index.umd.cjs",
-      "import": "./dist/index.js"
-    }
+      "types": "./index.d.ts",
+      "require": "./index.cjs",
+      "import": "./index.js"
+    },
+    "./chain": {
+      "types": "./chain.d.ts",
+      "require": "./chain.cjs",
+      "import": "./chain.js"
+    },
+    "./chain/saveWebInfo": {
+      "types": "./chain/saveWebInfo.d.ts",
+      "require": "./chain/saveWebInfo.cjs",
+      "import": "./chain/saveWebInfo.js"
+    },
+    "./openai": {
+      "types": "./openai.d.ts",
+      "require": "./openai.cjs",
+      "import": "./openai.js"
+    },
+    "./storage": {
+      "types": "./storage.d.ts",
+      "require": "./storage.cjs",
+      "import": "./storage.js"
+    },
+    "./storage/notion": {
+      "types": "./storage/notion.d.ts",
+      "require": "./storage/notion.cjs",
+      "import": "./storage/notion.js"
+    },
+    "./storage/supabase": {
+      "types": "./storage/supabase.d.ts",
+      "require": "./storage/supabase.cjs",
+      "import": "./storage/supabase.js"
+    },
+    "./utils": {
+      "types": "./utils.d.ts",
+      "require": "./utils.cjs",
+      "import": "./utils.js"
+    },
+    "./webCard": {
+      "types": "./webCard.d.ts",
+      "require": "./webCard.cjs",
+      "import": "./webCard.js"
+    },
+    "./webInfo": {
+      "types": "./webInfo.d.ts",
+      "require": "./webInfo.cjs",
+      "import": "./webInfo.js"
+    },
+    "./package.json": "./package.json"
   },
   "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "files": [
-    "dist"
+    "dist/",
+    "chain.cjs",
+    "chain.js",
+    "chain.d.ts",
+    "chain/saveWebInfo.cjs",
+    "chain/saveWebInfo.js",
+    "chain/saveWebInfo.d.ts",
+    "openai.cjs",
+    "openai.js",
+    "openai.d.ts",
+    "storage.cjs",
+    "storage.js",
+    "storage.d.ts",
+    "storage/notion.cjs",
+    "storage/notion.js",
+    "storage/notion.d.ts",
+    "storage/supabase.cjs",
+    "storage/supabase.js",
+    "storage/supabase.d.ts",
+    "utils.cjs",
+    "utils.js",
+    "utils.d.ts",
+    "webCard.cjs",
+    "webCard.js",
+    "webCard.d.ts",
+    "webInfo.cjs",
+    "webInfo.js",
+    "webInfo.d.ts",
+    "index.cjs",
+    "index.js",
+    "index.d.ts"
   ],
   "engines": {
     "node": ">=18.0.0"
   },
   "scripts": {
     "dev": "vite build --watch",
-    "build": "pnpm clear && vite build && tsc --declaration -p tsconfig.types.json --emitDeclarationOnly",
-    "clear": "rimraf dist",
+    "build": "pnpm clean && vite build && tsc --declaration -p tsconfig.types.json --emitDeclarationOnly && node scripts/create-entrypoints.js && node scripts/check-tree-shaking.js",
+    "clean": "rm -rf dist/ && node scripts/create-entrypoints.js clean",
     "lint": "eslint src",
     "prepublishOnly": "pnpm build",
     "tscheck": "tsc --noEmit",
     "test": "vitest"
   },
-  "dependencies": {
+  "peerDependencies": {
     "@supabase/supabase-js": "^2.22.0",
     "gpt3-tokenizer": "^1.1.5",
     "ofetch": "^1.0.1"
   },
-  "devDependencies": {}
+  "peerDependenciesMeta": {
+    "@supabase/supabase-js": {
+      "optional": true
+    },
+    "gpt3-tokenizer": {
+      "optional": true
+    },
+    "ofetch": {
+      "optional": false
+    }
+  },
+  "devDependencies": {
+    "@supabase/supabase-js": "^2.22.0",
+    "gpt3-tokenizer": "^1.1.5",
+    "ofetch": "^1.0.1"
+  }
 }

@@ -42,7 +42,7 @@ const commandAuthCheck = {
     }
     return false
   },
-  mustCreator(chatType: string) {
+  mustCreator(_chatType: string) {
     return ['creator']
   },
 }

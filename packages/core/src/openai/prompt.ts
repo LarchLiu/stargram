@@ -7,8 +7,6 @@ export enum ProviderType {
   GPT3 = 'gpt3',
 }
 
-const tokenizer = new GPT3Tokenizer({ type: 'gpt3' })
-
 export function getSummaryPrompt(transcript = '', providerConfigs?: ProviderType) {
   const text = transcript
     ? transcript
@@ -42,7 +40,7 @@ function truncateTranscript(str: string, providerConfigs?: ProviderType) {
 function truncateTranscriptByToken(str: string, providerConfigs?: ProviderType) {
   const tokenLimit = providerConfigs === ProviderType.GPT3 ? apiLimit : limit
 
-  // if (providerConfigs === ProviderType.GPT3) {
+  const tokenizer = new GPT3Tokenizer({ type: 'gpt3' })
   const encoded: { bpe: number[]; text: string[] } = tokenizer.encode(str)
   const bytes = encoded.bpe.length
 

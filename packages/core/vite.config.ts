@@ -2,6 +2,18 @@ import { resolve } from 'node:path'
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 
+export const entrypoints = {
+  'chain': 'chain/index',
+  'chain/saveWebInfo': 'chain/saveWebInfo',
+  'openai': 'openai/index',
+  'storage': 'storage/index',
+  'storage/notion': 'storage/notion/index',
+  'storage/supabase': 'storage/supabase/index',
+  'utils': 'utils/index',
+  'webCard': 'webCard/index',
+  'webInfo': 'webInfo/index',
+}
+
 export default defineConfig({
   define: {
     'import.meta.vitest': 'undefined',
@@ -11,10 +23,34 @@ export default defineConfig({
     emptyOutDir: false,
     lib: {
       // Could also be a dictionary or array of multiple entry points
-      entry: resolve(__dirname, 'src/index.ts'),
+      entry: {
+        index: resolve(__dirname, 'src/index.ts'),
+        ...Object.fromEntries(
+          [...Object.values(entrypoints)].map(v => [
+                `${v}`,
+                resolve(__dirname, `src/${v}`),
+          ]),
+        ),
+      },
       name: '@starnexus/core',
-      // the proper extensions will be added
-      fileName: 'index',
+    },
+    rollupOptions: {
+      // make sure to externalize deps that shouldn't be bundled
+      // into your library
+      external: [
+        '@supabase/supabase-js',
+        'gpt3-tokenizer',
+        'ofetch',
+      ],
+      output: {
+        // Provide global variables to use in the UMD build
+        // for externalized deps
+        globals: {
+          '@supabase/supabase-js': '@supabase/supabase-js',
+          'gpt3-tokenizer': 'gpt3-tokenizer',
+          'ofetch': 'ofetch',
+        },
+      },
     },
   },
   plugins: [

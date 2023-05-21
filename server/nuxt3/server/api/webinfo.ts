@@ -1,4 +1,5 @@
-import { OGInfo, WebInfo, errorMessage } from '@starnexus/core'
+import { OGInfo, WebInfo } from '@starnexus/core/webInfo'
+import { errorMessage } from '@starnexus/core/utils'
 import { routes } from '@starnexus/web-hub'
 import { ogInfoFn } from '../utils'
 

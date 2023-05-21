@@ -1,5 +1,5 @@
 /* eslint-disable no-prototype-builtins */
-import { errorMessage } from '@starnexus/core'
+import { errorMessage } from '@starnexus/core/utils'
 import { kv } from '@vercel/kv'
 import { StarNexusSaveWebInfoChain } from './makeChain'
 import { CONST, ENV, TG_CONFIG } from './env'

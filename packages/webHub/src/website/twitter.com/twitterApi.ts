@@ -1,5 +1,5 @@
-import { errorMessage } from '@starnexus/core'
-import { $fetch } from 'ofetch'
+import { errorMessage } from '@starnexus/core/utils'
+import { $fetch } from '@starnexus/core'
 
 // https://github.com/mikf/gallery-dl/blob/a53cfc845e12d9e98fefd07e43ebffaec488c18f/gallery_dl/extractor/twitter.py#L716-L726
 const headers = {

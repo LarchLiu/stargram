@@ -1,4 +1,9 @@
-import { NotionDataStorage, SaveWebInfoChain, SummarizeContent, SupabaseImageStorage, WebCard, WebInfoByApi } from '@starnexus/core'
+import { NotionDataStorage } from '@starnexus/core/storage/notion'
+import { SupabaseImageStorage } from '@starnexus/core/storage/supabase'
+import { WebCard } from '@starnexus/core/webCard'
+import { WebInfoByApi } from '@starnexus/core/webInfo'
+import { SummarizeContent } from '@starnexus/core/openai'
+import { SaveWebInfoChain } from '@starnexus/core/chain/saveWebInfo'
 import { ENV } from './env.js'
 
 /**

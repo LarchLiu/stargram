@@ -1,4 +1,4 @@
-import { WebInfo } from '@starnexus/core'
+import { WebInfo } from '@starnexus/core/webInfo'
 import { routes } from '../src/routes-auto-generate'
 
 export async function getWebsiteInfo(url: string) {
