@@ -1,0 +1,35 @@
+{
+  "name": "@server/nitro",
+  "version": "0.0.5",
+  "private": true,
+  "packageManager": "pnpm@8.5.1",
+  "scripts": {
+    "dev": "nitro dev",
+    "build": "nitro build",
+    "build:cl": "NITRO_PRESET=cloudflare turbo run build --filter=@server/nitro...",
+    "build:deno": "NITRO_PRESET=deno nitro build",
+    "build:turbo": "turbo run build --filter=@server/nitro...",
+    "build:netlify": "NITRO_PRESET=netlify-edge turbo run build --filter=@server/nitro...",
+    "build:vercel": "NITRO_PRESET=vercel-edge turbo run build --filter=@server/nitro",
+    "dev:cl": "wrangler dev .output/server/index.mjs --site .output/public --local",
+    "publish:cl": "wrangler2 publish",
+    "start": "node .output/server/index.mjs",
+    "typecheck": "vue-tsc --noEmit",
+    "lint": "eslint ."
+  },
+  "dependencies": {
+    "@starnexus/core": "workspace:*",
+    "@starnexus/web-hub": "workspace:*",
+    "@vercel/kv": "^0.2.1",
+    "satori": "^0.8.1",
+    "satori-html": "^0.3.2",
+    "unfurl.js": "^6.3.2"
+  },
+  "devDependencies": {
+    "@antfu/eslint-config": "^0.38.6",
+    "eslint": "^8.40.0",
+    "nitropack": "^2.4.1",
+    "typescript": "^5.0.4",
+    "wrangler": "^2.20.0"
+  }
+}

@@ -6,7 +6,7 @@ import {
 } from '../../utils/tgBot/telegram'
 
 import type { Context } from '../../utils/tgBot/context'
-import { CONST, ENV, I18N, TG_CONFIG } from '~/server/utils/tgBot/env'
+import { CONST, ENV, I18N, TG_CONFIG } from '../../utils/tgBot/env'
 
 type ScopeType = 'all_private_chats' | 'all_group_chats' | 'all_chat_administrators'
 type CommandType = '/help' | '/new' | '/start' | '/setenv' | '/delenv' | '/system' | '/adduser' | '/deluser'

@@ -39,7 +39,6 @@ export default defineConfig({
       // into your library
       external: [
         '@supabase/supabase-js',
-        'gpt3-tokenizer',
         'ofetch',
       ],
       output: {
@@ -47,7 +46,6 @@ export default defineConfig({
         // for externalized deps
         globals: {
           '@supabase/supabase-js': '@supabase/supabase-js',
-          'gpt3-tokenizer': 'gpt3-tokenizer',
           'ofetch': 'ofetch',
         },
       },

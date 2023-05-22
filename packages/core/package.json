@@ -116,14 +116,10 @@
   },
   "peerDependencies": {
     "@supabase/supabase-js": "^2.22.0",
-    "gpt3-tokenizer": "^1.1.5",
     "ofetch": "^1.0.1"
   },
   "peerDependenciesMeta": {
     "@supabase/supabase-js": {
-      "optional": true
-    },
-    "gpt3-tokenizer": {
       "optional": true
     },
     "ofetch": {
@@ -132,7 +128,6 @@
   },
   "devDependencies": {
     "@supabase/supabase-js": "^2.22.0",
-    "gpt3-tokenizer": "^1.1.5",
     "ofetch": "^1.0.1"
   }
 }

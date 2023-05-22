@@ -28,7 +28,7 @@ function countWord(data: string): number {
 
   for (let i = 0; i < m.length; i++) {
     if (m[i].charCodeAt(0) >= 0x4E00)
-      count += m[i].length
+      count += m[i].length * 2
     else
       count += 1
   }

@@ -1,5 +1,5 @@
 import { kv } from '@vercel/kv'
-import { TG_CONFIG, TG_TOKENS, tgEnvDefault } from '~/server/utils/tgBot/env'
+import { TG_CONFIG, TG_TOKENS, tgEnvDefault } from '../../utils/tgBot/env'
 
 export default eventHandler(async (event) => {
   const result: Record<string, any> = {}
