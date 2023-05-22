@@ -4,7 +4,7 @@ exports[`utils > get prompts by template 1`] = `"template test: This is the repl
 
 exports[`utils > get prompts by template 2`] = `"template test: 这是替换的内容用简体中文。"`;
 
-exports[`utils > preprocess text 1`] = `1428`;
+exports[`utils > preprocess text 1`] = `1432`;
 
 exports[`utils > preprocess text 2`] = `10923`;
 
@@ -12,4 +12,4 @@ exports[`utils > preprocess text 3`] = `"antfu/vitesse: 🏕 Opinionated Vite + 
 
 exports[`utils > preprocess text 4`] = `9261`;
 
-exports[`utils > preprocess text 5`] = `1333`;
+exports[`utils > preprocess text 5`] = `1337`;
