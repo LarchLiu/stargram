@@ -115,19 +115,17 @@
     "test": "vitest"
   },
   "peerDependencies": {
-    "@supabase/supabase-js": "^2.22.0",
     "ofetch": "^1.0.1"
   },
   "peerDependenciesMeta": {
-    "@supabase/supabase-js": {
-      "optional": true
-    },
     "ofetch": {
       "optional": false
     }
   },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.22.0"
+  },
   "devDependencies": {
-    "@supabase/supabase-js": "^2.22.0",
     "ofetch": "^1.0.1"
   }
 }

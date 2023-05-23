@@ -38,15 +38,15 @@ export default defineConfig({
       // make sure to externalize deps that shouldn't be bundled
       // into your library
       external: [
-        '@supabase/supabase-js',
+        // '@supabase/supabase-js',
         'ofetch',
       ],
       output: {
         // Provide global variables to use in the UMD build
         // for externalized deps
         globals: {
-          '@supabase/supabase-js': '@supabase/supabase-js',
-          'ofetch': 'ofetch',
+          // '@supabase/supabase-js': '@supabase/supabase-js',
+          ofetch: 'ofetch',
         },
       },
     },
