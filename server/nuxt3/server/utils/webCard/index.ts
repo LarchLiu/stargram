@@ -3,8 +3,8 @@ import type { GithubRepoMeta, TwitterTweetMeta, WebInfoData } from '@starnexus/c
 import type { StorageImage } from '@starnexus/core/storage'
 import { unfurl } from 'unfurl.js'
 import { errorMessage } from '@starnexus/core/utils'
-import { TweetCard } from './TweetCard'
-import { CommonCard } from './CommonCard'
+import TweetCard from './TweetCard.vue'
+import CommonCard from './CommonCard.vue'
 
 // const SUPABASE_URL = process.env.SUPABASE_URL
 // const STORAGE_URL = `${SUPABASE_URL}/storage/v1/object/public/pics-bed`
@@ -15,7 +15,7 @@ export async function createWebCard(webInfo: WebInfoData): Promise<StorageImage>
     let imgPath = ''
     let meta
     let props
-    let card = ''
+    let card: Component | undefined
     let svg = ''
     let png: Blob | undefined
     const res = await unfurl(webInfo.url)
@@ -27,6 +27,7 @@ export async function createWebCard(webInfo: WebInfoData): Promise<StorageImage>
         png = await $fetch(res.open_graph.images[0].url, { responseType: 'blob' })
     }
     else if (webMeta.siteName === 'Twitter') {
+      card = TweetCard
       meta = webMeta as TwitterTweetMeta
       const screenName = meta.screenName!
       const status = meta.status!
@@ -39,16 +40,16 @@ export async function createWebCard(webInfo: WebInfoData): Promise<StorageImage>
         contentArr = contentArr.slice(0, 8)
 
       props = {
-        avatar: meta.avator,
+        avator: meta.avator,
         name: meta.name,
         screenName: meta.screenName,
         content: contentArr,
         pubTime: meta.pubTime,
         lang: meta.lang, // TODO: change to satori lang type
       }
-      card = TweetCard(props)
     }
     else {
+      card = CommonCard
       const content = webInfo.content || res.description || 'No Content'
       let contentArr = content.split('\n').filter((l: string) => l !== '').map((l: string, i: number) =>
         i < 7 ? l : '...')
@@ -63,7 +64,6 @@ export async function createWebCard(webInfo: WebInfoData): Promise<StorageImage>
         content: contentArr,
         favicon,
       }
-      card = CommonCard(props)
       const url = webInfo.url.replace(/https?:\/\/[^/]+\/?/, '')
       const filename = url.replace(/[<|>|:|"|\\|\/|\.|?|*|#|&|%|~|'|"]/g, '')
       imgPath = `${webMeta.domain}/${filename}.svg`
@@ -90,6 +90,7 @@ export async function createWebCard(webInfo: WebInfoData): Promise<StorageImage>
 
       const fonts = await initBasicFonts()
       svg = await satori(card, {
+        props,
         width: 1200,
         height: 630,
         fonts,

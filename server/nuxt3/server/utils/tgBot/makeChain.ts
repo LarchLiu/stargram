@@ -1,5 +1,4 @@
 import { errorMessage } from '@starnexus/core/utils'
-import { $fetch } from '@starnexus/core'
 import type { Context } from './context'
 
 export interface UserConfig {
