@@ -20,22 +20,6 @@ export async function html(component: Component, props: any) {
   else
     Root = createApp(component)
   const strComponent = await renderToString(Root)
-  // <div class="icon-ph:shooting-star-light?w=120&amp;h=64"></div>
-  // const regex = /<div class="icon-([a-z0-9:_-]+)(?:\?(w=(\d+)&amp;h=(\d+)))?.*?"><\/div>/gi
-  // const matchs = strComponent.matchAll(regex)
-  // for (const match of matchs) {
-  //   const [collection, name] = match[1].split(':')
-  //   const width = match[3] || 48
-  //   const height = match[4] || 48
-  //   let icon = await $fetch<string>(`${process.env.ICONIFY_API}/${collection}:${name}.svg`, { responseType: 'text' })
-  //   if (icon) {
-  //     icon = icon.replace(/width="(\d+(em)?)" height="(\d+(em)?)"/, (_) => {
-  //       return `width="${width}" height="${height}"`
-  //     })
-  //     strComponent = strComponent.replaceAll(match[0], icon)
-  //     // console.log(strComponent)
-  //   }
-  // }
   return _html(replaceHtmlReservedCharacters(strComponent))
 }
 
