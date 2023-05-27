@@ -10,5 +10,6 @@
   "unocss.root": [
     "app/extension/chrome",
     "server/nuxt3"
-  ]
+  ],
+  "vue.codeActions.enabled": false
 }

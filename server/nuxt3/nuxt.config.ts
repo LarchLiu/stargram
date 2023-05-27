@@ -2,6 +2,14 @@ import vue from '@vitejs/plugin-vue'
 import { appDescription } from './constants/index'
 
 export default defineNuxtConfig({
+  modules: [
+    '@vueuse/nuxt',
+    '@unocss/nuxt',
+    '@pinia/nuxt',
+  ],
+  css: [
+    '@unocss/reset/tailwind.css',
+  ],
   nitro: {
     esbuild: {
       options: {
@@ -10,7 +18,15 @@ export default defineNuxtConfig({
     },
     prerender: {
       crawlLinks: false,
-      routes: ['/'],
+      routes: [
+        '/',
+        '/config',
+      ],
+    },
+    storage: {
+      data: {
+        driver: 'vercelKV',
+      },
     },
     rollupConfig: {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
