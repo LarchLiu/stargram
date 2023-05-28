@@ -10,6 +10,9 @@ export default defineNuxtConfig({
   css: [
     '@unocss/reset/tailwind.css',
   ],
+  runtimeConfig: {
+    starNexusHub: process.env.DEFAULT_STAR_NEXUS_HUB,
+  },
   nitro: {
     esbuild: {
       options: {

@@ -21,7 +21,7 @@ watch(outputEl, () => {
 
 <template>
   <div flex flex-col text-10px>
-    <textarea class="vue-flow" name="Text1" cols="40" rows="3" />
+    <textarea v-model="text" class="vue-flow" cols="40" rows="3" />
   </div>
   <div mt-2 flex items-center justify-end text-gray>
     <div ref="outputEl">

@@ -52,7 +52,7 @@ export async function StarNexusSaveWebInfoChain(starNexusHub: string, text: stri
       //   {
       //     apiKey: config.NOTION_CONFIG.API_KEY || '',
       //     databaseId: config.NOTION_CONFIG.DATABASE_ID || '',
-      //     defaultOgImage: process.env.SUPABASE_OG_IMAGE || '',
+      //     defaultOgImage: process.env.DEFAULT_OG_IMAGE || '',
       //   },
       // )
 

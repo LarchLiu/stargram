@@ -6,43 +6,41 @@ import { Background } from '@vue-flow/background'
 import { Controls } from '@vue-flow/controls'
 import { MiniMap } from '@vue-flow/minimap'
 import BasicNode from './vue-flow/BasicNode.vue'
-import KVStorage from './vue-flow/KVStorage.vue'
-import Application from './vue-flow/Application.vue'
-import LLM from './vue-flow/LLM.vue'
-import Document from './vue-flow/Document.vue'
 import TextInput from './vue-flow/TextInput.vue'
-import ImgStorage from './vue-flow/ImgStorage.vue'
-import DataStorage from './vue-flow/DataStorage.vue'
-import CloudServer from './vue-flow/CloudServer.vue'
-import OGImage from './vue-flow/OGImage.vue'
+import SelectConfig from './vue-flow/SelectConfig.vue'
+import PreviewConfig from './vue-flow/PreviewConfig.vue'
+
+const configStore = useConfigStore()
 
 const initialElements = [
-  { id: 'kv', type: 'kv', position: { x: 600, y: -330 }, class: 'light' },
-  { id: 'server', type: 'server', position: { x: 900, y: -330 }, class: 'light' },
-  { id: 'text', type: 'text', position: { x: 0, y: 250 }, class: 'light' },
-  { id: 'app', type: 'app', position: { x: 300, y: 250 }, class: 'light' },
+  { id: 'config', type: 'preview-config', position: { x: 0, y: -330 }, class: 'light' },
+  { id: 'kv', type: 'select', data: configStore.config.kvStorage, position: { x: 600, y: -330 }, class: 'light' },
+  { id: 'server', type: 'select', data: configStore.config.server, position: { x: 900, y: -330 }, class: 'light' },
+  { id: 'text', type: 'text', position: { x: 0, y: 300 }, class: 'light' },
+  { id: 'app', type: 'select', data: configStore.config.app, position: { x: 300, y: 300 }, class: 'light' },
   {
     id: 'server-flow',
     label: 'Server Flow',
     type: 'output',
     position: { x: 600, y: -100 },
-    style: { backgroundColor: 'rgba(16, 185, 129, 0.3)', width: '1200px', height: '500px' },
+    style: { backgroundColor: 'rgba(16, 185, 129, 0.3)', width: '1200px', height: '600px' },
   },
-  { id: 'document', type: 'document', position: { x: 50, y: 200 }, class: 'light', parentNode: 'server-flow', expandParent: true },
-  { id: 'llm', type: 'llm', position: { x: 350, y: 340 }, class: 'light', parentNode: 'server-flow', expandParent: true },
-  { id: 'og', type: 'og', position: { x: 350, y: 50 }, class: 'light', parentNode: 'server-flow', expandParent: true },
-  { id: 'img', type: 'img-storage', position: { x: 650, y: 50 }, class: 'light', parentNode: 'server-flow', expandParent: true },
-  { id: 'data', type: 'data-storage', position: { x: 950, y: 300 }, class: 'light', parentNode: 'server-flow', expandParent: true },
+  { id: 'webinfo', type: 'select', data: configStore.config.webInfo, position: { x: 50, y: 150 }, class: 'light', parentNode: 'server-flow', expandParent: true },
+  { id: 'llm', type: 'select', data: configStore.config.llm, position: { x: 350, y: 300 }, class: 'light', parentNode: 'server-flow', expandParent: true },
+  { id: 'card', type: 'select', data: configStore.config.webCard, position: { x: 350, y: 50 }, class: 'light', parentNode: 'server-flow', expandParent: true },
+  { id: 'img', type: 'select', data: configStore.config.imgStorage, position: { x: 650, y: 50 }, class: 'light', parentNode: 'server-flow', expandParent: true },
+  { id: 'data', type: 'select', data: configStore.config.dataStorage, position: { x: 950, y: 300 }, class: 'light', parentNode: 'server-flow', expandParent: true },
 
+  { id: 'config-kv', source: 'config', target: 'kv' },
   { id: 'kv-server', source: 'kv', target: 'server' },
   { id: 'text-app', source: 'text', target: 'app' },
-  { id: 'app-document', source: 'app', target: 'document' },
+  { id: 'app-webinfo', source: 'app', target: 'webinfo' },
   { id: 'server-server-flow', source: 'server', target: 'server-flow', type: 'smoothstep' },
-  { id: 'document-llm', source: 'document', target: 'llm', type: 'smoothstep' },
-  { id: 'document-og', source: 'document', target: 'og', type: 'smoothstep' },
-  { id: 'document-data', source: 'document', target: 'data', type: 'smoothstep' },
+  { id: 'webinfo-llm', source: 'webinfo', target: 'llm', type: 'smoothstep' },
+  { id: 'webinfo-card', source: 'webinfo', target: 'card', type: 'smoothstep' },
+  { id: 'webinfo-data', source: 'webinfo', target: 'data', type: 'smoothstep' },
   { id: 'llm-data', source: 'llm', target: 'data' },
-  { id: 'og-img', source: 'og', target: 'img' },
+  { id: 'card-img', source: 'card', target: 'img' },
   { id: 'img-data', source: 'img', target: 'data' },
   { id: 'data-app', source: 'data', target: 'app', type: 'smoothstep', targetHandle: 'result' },
 ]
@@ -50,7 +48,7 @@ const initialElements = [
  * useVueFlow provides all event handlers and store properties
  * You can pass the composable an object that has the same properties as the VueFlow component props
  */
-const { onPaneReady, onNodeDragStop, onConnect, addEdges, setTransform, toObject, findNode, addNodes } = useVueFlow()
+const { onPaneReady, onNodeDragStop, onConnect, addEdges, toObject } = useVueFlow()
 
 /**
  * Our elements
@@ -120,33 +118,8 @@ function toggleClass() {
     :fit-view-on-init="true"
     :elevate-edges-on-select="true"
   >
-    <template #node-kv>
-      <BasicNode :title="{ text: 'KV Storage', icon: 'i-carbon-virtual-column-key' }">
-        <template #kv-storage>
-          <KVStorage />
-        </template>
-      </BasicNode>
-    </template>
-    <template #node-app>
-      <BasicNode :title="{ text: 'App', icon: 'i-carbon-application' }">
-        <template #app>
-          <Application />
-        </template>
-      </BasicNode>
-    </template>
-    <template #node-llm>
-      <BasicNode :title="{ text: 'LLM', icon: 'i-carbon-ai-results' }">
-        <template #llm>
-          <LLM />
-        </template>
-      </BasicNode>
-    </template>
-    <template #node-document>
-      <BasicNode :title="{ text: 'Document', icon: 'i-carbon-document-preliminary' }">
-        <template #document>
-          <Document />
-        </template>
-      </BasicNode>
+    <template #node-select="{ data }">
+      <SelectConfig :data="data" />
     </template>
     <template #node-text>
       <BasicNode :title="{ text: 'Text', icon: 'i-carbon-text-annotation-toggle' }">
@@ -155,31 +128,10 @@ function toggleClass() {
         </template>
       </BasicNode>
     </template>
-    <template #node-img-storage>
-      <BasicNode :title="{ text: 'Image Storage', icon: 'i-carbon-save-image' }">
-        <template #img-storage>
-          <ImgStorage />
-        </template>
-      </BasicNode>
-    </template>
-    <template #node-data-storage>
-      <BasicNode :title="{ text: 'Data Storage', icon: 'i-carbon-db2-database' }">
-        <template #data-storage>
-          <DataStorage />
-        </template>
-      </BasicNode>
-    </template>
-    <template #node-server>
-      <BasicNode :title="{ text: 'Cloud Server', icon: 'i-carbon-ibm-cloud-citrix-daas' }">
-        <template #server>
-          <CloudServer />
-        </template>
-      </BasicNode>
-    </template>
-    <template #node-og>
-      <BasicNode :title="{ text: 'OG Image', icon: 'i-carbon-image' }">
-        <template #og>
-          <OGImage />
+    <template #node-preview-config>
+      <BasicNode :title="{ text: 'Preview Config', icon: 'i-carbon-settings-view' }">
+        <template #preview-config>
+          <PreviewConfig />
         </template>
       </BasicNode>
     </template>
@@ -265,16 +217,9 @@ function toggleClass() {
 .basicflow .controls button:hover{transform:scale(102%);transition:.25s all ease}
 
 .customnodeflow {
-  .vue-flow__node-app,
   .vue-flow__node-text,
-  .vue-flow__node-kv,
-  .vue-flow__node-llm,
-  .vue-flow__node-document,
-  .vue-flow__node-img-storage,
-  .vue-flow__node-data-storage,
-  .vue-flow__node-server,
-  .vue-flow__node-og,
-  .vue-flow__node-custom {
+  .vue-flow__node-preview-config,
+  .vue-flow__node-select {
     border:1px solid #777;
     padding:10px;
     border-radius:4px;
@@ -283,7 +228,6 @@ function toggleClass() {
     flex-direction:column;
     gap:4px;
     width: 200px;
-    max-width:240px;
 
     &:hover {
       border-color: #292524;
@@ -300,16 +244,9 @@ function toggleClass() {
   }
 }
 .customnodeflow.dark {
-  .vue-flow__node-app,
   .vue-flow__node-text,
-  .vue-flow__node-kv,
-  .vue-flow__node-llm,
-  .vue-flow__node-document,
-  .vue-flow__node-img-storage,
-  .vue-flow__node-data-storage,
-  .vue-flow__node-server,
-  .vue-flow__node-og,
-  .vue-flow__node-custom {
+  .vue-flow__node-preview-config,
+  .vue-flow__node-select {
     &.selected {
       border:1px solid transparent;
       box-shadow:0 5px 10px #0000004d;
@@ -318,5 +255,8 @@ function toggleClass() {
       background-clip: padding-box,border-box;
     }
   }
+}
+.vue-flow__node-preview-config {
+  width: 500px !important;
 }
 </style>

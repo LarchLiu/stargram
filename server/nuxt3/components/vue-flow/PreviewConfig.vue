@@ -1,9 +1,7 @@
 <script setup lang="ts">
 import { Handle, Position } from '@vue-flow/core'
 
-const kv = ref('vercel')
-const kvUrl = ref('')
-const kvToken = ref('')
+const store = useConfigStore()
 const outputEl = ref<HTMLDivElement>()
 const outputOffsetTop = ref(0)
 const outputOffsetHeight = ref(0)
@@ -13,7 +11,7 @@ const outputHandleStyle = computed(() => {
     bottom: 'auto',
   }
 })
-watch([kv, outputEl], () => {
+watch(outputEl, () => {
   nextTick(() => {
     outputOffsetTop.value = outputEl.value?.offsetTop || 0
     outputOffsetHeight.value = outputEl.value?.offsetHeight || 0
@@ -23,36 +21,17 @@ watch([kv, outputEl], () => {
 
 <template>
   <div flex flex-col text-10px>
-    <select v-model="kv" autocomplete="off" class="vue-flow">
-      <option value="" disabled>
-        Please Select
-      </option>
-      <option value="vercel">
-        Vercel KV
-      </option>
-      <option value="cloudflare">
-        Cloudflare KV
-      </option>
-    </select>
-    <div v-show="kv === 'vercel'">
-      <div mt-2 text-gray>
-        KV URL <span text-red>*</span>
-      </div>
-      <input id="kvUrl" v-model="kvUrl" class="vue-flow" type="password">
-      <div mt-1 text-gray>
-        API Token <span text-red>*</span>
-      </div>
-      <input id="kvToken" v-model="kvToken" class="vue-flow" type="password">
-    </div>
+    <pre max-h-100 style="overflow: scroll; border:1px solid #b1aeae; border-radius: 4px;">
+      <code>{{ `\n${JSON.stringify(store.outConfig, null, '\t')}` }}</code>
+    </pre>
   </div>
   <div mt-2 flex items-center justify-end text-gray>
     <div ref="outputEl">
-      Env Vars
+      Config
     </div>
     <Handle id="output" type="source" :position="Position.Right" :style="outputHandleStyle" />
   </div>
 </template>
 
 <style scoped>
-
 </style>

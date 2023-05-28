@@ -45,7 +45,7 @@ export interface SummarizeData {
   categories: string[]
 }
 
-export interface NotionConfig {
+export interface NotionDataConfig {
   apiKey: string
   databaseId: string
   defaultOgImage: string

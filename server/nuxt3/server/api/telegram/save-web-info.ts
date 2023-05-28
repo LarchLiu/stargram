@@ -8,6 +8,7 @@ import { routes } from '@starnexus/web-hub'
 import { SaveWebInfoChain } from '@starnexus/core/chain/saveWebInfo'
 import type { UserConfig } from '../../utils/tgBot/makeChain'
 import type { Context } from '../../utils/tgBot/context'
+import { DEFAULT_OG_IMAGE } from '../../../constants'
 
 export default eventHandler(async (event) => {
   const body = await readBody(event)
@@ -37,7 +38,7 @@ export default eventHandler(async (event) => {
     {
       apiKey: config.NOTION_CONFIG.API_KEY || '',
       databaseId: config.NOTION_CONFIG.DATABASE_ID || '',
-      defaultOgImage: process.env.SUPABASE_OG_IMAGE || '',
+      defaultOgImage: DEFAULT_OG_IMAGE,
     },
   )
 

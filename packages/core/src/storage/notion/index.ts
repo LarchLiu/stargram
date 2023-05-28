@@ -1,11 +1,11 @@
 import { $fetch } from 'ofetch'
-import type { GithubRepoMeta, NotionConfig, NotionPage, SavedNotion, TwitterTweetMeta } from '../../types'
+import type { GithubRepoMeta, NotionDataConfig, NotionPage, SavedNotion, TwitterTweetMeta } from '../../types'
 import { GITHUB_DOMAIN, NOTION_API_URL, TWITTER_DOMAIN } from '../../const'
 import { DataStorage } from '../types'
 import type { StorageData, StorageType } from '../types'
 
-export class NotionDataStorage extends DataStorage<NotionConfig, SavedNotion> {
-  constructor(config: NotionConfig, data?: StorageData) {
+export class NotionDataStorage extends DataStorage<NotionDataConfig, SavedNotion> {
+  constructor(config: NotionDataConfig, data?: StorageData) {
     super(config, data)
   }
 
@@ -30,7 +30,7 @@ export class NotionDataStorage extends DataStorage<NotionConfig, SavedNotion> {
     return await updateOgImage(this.config, info.storageId, url)
   }
 
-  getConfig(): NotionConfig {
+  getConfig(): NotionDataConfig {
     return this.config
   }
 
@@ -42,7 +42,7 @@ export class NotionDataStorage extends DataStorage<NotionConfig, SavedNotion> {
   }
 }
 
-export async function saveToNotion(config: NotionConfig, info: NotionPage): Promise<SavedNotion> {
+export async function saveToNotion(config: NotionDataConfig, info: NotionPage): Promise<SavedNotion> {
   const apiKey = config.apiKey
   let catOpt = [{
     name: 'Others',
@@ -237,7 +237,7 @@ export async function saveToNotion(config: NotionConfig, info: NotionPage): Prom
   return { starred: !starred, storageId }
 }
 
-export async function updateOgImage(config: NotionConfig, storageId: string, url: string) {
+export async function updateOgImage(config: NotionDataConfig, storageId: string, url: string) {
   const checkData = await $fetch<any>(`${NOTION_API_URL}/blocks/${storageId}/children`, {
     method: 'GET',
     headers: {
