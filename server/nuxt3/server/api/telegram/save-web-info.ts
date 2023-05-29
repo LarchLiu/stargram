@@ -1,52 +1,40 @@
-import { OGInfo, WebInfo } from '@starnexus/core/webInfo'
-import { SupabaseImageStorage } from '@starnexus/core/storage/supabase'
+import { WebInfoByApi } from '@starnexus/core/webInfo'
+import { WebCardByApi } from '@starnexus/core/webCard'
+import { OpenaiSummarizeContent } from '@starnexus/core/openai'
 import { NotionDataStorage } from '@starnexus/core/storage/notion'
-import { WebCard } from '@starnexus/core/webCard'
-import { SummarizeContent } from '@starnexus/core/openai'
 import { errorMessage } from '@starnexus/core/utils'
-import { routes } from '@starnexus/web-hub'
 import { SaveWebInfoChain } from '@starnexus/core/chain/saveWebInfo'
-import type { UserConfig } from '../../utils/tgBot/makeChain'
+import type { UserConfig } from '../../utils/index'
 import type { Context } from '../../utils/tgBot/context'
-import { DEFAULT_OG_IMAGE } from '../../../constants'
 
 export default eventHandler(async (event) => {
   const body = await readBody(event)
   const url = body.url
-  const starNexusHub = body.starNexusHub
   const context = body.context as Context
   const config = context.USER_CONFIG as UserConfig
 
-  const ogInfo = new OGInfo({ fn: ogInfoFn, url })
-  const webInfo = new WebInfo({
+  const webInfo = new WebInfoByApi({
     urls: {
       webUrl: url,
     },
-    routes,
-    ogInfo,
+    starNexusHub: config.webInfo.api.starNexusHub,
   })
 
-  const supabaseImgStorage = new SupabaseImageStorage({
-    url: process.env.SUPABASE_URL || '',
-    anonKey: process.env.SUPABASE_ANON_KEY || '',
-    bucket: process.env.SUPABASE_STORAGE_BUCKET || '',
-    upsert: true,
+  const webCard = new WebCardByApi({ starNexusHub: config.webCard.api.starNexusHub })
+
+  const summarizeContent = new OpenaiSummarizeContent({
+    apiKey: config.llm.openai.apiKey, apiHost: config.llm.openai.apiHost, lang: config.llm.openai.lang,
   })
-  const webCard = new WebCard({ starNexusHub, imgStorage: supabaseImgStorage })
-  const summarize = new SummarizeContent({ apiKey: config.OPENAI_API_KEY || '' })
-  const notion = new NotionDataStorage(
-    {
-      apiKey: config.NOTION_CONFIG.API_KEY || '',
-      databaseId: config.NOTION_CONFIG.DATABASE_ID || '',
-      defaultOgImage: DEFAULT_OG_IMAGE,
-    },
-  )
+
+  const dataStorage = new NotionDataStorage({
+    apiKey: config.dataStorage.notion.apiKey, databaseId: config.dataStorage.notion.databaseId, defaultOgImage: config.dataStorage.notion.defaultOgImage,
+  })
 
   const chain = new SaveWebInfoChain({
     webInfo,
     webCard,
-    summarizeContent: summarize,
-    dataStorage: notion,
+    summarizeContent,
+    dataStorage,
   })
 
   const info = await chain.call().then(_ => true).catch(e => errorMessage(e))

@@ -2,17 +2,45 @@
 import { kv } from '@vercel/kv'
 import { CONST, ENV, TG_TOKENS } from './env'
 
+export const defaultUserConfig = {
+  webInfo: {
+    api: {
+      starNexusHub: '',
+    },
+  },
+  webCard: {
+    api: {
+      starNexusHub: '',
+    },
+  },
+  llm: {
+    openai: {
+      apiKey: '',
+      apiHost: '',
+      lang: 'en',
+    },
+  },
+  imgStorage: {
+    supabase: {
+      url: '',
+      bucket: '',
+      anonKey: '',
+    },
+  },
+  dataStorage: {
+    notion: {
+      apiKey: '',
+      databaseId: '',
+      defaultOgImage: '',
+    },
+  },
+}
 /**
  * 上下文信息
  */
 export class Context {
   // 用户配置
-  USER_CONFIG = {
-    // OenAI API Key
-    OPENAI_API_KEY: '',
-    // Notion info
-    NOTION_CONFIG: { API_KEY: '', DATABASE_ID: '' },
-  }
+  USER_CONFIG = defaultUserConfig
 
   USER_DEFINE = {
     // 自定义角色

@@ -22,7 +22,7 @@ watch(outputEl, () => {
 <template>
   <div flex flex-col text-10px>
     <pre max-h-100 style="overflow: scroll; border:1px solid #b1aeae; border-radius: 4px;">
-      <code>{{ `\n${JSON.stringify(store.outConfig, null, '\t')}` }}</code>
+      <code>{{ `\n${JSON.stringify(store.kvConfig, null, 2)}` }}</code>
     </pre>
   </div>
   <div mt-2 flex items-center justify-end text-gray>

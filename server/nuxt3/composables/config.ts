@@ -1,16 +1,16 @@
 import { acceptHMRUpdate, defineStore } from 'pinia'
 import { Position } from '@vue-flow/core'
-import { DEFAULT_OG_IMAGE, DEFAULT_STAR_NEXUS_HUB } from '../constants'
+import { DEFAULT_OG_IMAGE, DEFAULT_STAR_NEXUS_HUB } from '../constants/index'
 
-export interface ServerConfig {
-  app: BasicConfig<ModelConfig>
-  webInfo: BasicConfig<ModelConfig>
-  webCard: BasicConfig<ModelConfig>
-  llm: BasicConfig<ModelConfig>
-  imgStorage: BasicConfig<ModelConfig>
-  dataStorage: BasicConfig<ModelConfig>
-  kvStorage: BasicConfig<ModelConfig>
-  server: BasicConfig<ModelConfig>
+export interface ServerConfig<T> {
+  app: T
+  webInfo: T
+  webCard: T
+  llm: T
+  imgStorage: T
+  dataStorage: T
+  kvStorage: T
+  server: T
 }
 export interface BasicConfig<T> {
   title: {
@@ -34,10 +34,25 @@ export interface IHandle {
 export interface ModelConfig {
   [key: string]: {
     displayName: string
+    fn?: string
+    import?: string
     config: {
       [key: string]: IConfig
     }
     output: string
+  }
+}
+export interface OutputConfig {
+  select: string
+  config: {
+    [key: string]: string
+  }
+  fn?: string
+  import?: string
+}
+export interface KVConfig {
+  [select: string]: {
+    [config: string]: string
   }
 }
 // @unocss-include
@@ -106,16 +121,20 @@ export const webInfoConfig: BasicConfig<ModelConfig> = {
       position: Position.Right,
     },
   ],
-  select: 'localFn',
+  select: 'api',
   info: {
     localFn: {
       displayName: 'Local Function',
+      import: 'import { OGInfo, WebInfo } from \'@starnexus/core/webInfo\'\nimport { routes } from \'@starnexus/web-hub\'\n',
+      fn: 'WebInfo',
       config: {
       },
       output: 'Website Info',
     },
     api: {
-      displayName: 'API',
+      displayName: 'Public API',
+      import: 'import { WebInfoByApi } from \'@starnexus/core/webInfo\'\n',
+      fn: 'WebInfoByApi',
       config: {
         starNexusHub: {
           label: 'StarNexus Hub',
@@ -144,16 +163,20 @@ export const webCardConfig: BasicConfig<ModelConfig> = {
       position: Position.Right,
     },
   ],
-  select: 'localFn',
+  select: 'api',
   info: {
     localFn: {
       displayName: 'Local Function',
+      import: 'import { WebCard } from \'@starnexus/core/webCard\'\n',
+      fn: 'WebCard',
       config: {
       },
       output: 'Image',
     },
     api: {
-      displayName: 'API',
+      displayName: 'Public API',
+      import: 'import { WebCardByApi } from \'@starnexus/core/webCard\'\n',
+      fn: 'WebCardByApi',
       config: {
         starNexusHub: {
           label: 'StarNexus Hub',
@@ -182,10 +205,12 @@ export const imgStorageConfig: BasicConfig<ModelConfig> = {
       position: Position.Right,
     },
   ],
-  select: 'SupabaseImageStorage',
+  select: 'supabase',
   info: {
-    SupabaseImageStorage: {
+    supabase: {
       displayName: 'Supabase Storage',
+      import: 'import { SupabaseImageStorage } from \'@starnexus/core/storage/supabase\'\n',
+      fn: 'SupabaseImageStorage',
       config: {
         url: {
           label: 'Supabase URL',
@@ -224,10 +249,12 @@ export const dataStorageConfig: BasicConfig<ModelConfig> = {
       position: Position.Right,
     },
   ],
-  select: 'NotionDataStorage',
+  select: 'notion',
   info: {
-    NotionDataStorage: {
+    notion: {
       displayName: 'Notion Storage',
+      import: 'import { NotionDataStorage } from \'@starnexus/core/storage/notion\'\n',
+      fn: 'NotionDataStorage',
       config: {
         apiKey: {
           label: 'API Key',
@@ -270,6 +297,8 @@ export const llmConfig: BasicConfig<ModelConfig> = {
   info: {
     openai: {
       displayName: 'Openai',
+      import: 'import { OpenaiSummarizeContent } from \'@starnexus/core/openai\'\n',
+      fn: 'OpenaiSummarizeContent',
       config: {
         apiKey: {
           label: 'API Token',
@@ -382,8 +411,8 @@ export const serverConfig: BasicConfig<ModelConfig> = {
     },
   },
 }
-export type ModelName = keyof ServerConfig
-export const defaultConfig: ServerConfig = {
+export type ModelName = keyof ServerConfig<BasicConfig<ModelConfig>>
+export const defaultConfig: ServerConfig<BasicConfig<ModelConfig>> = {
   app: appConfig,
   webInfo: webInfoConfig,
   webCard: webCardConfig,
@@ -402,18 +431,39 @@ export const useConfigStore = defineStore('server-config', () => {
     keys.forEach((k) => {
       const c = config.value[k as ModelName]
       const _config = c.info[c.select].config
+      const _fn = c.info[c.select].fn
+      const _import = c.info[c.select].import
       const _obj: Record<string, any> = {}
       Object.keys(_config).forEach((x) => {
         _obj[x] = _config[x].value
       })
       obj[k] = { select: c.select, config: Object.keys(_obj).length ? _obj : null }
+      if (_fn)
+        obj[k].fn = _fn
+      if (_import)
+        obj[k].import = _import
     })
-    return obj
+    return obj as ServerConfig<OutputConfig>
+  })
+  const kvConfig = computed(() => {
+    const keys = Object.keys(config.value)
+    const obj: Record<string, any> = {}
+    keys.forEach((k) => {
+      const c = config.value[k as ModelName]
+      const _config = c.info[c.select].config
+      const _obj: Record<string, any> = {}
+      Object.keys(_config).forEach((x) => {
+        _obj[x] = _config[x].value
+      })
+      obj[k] = { [c.select]: Object.keys(_obj).length ? _obj : null }
+    })
+    return obj as ServerConfig<KVConfig>
   })
 
   return {
     config,
     outConfig,
+    kvConfig,
   }
 })
 

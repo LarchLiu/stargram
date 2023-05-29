@@ -1,14 +1,6 @@
 import { errorMessage } from '@starnexus/core/utils'
 import type { Context } from './context'
 
-export interface UserConfig {
-  OPENAI_API_KEY: string
-  NOTION_CONFIG: {
-    API_KEY: string
-    DATABASE_ID: string
-  }
-}
-
 export async function StarNexusSaveWebInfoChain(starNexusHub: string, text: string, context: Context) {
   const regex = /(http(s)?:\/\/)?[a-zA-Z0-9][-a-zA-Z0-9]{0,62}(\.[a-zA-Z0-9][-a-zA-Z0-9]{0,62})+(:[0-9]{1,5})?[-a-zA-Z0-9()@:%_\\\+\.~#?&//=]*/g
   const match = text.match(regex)
@@ -47,7 +39,7 @@ export async function StarNexusSaveWebInfoChain(starNexusHub: string, text: stri
       //   upsert: true,
       // })
       // const webCard = new WebCard({ starNexusHub, imgStorage: supabaseImgStorage })
-      // const summarize = new SummarizeContent({ apiKey: config.OPENAI_API_KEY || '' })
+      // const summarize = new OpenaiSummarizeContent({ apiKey: config.OPENAI_API_KEY || '' })
       // const notion = new NotionDataStorage(
       //   {
       //     apiKey: config.NOTION_CONFIG.API_KEY || '',

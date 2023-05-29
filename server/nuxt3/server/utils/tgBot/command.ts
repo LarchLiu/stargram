@@ -4,7 +4,7 @@ import {
   getChatRoleWithContext,
   sendMessageToTelegramWithContext,
 } from '../../utils/tgBot/telegram'
-
+import { defaultUserConfig } from '../../utils/tgBot/context'
 import type { Context } from '../../utils/tgBot/context'
 import { CONST, ENV, I18N, TG_CONFIG } from '../../utils/tgBot/env'
 
@@ -169,10 +169,8 @@ async function commandUpdateUserConfig(message: any, command: string, subcommand
 async function commandDeleteUserConfig(message: any, command: string, subcommand: string, context: Context) {
   const i18n = I18N[TG_CONFIG()[context.SHARE_CONTEXT.currentBotToken].LANGUAGE as keyof typeof I18N]
   try {
-    if (subcommand === 'NOTION_CONFIG')
-      context.USER_CONFIG[subcommand] = { API_KEY: '', DATABASE_ID: '' }
-    else if (subcommand === 'OPENAI_API_KEY')
-      context.USER_CONFIG[subcommand] = ''
+    if (subcommand === 'confirm')
+      context.USER_CONFIG = defaultUserConfig
 
     await KV.set(
       context.SHARE_CONTEXT.configStoreKey,
@@ -190,7 +188,7 @@ async function commandSystem(message: any, command: string, subcommand: string, 
   if (ENV.DEV_MODE) {
     const shareCtx = { ...context.SHARE_CONTEXT }
     shareCtx.currentBotToken = '******'
-    context.USER_CONFIG.OPENAI_API_KEY = '******'
+    // context.USER_CONFIG.OPENAI_API_KEY = '******'
 
     msg += '<pre>'
     msg += `USER_CONFIG: \n${JSON.stringify(context.USER_CONFIG, null, 2)}\n`
@@ -201,13 +199,13 @@ async function commandSystem(message: any, command: string, subcommand: string, 
   }
   else {
     msg = 'Current User Config:\n'
-    const openaiKey = context.USER_CONFIG.OPENAI_API_KEY
-    const notionKey = context.USER_CONFIG.NOTION_CONFIG.API_KEY
-    if (openaiKey)
-      context.USER_CONFIG.OPENAI_API_KEY = `${openaiKey.slice(0, 8)}******${openaiKey.slice(-5)}`
+    // const openaiKey = context.USER_CONFIG.OPENAI_API_KEY
+    // const notionKey = context.USER_CONFIG.NOTION_CONFIG.API_KEY
+    // if (openaiKey)
+    //   context.USER_CONFIG.OPENAI_API_KEY = `${openaiKey.slice(0, 8)}******${openaiKey.slice(-5)}`
 
-    if (notionKey)
-      context.USER_CONFIG.NOTION_CONFIG.API_KEY = `${notionKey.slice(0, 12)}******${notionKey.slice(-5)}`
+    // if (notionKey)
+    //   context.USER_CONFIG.NOTION_CONFIG.API_KEY = `${notionKey.slice(0, 12)}******${notionKey.slice(-5)}`
 
     msg += '<pre>'
     msg += `USER_CONFIG: \n${JSON.stringify(context.USER_CONFIG, null, 2)}\n`

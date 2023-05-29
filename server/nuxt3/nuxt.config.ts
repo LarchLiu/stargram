@@ -1,5 +1,6 @@
 import vue from '@vitejs/plugin-vue'
 import { appDescription } from './constants/index'
+import GenerateApi from './modules/generate-api/vite'
 
 export default defineNuxtConfig({
   modules: [
@@ -10,9 +11,6 @@ export default defineNuxtConfig({
   css: [
     '@unocss/reset/tailwind.css',
   ],
-  runtimeConfig: {
-    starNexusHub: process.env.DEFAULT_STAR_NEXUS_HUB,
-  },
   nitro: {
     esbuild: {
       options: {
@@ -37,7 +35,11 @@ export default defineNuxtConfig({
       plugins: [vue()],
     },
   },
-
+  vite: {
+    plugins: [
+      GenerateApi(),
+    ],
+  },
   app: {
     head: {
       viewport: 'width=device-width,initial-scale=1',

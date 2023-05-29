@@ -253,6 +253,9 @@ importers:
       typescript:
         specifier: ^5.0.4
         version: 5.0.4
+      unconfig:
+        specifier: ^0.3.9
+        version: 0.3.9
       vue-tsc:
         specifier: ^1.6.5
         version: 1.6.5(typescript@5.0.4)
@@ -2916,7 +2919,7 @@ packages:
     engines: {node: '>=14'}
     dependencies:
       '@unocss/core': 0.51.13
-      unconfig: 0.3.7
+      unconfig: 0.3.9
     dev: true
 
   /@unocss/config@0.52.3:

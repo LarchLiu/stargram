@@ -48,7 +48,7 @@ const initialElements = [
  * useVueFlow provides all event handlers and store properties
  * You can pass the composable an object that has the same properties as the VueFlow component props
  */
-const { onPaneReady, onNodeDragStop, onConnect, addEdges, toObject } = useVueFlow()
+const { onPaneReady, onNodeDragStop, onConnect, addEdges } = useVueFlow()
 
 /**
  * Our elements
@@ -92,8 +92,13 @@ function updatePos() {
 /**
  * toObject transforms your current graph data to an easily persist-able object
  */
-function logToObject() {
-  return console.log(toObject())
+async function logToObject() {
+  const outConfig = useConfigStore().outConfig
+  return await $fetch('/api/config', {
+    method: 'POST',
+    body: { outConfig },
+  })
+  // return console.log(toObject())
 }
 
 /**

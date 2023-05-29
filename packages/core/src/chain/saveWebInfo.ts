@@ -1,6 +1,6 @@
 import type { WebInfo, WebInfoByApi } from '../webInfo'
-import type { WebCard } from '../webCard'
-import type { SummarizeContent } from '../openai'
+import type { WebCard, WebCardByApi } from '../webCard'
+import type { OpenaiSummarizeContent } from '../openai'
 import type { SummarizeData } from '../types'
 import type { IDataStorage } from '../storage'
 import { errorMessage } from '../utils'
@@ -8,8 +8,8 @@ import { errorMessage } from '../utils'
 export class SaveWebInfoChain {
   constructor(fields: {
     webInfo: WebInfo | WebInfoByApi
-    webCard?: WebCard
-    summarizeContent?: SummarizeContent
+    webCard?: WebCard | WebCardByApi
+    summarizeContent?: OpenaiSummarizeContent
     dataStorage: IDataStorage
   }) {
     this.webInfo = fields.webInfo

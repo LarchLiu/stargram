@@ -1,6 +1,40 @@
 import { unfurl } from 'unfurl.js'
-import type { WebInfoData } from '@starnexus/core'
+import type { PromptsLanguage, WebInfoData } from '@starnexus/core'
 import { getDomain } from '@starnexus/core/utils'
+
+export interface UserConfig {
+  webInfo: {
+    api: {
+      starNexusHub: string
+    }
+  }
+  webCard: {
+    api: {
+      starNexusHub: string
+    }
+  }
+  llm: {
+    openai: {
+      apiKey: string
+      apiHost: string
+      lang: PromptsLanguage
+    }
+  }
+  imgStorage: {
+    supabase: {
+      url: string
+      bucket: string
+      anonKey: string
+    }
+  }
+  dataStorage: {
+    notion: {
+      apiKey: string
+      databaseId: string
+      defaultOgImage: string
+    }
+  }
+}
 
 export async function ogInfoFn(webUrl: string) {
   const res = await unfurl(webUrl)

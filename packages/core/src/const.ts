@@ -2,11 +2,11 @@ import type { PromptsLanguage } from './types'
 
 export const GITHUB_DOMAIN = 'github.com'
 export const TWITTER_DOMAIN = 'twitter.com'
-export const GITHUB_API_URL = import.meta.env.VITE_GITHUB_API_HOST || 'https://api.github.com'
+export const GITHUB_API_URL = 'https://api.github.com'
 export const GITHUB_REPOS_API = `${GITHUB_API_URL}/repos`
-export const GITHUB_RAW_URL = import.meta.env.VITE_GITHUB_RAW_HOST || 'https://raw.githubusercontent.com'
-export const NOTION_API_URL = import.meta.env.VITE_NOTION_API_URL || 'https://api.notion.com/v1'
-export const OPENAI_CHAT_API = import.meta.env.VITE_OPENAI_API_HOST || 'https://api.openai.com/v1'
+export const GITHUB_RAW_URL = 'https://raw.githubusercontent.com'
+export const NOTION_API_URL = 'https://api.notion.com/v1'
+export const OPENAI_CHAT_API = 'https://api.openai.com'
 export const MAX_TOKEN_LENGTH = 2048
 export const SUMMARIZE_PROMPTS = `Please summarize content within 300 words and then classify it to 1-5 types of classification. Classification names should be short and no explanation or description is needed.
 You only speak JSON. Do not write text that isn't JSON. The JSON keys must be English word of "summary" and "categories".

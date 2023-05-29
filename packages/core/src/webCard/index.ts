@@ -4,6 +4,46 @@ import type { IDataStorage, IImageStorage, SavedData, SavedImage, StorageImage }
 
 export type WebCardFn = (webData: WebInfoData) => Promise<StorageImage>
 
+export class WebCardByApi {
+  constructor(fields: {
+    webData?: WebInfoData
+    starNexusHub?: string
+    headers?: Record<string, string>
+  }) {
+    this.apiUrl = (fields.starNexusHub || '') + this.apiUrl
+    this.webData = fields.webData
+    this.headers = fields.headers
+    this.localFn = undefined
+  }
+
+  private apiUrl = '/api/webcard'
+  private headers
+  private webData
+  public localFn = undefined
+
+  async call(fields: { dataStorage: IDataStorage; savedData: SavedData; webData?: WebInfoData }) {
+    if (!fields.webData && !this.webData)
+      throw new Error('WebCard error: No WebInfo Data')
+
+    const info = (fields.webData || this.webData)!
+    const dataType = fields.dataStorage.getType()
+    const dataCfg = fields.dataStorage.getConfig()
+    const imgRes = await $fetch<SavedImage>(this.apiUrl, {
+      method: 'POST',
+      headers: this.headers,
+      body: {
+        webData: info,
+        dataType,
+        dataCfg,
+        savedData: fields.savedData,
+        byApi: true,
+      },
+    })
+
+    return imgRes
+  }
+}
+
 export class WebCard {
   constructor(fields: {
     imgStorage: IImageStorage
