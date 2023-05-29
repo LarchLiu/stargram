@@ -1,0 +1,67 @@
+{
+  "app": {
+    "select": "telegram",
+    "config": {
+      "botToken": ""
+    }
+  },
+  "webInfo": {
+    "select": "api",
+    "config": {
+      "starNexusHub": "https://star-nexus.netlify.app"
+    },
+    "fn": "WebInfoByApi",
+    "import": "import { WebInfoByApi } from '@starnexus/core/webInfo'\n"
+  },
+  "webCard": {
+    "select": "api",
+    "config": {
+      "starNexusHub": "https://star-nexus.netlify.app"
+    },
+    "fn": "WebCardByApi",
+    "import": "import { WebCardByApi } from '@starnexus/core/webCard'\n"
+  },
+  "llm": {
+    "select": "openai",
+    "config": {
+      "apiKey": "",
+      "apiHost": "https://api.openai.com",
+      "lang": "en"
+    },
+    "fn": "OpenaiSummarizeContent",
+    "import": "import { OpenaiSummarizeContent } from '@starnexus/core/openai'\n"
+  },
+  "imgStorage": {
+    "select": "supabase",
+    "config": {
+      "url": "",
+      "bucket": "",
+      "anonKey": ""
+    },
+    "fn": "SupabaseImageStorage",
+    "import": "import { SupabaseImageStorage } from '@starnexus/core/storage/supabase'\n"
+  },
+  "dataStorage": {
+    "select": "notion",
+    "config": {
+      "apiKey": "",
+      "databaseId": "",
+      "defaultOgImage": "https://kiafhufrshqyrvlpsdqg.supabase.co/storage/v1/object/public/pics-bed/star-nexus.png?v=starnexusogimage"
+    },
+    "fn": "NotionDataStorage",
+    "import": "import { NotionDataStorage } from '@starnexus/core/storage/notion'\n"
+  },
+  "kvStorage": {
+    "select": "vercelKV",
+    "config": {
+      "KV_URL": "",
+      "KV_REST_API_TOKEN": ""
+    }
+  },
+  "server": {
+    "select": "netlifyEdge",
+    "config": {
+      "token": ""
+    }
+  }
+}

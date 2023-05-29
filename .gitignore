@@ -47,5 +47,3 @@ yarn-error.log*
 .nitro
 
 wrangler.toml
-
-starnexus.config.json
