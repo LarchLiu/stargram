@@ -54,7 +54,7 @@
   "kvStorage": {
     "select": "vercelKV",
     "config": {
-      "KV_URL": "",
+      "KV_REST_API_URL": "",
       "KV_REST_API_TOKEN": ""
     }
   },

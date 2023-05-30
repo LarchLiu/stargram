@@ -143,6 +143,7 @@ export default eventHandler(async (event) => {
 
   function copyDefaultConfigFile() {
     fs.cpSync(`${defaultApiPath}/starnexus.config.default.json`, configFile)
+    fs.cpSync(`${defaultApiPath}/config.dev.ts`, `${apiPath}/config.ts`)
   }
 
   return {

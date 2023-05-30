@@ -9,16 +9,18 @@ export default eventHandler(async (event) => {
       method: 'POST',
       headers: {
         'Accept': 'application/vnd.github+json',
-        'Authorization': process.env.GITHUB_TOKEN || '',
+        'Authorization': `Bearer ${process.env.GITHUB_TOKEN || ''}`,
         'X-GitHub-Api-Version': '2022-11-28',
       },
       body: {
-        envent_type: 'deploy',
+        event_type: 'deploy',
         client_payload: {
           outConfig: JSON.stringify(outConfig, null, 2),
           build: `pnpm build:${outConfig.server.select} && pnpm deploy:${outConfig.server.select}`,
-          token: outConfig.server.config.token,
+          clitoken: outConfig.server.config.token,
           siteid: outConfig.server.config.siteid,
+          kvurl: outConfig.kvStorage.config.KV_REST_API_URL,
+          kvtoken: outConfig.kvStorage.config.KV_REST_API_TOKEN,
         },
       },
       responseType: 'json',

@@ -342,13 +342,13 @@ export const kvStorageConfig: BasicConfig<ModelConfig> = {
     vercelKV: {
       displayName: 'Vercel KV',
       config: {
-        KV_URL: {
-          label: 'KV URL',
+        KV_REST_API_URL: {
+          label: 'REST API URL',
           value: '',
           require: true,
         },
         KV_REST_API_TOKEN: {
-          label: 'API TOKEN',
+          label: 'REST API TOKEN',
           value: '',
           require: true,
         },
