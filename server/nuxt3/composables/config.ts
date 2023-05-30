@@ -121,7 +121,7 @@ export const webInfoConfig: BasicConfig<ModelConfig> = {
       position: Position.Right,
     },
   ],
-  select: 'api',
+  select: 'localFn',
   info: {
     localFn: {
       displayName: 'Local Function',
@@ -163,7 +163,7 @@ export const webCardConfig: BasicConfig<ModelConfig> = {
       position: Position.Right,
     },
   ],
-  select: 'api',
+  select: 'localFn',
   info: {
     localFn: {
       displayName: 'Local Function',

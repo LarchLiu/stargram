@@ -1,5 +1,7 @@
-import { WebInfoByApi } from '@starnexus/core/webInfo'
-import { WebCardByApi } from '@starnexus/core/webCard'
+import { OGInfo, WebInfo } from '@starnexus/core/webInfo'
+import { routes } from '@starnexus/web-hub'
+import { WebCard } from '@starnexus/core/webCard'
+import { SupabaseImageStorage } from '@starnexus/core/storage/supabase'
 import { OpenaiSummarizeContent } from '@starnexus/core/openai'
 import { NotionDataStorage } from '@starnexus/core/storage/notion'
 import { errorMessage } from '@starnexus/core/utils'
@@ -13,14 +15,19 @@ export default eventHandler(async (event) => {
   const context = body.context as Context
   const config = context.USER_CONFIG as UserConfig
 
-  const webInfo = new WebInfoByApi({
+  const ogInfo = new OGInfo({ fn: ogInfoFn, url })
+  const webInfo = new WebInfo({
     urls: {
       webUrl: url,
     },
-    starNexusHub: config.webInfo.api.starNexusHub,
+    routes,
+    ogInfo,
   })
 
-  const webCard = new WebCardByApi({ starNexusHub: config.webCard.api.starNexusHub })
+  const imgStorage = new SupabaseImageStorage({
+    url: config.imgStorage.supabase.url, bucket: config.imgStorage.supabase.bucket, anonKey: config.imgStorage.supabase.anonKey,
+  })
+  const webCard = new WebCard({ starNexusHub: body.starNexusHub, imgStorage })
 
   const summarizeContent = new OpenaiSummarizeContent({
     apiKey: config.llm.openai.apiKey, apiHost: config.llm.openai.apiHost, lang: config.llm.openai.lang,
