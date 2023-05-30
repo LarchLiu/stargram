@@ -374,9 +374,9 @@ export const serverConfig: BasicConfig<ModelConfig> = {
       position: Position.Right,
     },
   ],
-  select: 'netlifyEdge',
+  select: 'netlify',
   info: {
-    netlifyEdge: {
+    netlify: {
       displayName: 'Netlify Edge',
       config: {
         token: {
@@ -384,10 +384,15 @@ export const serverConfig: BasicConfig<ModelConfig> = {
           value: '',
           require: true,
         },
+        siteid: {
+          label: 'Site ID',
+          value: '',
+          require: true,
+        },
       },
       output: 'Server',
     },
-    vercelServerless: {
+    vercel: {
       displayName: 'Vercel Serverless',
       config: {
         token: {
@@ -395,10 +400,15 @@ export const serverConfig: BasicConfig<ModelConfig> = {
           value: '',
           require: true,
         },
+        siteid: {
+          label: 'Site ID',
+          value: '',
+          require: true,
+        },
       },
       output: 'Server',
     },
-    cloudflareWorker: {
+    cloudflare: {
       displayName: 'Cloudflare Worker',
       config: {
         token: {

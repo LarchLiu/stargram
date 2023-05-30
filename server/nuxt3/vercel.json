@@ -1,5 +1,5 @@
 {
   "buildCommand": "pnpm build:vercel",
   "framework": "nuxtjs",
-  "outputDirectory": ".vercel"
+  "outputDirectory": ".output"
 }

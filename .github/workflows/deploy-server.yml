@@ -1,0 +1,35 @@
+name: deploy server
+on:
+  repository_dispatch:
+    types: [deploy]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: pnpm/action-setup@v2
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18.x
+          cache: pnpm
+
+      - name: Install
+        run: pnpm install
+
+      - name: overwrite config json file
+        if: ${{ github.event.action == 'deploy' }}
+        uses: DamianReeves/write-file-action@master
+        with:
+          path: server/nuxt3/starnexus.config.json
+          contents: ${{ github.event.client_payload.outConfig }}
+          write-mode: overwrite
+
+      - name: deploy server
+        run: ${{ github.event.client_payload.build }}
+        working-directory: server/nuxt3
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ github.event.client_payload.token }}
+          NETLIFY_AUTH_TOKEN: ${{ github.event.client_payload.token }}
+          NETLIFY_SITE_ID: ${{ github.event.client_payload.siteid }}

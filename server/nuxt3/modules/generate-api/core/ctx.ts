@@ -4,8 +4,8 @@ import { loadConfig } from 'unconfig'
 import type { OutputConfig, ServerConfig } from '../../../composables/config'
 
 export function createContext(root = process.cwd()) {
-  const resolved = resolve(root, './starnexus.config.json')
-  if (!fs.existsSync(resolved))
+  const configFile = resolve(root, './starnexus.config.json')
+  if (!fs.existsSync(configFile))
     throw new Error('[starnexus-generate-api] no starnexus.config.json file')
 
   const defaultApiPath = resolve(root, './server/_api')
@@ -23,6 +23,10 @@ export function createContext(root = process.cwd()) {
     })
     if (config.app) {
       fs.cpSync(`${defaultApiPath}/${config.app.select}`, `${apiPath}/${config.app.select}`, { recursive: true })
+      if (process.env.NODE_ENV === 'production')
+        fs.cpSync(`${defaultApiPath}/config.product.ts`, `${apiPath}/config.ts`)
+      else
+        fs.cpSync(`${defaultApiPath}/config.dev.ts`, `${apiPath}/config.ts`)
       const importArr = []
       const importStr = `import { errorMessage } from '@starnexus/core/utils'
 import { SaveWebInfoChain } from '@starnexus/core/chain/saveWebInfo'
@@ -65,7 +69,7 @@ export default eventHandler(async (event) => {
         importArr.push(config.webCard.import)
         if (config.webCard.select === 'api') {
           replaceCode += `
-  const webCard = new ${config.webCard.fn}({ starNexusHub: config.webCard.${config.webInfo.select}.starNexusHub })
+  const webCard = new ${config.webCard.fn}({ starNexusHub: config.webCard.${config.webCard.select}.starNexusHub })
 `
         }
         else {
@@ -137,8 +141,13 @@ export default eventHandler(async (event) => {
     }
   }
 
+  function copyDefaultConfigFile() {
+    fs.cpSync(`${defaultApiPath}/starnexus.config.default.json`, configFile)
+  }
+
   return {
     root,
     generateApi,
+    copyDefaultConfigFile,
   }
 }

@@ -12,6 +12,9 @@ export default createUnplugin(() => {
       this.addWatchFile(resolved)
       await ctx.generateApi()
     },
+    async buildEnd() {
+      ctx.copyDefaultConfigFile()
+    },
     vite: {
       async handleHotUpdate({ file }) {
         if (file.includes('starnexus.config'))
