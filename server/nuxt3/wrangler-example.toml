@@ -5,11 +5,5 @@ main = "./.output/server/index.mjs"
 workers_dev = true
 
 [vars]
-SUPABASE_URL=
-SUPABASE_STORAGE_BUCKET=
-SUPABASE_ANON_KEY=
-KV_URL=
 KV_REST_API_URL=
 KV_REST_API_TOKEN=
-KV_REST_API_READ_ONLY_TOKEN=
-

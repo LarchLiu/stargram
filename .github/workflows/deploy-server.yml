@@ -26,6 +26,25 @@ jobs:
           contents: ${{ github.event.client_payload.outConfig }}
           write-mode: overwrite
 
+      - name: prewrite
+        if: ${{ !(github.event.client_payload.prewrite.content == '') }}
+        uses: DamianReeves/write-file-action@master
+        with:
+          path: ${{ github.event.client_payload.prewrite.file }}
+          contents: ${{ github.event.client_payload.prewrite.content }}
+          write-mode: overwrite
+
+      - name: prebuild
+        if: ${{ !(github.event.client_payload.prebuild == '') }}
+        run: ${{ github.event.client_payload.prebuild }}
+        working-directory: server/nuxt3
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ github.event.client_payload.clitoken }}
+          NETLIFY_AUTH_TOKEN: ${{ github.event.client_payload.clitoken }}
+          NETLIFY_SITE_ID: ${{ github.event.client_payload.siteid }}
+          KV_REST_API_URL: ${{ github.event.client_payload.kvurl }}
+          KV_REST_API_TOKEN: ${{ github.event.client_payload.kvtoken }}
+
       - name: deploy server
         run: ${{ github.event.client_payload.build }}
         working-directory: server/nuxt3

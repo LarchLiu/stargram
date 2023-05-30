@@ -416,6 +416,11 @@ export const serverConfig: BasicConfig<ModelConfig> = {
           value: '',
           require: true,
         },
+        siteid: {
+          label: 'Worker Name',
+          value: '',
+          require: true,
+        },
       },
       output: 'Server',
     },
