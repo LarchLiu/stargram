@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest'
-import { countWord, getDomain, getPromptsByTemplate, preprocessText, strNotEqualWith } from '../src/utils'
+import { Cryption, countWord, getDomain, getPromptsByTemplate, preprocessText, strNotEqualWith } from '../src/utils'
 
 const host = 'github.com'
 describe('utils', () => {
@@ -286,5 +286,58 @@ describe('utils', () => {
     expect(lengthAfter).toMatchSnapshot()
     const countAfter = countWord(text)
     expect(countAfter).toMatchSnapshot()
+  })
+  test('Cryption', async () => {
+    const crytion = new Cryption(32456, 46981)
+    const config = {
+      app: {
+        telegram: {
+          botToken: '',
+        },
+      },
+      webInfo: {
+        localFn: null,
+      },
+      webCard: {
+        localFn: null,
+      },
+      llm: {
+        openai: {
+          apiKey: '',
+          apiHost: 'https://api.openai.com',
+          lang: 'en',
+        },
+      },
+      imgStorage: {
+        supabase: {
+          url: '',
+          bucket: '',
+          anonKey: '',
+        },
+      },
+      dataStorage: {
+        notion: {
+          apiKey: '',
+          databaseId: '',
+          defaultOgImage: 'https://kiafhufrshqyrvlpsdqg.supabase.co/storage/v1/object/public/pics-bed/star-nexus.png?v=starnexusogimage',
+        },
+      },
+      kvStorage: {
+        vercelKV: {
+          KV_REST_API_URL: '',
+          KV_REST_API_TOKEN: '',
+        },
+      },
+      server: {
+        netlify: {
+          token: '',
+          siteurl: '',
+          siteid: '',
+        },
+      },
+    }
+    const en = crytion.encode(JSON.stringify(config))
+    const de = crytion.decode(en)
+    expect(JSON.stringify(config)).toBe(de)
   })
 })

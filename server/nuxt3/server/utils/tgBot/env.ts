@@ -43,6 +43,7 @@ export const CONST = {
   TOKENS_KEY: 'TG_TOKENS',
   PASSWORD_KEY: 'chat_history_password',
   GROUP_TYPES: ['group', 'supergroup'],
+  USER_CONFIG_KEY: 'user_config_tg',
   USER_AGENT: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.2 Safari/605.1.15',
 }
 const I18nHans = i18n('zh-CN')

@@ -1,8 +1,11 @@
 /* eslint-disable no-prototype-builtins */
+import { Cryption } from '@starnexus/core/utils'
+import type { UserConfig } from '../index'
+import { C1, C2 } from '../../../constants/index'
 import { CONST, ENV, TG_TOKENS } from './env'
 
 const kv = useStorage('kv')
-export const defaultUserConfig = {
+export const defaultUserConfig: UserConfig = {
   webInfo: {
     api: {
       starNexusHub: '',
@@ -77,8 +80,10 @@ export class Context {
 
   async _initUserConfig(storeKey: string) {
     try {
-      const userConfig = await kv.getItem(storeKey) as any
-      if (userConfig) {
+      const config = await kv.getItem(storeKey) as any
+      if (config) {
+        const cryption = new Cryption(C1, C2)
+        const userConfig = JSON.parse(cryption.decode(config))
         for (const key in userConfig) {
           if (
             this.USER_CONFIG.hasOwnProperty(key)
@@ -139,8 +144,8 @@ export class Context {
       * */
 
     const botId = this.SHARE_CONTEXT.currentBotId
-    let historyKey = `history:${id}`
-    let configStoreKey = `user_config:${id}`
+    let historyKey = `history_tg:${id}`
+    let configStoreKey = `${CONST.USER_CONFIG_KEY}:${id}`
     let groupAdminKey = ''
 
     if (botId) {
@@ -153,7 +158,7 @@ export class Context {
         historyKey += `:${message.from.id}`
         configStoreKey += `:${message.from.id}`
       }
-      groupAdminKey = `group_admin:${id}`
+      groupAdminKey = `group_admin_tg:${id}`
     }
 
     this.SHARE_CONTEXT.chatHistoryKey = historyKey

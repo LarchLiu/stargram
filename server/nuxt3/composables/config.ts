@@ -1,6 +1,7 @@
 import { acceptHMRUpdate, defineStore } from 'pinia'
 import { Position } from '@vue-flow/core'
-import { DEFAULT_OG_IMAGE, DEFAULT_STAR_NEXUS_HUB } from '../constants/index'
+import { Cryption } from '@starnexus/core/utils'
+import { C1, C2, DEFAULT_OG_IMAGE, DEFAULT_STAR_NEXUS_HUB } from '../constants/index'
 
 export interface ServerConfig<T> {
   app: T
@@ -88,14 +89,24 @@ export const appConfig: BasicConfig<ModelConfig> = {
           value: '',
           require: true,
         },
+        botName: {
+          label: 'Bot Name',
+          value: '',
+          require: true,
+        },
       },
       output: 'Text',
     },
     slack: {
       displayName: 'Slack Bot',
       config: {
-        webHook: {
+        botToken: {
           label: 'Webhook URL',
+          value: '',
+          require: true,
+        },
+        botName: {
+          label: 'Bot Name',
           value: '',
           require: true,
         },
@@ -384,11 +395,6 @@ export const serverConfig: BasicConfig<ModelConfig> = {
           value: '',
           require: true,
         },
-        siteurl: {
-          label: 'Site URL',
-          value: '',
-          require: true,
-        },
         siteid: {
           label: 'Site ID',
           value: '',
@@ -405,11 +411,6 @@ export const serverConfig: BasicConfig<ModelConfig> = {
           value: '',
           require: true,
         },
-        siteurl: {
-          label: 'Site URL',
-          value: '',
-          require: true,
-        },
         siteid: {
           label: 'Site ID',
           value: '',
@@ -423,11 +424,6 @@ export const serverConfig: BasicConfig<ModelConfig> = {
       config: {
         token: {
           label: 'Cloudflare Token',
-          value: '',
-          require: true,
-        },
-        siteurl: {
-          label: 'Site URL',
           value: '',
           require: true,
         },
@@ -452,6 +448,8 @@ export const defaultConfig: ServerConfig<BasicConfig<ModelConfig>> = {
   kvStorage: kvStorageConfig,
   server: serverConfig,
 }
+
+const cryption = new Cryption(C1, C2)
 
 export const useConfigStore = defineStore('server-config', () => {
   const config = ref(defaultConfig)
@@ -489,11 +487,15 @@ export const useConfigStore = defineStore('server-config', () => {
     })
     return obj as ServerConfig<KVConfig>
   })
+  const enKvConfig = computed(() => {
+    return cryption.encode(JSON.stringify(kvConfig.value))
+  })
 
   return {
     config,
     outConfig,
     kvConfig,
+    enKvConfig,
   }
 })
 

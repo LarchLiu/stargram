@@ -140,6 +140,111 @@ function errorMessage(error: any) {
   return message
 }
 
+class Cryption {
+  constructor(C1: number, C2: number) {
+    this.C1 = C1
+    this.C2 = C2
+  }
+
+  private C1 = 43675 // random number
+  private C2 = 25974 // random number
+  private degree = 65 // ascii A
+
+  private replaceChar(
+    source: string,
+    pos: number,
+    newChar: string,
+  ) {
+    if (pos < 0 || pos >= source.length || source.length === 0)
+      return 'invalid parameters...'
+
+    const iBeginPos = 0
+    const sFrontPart = source.slice(iBeginPos, pos)
+    const sTailPart = source.slice(pos + 1, source.length)
+    const sRet = sFrontPart + newChar + sTailPart
+
+    return sRet
+  }
+
+  private encrypt(org_str: string, _salt: string, method: number) {
+    let result, str, i, j
+    const c1 = this.C1 >> method
+    const c2 = this.C2 >> method
+    let salt = _salt.charCodeAt(0)
+
+    result = org_str
+    for (i = 0; i < org_str.length; i++) {
+      result = this.replaceChar(
+        result,
+        i,
+        String.fromCharCode(org_str.charCodeAt(i) ^ (salt)),
+      )
+      salt = ((result.charCodeAt(i) + salt) * c1 + c2) % 650
+    }
+    org_str = result
+    result = ''
+    for (i = 0; i < org_str.length; i++) {
+      j = org_str.charCodeAt(i)
+      str = '12'
+      const k = j / 26 >= 26 ? (j / 26) % 26 + 32 : j / 26
+      str = this.replaceChar(str, 0, String.fromCharCode(this.degree + k))
+      str = this.replaceChar(str, 1, String.fromCharCode(this.degree + j % 26))
+      result += str
+    }
+    return result
+  }
+
+  private decrypt(en_str: string, _salt: string, method: number) {
+    let result, str
+    let i, j
+    const c1 = this.C1 >> method
+    const c2 = this.C2 >> method
+    let salt = _salt.charCodeAt(0)
+
+    result = ''
+    for (i = 0; i < en_str.length / 2; i++) {
+      const k = en_str.charCodeAt(2 * i) > 90
+        ? en_str.charCodeAt(2 * i) - 32 + 26
+        : en_str.charCodeAt(2 * i)
+      j = (k - this.degree) * 26
+
+      j += en_str.charCodeAt(2 * i + 1) - this.degree
+      str = '1'
+      str = this.replaceChar(str, 0, String.fromCharCode(j))
+      result += str
+    }
+    en_str = result
+    for (i = 0; i < en_str.length; i++) {
+      result = this.replaceChar(
+        result,
+        i,
+        String.fromCharCode(en_str.charCodeAt(i) ^ (salt)),
+      )
+      salt = ((en_str.charCodeAt(i) + salt) * c1 + c2) % 650
+    }
+    return result
+  }
+
+  encode(text: string) {
+    const salt = Math.ceil(Math.random() * 10) > 5
+      ? Math.ceil(Math.random() * 9).toString()
+      : String.fromCharCode(Math.ceil(Math.random() * 26) + 64)
+    const method = Math.ceil(Math.random() * 9)
+    const en = this.encrypt(text, salt, method)
+
+    return en + salt + method
+  }
+
+  decode(en: string) {
+    const method = parseInt(en.slice(-1))
+    const salt = en.slice(-2, -1)
+    const str = en.slice(0, -2)
+    const de = this.decrypt(str, salt, method)
+
+    return de
+  }
+}
+
 export {
   getDomain,
   countWord,
@@ -148,4 +253,5 @@ export {
   strNotEqualWith,
   replaceHtmlReservedCharacters,
   errorMessage,
+  Cryption,
 }

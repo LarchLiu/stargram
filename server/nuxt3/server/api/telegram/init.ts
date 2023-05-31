@@ -1,4 +1,4 @@
-import { TG_CONFIG, TG_TOKENS, tgEnvDefault } from '../../utils/tgBot/env'
+import { CONST, TG_CONFIG, TG_TOKENS, tgEnvDefault } from '../../utils/tgBot/env'
 
 const kv = useStorage('kv')
 
@@ -7,7 +7,7 @@ export default eventHandler(async (event) => {
   const body = await readBody(event)
   await initEnv()
   const domain = `${getRequestProtocol(event)}://${getRequestHost(event)}`
-  const token = body.tgToken.trim()
+  const token = body.botToken.trim()
   const botName = body.botName
   const test = /(\d+:[A-Za-z0-9_-]{35})/.test(token)
   if (!test) {
@@ -31,5 +31,11 @@ export default eventHandler(async (event) => {
     await kv.setItem(CONST.TOKENS_KEY, TG_TOKENS())
     await kv.setItem(CONST.CONFIG_KEY, TG_CONFIG())
   }
-  return result[id]
+  if (result[id].webhook.ok && result[id].command.ok)
+    return 'success'
+
+  setResponseStatus(event, 400)
+
+  const message = (result[id].webhook.description || result[id].command.description)
+  return { error: message }
 })

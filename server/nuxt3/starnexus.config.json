@@ -2,7 +2,8 @@
   "app": {
     "select": "telegram",
     "config": {
-      "botToken": ""
+      "botToken": "",
+      "botName": ""
     }
   },
   "webInfo": {
@@ -58,7 +59,6 @@
     "select": "netlify",
     "config": {
       "token": "",
-      "siteurl": "",
       "siteid": ""
     }
   }

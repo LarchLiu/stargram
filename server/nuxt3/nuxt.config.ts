@@ -21,7 +21,8 @@ export default defineNuxtConfig({
       crawlLinks: false,
       routes: [
         '/',
-        '/config',
+        '/app-init',
+        '/self-host',
       ],
     },
     storage: {
@@ -52,5 +53,8 @@ export default defineNuxtConfig({
         { name: 'apple-mobile-web-app-status-bar-style', content: 'black-translucent' },
       ],
     },
+  },
+  devtools: {
+    enabled: true,
   },
 })
