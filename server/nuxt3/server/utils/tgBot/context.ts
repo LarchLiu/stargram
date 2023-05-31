@@ -1,7 +1,7 @@
 /* eslint-disable no-prototype-builtins */
-import { kv } from '@vercel/kv'
 import { CONST, ENV, TG_TOKENS } from './env'
 
+const kv = useStorage('kv')
 export const defaultUserConfig = {
   webInfo: {
     api: {
@@ -77,7 +77,7 @@ export class Context {
 
   async _initUserConfig(storeKey: string) {
     try {
-      const userConfig = await kv.get<any>(storeKey)
+      const userConfig = await kv.getItem(storeKey) as any
       if (userConfig) {
         for (const key in userConfig) {
           if (

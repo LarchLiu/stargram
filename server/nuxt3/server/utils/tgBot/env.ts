@@ -1,6 +1,6 @@
-import { kv } from '@vercel/kv'
 import i18n from './i18n'
 
+const kv = useStorage('kv')
 export interface TgBotEnv {
   CHAT_WHITE_LIST: string[]
   CHAT_GROUP_WHITE_LIST: string[]
@@ -61,7 +61,7 @@ export const TG_CONFIG = () => TgConfig
 export const TG_TOKENS = () => TgTokens
 export async function initEnv() {
   if (!TgConfig)
-    TgConfig = await kv.get<TgBotConfig>(CONST.CONFIG_KEY) || {}
+    TgConfig = await kv.getItem(CONST.CONFIG_KEY) as TgBotConfig || {}
   if (!TgTokens)
-    TgTokens = await kv.get<TgAvailableTokens>(CONST.TOKENS_KEY) || {}
+    TgTokens = await kv.getItem(CONST.TOKENS_KEY) as TgAvailableTokens || {}
 }

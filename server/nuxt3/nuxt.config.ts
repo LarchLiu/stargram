@@ -25,7 +25,7 @@ export default defineNuxtConfig({
       ],
     },
     storage: {
-      data: {
+      kv: {
         driver: 'vercelKV',
       },
     },

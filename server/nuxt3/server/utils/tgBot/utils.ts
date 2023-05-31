@@ -1,6 +1,6 @@
-import { kv } from '@vercel/kv'
 import { CONST } from './env'
 
+const kv = useStorage('kv')
 export function randomString(length: number) {
   const chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
   let result = ''
@@ -9,10 +9,10 @@ export function randomString(length: number) {
 }
 
 export async function historyPassword() {
-  let password = await kv.get(CONST.PASSWORD_KEY)
+  let password = await kv.getItem(CONST.PASSWORD_KEY)
   if (password === null) {
     password = randomString(32)
-    await kv.set(CONST.PASSWORD_KEY, password)
+    await kv.setItem(CONST.PASSWORD_KEY, password)
   }
   return password
 }

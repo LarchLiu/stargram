@@ -1,5 +1,6 @@
-import { kv } from '@vercel/kv'
 import { TG_CONFIG } from '../../utils/tgBot/env'
+
+const kv = useStorage('kv')
 
 export default eventHandler(async (event) => {
   const body = await readBody(event)
@@ -19,6 +20,6 @@ export default eventHandler(async (event) => {
   const list = TG_CONFIG()[token].CHAT_WHITE_LIST
   if (!list.includes(userId))
     TG_CONFIG()[token].CHAT_WHITE_LIST.push(userId)
-  await kv.set(CONST.CONFIG_KEY, TG_CONFIG())
+  await kv.setItem(CONST.CONFIG_KEY, TG_CONFIG())
   return 'ok'
 })

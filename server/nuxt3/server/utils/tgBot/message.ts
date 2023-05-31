@@ -1,6 +1,5 @@
 /* eslint-disable no-prototype-builtins */
 import { errorMessage } from '@starnexus/core/utils'
-import { kv } from '@vercel/kv'
 import { StarNexusSaveWebInfoChain } from './makeChain'
 import { CONST, ENV, TG_CONFIG } from './env'
 import { Context } from './context'
@@ -13,6 +12,7 @@ import { errorToString } from './utils'
 // import { saveToNotion } from './notion.js'
 
 // import {TelegramMessage, TelegramWebhookRequest} from './type.d.ts';
+const kv = useStorage('kv')
 
 async function msgInitChatContext(message: any, context: Context) {
   try {
@@ -221,7 +221,7 @@ async function loadMessage(raw: any) {
   // console.log(JSON.stringify(raw))
   if (ENV.DEV_MODE) {
     setTimeout(() => {
-      kv.set(`log:${new Date().toISOString()}`, JSON.stringify(raw)).catch(console.error)
+      kv.setItem(`log:${new Date().toISOString()}`, JSON.stringify(raw)).catch(console.error)
     })
   }
   if (raw.edited_message)

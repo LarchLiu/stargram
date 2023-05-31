@@ -1,4 +1,3 @@
-import { kv as KV } from '@vercel/kv'
 import { mergeConfig } from '../../utils/tgBot/utils'
 import {
   getChatRoleWithContext,
@@ -7,6 +6,8 @@ import {
 import { defaultUserConfig } from '../../utils/tgBot/context'
 import type { Context } from '../../utils/tgBot/context'
 import { CONST, ENV, I18N, TG_CONFIG } from '../../utils/tgBot/env'
+
+const KV = useStorage('kv')
 
 type ScopeType = 'all_private_chats' | 'all_group_chats' | 'all_chat_administrators'
 type CommandType = '/help' | '/new' | '/start' | '/setenv' | '/delenv' | '/system' | '/adduser' | '/deluser'
@@ -96,7 +97,7 @@ async function commandAddUser(message: any, command: string, subcommand: string,
     const list = TG_CONFIG()[context.SHARE_CONTEXT.currentBotToken].CHAT_WHITE_LIST
     if (!list.includes(subcommand))
       TG_CONFIG()[context.SHARE_CONTEXT.currentBotToken].CHAT_WHITE_LIST.push(subcommand)
-    await KV.set(CONST.CONFIG_KEY, TG_CONFIG())
+    await KV.setItem(CONST.CONFIG_KEY, TG_CONFIG())
     return sendMessageToTelegramWithContext(context)(i18n.command.adduser.update_config_success)
   }
   catch (e) {
@@ -111,7 +112,7 @@ async function commandDelUser(message: any, command: string, subcommand: string,
     const idx = list.indexOf(subcommand)
     if (idx !== -1)
       TG_CONFIG()[context.SHARE_CONTEXT.currentBotToken].CHAT_WHITE_LIST.splice(idx, 1)
-    await KV.set(CONST.CONFIG_KEY, TG_CONFIG())
+    await KV.setItem(CONST.CONFIG_KEY, TG_CONFIG())
     return sendMessageToTelegramWithContext(context)(i18n.command.adduser.update_config_success)
   }
   catch (e) {
@@ -158,7 +159,7 @@ async function commandUpdateUserConfig(message: any, command: string, subcommand
   const value = subcommand.slice(kv + 1)
   try {
     mergeConfig(context.USER_CONFIG, key, value, i18n)
-    await KV.set(context.SHARE_CONTEXT.configStoreKey, context.USER_CONFIG)
+    await KV.setItem(context.SHARE_CONTEXT.configStoreKey, context.USER_CONFIG)
     return sendMessageToTelegramWithContext(context)(i18n.command.setenv.update_config_success)
   }
   catch (e) {
@@ -172,7 +173,7 @@ async function commandDeleteUserConfig(message: any, command: string, subcommand
     if (subcommand === 'confirm')
       context.USER_CONFIG = defaultUserConfig
 
-    await KV.set(
+    await KV.setItem(
       context.SHARE_CONTEXT.configStoreKey,
       JSON.stringify(context.USER_CONFIG),
     )

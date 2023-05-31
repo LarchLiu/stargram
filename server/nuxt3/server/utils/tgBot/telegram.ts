@@ -1,7 +1,7 @@
-import { kv } from '@vercel/kv'
 import type { Context } from './context'
 import { ENV } from './env'
 
+const kv = useStorage('kv')
 async function sendMessage(message: string, token: string, context: Record<string, any>) {
   return await fetch(
       `${ENV.TELEGRAM_API_DOMAIN}/bot${token}/sendMessage`,
@@ -109,7 +109,7 @@ export async function bindTelegramWebHook(token: string, url: string) {
 export async function getChatRole(id: string | number, groupAdminKey: string, chatId: string | number, token: string) {
   let groupAdmin
   try {
-    groupAdmin = await kv.get(groupAdminKey)
+    groupAdmin = await kv.getItem(groupAdminKey)
   }
   catch (e: any) {
     console.error(e)
@@ -122,7 +122,7 @@ export async function getChatRole(id: string | number, groupAdminKey: string, ch
 
     groupAdmin = administers
     // 缓存120s
-    await kv.set(groupAdminKey, groupAdmin)
+    await kv.setItem(groupAdminKey, groupAdmin)
   }
   for (let i = 0; i < groupAdmin.length; i++) {
     const user = groupAdmin[i]
