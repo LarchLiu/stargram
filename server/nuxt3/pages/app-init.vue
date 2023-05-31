@@ -20,12 +20,12 @@ async function onInitClick() {
         botName: config.value.app[appName].botName,
       },
     })
-    if (!error.value) {
-      if (appName === 'telegram')
-        showUserIdInput.value = true
+    if (error.value) {
+      alert(errorMessage(error.value))
     }
     else {
-      alert(errorMessage(error.value))
+      if (appName === 'telegram')
+        showUserIdInput.value = true
     }
   }
 }
@@ -37,11 +37,11 @@ async function onAddUser() {
       body: {
         botToken: config.value.app[appName].botToken,
         userId: userId.value,
-        userConfig: config.value,
+        userConfig: text.value,
       },
     })
-    if (error)
-      alert(error)
+    if (error.value)
+      alert(errorMessage(error.value))
     else
       alert('success')
   }
