@@ -311,7 +311,7 @@ export const llmConfig: BasicConfig<ModelConfig> = {
           require: true,
         },
         lang: {
-          label: 'Output Language',
+          label: 'Summary Language',
           value: 'en',
           require: false,
         },
@@ -384,6 +384,11 @@ export const serverConfig: BasicConfig<ModelConfig> = {
           value: '',
           require: true,
         },
+        siteurl: {
+          label: 'Site URL',
+          value: '',
+          require: true,
+        },
         siteid: {
           label: 'Site ID',
           value: '',
@@ -400,6 +405,11 @@ export const serverConfig: BasicConfig<ModelConfig> = {
           value: '',
           require: true,
         },
+        siteurl: {
+          label: 'Site URL',
+          value: '',
+          require: true,
+        },
         siteid: {
           label: 'Site ID',
           value: '',
@@ -413,6 +423,11 @@ export const serverConfig: BasicConfig<ModelConfig> = {
       config: {
         token: {
           label: 'Cloudflare Token',
+          value: '',
+          require: true,
+        },
+        siteurl: {
+          label: 'Site URL',
           value: '',
           require: true,
         },

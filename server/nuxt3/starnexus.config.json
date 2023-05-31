@@ -58,6 +58,7 @@
     "select": "netlify",
     "config": {
       "token": "",
+      "siteurl": "",
       "siteid": ""
     }
   }

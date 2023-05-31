@@ -1,7 +1,7 @@
 <!-- eslint-disable no-console -->
 <script setup lang="ts">
 import type { Elements } from '@vue-flow/core'
-import { Panel, PanelPosition, VueFlow, useVueFlow } from '@vue-flow/core'
+import { MarkerType, Panel, PanelPosition, VueFlow, useVueFlow } from '@vue-flow/core'
 import { Background } from '@vue-flow/background'
 import { Controls } from '@vue-flow/controls'
 import { MiniMap } from '@vue-flow/minimap'
@@ -13,9 +13,9 @@ import PreviewConfig from './vue-flow/PreviewConfig.vue'
 const configStore = useConfigStore()
 
 const initialElements = [
-  { id: 'config', type: 'preview-config', position: { x: 0, y: -330 }, class: 'light' },
-  { id: 'kv', type: 'select', data: configStore.config.kvStorage, position: { x: 600, y: -330 }, class: 'light' },
-  { id: 'server', type: 'select', data: configStore.config.server, position: { x: 900, y: -330 }, class: 'light' },
+  { id: 'config', type: 'preview-config', position: { x: 0, y: -430 }, class: 'light' },
+  { id: 'kv', type: 'select', data: configStore.config.kvStorage, position: { x: 600, y: -430 }, class: 'light' },
+  { id: 'server', type: 'select', data: configStore.config.server, position: { x: 900, y: -430 }, class: 'light' },
   { id: 'text', type: 'text', position: { x: 0, y: 300 }, class: 'light' },
   { id: 'app', type: 'select', data: configStore.config.app, position: { x: 300, y: 300 }, class: 'light' },
   {
@@ -42,7 +42,7 @@ const initialElements = [
   { id: 'llm-data', source: 'llm', target: 'data' },
   { id: 'card-img', source: 'card', target: 'img' },
   { id: 'img-data', source: 'img', target: 'data' },
-  { id: 'data-app', source: 'data', target: 'app', type: 'smoothstep', targetHandle: 'result' },
+  { id: 'data-app', source: 'data', target: 'app', type: 'smoothstep', targetHandle: 'result', markerEnd: MarkerType.ArrowClosed },
 ]
 /**
  * useVueFlow provides all event handlers and store properties
