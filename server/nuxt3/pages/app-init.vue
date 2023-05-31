@@ -32,10 +32,10 @@ async function onInitClick() {
 async function onAddUser() {
   if (config.value) {
     const appName = Object.keys(config.value.app)[0]
-    const { error } = await useFetch(`/api/${appName}/init`, {
+    const { error } = await useFetch(`/api/${appName}/adduser`, {
       method: 'POST',
       body: {
-        token: config.value.app[appName].botToken,
+        botToken: config.value.app[appName].botToken,
         userId: userId.value,
         userConfig: config.value,
       },
