@@ -1,7 +1,6 @@
 import { errorMessage } from '@starnexus/core/utils'
 import { NotionDataStorage } from '@starnexus/core/storage/notion'
-import { SupabaseImageStorage } from '@starnexus/core/storage/supabase'
-import { WebCard } from '@starnexus/core/webCard'
+import { WebCardByApi } from '@starnexus/core/webCard'
 import { WebInfoByApi } from '@starnexus/core/webInfo'
 import { OpenaiSummarizeContent } from '@starnexus/core/openai'
 import { SaveWebInfoChain } from '@starnexus/core/chain/saveWebInfo'
@@ -104,14 +103,8 @@ async function saveToNotion(pageInfo: PageInfo): Promise<SwResponse> {
     },
     starNexusHub,
   })
-  const supabaseImgStorage = new SupabaseImageStorage({
-    url: process.env.SUPABASE_URL || '',
-    anonKey: process.env.SUPABASE_ANON_KEY || '',
-    bucket: process.env.SUPABASE_STORAGE_BUCKET || '',
-    upsert: true,
-  })
 
-  const webCard = new WebCard({ starNexusHub, imgStorage: supabaseImgStorage })
+  const webCard = new WebCardByApi({ starNexusHub })
 
   const summarize = new OpenaiSummarizeContent({ apiKey: openaiApiKey, lang: promptsLang })
   const notion = new NotionDataStorage(

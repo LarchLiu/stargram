@@ -133,7 +133,7 @@ function replaceHtmlReservedCharacters(str: string) {
 }
 
 function errorMessage(error: any) {
-  let message = error.message || ''
+  let message: string = error.message || ''
   if (error.data)
     message += JSON.stringify(error.data)
 

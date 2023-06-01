@@ -1,9 +1,9 @@
 import { NotionDataStorage } from '@starnexus/core/storage/notion'
-import { SupabaseImageStorage } from '@starnexus/core/storage/supabase'
-import { WebCard } from '@starnexus/core/webCard'
+import { WebCardByApi } from '@starnexus/core/webCard'
 import { WebInfoByApi } from '@starnexus/core/webInfo'
 import { OpenaiSummarizeContent } from '@starnexus/core/openai'
 import { SaveWebInfoChain } from '@starnexus/core/chain/saveWebInfo'
+import { errorMessage } from '@starnexus/core/utils'
 import { ENV } from './env.js'
 
 /**
@@ -19,6 +19,7 @@ async function saveToNotion(text) {
     let i = 0
     let success = 0
     let fail = 0
+    let errInfo = ''
     while (i < match.length) {
       const notionApiKey = ENV.NOTION_API_KEY
       const databaseId = ENV.NOTION_DATABASE_ID
@@ -32,14 +33,7 @@ async function saveToNotion(text) {
         starNexusHub,
       })
 
-      const supabaseImgStorage = new SupabaseImageStorage({
-        url: ENV.SUPABASE_URL || '',
-        anonKey: ENV.SUPABASE_ANON_KEY || '',
-        bucket: ENV.SUPABASE_STORAGE_BUCKET || '',
-        upsert: true,
-      })
-
-      const webCard = new WebCard({ starNexusHub, imgStorage: supabaseImgStorage })
+      const webCard = new WebCardByApi({ starNexusHub })
 
       const summarize = new OpenaiSummarizeContent({ apiKey: openaiApiKey })
       const notion = new NotionDataStorage(
@@ -57,7 +51,10 @@ async function saveToNotion(text) {
         dataStorage: notion,
       })
 
-      const info = await chain.call().then(_ => true).catch(_ => false)
+      const info = await chain.call().then(_ => true).catch((err) => {
+        errInfo += `${errorMessage(err)}\n`
+        return false
+      })
 
       i++
       if (info)
@@ -65,7 +62,7 @@ async function saveToNotion(text) {
       else
         fail++
     }
-    return `Success: ${success}${fail ? (` Fail: ${fail}`) : ''}`
+    return `Success: ${success}${fail ? (` Fail: ${fail}\n${errInfo}`) : ''}`
   }
   else {
     throw new Error('No Website Matched')
