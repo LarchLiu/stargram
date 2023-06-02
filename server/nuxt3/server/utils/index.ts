@@ -43,13 +43,12 @@ export async function ogInfoFn(webUrl: string): Promise<WebInfoData> {
   let url = res.canonical_url || webUrl
   const domain = getDomain(url)
   const word = domain.split('.')[0]
-  let siteName = word.charAt(0).toUpperCase() + word.slice(1)
+  const siteName = word.charAt(0).toUpperCase() + word.slice(1)
   if (res.open_graph) {
     const og = res.open_graph
     title = og.title
     content = og.description || content
     url = og.url || url
-    siteName = og.site_name || siteName
   }
 
   if (!title || !content)

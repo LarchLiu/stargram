@@ -7,6 +7,25 @@ defineProps({
   pubTime: String,
   lang: String,
 })
+type LangKeys = keyof typeof langs
+const langs = {
+  ar: 'ar-AR',
+  bn: 'bn-IN',
+  iw: 'he-IL',
+  ja: 'ja-JP',
+  ko: 'ko-KR',
+  ml: 'ml-IN',
+  ta: 'ta-IN',
+  te: 'te-IN',
+  th: 'th-TH',
+  zh: 'zh-CN',
+}
+function getLang(lang: LangKeys) {
+  if (langs[lang])
+    return langs[lang]
+
+  return lang
+}
 </script>
 
 <template>
@@ -21,13 +40,13 @@ defineProps({
           class="rounded-full"
         >
         <div class="ml-20px flex flex-col text-40px">
-          <span :lang="lang ? lang : 'zh-CN'">{{ name }}</span>
-          <span :lang="lang ? lang : 'zh-CN'">{{ `@${screenName}` }}</span>
+          <span :lang="lang ? getLang(lang as LangKeys) : 'zh-CN'">{{ name }}</span>
+          <span :lang="lang ? getLang(lang as LangKeys) : 'zh-CN'">{{ `@${screenName}` }}</span>
         </div>
       </div>
 
       <div class="h-320px flex flex-col overflow-hidden pt-30px text-30px">
-        <div v-for="(c, i) in content" :key="i" class="flex" :lang="lang ? lang : 'zh-CN'">
+        <div v-for="(c, i) in content" :key="i" class="flex" :lang="lang ? getLang(lang as LangKeys) : 'zh-CN'">
           {{ c }}
         </div>
       </div>

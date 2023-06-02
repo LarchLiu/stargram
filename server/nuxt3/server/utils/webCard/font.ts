@@ -89,7 +89,7 @@ function convert(input: string): UnicodeRange {
     range = range.replaceAll('U+', '')
     const [start, end] = range.split('-').map(hex => Number.parseInt(hex, 16))
 
-    if (Number.isNaN(end))
+    if (!end)
       return start
 
     return [start, end]
