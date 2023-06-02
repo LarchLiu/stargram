@@ -98,10 +98,10 @@ export function createContext(options: Options = {}, root = process.cwd()) {
   async function scanDirs() {
     if (dirs?.length) {
       await routesImport.modifyDynamicImports(async (imports) => {
-        const exports = (await scanDirExports(dirs, { fileFilter: options.fileFilter ? options.fileFilter : () => true }) as ImportExtended[])
+        const _exports = (await scanDirExports(dirs, { fileFilter: options.fileFilter ? options.fileFilter : () => true }) as ImportExtended[])
           .filter(i => i.name === 'router' || i.name === 'pathInfo')
 
-        exports.forEach((i) => {
+        _exports.forEach((i) => {
           const filepath = i.from
           let name = i.name
           if (name === 'router') {
@@ -123,7 +123,7 @@ export function createContext(options: Options = {}, root = process.cwd()) {
 
         return [
           ...imports.filter((i: ImportExtended) => i.__source === 'resolver'),
-          ...exports,
+          ..._exports,
         ] as ImportExtended[]
       })
     }
@@ -144,12 +144,12 @@ export function flattenImports(map: Options['imports'], overriding = false): Imp
   const flat: Record<string, ImportExtended> = {}
   toArray(map).forEach((definition) => {
     const as = camelCaseWithoutAt(definition)
-    const meta = {
+    const meta: ImportExtended = {
       name: definition,
       as,
       from: definition,
       __source: 'resolver',
-    } as ImportExtended
+    }
 
     if (flat[as] && !overriding)
       throw new Error(`[starnexus-import-routes] identifier ${as} already defined with ${flat[as].from}`)

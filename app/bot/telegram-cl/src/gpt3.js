@@ -130,11 +130,11 @@ export async function gpt3TokensCounter() {
       const minPairs = {}
       Array.from(pairs).forEach((pair) => {
         const rank = bpe_ranks[pair]
-        minPairs[(isNaN(rank) ? 10e10 : rank)] = pair
+        minPairs[(Number.isNaN(rank) ? 10e10 : rank)] = pair
       })
 
       const bigram = minPairs[Math.min(...Object.keys(minPairs).map((x) => {
-        return parseInt(x)
+        return Number.parseInt(x)
       },
       ))]
 

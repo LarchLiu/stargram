@@ -36,7 +36,7 @@ export interface UserConfig {
   }
 }
 
-export async function ogInfoFn(webUrl: string) {
+export async function ogInfoFn(webUrl: string): Promise<WebInfoData> {
   const res = await unfurl(webUrl)
   let content = res.description || ''
   let title = res.title || ''
@@ -63,5 +63,5 @@ export async function ogInfoFn(webUrl: string) {
       domain,
       siteName,
     },
-  } as WebInfoData
+  }
 }

@@ -87,9 +87,9 @@ export class FontDetector {
 function convert(input: string): UnicodeRange {
   return input.split(', ').map((range) => {
     range = range.replaceAll('U+', '')
-    const [start, end] = range.split('-').map(hex => parseInt(hex, 16))
+    const [start, end] = range.split('-').map(hex => Number.parseInt(hex, 16))
 
-    if (isNaN(end))
+    if (Number.isNaN(end))
       return start
 
     return [start, end]

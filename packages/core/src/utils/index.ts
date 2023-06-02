@@ -236,7 +236,7 @@ class Cryption {
   }
 
   decode(en: string) {
-    const method = parseInt(en.slice(-1))
+    const method = Number.parseInt(en.slice(-1))
     const salt = en.slice(-2, -1)
     const str = en.slice(0, -2)
     const de = this.decrypt(str, salt, method)

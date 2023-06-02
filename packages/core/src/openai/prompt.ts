@@ -79,7 +79,7 @@ function truncateTranscriptByToken(str: string, providerConfigs?: ProviderType) 
 export function textToBinaryString(str: string) {
   const escstr = decodeURIComponent(encodeURIComponent(escape(str)))
   const binstr = escstr.replace(/%([0-9A-F]{2})/gi, (match, hex) => {
-    const i = parseInt(hex, 16)
+    const i = Number.parseInt(hex, 16)
     return String.fromCharCode(i)
   })
   return binstr

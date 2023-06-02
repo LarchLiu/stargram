@@ -108,7 +108,7 @@ export function initEnv(env, i18n) {
     if (env[key]) {
       switch (ENV_VALUE_TYPE[key] || (typeof ENV[key])) {
         case 'number':
-          ENV[key] = parseInt(env[key]) || ENV[key]
+          ENV[key] = Number.parseInt(env[key]) || ENV[key]
           break
         case 'boolean':
           ENV[key] = (env[key] || 'false') === 'true'
