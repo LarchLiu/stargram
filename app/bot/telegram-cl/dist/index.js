@@ -46,9 +46,9 @@ const a = {
   // 检查更新的分支
   UPDATE_BRANCH: "main",
   // 当前版本
-  BUILD_TIMESTAMP: "1685956841",
+  BUILD_TIMESTAMP: "1685956864",
   // 当前版本 commit id
-  BUILD_VERSION: "1fef12f",
+  BUILD_VERSION: "e3b4c8b",
   /**
   * @type {I18n}
   */
