@@ -1,6 +1,6 @@
 import { unfurl } from 'unfurl.js'
-import type { PromptsLanguage, WebInfoData } from '@starnexus/core'
-import { getDomain } from '@starnexus/core/utils'
+import type { PromptsLanguage, WebInfoData } from '@stargram/core'
+import { getDomain } from '@stargram/core/utils'
 
 export interface UserConfig {
   webInfo: {

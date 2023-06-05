@@ -1,11 +1,11 @@
-import { OGInfo, WebInfo } from '@starnexus/core/webInfo'
-import { SupabaseImageStorage } from '@starnexus/core/storage/supabase'
-import { NotionDataStorage } from '@starnexus/core/storage/notion'
-import { WebCard } from '@starnexus/core/webCard'
-import { OpenaiSummarizeContent } from '@starnexus/core/openai'
-import { errorMessage } from '@starnexus/core/utils'
-import { routes } from '@starnexus/web-hub'
-import { SaveWebInfoChain } from '@starnexus/core/chain/saveWebInfo'
+import { OGInfo, WebInfo } from '@stargram/core/webInfo'
+import { SupabaseImageStorage } from '@stargram/core/storage/supabase'
+import { NotionDataStorage } from '@stargram/core/storage/notion'
+import { WebCard } from '@stargram/core/webCard'
+import { OpenaiSummarizeContent } from '@stargram/core/openai'
+import { errorMessage } from '@stargram/core/utils'
+import { routes } from '@stargram/web-hub'
+import { SaveWebInfoChain } from '@stargram/core/chain/saveWebInfo'
 import type { UserConfig } from '../../utils/index'
 import type { Context } from '../../utils/tgBot/context'
 
@@ -52,7 +52,7 @@ export default eventHandler(async (event) => {
 
   let message = ''
   if (typeof info === 'boolean')
-    message = `Saved to StarNexus 🎉. ${url}\n`
+    message = `Saved to Stargram 🎉. ${url}\n`
   else
     message = `Save failed 🐛. ${url}\nError Info: ${info}\n`
 

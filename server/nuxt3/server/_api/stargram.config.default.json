@@ -10,13 +10,13 @@
     "select": "localFn",
     "config": null,
     "fn": "WebInfo",
-    "import": "import { OGInfo, WebInfo } from '@starnexus/core/webInfo'\nimport { routes } from '@starnexus/web-hub'\n"
+    "import": "import { OGInfo, WebInfo } from '@stargram/core/webInfo'\nimport { routes } from '@stargram/web-hub'\n"
   },
   "webCard": {
     "select": "localFn",
     "config": null,
     "fn": "WebCard",
-    "import": "import { WebCard } from '@starnexus/core/webCard'\n"
+    "import": "import { WebCard } from '@stargram/core/webCard'\n"
   },
   "llm": {
     "select": "openai",
@@ -26,7 +26,7 @@
       "lang": "en"
     },
     "fn": "OpenaiSummarizeContent",
-    "import": "import { OpenaiSummarizeContent } from '@starnexus/core/openai'\n"
+    "import": "import { OpenaiSummarizeContent } from '@stargram/core/openai'\n"
   },
   "imgStorage": {
     "select": "supabase",
@@ -36,7 +36,7 @@
       "anonKey": ""
     },
     "fn": "SupabaseImageStorage",
-    "import": "import { SupabaseImageStorage } from '@starnexus/core/storage/supabase'\n"
+    "import": "import { SupabaseImageStorage } from '@stargram/core/storage/supabase'\n"
   },
   "dataStorage": {
     "select": "notion",
@@ -46,7 +46,7 @@
       "defaultOgImage": "https://kiafhufrshqyrvlpsdqg.supabase.co/storage/v1/object/public/pics-bed/star-nexus.png?v=starnexusogimage"
     },
     "fn": "NotionDataStorage",
-    "import": "import { NotionDataStorage } from '@starnexus/core/storage/notion'\n"
+    "import": "import { NotionDataStorage } from '@stargram/core/storage/notion'\n"
   },
   "kvStorage": {
     "select": "vercelKV",

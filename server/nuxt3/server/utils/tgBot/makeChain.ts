@@ -1,4 +1,4 @@
-import { errorMessage } from '@starnexus/core/utils'
+import { errorMessage } from '@stargram/core/utils'
 import type { Context } from './context'
 
 export async function StarNexusSaveWebInfoChain(starNexusHub: string, text: string, context: Context) {

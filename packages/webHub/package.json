@@ -1,8 +1,8 @@
 {
-  "name": "@starnexus/web-hub",
+  "name": "@stargram/web-hub",
   "type": "module",
-  "version": "0.0.7-beta.4",
-  "description": "StarNexus core package",
+  "version": "0.0.0",
+  "description": "Stargram core package",
   "author": "Alex Liu <larch.liu@gmail.com>",
   "license": "MIT",
   "homepage": "https://github.com/LarchLiu/star-nexus",
@@ -39,14 +39,14 @@
     "test": "vitest"
   },
   "peerDependencies": {
-    "@starnexus/core": "workspace:*"
+    "@stargram/core": "workspace:*"
   },
   "peerDependenciesMeta": {
-    "@starnexus/core": {
+    "@stargram/core": {
       "optional": false
     }
   },
   "devDependencies": {
-    "@starnexus/generate-routes": "workspace:*"
+    "@stargram/generate-routes": "workspace:*"
   }
 }

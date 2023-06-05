@@ -32,7 +32,7 @@ export default defineConfig({
           ]),
         ),
       },
-      name: '@starnexus/core',
+      name: '@stargram/core',
     },
     rollupOptions: {
       // make sure to externalize deps that shouldn't be bundled

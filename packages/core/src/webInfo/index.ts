@@ -19,7 +19,7 @@ export class WebInfoByApi {
 
   async call() {
     if (!this.starNexusHub)
-      throw new Error('StarNexus error: No StarNexusHub API.')
+      throw new Error('Stargram error: No StarNexusHub API.')
 
     const info = await $fetch<WebInfoData>(this.starNexusHub + this.apiUrl,
       {
@@ -74,7 +74,7 @@ export class WebInfo {
       return await this.ogInfo.call()
     }
 
-    throw new Error('StarNexus error: Not supported website.')
+    throw new Error('Stargram error: Not supported website.')
   }
 
   getStarNuxesApi() {

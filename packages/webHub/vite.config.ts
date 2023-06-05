@@ -1,6 +1,6 @@
 import { resolve } from 'node:path'
 import { defineConfig } from 'vite'
-import GenerateRoutes from '@starnexus/generate-routes/vite'
+import GenerateRoutes from '@stargram/generate-routes/vite'
 
 export default defineConfig({
   define: {
@@ -12,7 +12,7 @@ export default defineConfig({
     lib: {
       // Could also be a dictionary or array of multiple entry points
       entry: resolve(__dirname, 'src/index.ts'),
-      name: '@starnexus/web-hub',
+      name: '@stargram/web-hub',
       // the proper extensions will be added
       fileName: 'index',
     },
@@ -20,13 +20,13 @@ export default defineConfig({
       // make sure to externalize deps that shouldn't be bundled
       // into your library
       external: [
-        '@starnexus/core',
+        '@stargram/core',
       ],
       output: {
         // Provide global variables to use in the UMD build
         // for externalized deps
         globals: {
-          '@starnexus/core': '@starnexus/core',
+          '@stargram/core': '@stargram/core',
         },
       },
     },

@@ -5,7 +5,7 @@ import { createContext } from './ctx'
 export default createUnplugin<Options | undefined>((options) => {
   let ctx = createContext(options)
   return {
-    name: 'starnexus-import-routes',
+    name: 'stargram-import-routes',
     enforce: 'post',
     async buildStart() {
       await ctx.scanDirs()

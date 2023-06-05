@@ -4,9 +4,9 @@ import { loadConfig } from 'unconfig'
 import type { OutputConfig, ServerConfig } from '../../../composables/config'
 
 export function createContext(root = process.cwd()) {
-  const configFile = resolve(root, './starnexus.config.json')
+  const configFile = resolve(root, './stargram.config.json')
   if (!fs.existsSync(configFile))
-    throw new Error('[starnexus-generate-api] no starnexus.config.json file')
+    throw new Error('[stargram-generate-api] no stargram.config.json file')
 
   const defaultApiPath = resolve(root, './server/_api')
   const apiPath = resolve(root, './server/api')
@@ -15,7 +15,7 @@ export function createContext(root = process.cwd()) {
     const { config } = await loadConfig<ServerConfig<OutputConfig>>({
       sources: [
         {
-          files: 'starnexus.config',
+          files: 'stargram.config',
           extensions: ['json', ''],
         },
       ],
@@ -28,8 +28,8 @@ export function createContext(root = process.cwd()) {
       else
         fs.cpSync(`${defaultApiPath}/config.dev.ts`, `${apiPath}/config.ts`)
       const importArr = []
-      const importStr = `import { errorMessage } from '@starnexus/core/utils'
-import { SaveWebInfoChain } from '@starnexus/core/chain/saveWebInfo'
+      const importStr = `import { errorMessage } from '@stargram/core/utils'
+import { SaveWebInfoChain } from '@stargram/core/chain/saveWebInfo'
 import type { UserConfig } from '../../utils/index'
 import type { Context } from '../../utils/tgBot/context'
 `
@@ -123,7 +123,7 @@ export default eventHandler(async (event) => {
 
   let message = ''
   if (typeof info === 'boolean')
-    message = \`Saved to StarNexus 🎉. \${url}\\n\`
+    message = \`Saved to Stargram 🎉. \${url}\\n\`
   else
     message = \`Save failed 🐛. \${url}\\nError Info: \${info}\\n\`
 
@@ -142,7 +142,7 @@ export default eventHandler(async (event) => {
   }
 
   function copyDefaultConfigFile() {
-    fs.cpSync(`${defaultApiPath}/starnexus.config.default.json`, configFile)
+    fs.cpSync(`${defaultApiPath}/stargram.config.default.json`, configFile)
   }
 
   return {

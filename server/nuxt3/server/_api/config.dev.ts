@@ -1,9 +1,9 @@
 import * as fs from 'node:fs'
-import { errorMessage } from '@starnexus/core/utils'
+import { errorMessage } from '@stargram/core/utils'
 
 export default eventHandler(async (event) => {
   try {
-    const filename = './starnexus.config.json'
+    const filename = './stargram.config.json'
     const { outConfig } = await readBody(event)
     fs.writeFileSync(filename, `${JSON.stringify(outConfig, null, 2)}\n`)
     return 'ok'

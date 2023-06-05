@@ -1,5 +1,5 @@
-import type { PathInfo, TwitterTweetMeta, WebInfoData, WebLoaderUrls } from '@starnexus/core'
-import { replaceHtmlReservedCharacters, strNotEqualWith } from '@starnexus/core/utils'
+import type { PathInfo, TwitterTweetMeta, WebInfoData, WebLoaderUrls } from '@stargram/core'
+import { replaceHtmlReservedCharacters, strNotEqualWith } from '@stargram/core/utils'
 import { getTweetByStatus } from '../twitterApi'
 
 function tweetFilter(urls: WebLoaderUrls): WebLoaderUrls | undefined {
@@ -81,7 +81,7 @@ async function getTweetInfo(urls: WebLoaderUrls): Promise<WebInfoData> {
 
 export const pathInfo: PathInfo = {
   name: 'Tweet Details',
-  author: '[StarNexus](https://github.com/LarchLiu/star-nexus)',
+  author: '[Stargram](https://github.com/LarchLiu/star-nexus)',
   sample: 'LarchLiu/status/1635509927094677504',
   filter: tweetFilter,
   loader: getTweetInfo,

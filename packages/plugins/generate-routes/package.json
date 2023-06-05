@@ -1,8 +1,8 @@
 {
-  "name": "@starnexus/generate-routes",
+  "name": "@stargram/generate-routes",
   "type": "module",
-  "version": "0.0.7-beta.4",
-  "description": "StarNexus unplugin used to import routes",
+  "version": "0.0.0",
+  "description": "Stargram unplugin used to import routes",
   "author": "Alex Liu <larch.liu@gmail.com>",
   "keywords": [
     "unplugin",

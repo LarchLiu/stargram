@@ -1,5 +1,5 @@
 /* eslint-disable no-prototype-builtins */
-import { errorMessage } from '@starnexus/core/utils'
+import { errorMessage } from '@stargram/core/utils'
 import { StarNexusSaveWebInfoChain } from './makeChain'
 import { CONST, ENV, TG_CONFIG } from './env'
 import { Context } from './context'

@@ -1,9 +1,9 @@
-import { NotionDataStorage } from '@starnexus/core/storage/notion'
-import { WebCardByApi } from '@starnexus/core/webCard'
-import { WebInfoByApi } from '@starnexus/core/webInfo'
-import { OpenaiSummarizeContent } from '@starnexus/core/openai'
-import { SaveWebInfoChain } from '@starnexus/core/chain/saveWebInfo'
-import { errorMessage } from '@starnexus/core/utils'
+import { NotionDataStorage } from '@stargram/core/storage/notion'
+import { WebCardByApi } from '@stargram/core/webCard'
+import { WebInfoByApi } from '@stargram/core/webInfo'
+import { OpenaiSummarizeContent } from '@stargram/core/openai'
+import { SaveWebInfoChain } from '@stargram/core/chain/saveWebInfo'
+import { errorMessage } from '@stargram/core/utils'
 import { ENV } from './env.js'
 
 /**

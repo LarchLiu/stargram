@@ -1,10 +1,10 @@
-import { errorMessage } from '@starnexus/core/utils'
-import { NotionDataStorage } from '@starnexus/core/storage/notion'
-import { WebCardByApi } from '@starnexus/core/webCard'
-import { WebInfoByApi } from '@starnexus/core/webInfo'
-import { OpenaiSummarizeContent } from '@starnexus/core/openai'
-import { SaveWebInfoChain } from '@starnexus/core/chain/saveWebInfo'
-import type { SavedNotion } from '@starnexus/core'
+import { errorMessage } from '@stargram/core/utils'
+import { NotionDataStorage } from '@stargram/core/storage/notion'
+import { WebCardByApi } from '@stargram/core/webCard'
+import { WebInfoByApi } from '@stargram/core/webInfo'
+import { OpenaiSummarizeContent } from '@stargram/core/openai'
+import { SaveWebInfoChain } from '@stargram/core/chain/saveWebInfo'
+import type { SavedNotion } from '@stargram/core'
 import type { ContentRequest, ListenerSendResponse, PageInfo, SwResponse } from '~/types'
 
 async function sendSavedStatus(res: SwResponse) {

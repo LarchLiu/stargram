@@ -4,6 +4,6 @@
 
 <template>
   <div>
-    StarNexus
+    Stargram
   </div>
 </template>

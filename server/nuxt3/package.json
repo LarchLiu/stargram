@@ -1,6 +1,6 @@
 {
   "name": "@server/nuxt3",
-  "version": "0.0.5",
+  "version": "0.0.0",
   "private": true,
   "scripts": {
     "build": "nuxi build",
@@ -21,8 +21,8 @@
     "start:generate": "npx serve .output/public"
   },
   "dependencies": {
-    "@starnexus/core": "workspace:*",
-    "@starnexus/web-hub": "workspace:*",
+    "@stargram/core": "workspace:*",
+    "@stargram/web-hub": "workspace:*",
     "@vercel/kv": "^0.2.1",
     "@vue-flow/background": "^1.2.0",
     "@vue-flow/controls": "^1.1.0",

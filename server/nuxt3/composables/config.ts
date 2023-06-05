@@ -1,6 +1,6 @@
 import { acceptHMRUpdate, defineStore } from 'pinia'
 import { Position } from '@vue-flow/core'
-import { Cryption } from '@starnexus/core/utils'
+import { Cryption } from '@stargram/core/utils'
 import { C1, C2, DEFAULT_OG_IMAGE, DEFAULT_STAR_NEXUS_HUB } from '../constants/index'
 
 export interface ServerConfig<T> {
@@ -136,7 +136,7 @@ export const webInfoConfig: BasicConfig<ModelConfig> = {
   info: {
     localFn: {
       displayName: 'Local Function',
-      import: 'import { OGInfo, WebInfo } from \'@starnexus/core/webInfo\'\nimport { routes } from \'@starnexus/web-hub\'\n',
+      import: 'import { OGInfo, WebInfo } from \'@stargram/core/webInfo\'\nimport { routes } from \'@stargram/web-hub\'\n',
       fn: 'WebInfo',
       config: {
       },
@@ -144,11 +144,11 @@ export const webInfoConfig: BasicConfig<ModelConfig> = {
     },
     api: {
       displayName: 'Public API',
-      import: 'import { WebInfoByApi } from \'@starnexus/core/webInfo\'\n',
+      import: 'import { WebInfoByApi } from \'@stargram/core/webInfo\'\n',
       fn: 'WebInfoByApi',
       config: {
         starNexusHub: {
-          label: 'StarNexus Hub',
+          label: 'Stargram Hub',
           value: DEFAULT_STAR_NEXUS_HUB,
           require: true,
         },
@@ -178,7 +178,7 @@ export const webCardConfig: BasicConfig<ModelConfig> = {
   info: {
     localFn: {
       displayName: 'Local Function',
-      import: 'import { WebCard } from \'@starnexus/core/webCard\'\n',
+      import: 'import { WebCard } from \'@stargram/core/webCard\'\n',
       fn: 'WebCard',
       config: {
       },
@@ -186,11 +186,11 @@ export const webCardConfig: BasicConfig<ModelConfig> = {
     },
     api: {
       displayName: 'Public API',
-      import: 'import { WebCardByApi } from \'@starnexus/core/webCard\'\n',
+      import: 'import { WebCardByApi } from \'@stargram/core/webCard\'\n',
       fn: 'WebCardByApi',
       config: {
         starNexusHub: {
-          label: 'StarNexus Hub',
+          label: 'Stargram Hub',
           value: DEFAULT_STAR_NEXUS_HUB,
           require: true,
         },
@@ -220,7 +220,7 @@ export const imgStorageConfig: BasicConfig<ModelConfig> = {
   info: {
     supabase: {
       displayName: 'Supabase Storage',
-      import: 'import { SupabaseImageStorage } from \'@starnexus/core/storage/supabase\'\n',
+      import: 'import { SupabaseImageStorage } from \'@stargram/core/storage/supabase\'\n',
       fn: 'SupabaseImageStorage',
       config: {
         url: {
@@ -264,7 +264,7 @@ export const dataStorageConfig: BasicConfig<ModelConfig> = {
   info: {
     notion: {
       displayName: 'Notion Storage',
-      import: 'import { NotionDataStorage } from \'@starnexus/core/storage/notion\'\n',
+      import: 'import { NotionDataStorage } from \'@stargram/core/storage/notion\'\n',
       fn: 'NotionDataStorage',
       config: {
         apiKey: {
@@ -308,7 +308,7 @@ export const llmConfig: BasicConfig<ModelConfig> = {
   info: {
     openai: {
       displayName: 'Openai',
-      import: 'import { OpenaiSummarizeContent } from \'@starnexus/core/openai\'\n',
+      import: 'import { OpenaiSummarizeContent } from \'@stargram/core/openai\'\n',
       fn: 'OpenaiSummarizeContent',
       config: {
         apiKey: {

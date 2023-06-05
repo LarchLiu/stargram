@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Cryption, errorMessage } from '@starnexus/core/utils'
+import { Cryption, errorMessage } from '@stargram/core/utils'
 import { C1, C2 } from '../constants/index'
 import type { KVConfig, ServerConfig } from '../composables/config'
 

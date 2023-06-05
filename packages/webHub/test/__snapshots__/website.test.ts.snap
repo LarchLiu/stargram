@@ -6,4 +6,4 @@ exports[`handle error > github repo path error 1`] = `[Error: Github error: Not 
 
 exports[`handle error > twitter tweet path error 1`] = `[Error: Twitter error: Not supported website.]`;
 
-exports[`handle error > website domain error 1`] = `[Error: StarNexus error: Not supported website.]`;
+exports[`handle error > website domain error 1`] = `[Error: Stargram error: Not supported website.]`;

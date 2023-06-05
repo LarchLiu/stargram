@@ -68,7 +68,7 @@ async function handleSaveToNotion() {
     if (twinkTimer)
       clearInterval(twinkTimer)
     ElNotification({
-      title: 'StarNexus',
+      title: 'Stargram',
       type: 'error',
       message: error,
       offset,
@@ -99,7 +99,7 @@ chrome.runtime.onMessage.addListener(async (request: SwRequest, sender, sendResp
     if (data) {
       if (data.error) {
         ElNotification({
-          title: 'StarNexus',
+          title: 'Stargram',
           type: 'error',
           message: data.error,
           offset,
@@ -125,7 +125,7 @@ chrome.runtime.onMessage.addListener(async (request: SwRequest, sender, sendResp
       if (data.error) {
         starred = data.starred
         ElNotification({
-          title: 'StarNexus',
+          title: 'Stargram',
           type: 'error',
           message: data.error,
           offset,
@@ -137,7 +137,7 @@ chrome.runtime.onMessage.addListener(async (request: SwRequest, sender, sendResp
         starred = data.starred
         storageId = data.storageId!
         ElNotification({
-          title: 'StarNexus',
+          title: 'Stargram',
           type: 'success',
           message: starred ? 'Starred this page 🎉' : 'Unstarred this page 👌',
           offset,
@@ -179,7 +179,7 @@ function createButton(starred: boolean) {
   a.target = '_blank'
   a.classList.add('btn')
   a.classList.add('btn-sm')
-  a.innerText = ' StarNexus'
+  a.innerText = ' Stargram'
   a.id = id
   Object.assign(a.style, {
     display: 'inline-flex',

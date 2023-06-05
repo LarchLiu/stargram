@@ -1,7 +1,7 @@
 {
   "name": "telegram-cl-bot",
   "type": "module",
-  "version": "0.0.5",
+  "version": "0.0.0",
   "description": "Manage all your starred pages.",
   "author": "Alex Liu <larch.liu@gmail.com>",
   "license": "MIT",
@@ -33,7 +33,7 @@
     "deploy:build": "npm run build && wrangler2 publish"
   },
   "dependencies": {
-    "@starnexus/core": "workspace:*"
+    "@stargram/core": "workspace:*"
   },
   "devDependencies": {
     "wrangler": "^3.0.1",

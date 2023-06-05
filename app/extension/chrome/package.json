@@ -1,6 +1,6 @@
 {
   "name": "chrome-extension",
-  "version": "0.0.5",
+  "version": "0.0.0",
   "description": "Manage all your Starred Pages",
   "author": "Alex Liu <larch.liu@gmail.com>",
   "license": "MIT",
@@ -25,7 +25,7 @@
     "lint": "eslint src"
   },
   "dependencies": {
-    "@starnexus/core": "workspace:*",
+    "@stargram/core": "workspace:*",
     "@vueuse/core": "^10.1.2",
     "@vueuse/head": "^1.1.26",
     "element-plus": "^2.3.6",

@@ -1,5 +1,5 @@
 /* eslint-disable no-prototype-builtins */
-import { errorMessage } from '@starnexus/core/utils'
+import { errorMessage } from '@stargram/core/utils'
 import { CONST, DATABASE, ENV } from './env.js'
 import { Context } from './context.js'
 import { sendChatActionToTelegramWithContext, sendMessageToTelegramWithContext } from './telegram.js'
@@ -247,7 +247,7 @@ async function msgChatWithOpenAI(message, context) {
     // console.log(`Ask:${message.text}` || '')
     setTimeout(() => sendChatActionToTelegramWithContext(context)('typing').catch(console.error), 0)
     const res = await saveToNotion(message.text)
-    return sendMessageToTelegramWithContext(context)(`Saved to StarNexus 🎉.\n${res}`)
+    return sendMessageToTelegramWithContext(context)(`Saved to Stargram 🎉.\n${res}`)
   }
   catch (e) {
     const message = errorMessage(e)

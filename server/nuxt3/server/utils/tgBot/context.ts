@@ -1,5 +1,5 @@
 /* eslint-disable no-prototype-builtins */
-import { Cryption } from '@starnexus/core/utils'
+import { Cryption } from '@stargram/core/utils'
 import type { UserConfig } from '../index'
 import { C1, C2 } from '../../../constants/index'
 import { CONST, ENV, TG_TOKENS } from './env'

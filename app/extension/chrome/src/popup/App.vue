@@ -171,7 +171,7 @@ onMounted(() => {
         class="gh-btn gh-btn-sm inline-flex items-center disabled:cursor-not-allowed"
         @click="onSaveClick"
       >
-        <img :src="starSrc" height="18"><span ml-2>StarNexus</span>
+        <img :src="starSrc" height="18"><span ml-2>Stargram</span>
       </button>
     </div>
     <footer class="mt-2 flex flex-col bg-[#f0f0f0] p-2 text-12px">

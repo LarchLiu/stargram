@@ -2,7 +2,7 @@ import type {
   GithubRepoMeta,
   WebLoaderUrls,
   WebInfoData,
-} from '@starnexus/core'
+} from '@stargram/core'
 
 interface PageData extends WebInfoData {
   starred: boolean

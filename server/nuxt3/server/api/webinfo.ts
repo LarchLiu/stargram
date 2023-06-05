@@ -1,6 +1,6 @@
-import { OGInfo, WebInfo } from '@starnexus/core/webInfo'
-import { errorMessage } from '@starnexus/core/utils'
-import { routes } from '@starnexus/web-hub'
+import { OGInfo, WebInfo } from '@stargram/core/webInfo'
+import { errorMessage } from '@stargram/core/utils'
+import { routes } from '@stargram/web-hub'
 import { ogInfoFn } from '../utils'
 
 export default eventHandler(async (event) => {

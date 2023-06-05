@@ -1,4 +1,4 @@
-import { errorMessage } from '@starnexus/core/utils'
+import { errorMessage } from '@stargram/core/utils'
 import { $fetch } from 'ofetch'
 import type { OutputConfig, ServerConfig } from '../../composables/config'
 

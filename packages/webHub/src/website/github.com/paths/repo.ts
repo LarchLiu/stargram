@@ -1,6 +1,6 @@
-import type { GithubRepoMeta, PathInfo, WebInfoData, WebLoaderUrls } from '@starnexus/core'
-import { strNotEqualWith } from '@starnexus/core/utils'
-import { $fetch } from '@starnexus/core'
+import type { GithubRepoMeta, PathInfo, WebInfoData, WebLoaderUrls } from '@stargram/core'
+import { strNotEqualWith } from '@stargram/core/utils'
+import { $fetch } from '@stargram/core'
 import { GITHUB_RAW_URL, GITHUB_REPOS_API, USER_AGENT } from '../../../const'
 
 function repoFilter(urls: WebLoaderUrls): WebLoaderUrls | undefined {
@@ -63,7 +63,7 @@ async function getRepoInfo(urls: WebLoaderUrls, headers: Record<string, string> 
 
 export const pathInfo: PathInfo = {
   name: 'Github Repo Info',
-  author: '[StarNexus](https://github.com/LarchLiu/star-nexus)',
+  author: '[Stargram](https://github.com/LarchLiu/star-nexus)',
   sample: 'LarchLiu/star-nexus',
   filter: repoFilter,
   loader: getRepoInfo,
