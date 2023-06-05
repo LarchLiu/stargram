@@ -1,4 +1,4 @@
-name = "star-nexus"
+name = "stargram"
 send_metrics = false
 compatibility_date = "2023-03-04"
 main = "./.output/server/index.mjs"

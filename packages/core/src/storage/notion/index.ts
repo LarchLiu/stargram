@@ -252,7 +252,7 @@ export async function updateOgImage(config: NotionDataConfig, storageId: string,
     const data = checkData.results
     const len = data.length
     for (let i = 0; i < len; i++) {
-      if (data[i].type === 'image' && data[i].image.type === 'external' && data[i].image.external.url.includes('starnexusogimage')) {
+      if (data[i].type === 'image' && data[i].image.type === 'external' && data[i].image.external.url.includes('stargramogimage')) {
         blockId = data[i].id
         break
       }

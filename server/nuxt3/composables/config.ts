@@ -1,7 +1,7 @@
 import { acceptHMRUpdate, defineStore } from 'pinia'
 import { Position } from '@vue-flow/core'
 import { Cryption } from '@stargram/core/utils'
-import { C1, C2, DEFAULT_OG_IMAGE, DEFAULT_STAR_NEXUS_HUB } from '../constants/index'
+import { C1, C2, DEFAULT_OG_IMAGE, DEFAULT_STARGRAM_HUB } from '../constants/index'
 
 export interface ServerConfig<T> {
   app: T
@@ -147,9 +147,9 @@ export const webInfoConfig: BasicConfig<ModelConfig> = {
       import: 'import { WebInfoByApi } from \'@stargram/core/webInfo\'\n',
       fn: 'WebInfoByApi',
       config: {
-        starNexusHub: {
+        stargramHub: {
           label: 'Stargram Hub',
-          value: DEFAULT_STAR_NEXUS_HUB,
+          value: DEFAULT_STARGRAM_HUB,
           require: true,
         },
       },
@@ -189,9 +189,9 @@ export const webCardConfig: BasicConfig<ModelConfig> = {
       import: 'import { WebCardByApi } from \'@stargram/core/webCard\'\n',
       fn: 'WebCardByApi',
       config: {
-        starNexusHub: {
+        stargramHub: {
           label: 'Stargram Hub',
-          value: DEFAULT_STAR_NEXUS_HUB,
+          value: DEFAULT_STARGRAM_HUB,
           require: true,
         },
       },

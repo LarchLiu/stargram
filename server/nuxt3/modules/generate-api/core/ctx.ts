@@ -48,7 +48,7 @@ export default eventHandler(async (event) => {
     urls: {
       webUrl: url,
     },
-    starNexusHub: config.webInfo.${config.webInfo.select}.starNexusHub,
+    stargramHub: config.webInfo.${config.webInfo.select}.stargramHub,
   })
 `
         }
@@ -69,7 +69,7 @@ export default eventHandler(async (event) => {
         importArr.push(config.webCard.import)
         if (config.webCard.select === 'api') {
           replaceCode += `
-  const webCard = new ${config.webCard.fn}({ starNexusHub: config.webCard.${config.webCard.select}.starNexusHub })
+  const webCard = new ${config.webCard.fn}({ stargramHub: config.webCard.${config.webCard.select}.stargramHub })
 `
         }
         else {
@@ -82,7 +82,7 @@ export default eventHandler(async (event) => {
   const imgStorage = new ${config.imgStorage.fn}({
     ${imgConfig.join(', ')},
   })
-  const webCard = new ${config.webCard.fn}({ starNexusHub: body.starNexusHub, imgStorage })
+  const webCard = new ${config.webCard.fn}({ stargramHub: body.stargramHub, imgStorage })
 `
         }
       }

@@ -1,6 +1,6 @@
 /* eslint-disable no-prototype-builtins */
 import { errorMessage } from '@stargram/core/utils'
-import { StarNexusSaveWebInfoChain } from './makeChain'
+import { StargramSaveWebInfoChain } from './makeChain'
 import { CONST, ENV, TG_CONFIG } from './env'
 import { Context } from './context'
 import { sendChatActionToTelegramWithContext, sendMessageToTelegramWithContext } from './telegram.js'
@@ -164,7 +164,7 @@ async function msgProcessByStarNuxts(message: any, context: Context) {
   try {
     // console.log(`Ask:${message.text}` || '')
     setTimeout(() => sendChatActionToTelegramWithContext(context)('typing').catch(console.error), 0)
-    const res = await StarNexusSaveWebInfoChain(context.SHARE_CONTEXT.currentHost, message.text, context)
+    const res = await StargramSaveWebInfoChain(context.SHARE_CONTEXT.currentHost, message.text, context)
     return sendMessageToTelegramWithContext(context)(res)
   }
   catch (e) {

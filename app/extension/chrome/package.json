@@ -4,13 +4,13 @@
   "description": "Manage all your Starred Pages",
   "author": "Alex Liu <larch.liu@gmail.com>",
   "license": "MIT",
-  "homepage": "https://github.com/LarchLiu/star-nexus",
+  "homepage": "https://github.com/LarchLiu/stargram",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/LarchLiu/star-nexus.git"
+    "url": "git+https://github.com/LarchLiu/stargram.git"
   },
   "bugs": {
-    "url": "https://github.com/LarchLiu/star-nexus/issues"
+    "url": "https://github.com/LarchLiu/stargram/issues"
   },
   "main": "index.js",
   "scripts": {

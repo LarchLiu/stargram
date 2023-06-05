@@ -8,7 +8,7 @@ const { t, locale } = useI18n()
 const notionApiKeyInput = ref('')
 const notionPageLinkInput = ref('')
 const openaiApiKeyInput = ref('')
-const starNexusHubInput = ref('')
+const stargramHubInput = ref('')
 const saveStatus = ref('')
 const showSettings = ref(false)
 const showLanguage = ref(false)
@@ -70,7 +70,7 @@ function saveSettings() {
     {
       notionApiKey: notionApiKeyInput.value,
       openaiApiKey: openaiApiKeyInput.value,
-      starNexusHub: starNexusHubInput.value,
+      stargramHub: stargramHubInput.value,
       notionDatabaseId,
       notionPageLink,
     },
@@ -84,11 +84,11 @@ function onSettingsClick() {
   showLanguage.value = false
   showSettings.value = !showSettings.value
   if (showSettings.value) {
-    chrome.storage.sync.get(['notionApiKey', 'notionPageLink', 'openaiApiKey', 'starNexusHub'], (result) => {
+    chrome.storage.sync.get(['notionApiKey', 'notionPageLink', 'openaiApiKey', 'stargramHub'], (result) => {
       notionApiKeyInput.value = result.notionApiKey || ''
       notionPageLinkInput.value = result.notionPageLink || ''
       openaiApiKeyInput.value = result.openaiApiKey || ''
-      starNexusHubInput.value = result.starNexusHub || ''
+      stargramHubInput.value = result.stargramHub || ''
     })
   }
 }
@@ -150,11 +150,11 @@ watch(promptsLangSelect, (n, _) => {
 })
 
 onMounted(() => {
-  chrome.storage.sync.get(['notionApiKey', 'notionPageLink', 'openaiApiKey', 'starNexusHub', 'uiLang', 'promptsLang'], (result) => {
+  chrome.storage.sync.get(['notionApiKey', 'notionPageLink', 'openaiApiKey', 'stargramHub', 'uiLang', 'promptsLang'], (result) => {
     notionApiKeyInput.value = result.notionApiKey || ''
     notionPageLinkInput.value = result.notionPageLink || ''
     openaiApiKeyInput.value = result.openaiApiKey || ''
-    starNexusHubInput.value = result.starNexusHub || ''
+    stargramHubInput.value = result.stargramHub || ''
     uiLangSelect.value = result.uiLang || 'en'
     promptsLangSelect.value = result.promptsLang || 'en'
     locale.value = uiLangSelect.value
@@ -186,7 +186,7 @@ onMounted(() => {
         </div>
         <div flex items-center>
           <div class="github" mx-2 cursor-pointer>
-            <a href="https://github.com/LarchLiu/star-nexus" target="_blank">
+            <a href="https://github.com/LarchLiu/stargram" target="_blank">
               <img :src="iconGithub" height="18">
             </a>
           </div>
@@ -204,8 +204,8 @@ onMounted(() => {
       <label for="openaiApiKey">{{ t('settings.openaiApiKey') }}</label>
       <input id="openaiApiKey" v-model="openaiApiKeyInput" class="my-2" type="text" name="notionPageLink">
 
-      <label for="starNexusHub">{{ t('settings.starNexusHub') }}</label>
-      <input id="starNexusHub" v-model="starNexusHubInput" class="my-2" type="text" name="notionPageLink">
+      <label for="stargramHub">{{ t('settings.stargramHub') }}</label>
+      <input id="stargramHub" v-model="stargramHubInput" class="my-2" type="text" name="notionPageLink">
 
       <button class="gh-btn mt-2" type="submit" @click="saveSettings">
         {{ t('settings.saveSettings') }}

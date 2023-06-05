@@ -7,10 +7,10 @@ export type WebCardFn = (webData: WebInfoData) => Promise<StorageImage>
 export class WebCardByApi {
   constructor(fields: {
     webData?: WebInfoData
-    starNexusHub?: string
+    stargramHub?: string
     headers?: Record<string, string>
   }) {
-    this.apiUrl = (fields.starNexusHub || '') + this.apiUrl
+    this.apiUrl = (fields.stargramHub || '') + this.apiUrl
     this.webData = fields.webData
     this.headers = fields.headers
     this.localFn = undefined
@@ -48,11 +48,11 @@ export class WebCard {
   constructor(fields: {
     imgStorage: IImageStorage
     webData?: WebInfoData
-    starNexusHub?: string
+    stargramHub?: string
     localFn?: WebCardFn
     headers?: Record<string, string>
   }) {
-    this.apiUrl = (fields.starNexusHub || '') + this.apiUrl
+    this.apiUrl = (fields.stargramHub || '') + this.apiUrl
     this.webData = fields.webData
     this.headers = fields.headers
     this.localFn = fields.localFn

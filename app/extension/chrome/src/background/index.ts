@@ -37,14 +37,14 @@ async function sendSavedStatus(res: SwResponse) {
 }
 
 chrome.runtime.onInstalled.addListener(async () => {
-  const result = await chrome.storage.sync.get(['notionApiKey', 'notionDatabaseId', 'openaiApiKey', 'starNexusHub', 'uiLang', 'promptsLang'])
+  const result = await chrome.storage.sync.get(['notionApiKey', 'notionDatabaseId', 'openaiApiKey', 'stargramHub', 'uiLang', 'promptsLang'])
   const notionApiKey = result.notionApiKey ?? ''
   const notionDatabaseId = result.notionDatabaseId ?? ''
   const openaiApiKey = result.openaiApiKey ?? ''
-  const starNexusHub = result.starNexusHub ?? ''
+  const stargramHub = result.stargramHub ?? ''
   const uiLang = result.uiLang ?? 'en'
   const promptsLang = result.promptsLang ?? 'en'
-  await chrome.storage.sync.set({ notionApiKey, notionDatabaseId, openaiApiKey, starNexusHub, uiLang, promptsLang })
+  await chrome.storage.sync.set({ notionApiKey, notionDatabaseId, openaiApiKey, stargramHub, uiLang, promptsLang })
 })
 
 chrome.runtime.onMessage.addListener(async (request: ContentRequest, sender, sendResponse: ListenerSendResponse) => {
@@ -83,12 +83,12 @@ chrome.runtime.onMessage.addListener(async (request: ContentRequest, sender, sen
 })
 
 async function saveToNotion(pageInfo: PageInfo): Promise<SwResponse> {
-  const storage = await chrome.storage.sync.get(['notionApiKey', 'notionDatabaseId', 'openaiApiKey', 'promptsLang', 'starNexusHub'])
+  const storage = await chrome.storage.sync.get(['notionApiKey', 'notionDatabaseId', 'openaiApiKey', 'promptsLang', 'stargramHub'])
   const notionApiKey = storage.notionApiKey ?? ''
   const databaseId = storage.notionDatabaseId ?? ''
   const openaiApiKey = storage.openaiApiKey ?? ''
   const promptsLang = storage.promptsLang ?? 'en'
-  const starNexusHub = storage.starNexusHub ?? ''
+  const stargramHub = storage.stargramHub ?? ''
 
   if (!notionApiKey || !databaseId) {
     // console.log('Missing Notion API key or Database ID in settings.')
@@ -101,17 +101,17 @@ async function saveToNotion(pageInfo: PageInfo): Promise<SwResponse> {
     urls: {
       webUrl: url,
     },
-    starNexusHub,
+    stargramHub,
   })
 
-  const webCard = new WebCardByApi({ starNexusHub })
+  const webCard = new WebCardByApi({ stargramHub })
 
   const summarize = new OpenaiSummarizeContent({ apiKey: openaiApiKey, lang: promptsLang })
   const notion = new NotionDataStorage(
     {
       apiKey: notionApiKey,
       databaseId,
-      defaultOgImage: 'https://kiafhufrshqyrvlpsdqg.supabase.co/storage/v1/object/public/pics-bed/star-nexus.png?v=starnexusogimage',
+      defaultOgImage: 'https://kiafhufrshqyrvlpsdqg.supabase.co/storage/v1/object/public/pics-bed/stargram.png?v=stargramogimage',
     },
   )
 

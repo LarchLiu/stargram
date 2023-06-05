@@ -27,7 +27,7 @@ export default eventHandler(async (event) => {
   const imgStorage = new SupabaseImageStorage({
     url: config.imgStorage.supabase.url, bucket: config.imgStorage.supabase.bucket, anonKey: config.imgStorage.supabase.anonKey,
   })
-  const webCard = new WebCard({ starNexusHub: body.starNexusHub, imgStorage })
+  const webCard = new WebCard({ stargramHub: body.stargramHub, imgStorage })
 
   const summarizeContent = new OpenaiSummarizeContent({
     apiKey: config.llm.openai.apiKey, apiHost: config.llm.openai.apiHost, lang: config.llm.openai.lang,

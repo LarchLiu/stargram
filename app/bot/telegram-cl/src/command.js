@@ -309,7 +309,7 @@ async function commandFetchUpdate(message, command, subcommand, context) {
     sha: ENV.BUILD_VERSION,
   }
 
-  const repo = `https://raw.githubusercontent.com/LarchLiu/star-nexus/${ENV.UPDATE_BRANCH}`
+  const repo = `https://raw.githubusercontent.com/LarchLiu/stargram/${ENV.UPDATE_BRANCH}`
   const ts = `${repo}/dist/timestamp`
   const info = `${repo}/dist/buildinfo.json`
 

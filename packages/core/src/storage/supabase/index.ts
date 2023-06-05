@@ -38,7 +38,7 @@ export class SupabaseImageStorage extends ImageStorage<SupabaseImageConfig, WebC
       throw error
 
     return {
-      url: `${this.storageUrl}/${storageData.imgPath}?v=starnexusogimage&t=${Date.now()}`,
+      url: `${this.storageUrl}/${storageData.imgPath}?v=stargramogimage&t=${Date.now()}`,
     }
   }
 
@@ -59,7 +59,7 @@ export class SupabaseImageStorage extends ImageStorage<SupabaseImageConfig, WebC
       throw error
 
     return {
-      url: `${this.storageUrl}/${storageData.imgPath}?v=starnexusogimage&t=${Date.now()}`,
+      url: `${this.storageUrl}/${storageData.imgPath}?v=stargramogimage&t=${Date.now()}`,
     }
   }
 

@@ -6,7 +6,7 @@ const { t } = useI18n()
 const notionApiKeyInput = ref('')
 const notionPageLinkInput = ref('')
 const openaiApiKeyInput = ref('')
-const starNexusHubInput = ref('')
+const stargramHubInput = ref('')
 
 function extractDatabaseIdFromPageLink(pageLink: string) {
   const regex = /([a-f0-9]{32})/
@@ -26,18 +26,18 @@ function saveSettings() {
     {
       notionApiKey: notionApiKeyInput.value,
       openaiApiKey: openaiApiKeyInput.value,
-      starNexusHub: starNexusHubInput.value,
+      stargramHub: stargramHubInput.value,
       notionDatabaseId,
       notionPageLink,
     },
   )
 }
 onMounted(() => {
-  chrome.storage.sync.get(['notionApiKey', 'notionPageLink', 'openaiApiKey', 'starNexusHub'], (result) => {
+  chrome.storage.sync.get(['notionApiKey', 'notionPageLink', 'openaiApiKey', 'stargramHub'], (result) => {
     notionApiKeyInput.value = result.notionApiKey || ''
     notionPageLinkInput.value = result.notionPageLink || ''
     openaiApiKeyInput.value = result.openaiApiKey || ''
-    starNexusHubInput.value = result.starNexusHub || ''
+    stargramHubInput.value = result.stargramHub || ''
   })
 })
 </script>
@@ -55,8 +55,8 @@ onMounted(() => {
       <label for="openaiApiKey">{{ t('settings.openaiApiKey') }}</label>
       <input id="openaiApiKey" v-model="openaiApiKeyInput" class="mb-6 mt-2 w-full" type="text" name="notionPageLink">
 
-      <label for="starNexusHub">{{ t('settings.starNexusHub') }}</label>
-      <input id="starNexusHub" v-model="starNexusHubInput" class="mt-2 w-full" type="text" name="notionPageLink">
+      <label for="stargramHub">{{ t('settings.stargramHub') }}</label>
+      <input id="stargramHub" v-model="stargramHubInput" class="mt-2 w-full" type="text" name="notionPageLink">
 
       <button class="mt-6 btn" type="submit" @click="saveSettings">
         {{ t('settings.saveSettings') }}

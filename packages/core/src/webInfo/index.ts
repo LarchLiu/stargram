@@ -6,22 +6,22 @@ import type { OGInfo } from './ogInfo'
 export * from './ogInfo'
 
 export class WebInfoByApi {
-  constructor(fields: { urls: WebLoaderUrls; starNexusHub: string; headers?: Record<string, string> }) {
+  constructor(fields: { urls: WebLoaderUrls; stargramHub: string; headers?: Record<string, string> }) {
     this.webUrl = fields.urls.webUrl
     this.headers = fields.headers
-    this.starNexusHub = fields.starNexusHub || ''
+    this.stargramHub = fields.stargramHub || ''
   }
 
   private webUrl = ''
   private apiUrl = '/api/webinfo'
-  private starNexusHub = ''
+  private stargramHub = ''
   private headers?: Record<string, string>
 
   async call() {
-    if (!this.starNexusHub)
-      throw new Error('Stargram error: No StarNexusHub API.')
+    if (!this.stargramHub)
+      throw new Error('Stargram error: No StargramHub API.')
 
-    const info = await $fetch<WebInfoData>(this.starNexusHub + this.apiUrl,
+    const info = await $fetch<WebInfoData>(this.stargramHub + this.apiUrl,
       {
         method: 'POST',
         headers: this.headers,
@@ -33,7 +33,7 @@ export class WebInfoByApi {
   }
 
   getStarNuxesApi() {
-    return this.starNexusHub
+    return this.stargramHub
   }
 }
 

@@ -4,7 +4,7 @@ import messages from '@intlify/unplugin-vue-i18n/messages'
 import App from './App.vue'
 import 'uno.css'
 
-const rootIdName = 'star_nexus_content_script'
+const rootIdName = 'stargram_content_script'
 const beforeRoot = document.querySelector(`#${rootIdName}`)
 if (beforeRoot && __DEV__)
   document.body.removeChild(beforeRoot)

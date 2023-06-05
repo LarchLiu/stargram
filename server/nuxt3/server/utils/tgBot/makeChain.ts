@@ -1,7 +1,7 @@
 import { errorMessage } from '@stargram/core/utils'
 import type { Context } from './context'
 
-export async function StarNexusSaveWebInfoChain(starNexusHub: string, text: string, context: Context) {
+export async function StargramSaveWebInfoChain(stargramHub: string, text: string, context: Context) {
   const regex = /(http(s)?:\/\/)?[a-zA-Z0-9][-a-zA-Z0-9]{0,62}(\.[a-zA-Z0-9][-a-zA-Z0-9]{0,62})+(:[0-9]{1,5})?[-a-zA-Z0-9()@:%_\\\+\.~#?&//=]*/g
   const match = text.match(regex)
   // const infoArr = []
@@ -14,12 +14,12 @@ export async function StarNexusSaveWebInfoChain(starNexusHub: string, text: stri
       if (!url.startsWith('http'))
         url = `https://${url}`
 
-      $fetch(`${starNexusHub}/api/telegram/save-web-info`, {
+      $fetch(`${stargramHub}/api/telegram/save-web-info`, {
         method: 'POST',
         body: {
           context,
           url,
-          starNexusHub,
+          stargramHub,
         },
       }).catch(e => console.error(errorMessage(e)))
       i += 1
@@ -38,7 +38,7 @@ export async function StarNexusSaveWebInfoChain(starNexusHub: string, text: stri
       //   bucket: process.env.SUPABASE_STORAGE_BUCKET || '',
       //   upsert: true,
       // })
-      // const webCard = new WebCard({ starNexusHub, imgStorage: supabaseImgStorage })
+      // const webCard = new WebCard({ stargramHub, imgStorage: supabaseImgStorage })
       // const summarize = new OpenaiSummarizeContent({ apiKey: config.OPENAI_API_KEY || '' })
       // const notion = new NotionDataStorage(
       //   {

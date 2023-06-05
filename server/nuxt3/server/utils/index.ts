@@ -5,12 +5,12 @@ import { getDomain } from '@stargram/core/utils'
 export interface UserConfig {
   webInfo: {
     api: {
-      starNexusHub: string
+      stargramHub: string
     }
   }
   webCard: {
     api: {
-      starNexusHub: string
+      stargramHub: string
     }
   }
   llm: {

@@ -319,7 +319,7 @@ describe('utils', () => {
         notion: {
           apiKey: '',
           databaseId: '',
-          defaultOgImage: 'https://kiafhufrshqyrvlpsdqg.supabase.co/storage/v1/object/public/pics-bed/star-nexus.png?v=starnexusogimage',
+          defaultOgImage: 'https://kiafhufrshqyrvlpsdqg.supabase.co/storage/v1/object/public/pics-bed/stargram.png?v=stargramogimage',
         },
       },
       kvStorage: {

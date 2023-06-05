@@ -63,8 +63,8 @@ async function getRepoInfo(urls: WebLoaderUrls, headers: Record<string, string> 
 
 export const pathInfo: PathInfo = {
   name: 'Github Repo Info',
-  author: '[Stargram](https://github.com/LarchLiu/star-nexus)',
-  sample: 'LarchLiu/star-nexus',
+  author: '[Stargram](https://github.com/LarchLiu/stargram)',
+  sample: 'LarchLiu/stargram',
   filter: repoFilter,
   loader: getRepoInfo,
 }

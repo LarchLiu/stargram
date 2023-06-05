@@ -3,9 +3,9 @@ import { getWebsiteInfo } from './website'
 
 describe('get website info', () => {
   test('github info', async () => {
-    const res = await getWebsiteInfo('https://github.com/LarchLiu/star-nexus')
-    expect((res.title).includes('star-nexus')).toBeTruthy()
-    expect(res.url).toBe('https://github.com/LarchLiu/star-nexus')
+    const res = await getWebsiteInfo('https://github.com/LarchLiu/stargram')
+    expect((res.title).includes('stargram')).toBeTruthy()
+    expect(res.url).toBe('https://github.com/LarchLiu/stargram')
   })
 
   test('tweet info', async () => {

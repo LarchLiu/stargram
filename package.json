@@ -1,18 +1,18 @@
 {
-  "name": "star-nexus",
+  "name": "stargram",
   "version": "0.0.0",
   "private": true,
   "packageManager": "pnpm@8.6.0",
   "description": "Manage all your starred pages.",
   "author": "Alex Liu <larch.liu@gmail.com>",
   "license": "MIT",
-  "homepage": "https://github.com/LarchLiu/star-nexus",
+  "homepage": "https://github.com/LarchLiu/stargram",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/LarchLiu/star-nexus.git"
+    "url": "git+https://github.com/LarchLiu/stargram.git"
   },
   "bugs": {
-    "url": "https://github.com/LarchLiu/star-nexus/issues"
+    "url": "https://github.com/LarchLiu/stargram/issues"
   },
   "engines": {
     "node": ">=18.0.0"

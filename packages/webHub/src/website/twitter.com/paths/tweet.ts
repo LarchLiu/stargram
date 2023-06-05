@@ -81,7 +81,7 @@ async function getTweetInfo(urls: WebLoaderUrls): Promise<WebInfoData> {
 
 export const pathInfo: PathInfo = {
   name: 'Tweet Details',
-  author: '[Stargram](https://github.com/LarchLiu/star-nexus)',
+  author: '[Stargram](https://github.com/LarchLiu/stargram)',
   sample: 'LarchLiu/status/1635509927094677504',
   filter: tweetFilter,
   loader: getTweetInfo,

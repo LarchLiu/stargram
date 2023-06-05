@@ -12,7 +12,7 @@ import type { Context } from '../../utils/tgBot/context'
 export default eventHandler(async (event) => {
   const body = await readBody(event)
   const url = body.url
-  const starNexusHub = body.starNexusHub
+  const stargramHub = body.stargramHub
   const context = body.context as Context
   const config = context.USER_CONFIG as UserConfig
 
@@ -31,7 +31,7 @@ export default eventHandler(async (event) => {
     bucket: config.imgStorage.supabase.bucket || '',
     upsert: true,
   })
-  const webCard = new WebCard({ starNexusHub, imgStorage: supabaseImgStorage })
+  const webCard = new WebCard({ stargramHub, imgStorage: supabaseImgStorage })
   const summarize = new OpenaiSummarizeContent({ apiKey: config.llm.openai.apiKey || '' })
   const notion = new NotionDataStorage(
     {

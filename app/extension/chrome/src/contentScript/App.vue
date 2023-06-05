@@ -10,7 +10,7 @@ let twinkTimer: NodeJS.Timer
 let starred = false
 let twinkStarred = false
 let storageId = ''
-const id = 'star-nexus'
+const id = 'stargram'
 
 function init() {
   const button = document.querySelector(`#${id}`)

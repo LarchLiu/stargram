@@ -24,23 +24,23 @@ async function saveToNotion(text) {
       const notionApiKey = ENV.NOTION_API_KEY
       const databaseId = ENV.NOTION_DATABASE_ID
       const openaiApiKey = ENV.API_KEY
-      const starNexusHub = ENV.STAR_NEXUS_HUB_API
+      const stargramHub = ENV.STARGRAM_HUB_API
       const url = match[i]
       const webInfo = new WebInfoByApi({
         urls: {
           webUrl: url,
         },
-        starNexusHub,
+        stargramHub,
       })
 
-      const webCard = new WebCardByApi({ starNexusHub })
+      const webCard = new WebCardByApi({ stargramHub })
 
       const summarize = new OpenaiSummarizeContent({ apiKey: openaiApiKey })
       const notion = new NotionDataStorage(
         {
           apiKey: notionApiKey,
           databaseId,
-          defaultOgImage: 'https://kiafhufrshqyrvlpsdqg.supabase.co/storage/v1/object/public/pics-bed/star-nexus.png?v=starnexusogimage',
+          defaultOgImage: 'https://kiafhufrshqyrvlpsdqg.supabase.co/storage/v1/object/public/pics-bed/stargram.png?v=stargramogimage',
         },
       )
 

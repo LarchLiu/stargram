@@ -8,12 +8,12 @@ const kv = useStorage('kv')
 export const defaultUserConfig: UserConfig = {
   webInfo: {
     api: {
-      starNexusHub: '',
+      stargramHub: '',
     },
   },
   webCard: {
     api: {
-      starNexusHub: '',
+      stargramHub: '',
     },
   },
   llm: {
