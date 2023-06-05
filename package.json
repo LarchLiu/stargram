@@ -1,6 +1,6 @@
 {
   "name": "stargram",
-  "version": "0.0.1-beta.0",
+  "version": "0.0.7",
   "private": true,
   "packageManager": "pnpm@8.6.0",
   "description": "Manage all your starred pages.",
