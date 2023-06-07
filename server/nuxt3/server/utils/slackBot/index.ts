@@ -26,7 +26,7 @@ export async function SlackSaveWebInfoChain(stargramHub: string, text: string, u
     return `Found ${i} Website. Saving...`
   }
   else {
-    throw new Error('Not Supported Website.')
+    throw new Error('No Supported Website.')
   }
 }
 

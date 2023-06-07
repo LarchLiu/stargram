@@ -69,6 +69,6 @@ export async function TelegramSaveWebInfoChain(stargramHub: string, text: string
     return `Found ${i} Website. Saving...`
   }
   else {
-    throw new Error('Not Supported Website.')
+    throw new Error('No Supported Website.')
   }
 }
