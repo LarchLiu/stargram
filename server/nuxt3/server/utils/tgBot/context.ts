@@ -1,7 +1,6 @@
 /* eslint-disable no-prototype-builtins */
-import { Cryption } from '@stargram/core/utils'
 import type { UserConfig } from '../index'
-import { C1, C2 } from '../../../constants/index'
+import { cryption } from '../../../constants/index'
 import { CONST, ENV, TG_CONFIG } from './env'
 
 const kv = useStorage('kv')
@@ -92,7 +91,6 @@ export class Context {
     try {
       const config = await kv.getItem(storeKey) as any
       if (config) {
-        const cryption = new Cryption(C1, C2)
         const userConfig = JSON.parse(cryption.decode(config))
         for (const key in userConfig) {
           if (

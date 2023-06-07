@@ -1,7 +1,5 @@
-import { Cryption } from '@stargram/core/utils'
-import { C1, C2 } from '../../../../constants/index'
+import { cryption } from '../../../../constants/index'
 
-const cryption = new Cryption(C1, C2)
 const kv = useStorage('kv')
 
 export default eventHandler(async (event) => {

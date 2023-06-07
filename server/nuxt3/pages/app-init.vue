@@ -1,9 +1,8 @@
 <script setup lang="ts">
-import { Cryption, errorMessage } from '@stargram/core/utils'
-import { C1, C2 } from '../constants/index'
+import { errorMessage } from '@stargram/core/utils'
+import { cryption } from '../constants/index'
 import type { OutputConfig, ServerConfig } from '../composables/config'
 
-const cryption = new Cryption(C1, C2)
 const text = ref('')
 const userId = ref('')
 const config = ref<ServerConfig<OutputConfig>>()

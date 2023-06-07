@@ -1,9 +1,6 @@
-import { Cryption } from '@stargram/core/utils'
-import { C1, C2 } from '../../../constants/index'
+import { cryption } from '../../../constants/index'
 import type { BotConfig } from '../../utils'
 import { getBotConfig, setBotConfig } from '../../utils'
-
-const cryption = new Cryption(C1, C2)
 
 export default eventHandler(async (event) => {
   const encode = await readBody(event) as string

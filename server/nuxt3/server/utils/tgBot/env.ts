@@ -1,10 +1,8 @@
-import { Cryption } from '@stargram/core/utils'
 import type { BotConfig } from '../index'
 import { getBotConfig } from '../index'
-import { C1, C2 } from '../../../constants/index'
+import { cryption } from '../../../constants/index'
 import i18n from './i18n'
 
-const cryption = new Cryption(C1, C2)
 export interface TgBotEnv {
   CHAT_WHITE_LIST: string[]
   LANGUAGE: string

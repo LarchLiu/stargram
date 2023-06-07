@@ -1,7 +1,6 @@
 import { acceptHMRUpdate, defineStore } from 'pinia'
 import { Position } from '@vue-flow/core'
-import { Cryption } from '@stargram/core/utils'
-import { C1, C2, DEFAULT_OG_IMAGE, DEFAULT_STARGRAM_HUB } from '../constants/index'
+import { DEFAULT_OG_IMAGE, DEFAULT_STARGRAM_HUB, cryption } from '../constants/index'
 
 export interface ServerConfig<T> {
   app: T
@@ -474,8 +473,6 @@ export const defaultConfig: ServerConfig<BasicConfig<ModelsConfig>> = {
   kvStorage: kvStorageConfig,
   server: serverConfig,
 }
-
-const cryption = new Cryption(C1, C2)
 
 export function getConfigKV(config: Record<string, IConfig>) {
   const _obj: Record<string, any> = {}

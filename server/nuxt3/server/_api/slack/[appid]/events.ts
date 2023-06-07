@@ -1,8 +1,7 @@
-import { Cryption, errorMessage } from '@stargram/core/utils'
-import { C1, C2 } from '../../../../constants/index'
+import { errorMessage } from '@stargram/core/utils'
+import { cryption } from '../../../../constants/index'
 
 const kv = useStorage('kv')
-const cryption = new Cryption(C1, C2)
 
 export default eventHandler(async (event) => {
   try {
