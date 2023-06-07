@@ -1,7 +1,7 @@
 /* eslint-disable no-prototype-builtins */
 import { errorMessage } from '@stargram/core/utils'
-import { StargramSaveWebInfoChain } from './makeChain'
-import { CONST, ENV, TG_CONFIG } from './env'
+import { TelegramSaveWebInfoChain } from './makeChain'
+import { ENV, TG_CONFIG } from './env'
 import { Context } from './context'
 import { sendChatActionToTelegramWithContext, sendMessageToTelegramWithContext } from './telegram.js'
 
@@ -28,11 +28,11 @@ async function msgFilterWhiteList(message: any, context: Context) {
   if (ENV.I_AM_A_GENEROUS_PERSON)
     return null
 
-  const i18n = I18N[TG_CONFIG()[context.SHARE_CONTEXT.currentBotToken].LANGUAGE as keyof typeof I18N]
+  const i18n = I18N[TG_CONFIG().LANGUAGE as keyof typeof I18N]
   // 判断私聊消息
   if (context.SHARE_CONTEXT.chatType === 'private') {
     // 白名单判断
-    if (!TG_CONFIG()[context.SHARE_CONTEXT.currentBotToken].CHAT_WHITE_LIST.includes(`${context.CURRENT_CHAT_CONTEXT.chat_id}`)) {
+    if (!TG_CONFIG().CHAT_WHITE_LIST.includes(`${context.CURRENT_CHAT_CONTEXT.chat_id}`)) {
       return sendMessageToTelegramWithContext(context)(
         i18n.message.user_has_no_permission_to_use_the_bot(context.CURRENT_CHAT_CONTEXT.chat_id),
       )
@@ -40,27 +40,13 @@ async function msgFilterWhiteList(message: any, context: Context) {
     return null
   }
 
-  // 判断群组消息
-  if (CONST.GROUP_TYPES.includes(context.SHARE_CONTEXT.chatType)) {
-    // 未打开群组机器人开关,直接忽略
-    if (!ENV.GROUP_CHAT_BOT_ENABLE)
-      return new Response('Not support', { status: 401 })
-
-    // 白名单判断
-    if (!TG_CONFIG()[context.SHARE_CONTEXT.currentBotToken].CHAT_GROUP_WHITE_LIST.includes(`${context.CURRENT_CHAT_CONTEXT.chat_id}`)) {
-      return sendMessageToTelegramWithContext(context)(
-        i18n.message.group_has_no_permission_to_use_the_bot(context.CURRENT_CHAT_CONTEXT.chat_id),
-      )
-    }
-    return null
-  }
   return sendMessageToTelegramWithContext(context)(
     i18n.message.not_supported_chat_type(context.SHARE_CONTEXT.chatType),
   )
 }
 
 async function msgFilterNonTextMessage(message: any, context: Context) {
-  const i18n = I18N[TG_CONFIG()[context.SHARE_CONTEXT.currentBotToken].LANGUAGE as keyof typeof I18N]
+  const i18n = I18N[TG_CONFIG().LANGUAGE as keyof typeof I18N]
   if (!message.text)
     return sendMessageToTelegramWithContext(context)(i18n.message.not_supported_chat_type_message)
 
@@ -164,7 +150,7 @@ async function msgProcessByStarNuxts(message: any, context: Context) {
   try {
     // console.log(`Ask:${message.text}` || '')
     setTimeout(() => sendChatActionToTelegramWithContext(context)('typing').catch(console.error), 0)
-    const res = await StargramSaveWebInfoChain(context.SHARE_CONTEXT.currentHost, message.text, context)
+    const res = await TelegramSaveWebInfoChain(context.SHARE_CONTEXT.currentHost, message.text, context)
     return sendMessageToTelegramWithContext(context)(res)
   }
   catch (e) {
@@ -174,7 +160,7 @@ async function msgProcessByStarNuxts(message: any, context: Context) {
 }
 
 export async function msgProcessByChatType(message: any, context: Context) {
-  const i18n = I18N[TG_CONFIG()[context.SHARE_CONTEXT.currentBotToken].LANGUAGE as keyof typeof I18N]
+  const i18n = I18N[TG_CONFIG().LANGUAGE as keyof typeof I18N]
   const handlerMap = {
     private: [
       msgFilterWhiteList,

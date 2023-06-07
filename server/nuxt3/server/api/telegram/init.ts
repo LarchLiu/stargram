@@ -1,22 +1,21 @@
-import { CONST, TG_CONFIG, TG_TOKENS, tgEnvDefault } from '../../utils/tgBot/env'
+import { Cryption } from '@stargram/core/utils'
+import { C1, C2 } from '../../../constants/index'
+import type { BotConfig } from '../../utils'
+import { getBotConfig, setBotConfig } from '../../utils'
 
-const kv = useStorage('kv')
+const cryption = new Cryption(C1, C2)
 
 export default eventHandler(async (event) => {
   const result: Record<string, any> = {}
-  const body = await readBody(event)
-  await initEnv()
+  const encode = await readBody(event) as string
+  const decode = cryption.decode(encode)
+  const config = JSON.parse(decode)
   const domain = `${getRequestProtocol(event)}://${getRequestHost(event)}`
-  const token = body.botToken.trim()
-  const botName = body.botName
+  const token = config.app.config.botToken.trim() as string
   const test = /(\d+:[A-Za-z0-9_-]{35})/.test(token)
   if (!test) {
     setResponseStatus(event, 400)
     return { error: 'Telegram Token Not Available' }
-  }
-  if (!botName) {
-    setResponseStatus(event, 400)
-    return { error: 'Telegram Bot Name Not Available' }
   }
   const url = `${domain}/api/telegram/${token}/webhook`
   const id = token.split(':')[0]
@@ -25,11 +24,12 @@ export default eventHandler(async (event) => {
     command: await bindCommandForTelegram(token).catch(e => e.message),
   }
   if (result[id].webhook.result) {
-    const env = JSON.parse(JSON.stringify(tgEnvDefault))
-    TG_TOKENS()[token] = botName
-    TG_CONFIG()[token] = env
-    await kv.setItem(CONST.TOKENS_KEY, TG_TOKENS())
-    await kv.setItem(CONST.CONFIG_KEY, TG_CONFIG())
+    const appConfig = await getBotConfig('telegram') as BotConfig
+    appConfig[id] = { config: encode, userList: [] }
+    if (!appConfig.default)
+      appConfig.default = token
+
+    setBotConfig('telegram', appConfig)
   }
   if (result[id].webhook.ok && result[id].command.ok)
     return 'success'

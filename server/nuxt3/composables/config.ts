@@ -19,6 +19,8 @@ export interface BasicConfig<T> {
     icon: string
   }
   handles: IHandle[]
+  public: boolean
+  userConfig: boolean
   select: string
   info: T
 }
@@ -33,35 +35,45 @@ export interface IHandle {
   position: Position
 }
 export interface ModelConfig {
-  [key: string]: {
-    displayName: string
-    fn?: string
-    import?: string
-    config: {
-      [key: string]: IConfig
-    }
-    output: string
+  displayName: string
+  fn?: string
+  import?: string
+  config: {
+    [key: string]: IConfig
   }
+  output: string
 }
+export type ModelsConfig = AppConfig | Record<string, ModelConfig>
 export interface OutputConfig {
   select: string
-  config: {
-    [key: string]: string
-  }
+  public: boolean
+  userConfig: boolean
+  config: Record<string, any> | null
   fn?: string
   import?: string
 }
+export interface OutUserConfig {
+  select: string
+  public: boolean
+  config: Record<string, any> | null
+}
 export interface KVConfig {
-  [select: string]: {
-    [config: string]: string
-  }
+  [select: string]: Record<string, any> | null
+}
+
+export type AppName = keyof AppConfig
+export interface AppConfig {
+  telegram: ModelConfig
+  slack: ModelConfig
 }
 // @unocss-include
-export const appConfig: BasicConfig<ModelConfig> = {
+export const appConfig: BasicConfig<AppConfig> = {
   title: {
     text: 'App',
     icon: 'i-carbon-application',
   },
+  public: true,
+  userConfig: true,
   handles: [
     {
       id: 'input',
@@ -89,9 +101,9 @@ export const appConfig: BasicConfig<ModelConfig> = {
           value: '',
           require: true,
         },
-        botName: {
-          label: 'Bot Name',
-          value: '',
+        language: {
+          label: 'Command Language',
+          value: 'en',
           require: true,
         },
       },
@@ -100,13 +112,13 @@ export const appConfig: BasicConfig<ModelConfig> = {
     slack: {
       displayName: 'Slack Bot',
       config: {
-        botToken: {
-          label: 'Webhook URL',
+        appId: {
+          label: 'App ID',
           value: '',
           require: true,
         },
-        botName: {
-          label: 'Bot Name',
+        webhook: {
+          label: 'Incoming Webhook',
           value: '',
           require: true,
         },
@@ -115,11 +127,13 @@ export const appConfig: BasicConfig<ModelConfig> = {
     },
   },
 }
-export const webInfoConfig: BasicConfig<ModelConfig> = {
+export const webInfoConfig: BasicConfig<ModelsConfig> = {
   title: {
     text: 'Website Info',
     icon: 'i-carbon-document-preliminary',
   },
+  public: true,
+  userConfig: true,
   handles: [
     {
       id: 'input',
@@ -157,11 +171,13 @@ export const webInfoConfig: BasicConfig<ModelConfig> = {
     },
   },
 }
-export const webCardConfig: BasicConfig<ModelConfig> = {
+export const webCardConfig: BasicConfig<ModelsConfig> = {
   title: {
     text: 'Website Card',
     icon: 'i-carbon-image',
   },
+  public: true,
+  userConfig: true,
   handles: [
     {
       id: 'input',
@@ -199,11 +215,13 @@ export const webCardConfig: BasicConfig<ModelConfig> = {
     },
   },
 }
-export const imgStorageConfig: BasicConfig<ModelConfig> = {
+export const imgStorageConfig: BasicConfig<ModelsConfig> = {
   title: {
     text: 'Image Storage',
     icon: 'i-carbon-save-image',
   },
+  public: true,
+  userConfig: true,
   handles: [
     {
       id: 'input',
@@ -243,11 +261,13 @@ export const imgStorageConfig: BasicConfig<ModelConfig> = {
     },
   },
 }
-export const dataStorageConfig: BasicConfig<ModelConfig> = {
+export const dataStorageConfig: BasicConfig<ModelsConfig> = {
   title: {
     text: 'Data Storage',
     icon: 'i-carbon-db2-database',
   },
+  public: false,
+  userConfig: true,
   handles: [
     {
       id: 'input',
@@ -287,11 +307,13 @@ export const dataStorageConfig: BasicConfig<ModelConfig> = {
     },
   },
 }
-export const llmConfig: BasicConfig<ModelConfig> = {
+export const llmConfig: BasicConfig<ModelsConfig> = {
   title: {
     text: 'LLM',
     icon: 'i-carbon-ai-results',
   },
+  public: false,
+  userConfig: true,
   handles: [
     {
       id: 'input',
@@ -331,11 +353,13 @@ export const llmConfig: BasicConfig<ModelConfig> = {
     },
   },
 }
-export const kvStorageConfig: BasicConfig<ModelConfig> = {
+export const kvStorageConfig: BasicConfig<ModelsConfig> = {
   title: {
     text: 'KV Storage',
     icon: 'i-carbon-virtual-column-key',
   },
+  public: false,
+  userConfig: false,
   handles: [
     {
       id: 'input',
@@ -368,11 +392,13 @@ export const kvStorageConfig: BasicConfig<ModelConfig> = {
     },
   },
 }
-export const serverConfig: BasicConfig<ModelConfig> = {
+export const serverConfig: BasicConfig<ModelsConfig> = {
   title: {
     text: 'Cloud Server',
     icon: 'i-carbon-ibm-cloud-citrix-daas',
   },
+  public: false,
+  userConfig: false,
   handles: [
     {
       id: 'input',
@@ -437,8 +463,8 @@ export const serverConfig: BasicConfig<ModelConfig> = {
     },
   },
 }
-export type ModelName = keyof ServerConfig<BasicConfig<ModelConfig>>
-export const defaultConfig: ServerConfig<BasicConfig<ModelConfig>> = {
+export type ModelName = keyof ServerConfig<BasicConfig<ModelsConfig>>
+export const defaultConfig: ServerConfig<BasicConfig<ModelsConfig>> = {
   app: appConfig,
   webInfo: webInfoConfig,
   webCard: webCardConfig,
@@ -451,6 +477,15 @@ export const defaultConfig: ServerConfig<BasicConfig<ModelConfig>> = {
 
 const cryption = new Cryption(C1, C2)
 
+export function getConfigKV(config: Record<string, IConfig>) {
+  const _obj: Record<string, any> = {}
+  Object.keys(config).forEach((x) => {
+    _obj[x] = config[x].value
+  })
+
+  return Object.keys(_obj).length ? _obj : null
+}
+
 export const useConfigStore = defineStore('server-config', () => {
   const config = ref(defaultConfig)
   const outConfig = computed(() => {
@@ -458,14 +493,12 @@ export const useConfigStore = defineStore('server-config', () => {
     const obj: Record<string, any> = {}
     keys.forEach((k) => {
       const c = config.value[k as ModelName]
-      const _config = c.info[c.select].config
-      const _fn = c.info[c.select].fn
-      const _import = c.info[c.select].import
-      const _obj: Record<string, any> = {}
-      Object.keys(_config).forEach((x) => {
-        _obj[x] = _config[x].value
-      })
-      obj[k] = { select: c.select, config: Object.keys(_obj).length ? _obj : null }
+      const select = c.select as keyof typeof c.info
+      const _config = getConfigKV(c.info[select].config)
+      const _fn = c.info[select].fn
+      const _import = c.info[select].import
+
+      obj[k] = { select: c.select, public: c.public, userConfig: c.userConfig, config: _config }
       if (_fn)
         obj[k].fn = _fn
       if (_import)
@@ -473,29 +506,46 @@ export const useConfigStore = defineStore('server-config', () => {
     })
     return obj as ServerConfig<OutputConfig>
   })
+  const outUserConfig = computed(() => {
+    const keys = Object.keys(config.value)
+    const obj: Record<string, any> = {}
+    keys.forEach((k) => {
+      const c = config.value[k as ModelName]
+      const select = c.select as keyof typeof c.info
+      if (c.userConfig) {
+        const _config = getConfigKV(c.info[select].config)
+        obj[k] = { select: c.select, public: c.public, config: _config }
+      }
+    })
+    return obj as ServerConfig<OutUserConfig>
+  })
   const kvConfig = computed(() => {
     const keys = Object.keys(config.value)
     const obj: Record<string, any> = {}
     keys.forEach((k) => {
       const c = config.value[k as ModelName]
-      const _config = c.info[c.select].config
-      const _obj: Record<string, any> = {}
-      Object.keys(_config).forEach((x) => {
-        _obj[x] = _config[x].value
-      })
-      obj[k] = { [c.select]: Object.keys(_obj).length ? _obj : null }
+      const select = c.select as keyof typeof c.info
+      if (c.userConfig) {
+        const _config = getConfigKV(c.info[select].config)
+        obj[k] = { [c.select]: _config }
+      }
     })
     return obj as ServerConfig<KVConfig>
   })
-  const enKvConfig = computed(() => {
+  const encodeKvConfig = computed(() => {
     return cryption.encode(JSON.stringify(kvConfig.value))
+  })
+  const encodeUserConfig = computed(() => {
+    return cryption.encode(JSON.stringify(outUserConfig.value))
   })
 
   return {
     config,
     outConfig,
+    outUserConfig,
     kvConfig,
-    enKvConfig,
+    encodeKvConfig,
+    encodeUserConfig,
   }
 })
 

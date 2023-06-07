@@ -17,7 +17,7 @@ export default createUnplugin(() => {
     },
     vite: {
       async handleHotUpdate({ file }) {
-        if (file.includes('stargram.config'))
+        if (file.includes('stargram.config') || file.includes('_api'))
           await ctx.generateApi()
       },
     },

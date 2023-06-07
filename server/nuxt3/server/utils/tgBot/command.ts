@@ -10,7 +10,7 @@ import { CONST, ENV, I18N, TG_CONFIG } from '../../utils/tgBot/env'
 const KV = useStorage('kv')
 
 type ScopeType = 'all_private_chats' | 'all_group_chats' | 'all_chat_administrators'
-type CommandType = '/help' | '/new' | '/start' | '/setenv' | '/delenv' | '/system' | '/adduser' | '/deluser'
+type CommandType = '/help' | '/new' | '/start' | '/setenv' | '/delenv' | '/system'
 interface CommandOpt {
   scopes: ScopeType[]
   fn: (message: any, command: any, subcommand: any, context: any) => Promise<any>
@@ -79,49 +79,10 @@ const commandHandlers: CommandHandlers = {
     scopes: ['all_private_chats', 'all_chat_administrators'],
     fn: commandGetHelp,
   },
-  '/adduser': {
-    scopes: [],
-    fn: commandAddUser,
-    needAuth: commandAuthCheck.mustCreator,
-  },
-  '/deluser': {
-    scopes: [],
-    fn: commandDelUser,
-    needAuth: commandAuthCheck.mustCreator,
-  },
-}
-
-async function commandAddUser(message: any, command: string, subcommand: string, context: Context) {
-  const i18n = I18N[TG_CONFIG()[context.SHARE_CONTEXT.currentBotToken].LANGUAGE as keyof typeof I18N]
-  try {
-    const list = TG_CONFIG()[context.SHARE_CONTEXT.currentBotToken].CHAT_WHITE_LIST
-    if (!list.includes(subcommand))
-      TG_CONFIG()[context.SHARE_CONTEXT.currentBotToken].CHAT_WHITE_LIST.push(subcommand)
-    await KV.setItem(CONST.CONFIG_KEY, TG_CONFIG())
-    return sendMessageToTelegramWithContext(context)(i18n.command.adduser.update_config_success)
-  }
-  catch (e) {
-    return sendMessageToTelegramWithContext(context)(i18n.command.adduser.add_user_error(e))
-  }
-}
-
-async function commandDelUser(message: any, command: string, subcommand: string, context: Context) {
-  const i18n = I18N[TG_CONFIG()[context.SHARE_CONTEXT.currentBotToken].LANGUAGE as keyof typeof I18N]
-  try {
-    const list = TG_CONFIG()[context.SHARE_CONTEXT.currentBotToken].CHAT_WHITE_LIST
-    const idx = list.indexOf(subcommand)
-    if (idx !== -1)
-      TG_CONFIG()[context.SHARE_CONTEXT.currentBotToken].CHAT_WHITE_LIST.splice(idx, 1)
-    await KV.setItem(CONST.CONFIG_KEY, TG_CONFIG())
-    return sendMessageToTelegramWithContext(context)(i18n.command.adduser.update_config_success)
-  }
-  catch (e) {
-    return sendMessageToTelegramWithContext(context)(i18n.command.adduser.add_user_error(e))
-  }
 }
 
 async function commandGetHelp(message: any, command: string, subcommand: string, context: Context) {
-  const i18n = I18N[TG_CONFIG()[context.SHARE_CONTEXT.currentBotToken].LANGUAGE as keyof typeof I18N]
+  const i18n = I18N[TG_CONFIG().LANGUAGE as keyof typeof I18N]
   const helpMsg
       = i18n.command.help.summary
       + Object.keys(commandHandlers)
@@ -131,7 +92,7 @@ async function commandGetHelp(message: any, command: string, subcommand: string,
 }
 
 async function commandCreateNewChatContext(message: any, command: string, subcommand: string, context: Context) {
-  const i18n = I18N[TG_CONFIG()[context.SHARE_CONTEXT.currentBotToken].LANGUAGE as keyof typeof I18N]
+  const i18n = I18N[TG_CONFIG().LANGUAGE as keyof typeof I18N]
   try {
     if (command === '/new') {
       return sendMessageToTelegramWithContext(context)(i18n.command.new.new_chat_start)
@@ -150,7 +111,7 @@ async function commandCreateNewChatContext(message: any, command: string, subcom
 }
 
 async function commandUpdateUserConfig(message: any, command: string, subcommand: string, context: Context) {
-  const i18n = I18N[TG_CONFIG()[context.SHARE_CONTEXT.currentBotToken].LANGUAGE as keyof typeof I18N]
+  const i18n = I18N[TG_CONFIG().LANGUAGE as keyof typeof I18N]
   const kv = subcommand.indexOf('=')
   if (kv === -1)
     return sendMessageToTelegramWithContext(context)(i18n.command.setenv.help)
@@ -168,7 +129,7 @@ async function commandUpdateUserConfig(message: any, command: string, subcommand
 }
 
 async function commandDeleteUserConfig(message: any, command: string, subcommand: string, context: Context) {
-  const i18n = I18N[TG_CONFIG()[context.SHARE_CONTEXT.currentBotToken].LANGUAGE as keyof typeof I18N]
+  const i18n = I18N[TG_CONFIG().LANGUAGE as keyof typeof I18N]
   try {
     if (subcommand === 'confirm')
       context.USER_CONFIG = defaultUserConfig
@@ -217,7 +178,7 @@ async function commandSystem(message: any, command: string, subcommand: string, 
 }
 
 export async function handleCommandMessage(message: any, context: Context) {
-  const i18n = I18N[TG_CONFIG()[context.SHARE_CONTEXT.currentBotToken].LANGUAGE as keyof typeof I18N]
+  const i18n = I18N[TG_CONFIG().LANGUAGE as keyof typeof I18N]
   if (ENV.DEV_MODE) {
     // commandHandlers['/echo'] = {
     //   help: '[DEBUG ONLY] echo message',
@@ -269,8 +230,6 @@ export async function bindCommandForTelegram(token: string) {
     all_chat_administrators: [],
   }
   for (const key in commandHandlers) {
-    if (TG_CONFIG()[token].HIDE_COMMAND_BUTTONS.includes(key))
-      continue
     const _key = key as CommandType
     if (commandHandlers[_key] && commandHandlers[_key].scopes) {
       for (const scope of commandHandlers[_key].scopes) {

@@ -48,7 +48,7 @@ const initialElements = [
  * useVueFlow provides all event handlers and store properties
  * You can pass the composable an object that has the same properties as the VueFlow component props
  */
-const { onPaneReady, onNodeDragStop, onConnect, addEdges } = useVueFlow()
+const { onPaneReady, onConnect, addEdges } = useVueFlow()
 
 /**
  * Our elements
@@ -64,7 +64,7 @@ onPaneReady(({ fitView }) => {
   fitView()
 })
 
-onNodeDragStop(e => console.log('drag stop', e))
+// onNodeDragStop(e => console.log('drag stop', e))
 
 /**
  * onConnect is called when a new connection is created.

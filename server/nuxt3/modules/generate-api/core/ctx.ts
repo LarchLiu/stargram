@@ -27,6 +27,8 @@ export function createContext(root = process.cwd()) {
         fs.cpSync(`${defaultApiPath}/config.product.ts`, `${apiPath}/config.ts`)
       else
         fs.cpSync(`${defaultApiPath}/config.dev.ts`, `${apiPath}/config.ts`)
+
+      const sendMessage = config.app.select === 'telegram' ? 'sendMessageToTelegramWithContext(context)(message)' : `sendMessageToSlackBot(config.app.${config.app.select}, message)`
       const importArr = []
       const importStr = `import { errorMessage } from '@stargram/core/utils'
 import { SaveWebInfoChain } from '@stargram/core/chain/saveWebInfo'
@@ -74,7 +76,7 @@ export default eventHandler(async (event) => {
         }
         else {
           importArr.push(config.imgStorage.import)
-          const imgKeys = Object.keys(config.imgStorage.config)
+          const imgKeys = Object.keys(config.imgStorage.config!)
           const imgConfig = imgKeys.map((k) => {
             return `${k}: config.imgStorage.${config.imgStorage.select}.${k}`
           })
@@ -88,7 +90,7 @@ export default eventHandler(async (event) => {
       }
       if (config.llm) {
         importArr.push(config.llm.import)
-        const llmKeys = Object.keys(config.llm.config)
+        const llmKeys = Object.keys(config.llm.config!)
         const llmConfig = llmKeys.map((k) => {
           return `${k}: config.llm.${config.llm.select}.${k}`
         })
@@ -100,7 +102,7 @@ export default eventHandler(async (event) => {
       }
       if (config.dataStorage) {
         importArr.push(config.dataStorage.import)
-        const dataKeys = Object.keys(config.dataStorage.config)
+        const dataKeys = Object.keys(config.dataStorage.config!)
         const dataConfig = dataKeys.map((k) => {
           return `${k}: config.dataStorage.${config.dataStorage.select}.${k}`
         })
@@ -128,7 +130,7 @@ export default eventHandler(async (event) => {
     message = \`Save failed 🐛. \${url}\\nError Info: \${info}\\n\`
 
   try {
-    return (await sendMessageToTelegramWithContext(context)(message))
+    return (await ${sendMessage})
   }
   catch (error) {
     console.error(error)

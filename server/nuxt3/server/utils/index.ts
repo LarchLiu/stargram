@@ -1,8 +1,52 @@
 import { unfurl } from 'unfurl.js'
-import type { PromptsLanguage, WebInfoData } from '@stargram/core'
 import { getDomain } from '@stargram/core/utils'
+import type { PromptsLanguage, WebInfoData } from '@stargram/core'
+import type { AppName } from '../../composables/config'
+
+const kv = useStorage('kv')
+
+export interface IBotConfig {
+  config: string
+  userList: string[]
+}
+export type BotConfig = { default: string } & Record<string, IBotConfig>
+
+export const ConfigKey = {
+  botConfigKey: '_bot_config',
+  userCofnigKey: '_user_config',
+}
+
+export interface AppConfig {
+  publicWebInfo: {
+    api: {
+      stargramHub: string
+    }
+  }
+  publicWebCard: {
+    api: {
+      stargramHub: string
+    }
+  }
+  publicImgStorage: {
+    supabase: {
+      url: string
+      bucket: string
+      anonKey: string
+    }
+  }
+}
 
 export interface UserConfig {
+  app: {
+    telegram: {
+      botToken: string
+      language: string
+    }
+    slack: {
+      appId: string
+      webhook: string
+    }
+  }
   webInfo: {
     api: {
       stargramHub: string
@@ -63,4 +107,12 @@ export async function ogInfoFn(webUrl: string): Promise<WebInfoData> {
       siteName,
     },
   }
+}
+
+export async function getBotConfig(app: AppName) {
+  return await kv.getItem(`${app}${ConfigKey.botConfigKey}`) || {}
+}
+
+export async function setBotConfig(app: AppName, config: BotConfig) {
+  return await kv.setItem(`${app}${ConfigKey.botConfigKey}`, config)
 }

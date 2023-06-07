@@ -1,16 +1,16 @@
 import { errorMessage } from '@stargram/core/utils'
 import type { Context } from './context'
 
-export async function StargramSaveWebInfoChain(stargramHub: string, text: string, context: Context) {
+export async function TelegramSaveWebInfoChain(stargramHub: string, text: string, context: Context) {
   const regex = /(http(s)?:\/\/)?[a-zA-Z0-9][-a-zA-Z0-9]{0,62}(\.[a-zA-Z0-9][-a-zA-Z0-9]{0,62})+(:[0-9]{1,5})?[-a-zA-Z0-9()@:%_\\\+\.~#?&//=]*/g
-  const match = text.match(regex)
+  const matchs = text.match(regex)
   // const infoArr = []
-  if (match) {
+  if (matchs) {
     let i = 0
-    // let success = 0
-    // let fail = 0
-    while (i < match.length) {
-      let url = match[i]
+    const uniqueUrls = new Set(matchs)
+    const uniqueMatchs = [...uniqueUrls]
+    while (i < uniqueMatchs.length) {
+      let url = uniqueMatchs[i]
       if (!url.startsWith('http'))
         url = `https://${url}`
 

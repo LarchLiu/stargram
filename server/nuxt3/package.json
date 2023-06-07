@@ -14,7 +14,7 @@
     "deploy:netlify": "netlify deploy --prod",
     "deploy:vercel": "vercel deploy --prod",
     "start": "node .output/server/index.mjs",
-    "typecheck": "vue-tsc --noEmit",
+    "tscheck": "vue-tsc --noEmit",
     "lint": "eslint .",
     "postinstall": "nuxi prepare",
     "generate": "nuxi generate",

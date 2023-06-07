@@ -1,25 +1,33 @@
 {
   "app": {
     "select": "telegram",
+    "public": true,
+    "userConfig": true,
     "config": {
       "botToken": "",
-      "botName": ""
+      "language": "en"
     }
   },
   "webInfo": {
     "select": "localFn",
+    "public": true,
+    "userConfig": true,
     "config": null,
     "fn": "WebInfo",
     "import": "import { OGInfo, WebInfo } from '@stargram/core/webInfo'\nimport { routes } from '@stargram/web-hub'\n"
   },
   "webCard": {
     "select": "localFn",
+    "public": true,
+    "userConfig": true,
     "config": null,
     "fn": "WebCard",
     "import": "import { WebCard } from '@stargram/core/webCard'\n"
   },
   "llm": {
     "select": "openai",
+    "public": false,
+    "userConfig": true,
     "config": {
       "apiKey": "",
       "apiHost": "https://api.openai.com",
@@ -30,6 +38,8 @@
   },
   "imgStorage": {
     "select": "supabase",
+    "public": true,
+    "userConfig": true,
     "config": {
       "url": "",
       "bucket": "",
@@ -40,6 +50,8 @@
   },
   "dataStorage": {
     "select": "notion",
+    "public": false,
+    "userConfig": true,
     "config": {
       "apiKey": "",
       "databaseId": "",
@@ -50,6 +62,8 @@
   },
   "kvStorage": {
     "select": "vercelKV",
+    "public": false,
+    "userConfig": false,
     "config": {
       "KV_REST_API_URL": "",
       "KV_REST_API_TOKEN": ""
@@ -57,6 +71,8 @@
   },
   "server": {
     "select": "netlify",
+    "public": false,
+    "userConfig": false,
     "config": {
       "token": "",
       "siteid": ""

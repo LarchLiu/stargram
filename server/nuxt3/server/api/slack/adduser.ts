@@ -12,30 +12,24 @@ export default eventHandler(async (event) => {
   let userId = body.userId
   const encodeConfig = body.userConfig
   const userConfig = JSON.parse(cryption.decode(encodeConfig)) as ServerConfig<OutUserConfig>
-  let token = userConfig.app.config?.botToken.trim() as string
-  const appConfig = await getBotConfig('telegram') as BotConfig
-  if (!token)
-    token = appConfig.default
+  let appId = userConfig.app.config?.appId as string
+  const appConfig = await getBotConfig('slack') as BotConfig
+  if (!appId)
+    appId = appConfig.default
 
-  token = token.trim()
-  const test = /(\d+:[A-Za-z0-9_-]{35})/.test(token)
-  if (!test) {
-    setResponseStatus(event, 400)
-    return { error: 'Telegram Token Not Available' }
-  }
   if (!userId) {
     setResponseStatus(event, 400)
     return { error: 'No User Id' }
   }
+  appId = appId.trim()
   userId = userId.trim()
 
-  const botId = token.split(':')[0] as string
-  const _thisConfig = appConfig[botId]?.config
-  const userList = appConfig[botId]?.userList
+  const _thisConfig = appConfig[appId]?.config
+  const userList = appConfig[appId]?.userList
   if (_thisConfig) {
     if (!userList.includes(userId)) {
       userList.push(userId)
-      await setBotConfig('telegram', appConfig)
+      await setBotConfig('slack', appConfig)
     }
 
     const thisConfig = JSON.parse(cryption.decode(_thisConfig)) as ServerConfig<OutUserConfig>
@@ -52,7 +46,7 @@ export default eventHandler(async (event) => {
       if (!_userConfig[_key])
         _userConfig[key] = { [thisConfig[_key].select]: thisConfig[_key].config }
     })
-    const userConfigKey = `telegram${ConfigKey.userCofnigKey}:${botId}:${userId}`
+    const userConfigKey = `slack${ConfigKey.userCofnigKey}:${appId}:${userId}`
     await kv.setItem(userConfigKey, cryption.encode(JSON.stringify(_userConfig)))
   }
   return 'ok'

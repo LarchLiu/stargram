@@ -12,11 +12,11 @@ export default eventHandler(async (event) => {
       content: '',
     }
     if (outConfig.server.select === 'netlify')
-      prebuild = `netlify env:set KV_REST_API_URL ${outConfig.kvStorage.config.KV_REST_API_URL} && netlify env:set KV_REST_API_TOKEN ${outConfig.kvStorage.config.KV_REST_API_TOKEN}`
+      prebuild = `netlify env:set KV_REST_API_URL ${outConfig.kvStorage.config!.KV_REST_API_URL} && netlify env:set KV_REST_API_TOKEN ${outConfig.kvStorage.config!.KV_REST_API_TOKEN}`
     else if (outConfig.server.select === 'cloudflare')
-      deployOptions = ` --project-name=${outConfig.server.config.siteid}`
+      deployOptions = ` --project-name=${outConfig.server.config!.siteid}`
     else if (outConfig.server.select === 'vercel')
-      deployOptions = ` --token=${outConfig.server.config.token}`
+      deployOptions = ` --token=${outConfig.server.config!.token}`
 
     const res = await $fetch(`${process.env.GITHUB_REPO_DISPATCH_URL}`, {
       method: 'POST',
@@ -32,10 +32,10 @@ export default eventHandler(async (event) => {
           prebuild,
           prewrite,
           build: `pnpm build:${outConfig.server.select} && pnpm deploy:${outConfig.server.select}${deployOptions}`,
-          clitoken: outConfig.server.config.token,
-          siteid: outConfig.server.config.siteid,
-          kvurl: outConfig.kvStorage.config.KV_REST_API_URL,
-          kvtoken: outConfig.kvStorage.config.KV_REST_API_TOKEN,
+          clitoken: outConfig.server.config!.token,
+          siteid: outConfig.server.config!.siteid,
+          kvurl: outConfig.kvStorage.config!.KV_REST_API_URL,
+          kvtoken: outConfig.kvStorage.config!.KV_REST_API_TOKEN,
         },
       },
       responseType: 'json',

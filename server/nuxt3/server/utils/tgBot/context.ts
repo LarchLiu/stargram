@@ -2,10 +2,20 @@
 import { Cryption } from '@stargram/core/utils'
 import type { UserConfig } from '../index'
 import { C1, C2 } from '../../../constants/index'
-import { CONST, ENV, TG_TOKENS } from './env'
+import { CONST, ENV, TG_CONFIG } from './env'
 
 const kv = useStorage('kv')
 export const defaultUserConfig: UserConfig = {
+  app: {
+    telegram: {
+      botToken: '',
+      language: '',
+    },
+    slack: {
+      appId: '',
+      webhook: '',
+    },
+  },
   webInfo: {
     api: {
       stargramHub: '',
@@ -115,14 +125,14 @@ export class Context {
     )
     if (match)
       token = match[1]
-    const telegramIndex = Object.keys(TG_TOKENS()).indexOf(token)
-    if (telegramIndex === -1)
+    const id = token.split(':')[0]
+    if (!TG_CONFIG().IS_INIT)
       throw new Error('Token not allowed')
 
     this.SHARE_CONTEXT.currentHost = `${url.protocol}//${url.host}`
     this.SHARE_CONTEXT.currentBotToken = token
-    this.SHARE_CONTEXT.currentBotId = token.split(':')[0]
-    this.SHARE_CONTEXT.currentBotName = TG_TOKENS()[token]
+    this.SHARE_CONTEXT.currentBotId = id
+    this.SHARE_CONTEXT.currentBotName = ''
   }
 
   async _initShareContext(message: any) {
@@ -145,13 +155,8 @@ export class Context {
 
     const botId = this.SHARE_CONTEXT.currentBotId
     let historyKey = `history_tg:${id}`
-    let configStoreKey = `${CONST.USER_CONFIG_KEY}:${id}`
+    let configStoreKey = `telegram${ConfigKey.userCofnigKey}:${botId}:${id}`
     let groupAdminKey = ''
-
-    if (botId) {
-      historyKey += `:${botId}`
-      configStoreKey += `:${botId}`
-    }
     // 标记群组消息
     if (CONST.GROUP_TYPES.includes(message.chat?.type)) {
       if (!ENV.GROUP_CHAT_BOT_SHARE_MODE && message.from.id) {

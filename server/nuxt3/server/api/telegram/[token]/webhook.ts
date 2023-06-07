@@ -2,7 +2,7 @@ export default eventHandler(async (event) => {
   try {
     const raw = await readBody(event)
     const url = getRequestURL(event)
-    await initEnv()
+    await initEnv(event.context.params?.token || '')
     return makeResponse200(await handleMessage(url, raw))
   }
   catch (error) {

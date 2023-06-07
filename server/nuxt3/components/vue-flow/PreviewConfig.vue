@@ -26,9 +26,9 @@ watch(outputEl, () => {
       <code>{{ `\n${JSON.stringify(store.kvConfig, null, 2)}` }}</code>
     </pre>
     <pre mt-2 max-h-50 style="overflow: scroll; border:1px solid #b1aeae; border-radius: 4px;">
-      <code>{{ `\n${store.enKvConfig}` }}</code>
+      <code>{{ `\n${store.encodeUserConfig}` }}</code>
     </pre>
-    <button v-if="isSupported" @click="copy(store.enKvConfig)">
+    <button v-if="isSupported" @click="copy(store.encodeUserConfig)">
       <span v-if="!copied">Copy</span>
       <span v-else>Copied!</span>
     </button>

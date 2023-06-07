@@ -1,24 +1,22 @@
+import { Cryption } from '@stargram/core/utils'
+import type { BotConfig } from '../index'
+import { getBotConfig } from '../index'
+import { C1, C2 } from '../../../constants/index'
 import i18n from './i18n'
 
-const kv = useStorage('kv')
+const cryption = new Cryption(C1, C2)
 export interface TgBotEnv {
   CHAT_WHITE_LIST: string[]
-  CHAT_GROUP_WHITE_LIST: string[]
-  HIDE_COMMAND_BUTTONS: string[]
   LANGUAGE: string
+  IS_INIT?: boolean
 }
 
 export interface TgBotConfig {
   [token: string]: TgBotEnv
 }
-type TgAvailableTokens = Record<string, string>
 export const tgEnvDefault: TgBotEnv = {
   // 白名单
   CHAT_WHITE_LIST: [],
-  // 群组白名单
-  CHAT_GROUP_WHITE_LIST: [],
-  // 隐藏部分命令按钮
-  HIDE_COMMAND_BUTTONS: [],
   // 语言
   LANGUAGE: 'en',
 }
@@ -56,13 +54,16 @@ export const I18N = {
   'en': I18nEN,
 }
 
-let TgConfig: TgBotConfig
-let TgTokens: TgAvailableTokens
+const TgConfig: TgBotEnv = tgEnvDefault
 export const TG_CONFIG = () => TgConfig
-export const TG_TOKENS = () => TgTokens
-export async function initEnv() {
-  if (!TgConfig)
-    TgConfig = await kv.getItem(CONST.CONFIG_KEY) as TgBotConfig || {}
-  if (!TgTokens)
-    TgTokens = await kv.getItem(CONST.TOKENS_KEY) as TgAvailableTokens || {}
+export async function initEnv(token: string) {
+  const botConfig = await getBotConfig('telegram') as BotConfig
+  const id = token.split(':')[0]
+  const encodeConfig = botConfig[id]?.config
+  if (encodeConfig) {
+    const config = JSON.parse(cryption.decode(encodeConfig))
+    TgConfig.LANGUAGE = config.app.config.language
+    TgConfig.CHAT_WHITE_LIST = botConfig[id].userList
+    TgConfig.IS_INIT = true
+  }
 }

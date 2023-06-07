@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { Handle } from '@vue-flow/core'
-import type { BasicConfig, ModelConfig } from '../../composables/config'
+import type { BasicConfig, ModelsConfig } from '../../composables/config'
 
 interface Props {
-  data: BasicConfig<ModelConfig>
+  data: BasicConfig<ModelsConfig>
 }
 const props = defineProps<Props>()
 const model = props.data
@@ -74,7 +74,7 @@ function updateHandler() {
         {{ o.label }}
       </option>
     </select>
-    <div v-for="c in info[model.select].config" :key="c.label">
+    <div v-for="c in info[model.select as keyof typeof info].config" :key="c.label">
       <div mt-2 text-gray>
         {{ c.label }} <span v-if="c.require" text-red>*</span>
       </div>
@@ -83,7 +83,7 @@ function updateHandler() {
   </div>
   <div mt-2 flex items-center justify-end text-10px text-gray>
     <div ref="outputEl">
-      {{ info[model.select].output }}
+      {{ info[model.select as keyof typeof info].output }}
     </div>
   </div>
   <Handle
