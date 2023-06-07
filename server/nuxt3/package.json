@@ -16,7 +16,6 @@
     "start": "node .output/server/index.mjs",
     "tscheck": "vue-tsc --noEmit",
     "lint": "eslint .",
-    "postinstall": "nuxi prepare",
     "generate": "nuxi generate",
     "start:generate": "npx serve .output/public"
   },
