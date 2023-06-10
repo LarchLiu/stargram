@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { errorMessage } from '@stargram/core/utils'
 import UserConfigFlow from '~/components/UserConfigFlow.vue'
 import { cryption } from '~/constants'
 import type { OutUserConfig, ServerConfig } from '~/composables/config'
@@ -25,8 +26,8 @@ async function onChange(config: ServerConfig<OutUserConfig>) {
       userConfig: cryption.encode(JSON.stringify(config)),
     },
   })
-  if (error)
-    alert(error.value?.message)
+  if (error.value)
+    alert(errorMessage(error.value))
   else
     alert('success')
 }

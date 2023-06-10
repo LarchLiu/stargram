@@ -22,7 +22,7 @@ async function onInitClick() {
       showUserIdInput.value = true
   }
   else {
-    alert(errorMessage('Config error'))
+    alert('Config code error')
   }
 }
 async function onAddUser() {
