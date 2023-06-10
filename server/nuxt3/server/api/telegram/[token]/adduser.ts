@@ -36,7 +36,7 @@ export default eventHandler(async (event) => {
         await setBotConfig('telegram', appConfig)
       }
       const thisConfig = JSON.parse(cryption.decode(_thisConfig)) as ServerConfig<OutUserConfig>
-      const _userConfig: any = await getUserConfig('telegram', appId, userId) || {}
+      const _userConfig: any = {}
       const publicKey = Object.keys(thisConfig).filter((c) => {
         return thisConfig[c as keyof ServerConfig<OutUserConfig>].public
       })

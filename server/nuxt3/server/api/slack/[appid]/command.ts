@@ -1,6 +1,5 @@
 import { cryption } from '../../../../constants/index'
-
-const kv = useStorage('kv')
+import type { KVConfig, ServerConfig } from '../../../../composables/config'
 
 export default eventHandler(async (event) => {
   const raw = await readBody(event)
@@ -25,16 +24,17 @@ export default eventHandler(async (event) => {
     }
   }
   else if (raw.command === '/config') {
-    const config = await kv.getItem(`slack${ConfigKey.userConfigKey}:${raw.api_app_id}:${raw.user_id}`) as string
-    const userConfig = JSON.parse(cryption.decode(config))
+    const userConfig = await getUserConfig('slack', raw.api_app_id, raw.user_id)
     const myConfig: any = {}
-    Object.keys(userConfig)
-      .filter((key) => {
-        const obj = userConfig[key]
-        const keys = Object.keys(obj)
-        return !keys.includes('public')
-      })
-      .forEach(key => myConfig[key] = userConfig[key])
+    if (userConfig) {
+      Object.keys(userConfig)
+        .filter((key) => {
+          const obj = userConfig[key as keyof ServerConfig<KVConfig>]
+          const keys = Object.keys(obj)
+          return !keys.includes('public')
+        })
+        .forEach(key => myConfig[key] = userConfig[key as keyof ServerConfig<KVConfig>])
+    }
     const showConfig = JSON.stringify(myConfig, null, 2)
     return {
       blocks: [

@@ -30,7 +30,7 @@ export async function SlackSaveWebInfoChain(stargramHub: string, text: string, u
   }
 }
 
-export function sendMessageToSlackBot(config: { appId: string; webhook: string }, message: string) {
+export function sendMessageToSlackBot(config: { webhook: string }, message: string) {
   return $fetch(config.webhook, {
     body: {
       blocks: [

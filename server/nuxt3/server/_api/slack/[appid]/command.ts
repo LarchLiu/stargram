@@ -1,8 +1,6 @@
 import { cryption } from '../../../../constants/index'
 import type { KVConfig, ServerConfig } from '../../../../composables/config'
 
-const kv = useStorage('kv')
-
 export default eventHandler(async (event) => {
   const raw = await readBody(event)
   if (raw.command === '/start') {

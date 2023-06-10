@@ -1,7 +1,4 @@
 import { errorMessage } from '@stargram/core/utils'
-import { cryption } from '../../../../constants/index'
-
-const kv = useStorage('kv')
 
 export default eventHandler(async (event) => {
   try {
@@ -13,16 +10,15 @@ export default eventHandler(async (event) => {
           if (rawEvent.type === 'message' && rawEvent.channel_type === 'im' && rawEvent.user) {
             const text = rawEvent.text
             const stargramHub = `${getRequestProtocol(event)}://${getRequestHost(event)}`
-            const config = await kv.getItem(`slack${ConfigKey.userConfigKey}:${raw.api_app_id}:${rawEvent.user}`)
-            if (config) {
-              const userConfig = JSON.parse(cryption.decode(config as string))
+            const userConfig = await getUserConfig('slack', raw.api_app_id, rawEvent.user)
+            if (userConfig) {
               const message = await SlackSaveWebInfoChain(stargramHub, text, userConfig).catch((error) => {
-                sendMessageToSlackBot(userConfig.app.slack, error.message).catch((err) => {
+                sendMessageToSlackBot(userConfig.app.slack! as { webhook: string }, error.message).catch((err) => {
                   console.error(errorMessage(err))
                 })
               })
               if (message) {
-                sendMessageToSlackBot(userConfig.app.slack, message).catch((err) => {
+                sendMessageToSlackBot(userConfig.app.slack! as { webhook: string }, message).catch((err) => {
                   console.error(errorMessage(err))
                 })
               }

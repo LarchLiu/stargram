@@ -3,8 +3,6 @@ import type { BotConfig } from '../../../utils'
 import { getBotConfig, setBotConfig } from '../../../utils'
 import type { OutUserConfig, ServerConfig } from '../../../../composables/config'
 
-const kv = useStorage('kv')
-
 export default eventHandler(async (event) => {
   const method = getMethod(event)
   if (method === 'GET') {
