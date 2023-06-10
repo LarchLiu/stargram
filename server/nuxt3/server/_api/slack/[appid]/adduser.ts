@@ -38,7 +38,7 @@ export default eventHandler(async (event) => {
         await setBotConfig('slack', appConfig)
       }
       const thisConfig = JSON.parse(cryption.decode(_thisConfig)) as ServerConfig<OutUserConfig>
-      const _userConfig: any = await getUserConfig('slack', appId, userId)
+      const _userConfig: any = await getUserConfig('slack', appId, userId) || {}
       const publicKey = Object.keys(thisConfig).filter((c) => {
         return thisConfig[c as keyof ServerConfig<OutUserConfig>].public
       })

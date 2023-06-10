@@ -92,7 +92,7 @@ async function commandSystem(message: any, command: string, subcommand: string, 
   }
   const showConfig = JSON.stringify(myConfig, null, 2)
   msg += '<pre>'
-  msg += showConfig
+  msg += `<code>${showConfig}</code>`
   msg += '</pre>'
   context.CURRENT_CHAT_CONTEXT.parse_mode = 'HTML'
   return sendMessageToTelegramWithContext(context)(msg)
