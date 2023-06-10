@@ -153,7 +153,7 @@ export class Context {
 
     const botId = this.SHARE_CONTEXT.currentBotId
     let historyKey = `history_tg:${id}`
-    let configStoreKey = `telegram${ConfigKey.userCofnigKey}:${botId}:${id}`
+    let configStoreKey = `telegram${ConfigKey.userConfigKey}:${botId}:${id}`
     let groupAdminKey = ''
     // 标记群组消息
     if (CONST.GROUP_TYPES.includes(message.chat?.type)) {

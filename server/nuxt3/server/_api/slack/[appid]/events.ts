@@ -13,7 +13,7 @@ export default eventHandler(async (event) => {
           if (rawEvent.type === 'message' && rawEvent.channel_type === 'im' && rawEvent.user) {
             const text = rawEvent.text
             const stargramHub = `${getRequestProtocol(event)}://${getRequestHost(event)}`
-            const config = await kv.getItem(`slack${ConfigKey.userCofnigKey}:${raw.api_app_id}:${rawEvent.user}`)
+            const config = await kv.getItem(`slack${ConfigKey.userConfigKey}:${raw.api_app_id}:${rawEvent.user}`)
             if (config) {
               const userConfig = JSON.parse(cryption.decode(config as string))
               const message = await SlackSaveWebInfoChain(stargramHub, text, userConfig).catch((error) => {

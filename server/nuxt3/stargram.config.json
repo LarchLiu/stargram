@@ -1,11 +1,11 @@
 {
   "app": {
-    "select": "slack",
-    "public": true,
+    "select": "telegram",
+    "public": false,
     "userConfig": true,
     "config": {
-      "appId": "",
-      "webhook": ""
+      "botToken": "",
+      "language": "en"
     }
   },
   "webInfo": {

@@ -1,7 +1,8 @@
 import { unfurl } from 'unfurl.js'
 import { getDomain } from '@stargram/core/utils'
 import type { PromptsLanguage, WebInfoData } from '@stargram/core'
-import type { AppName } from '../../composables/config'
+import type { AppName, KVConfig, ServerConfig } from '../../composables/config'
+import { cryption } from '~/constants'
 
 const kv = useStorage('kv')
 
@@ -13,7 +14,7 @@ export type BotConfig = { default: string } & Record<string, IBotConfig>
 
 export const ConfigKey = {
   botConfigKey: '_bot_config',
-  userCofnigKey: '_user_config',
+  userConfigKey: '_user_config',
 }
 
 export interface AppConfig {
@@ -115,4 +116,20 @@ export async function getBotConfig(app: AppName) {
 
 export async function setBotConfig(app: AppName, config: BotConfig) {
   return await kv.setItem(`${app}${ConfigKey.botConfigKey}`, config)
+}
+
+export async function setUserConfig(app: AppName, appId: string, userId: string, config: Record<string, any>) {
+  const encode = cryption.encode(JSON.stringify(config))
+  await kv.setItem(`${app}${ConfigKey.userConfigKey}:${appId}:${userId}`, encode)
+}
+
+export async function getUserConfig(app: AppName, appId: string, userId: string) {
+  const encode = await kv.getItem(`${app}${ConfigKey.userConfigKey}:${appId}:${userId}`) as string
+  if (encode) {
+    const config = JSON.parse(cryption.decode(encode)) as ServerConfig<KVConfig>
+    return config
+  }
+  else {
+    return false
+  }
 }

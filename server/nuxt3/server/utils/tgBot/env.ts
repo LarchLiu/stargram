@@ -20,7 +20,7 @@ export const tgEnvDefault: TgBotEnv = {
 }
 export const ENV = {
   // 允许所有人使用
-  I_AM_A_GENEROUS_PERSON: false,
+  I_AM_A_GENEROUS_PERSON: true,
   // 群组机器人开关
   GROUP_CHAT_BOT_ENABLE: false,
   // 群组机器人共享模式,关闭后，一个群组只有一个会话和配置。开启的话群组的每个人都有自己的会话上下文

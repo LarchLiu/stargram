@@ -71,7 +71,7 @@ export const appConfig: BasicConfig<AppConfig> = {
     text: 'App',
     icon: 'i-carbon-application',
   },
-  public: true,
+  public: false,
   userConfig: true,
   handles: [
     {
@@ -116,8 +116,13 @@ export const appConfig: BasicConfig<AppConfig> = {
           value: '',
           require: true,
         },
-        webhook: {
-          label: 'Incoming Webhook',
+        clientId: {
+          label: 'Client ID',
+          value: '',
+          require: true,
+        },
+        clientSecret: {
+          label: 'Client Secret',
           value: '',
           require: true,
         },

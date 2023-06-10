@@ -1,7 +1,7 @@
 {
   "app": {
     "select": "telegram",
-    "public": true,
+    "public": false,
     "userConfig": true,
     "config": {
       "botToken": "",

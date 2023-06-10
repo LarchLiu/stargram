@@ -18,15 +18,15 @@ export default eventHandler(async (event) => {
   const id = token.split(':')[0]
   result[id] = {
     webhook: await bindTelegramWebHook(token, url).catch(e => e.message),
-    command: await bindCommandForTelegram(token).catch(e => e.message),
+    command: await bindCommandForTelegram(token, config.app.config.language.trim()).catch(e => e.message),
   }
   if (result[id].webhook.result) {
-    const appConfig = await getBotConfig('telegram') as BotConfig
-    appConfig[id] = { config: encode, userList: [] }
-    if (!appConfig.default)
-      appConfig.default = token
+    const botConfig = await getBotConfig('telegram') as BotConfig
+    botConfig[id] = { config: encode, userList: [] }
+    if (!botConfig.default)
+      botConfig.default = token
 
-    setBotConfig('telegram', appConfig)
+    await setBotConfig('telegram', botConfig)
   }
   if (result[id].webhook.ok && result[id].command.ok)
     return 'success'

@@ -18,70 +18,8 @@ export default {
   command: {
     help: {
       summary: '當前支持的命令如下：\n',
-      help: '獲取命令幫助',
-      new: '開始一個新對話',
-      start: '獲取您的ID並開始一個新對話',
-      img: '生成圖片，完整命令格式為`/img 圖片描述`，例如`/img 海灘月光`',
-      version: '獲取當前版本號確認是否需要更新',
-      setenv: '設置用戶配置，完整命令格式為/setenv KEY=VALUE',
-      delenv: '刪除用戶配置，完整命令格式為/delenv KEY',
-      usage: '獲取機器人當前的使用情況統計',
-      system: '查看一些系統信息',
-      role: '設置預設身份',
-      redo: '重做上一次的對話 /redo 加修改過的內容 或者 直接 /redo',
-      echo: '回显消息',
-      adduser: '添加用户至白名单. /adduser UserId',
-      deluser: '从白名单中删除用户. /deluser UserId',
-    },
-    role: {
-      not_defined_any_role: '尚未定義任何角色',
-      current_defined_role: (size: string) => `當前已定義的角色如下(${size})：\n`,
-      help: '格式錯誤：完整命令格式為`/role 操作`\n'
-                + '當前支持的`操作`如下：\n'
-                + ' `/role show` 查看當前已定義的角色。\n'
-                + ' `/role 角色名 del` 刪除指定的角色。\n'
-                + ' `/role 角色名 KEY=VALUE` 設置指定角色的配置。\n'
-                + '  當前支持的設置如下：\n'
-                + '   `SYSTEM_INIT_MESSAGE`：初始化消息\n'
-                + '   `OPENAI_API_EXTRA_PARAMS`：OpenAI API額外參數，必須為JSON',
-      delete_role_success: '刪除角色成功',
-      delete_role_error: (e: any) => `刪除角色出錯：\`${e.message}\``,
-      update_role_success: '更新配置成功',
-      update_role_error: (e: any) => `配置項格式錯誤：\`${e.message}\``,
-    },
-    img: {
-      help: '請輸入圖片描述。完整命令格式為`/img raccoon cat`',
-    },
-    new: {
-      new_chat_start: '開始一個新對話',
-      new_chat_start_private: (id: string) => `開始一個新對話，您的ID(${id})`,
-      new_chat_start_group: (id: string) => `開始一個新對話，群組ID(${id})`,
-    },
-    setenv: {
-      help: '配置項格式錯誤：完整命令格式為/setenv KEY=VALUE',
-      update_config_success: '更新配置成功',
-      update_config_error: (e: any) => `配置項格式錯誤：\`${e.message}\``,
-    },
-    adduser: {
-      help: '添加用户有误: 完整命令格式為 /adduser user_id',
-      update_config_success: '添加用户成功',
-      add_user_error: (e: any) => `添加用户有误: ${e.message}`,
-    },
-    version: {
-      new_version_found: (current: any, online: any) => `發現新版本，當前版本：${JSON.stringify(current)}，最新版本：${JSON.stringify(online)}`,
-      current_is_latest_version: (current: any) => `當前已是最新版本，當前版本：${JSON.stringify(current)}`,
-    },
-    usage: {
-      usage_not_open: '當前機器人未開啟使用情況統計',
-      current_usage: '📊 當前機器人使用情況\n\n使用情況：\n',
-      total_usage: (total: number) => `- 總計：${total || 0} 次\n- 每個群組使用情況： `,
-      no_usage: '- 暫無使用情況',
-    },
-    permission: {
-      not_authorized: '身份權限驗證失敗',
-      not_enough_permission: (roleList: string[], chatRole: string) => `權限不足，需要${roleList.join(',')}，當前：${chatRole}`,
-      role_error: (e: any) => `身份驗證出錯：${e.message}`,
-      command_error: (e: any) => `命令執行出錯：${e.message}`,
+      start: '獲取您的ID和设置网址',
+      config: '查看用户设置',
     },
   },
 }

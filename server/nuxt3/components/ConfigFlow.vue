@@ -1,7 +1,7 @@
 <!-- eslint-disable no-console -->
 <script setup lang="ts">
 import type { Elements } from '@vue-flow/core'
-import { MarkerType, Panel, PanelPosition, VueFlow, useVueFlow } from '@vue-flow/core'
+import { MarkerType, Panel, VueFlow, useVueFlow } from '@vue-flow/core'
 import { Background } from '@vue-flow/background'
 import { Controls } from '@vue-flow/controls'
 import { MiniMap } from '@vue-flow/minimap'
@@ -16,7 +16,7 @@ const initialElements = [
   { id: 'config', type: 'preview-config', position: { x: 0, y: -430 }, class: 'light' },
   { id: 'kv', type: 'select', data: configStore.config.kvStorage, position: { x: 600, y: -430 }, class: 'light' },
   { id: 'server', type: 'select', data: configStore.config.server, position: { x: 900, y: -430 }, class: 'light' },
-  { id: 'text', type: 'text', position: { x: 0, y: 300 }, class: 'light' },
+  { id: 'text', type: 'text-input', position: { x: 0, y: 300 }, class: 'light' },
   { id: 'app', type: 'select', data: configStore.config.app, position: { x: 300, y: 300 }, class: 'light' },
   {
     id: 'server-flow',
@@ -126,9 +126,9 @@ function toggleClass() {
     <template #node-select="{ data }">
       <SelectConfig :data="data" />
     </template>
-    <template #node-text>
-      <BasicNode :title="{ text: 'Text', icon: 'i-carbon-text-annotation-toggle' }">
-        <template #text>
+    <template #node-text-input>
+      <BasicNode :title="{ text: 'Input Text', icon: 'i-carbon-text-annotation-toggle' }">
+        <template #text-input>
           <TextInput />
         </template>
       </BasicNode>
@@ -146,7 +146,7 @@ function toggleClass() {
 
     <Controls />
 
-    <Panel :position="PanelPosition.TopRight" class="controls">
+    <Panel position="top-right" class="controls">
       <button style="background-color: #113285; color: white" title="Reset Transform" @click="resetTransform">
         <svg width="16" height="16" viewBox="0 0 32 32">
           <path fill="#FFFFFB" d="M18 28A12 12 0 1 0 6 16v6.2l-3.6-3.6L1 20l6 6l6-6l-1.4-1.4L8 22.2V16a10 10 0 1 1 10 10Z" />
@@ -222,7 +222,7 @@ function toggleClass() {
 .basicflow .controls button:hover{transform:scale(102%);transition:.25s all ease}
 
 .customnodeflow {
-  .vue-flow__node-text,
+  .vue-flow__node-text-input,
   .vue-flow__node-preview-config,
   .vue-flow__node-select {
     border:1px solid #777;
@@ -249,7 +249,7 @@ function toggleClass() {
   }
 }
 .customnodeflow.dark {
-  .vue-flow__node-text,
+  .vue-flow__node-text-input,
   .vue-flow__node-preview-config,
   .vue-flow__node-select {
     &.selected {

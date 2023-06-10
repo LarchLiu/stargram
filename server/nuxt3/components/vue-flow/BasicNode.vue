@@ -15,7 +15,7 @@ defineProps<{ title: TitleData }>()
     </dev>
   </div>
   <div text-10px>
-    <slot name="text" />
+    <slot name="text-input" />
     <slot name="preview-config" />
   </div>
 </template>

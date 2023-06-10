@@ -3,7 +3,7 @@ import zhHant from './zh-hant'
 import en from './en'
 
 export default function i18n(lang: string) {
-  switch (lang.toLowerCase()) {
+  switch (lang) {
     case 'zh-CN':
       return zhHans
     case 'zh-TW':

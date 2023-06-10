@@ -50,12 +50,8 @@ async function onAddUser() {
       <button btn @click="onInitClick">
         Init
       </button>
-      <div v-if="showUserIdInput">
-        <div>Add User ID</div>
-        <input v-model="userId" class="vue-flow">
-        <button btn @click="onAddUser">
-          Add
-        </button>
+      <div v-if="showUserIdInput" mt-4>
+        <div>Setup your bot then send command <code>/start</code> to configure your custom settings.</div>
       </div>
     </div>
   </div>
