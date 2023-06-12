@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest'
-import { summarizeContent } from '../src/openai'
+import { summarizeContent } from '../src/llm/openai'
 import type { WebInfoData } from '../src/types'
 
 const webInfo: WebInfoData = {
