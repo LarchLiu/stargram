@@ -1,7 +1,7 @@
 import { NotionDataStorage } from '@stargram/core/storage/notion'
 import { WebCardByApi } from '@stargram/core/webCard'
 import { WebInfoByApi } from '@stargram/core/webInfo'
-import { OpenaiSummarizeContent } from '@stargram/core/openai'
+import { OpenaiSummarizeContent } from '@stargram/core/llm/openai'
 import { SaveWebInfoChain } from '@stargram/core/chain/saveWebInfo'
 import { errorMessage } from '@stargram/core/utils'
 import { ENV } from './env.js'
