@@ -4,7 +4,6 @@ import { cryption } from '../constants/index'
 import type { OutputConfig, ServerConfig } from '../composables/config'
 
 const text = ref('')
-const userId = ref('')
 const config = ref<ServerConfig<OutputConfig>>()
 const showUserIdInput = ref(false)
 async function onInitClick() {
@@ -23,22 +22,6 @@ async function onInitClick() {
   }
   else {
     alert('Config code error')
-  }
-}
-async function onAddUser() {
-  if (config.value) {
-    const appName = config.value.app.select
-    const { error } = await useFetch(`/api/${appName}/adduser`, {
-      method: 'POST',
-      body: {
-        userId: userId.value,
-        userConfig: text.value,
-      },
-    })
-    if (error.value)
-      alert(errorMessage(error.value))
-    else
-      alert('success')
   }
 }
 </script>
