@@ -29,10 +29,10 @@
       "require": "./chain/saveWebInfo.cjs",
       "import": "./chain/saveWebInfo.js"
     },
-    "./openai": {
-      "types": "./openai.d.ts",
-      "require": "./openai.cjs",
-      "import": "./openai.js"
+    "./llm/openai": {
+      "types": "./llm/openai.d.ts",
+      "require": "./llm/openai.cjs",
+      "import": "./llm/openai.js"
     },
     "./storage": {
       "types": "./storage.d.ts",
@@ -77,9 +77,9 @@
     "chain/saveWebInfo.cjs",
     "chain/saveWebInfo.js",
     "chain/saveWebInfo.d.ts",
-    "openai.cjs",
-    "openai.js",
-    "openai.d.ts",
+    "llm/openai.cjs",
+    "llm/openai.js",
+    "llm/openai.d.ts",
     "storage.cjs",
     "storage.js",
     "storage.d.ts",

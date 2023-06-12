@@ -34,7 +34,7 @@
       "lang": "en"
     },
     "fn": "OpenaiSummarizeContent",
-    "import": "import { OpenaiSummarizeContent } from '@stargram/core/openai'\n"
+    "import": "import { OpenaiSummarizeContent } from '@stargram/core/llm/openai'\n"
   },
   "imgStorage": {
     "select": "supabase",

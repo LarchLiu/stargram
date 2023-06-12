@@ -1,6 +1,6 @@
 // https://github.com/sparticleinc/chatgpt-google-summary-extension/blob/main/src/content-script/prompt.ts
 
-import { countWord } from '../utils'
+import { countWord } from '../../utils'
 
 export enum ProviderType {
   ChatGPT = 'chatgpt',

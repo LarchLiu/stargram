@@ -11,7 +11,7 @@ import * as path from 'node:path'
 export const entrypoints = {
   'chain': 'chain/index',
   'chain/saveWebInfo': 'chain/saveWebInfo',
-  'openai': 'openai/index',
+  'llm/openai': 'llm/openai/index',
   'storage': 'storage/index',
   'storage/notion': 'storage/notion/index',
   'storage/supabase': 'storage/supabase/index',

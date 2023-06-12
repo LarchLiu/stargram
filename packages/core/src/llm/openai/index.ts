@@ -1,7 +1,7 @@
 import { $fetch } from 'ofetch'
-import type { PromptsLanguage, SummarizeData, WebInfoData } from '../types'
-import { countWord, getPromptsByTemplate, preprocessText } from '../utils'
-import { ANSWER_IN_LANGUAGE, OPENAI_CHAT_API, SUMMARIZE_PROMPTS, USER_PROMPTS } from '../const'
+import type { PromptsLanguage, SummarizeData, WebInfoData } from '../../types'
+import { countWord, getPromptsByTemplate, preprocessText } from '../../utils'
+import { ANSWER_IN_LANGUAGE, OPENAI_CHAT_API, SUMMARIZE_PROMPTS, USER_PROMPTS } from '../../const'
 import { ProviderType, getSummaryPrompt } from './prompt'
 
 export class OpenaiSummarizeContent {

@@ -334,7 +334,7 @@ export const llmConfig: BasicConfig<ModelsConfig> = {
   info: {
     openai: {
       displayName: 'Openai',
-      import: 'import { OpenaiSummarizeContent } from \'@stargram/core/openai\'\n',
+      import: 'import { OpenaiSummarizeContent } from \'@stargram/core/llm/openai\'\n',
       fn: 'OpenaiSummarizeContent',
       config: {
         apiKey: {

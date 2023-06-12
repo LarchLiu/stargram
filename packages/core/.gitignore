@@ -4,9 +4,9 @@ chain.d.ts
 chain/saveWebInfo.cjs
 chain/saveWebInfo.js
 chain/saveWebInfo.d.ts
-openai.cjs
-openai.js
-openai.d.ts
+llm/openai.cjs
+llm/openai.js
+llm/openai.d.ts
 storage.cjs
 storage.js
 storage.d.ts
