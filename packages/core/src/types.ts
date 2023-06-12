@@ -27,7 +27,7 @@ export interface GithubRepoMeta extends WebsiteMeta {
 export interface TwitterTweetMeta extends WebsiteMeta {
   name?: string
   screenName?: string
-  avator?: string
+  avatar?: string
   content?: string
   status?: string
   pubTime?: string

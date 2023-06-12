@@ -37,7 +37,7 @@ export async function createWebCard(webInfo: WebInfoData): Promise<StorageImage>
         contentArr = contentArr.slice(0, 8)
 
       props = {
-        avator: meta.avator,
+        avatar: meta.avatar,
         name: meta.name,
         screenName: meta.screenName,
         content: contentArr,

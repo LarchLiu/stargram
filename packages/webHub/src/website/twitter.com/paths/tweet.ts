@@ -57,13 +57,13 @@ async function getTweetInfo(urls: WebLoaderUrls): Promise<WebInfoData> {
       const name = user.name
       const screenName = user.screen_name
       title = `Tweet · ${name} @${screenName}`
-      const avator = user.profile_image_url_https.replace('_normal', '')
+      const avatar = user.profile_image_url_https.replace('_normal', '')
       const content = replaceHtmlReservedCharacters(tweet.full_text)
       const pubTime = new Date(tweet.created_at).toUTCString()
 
       meta.name = name
       meta.screenName = screenName
-      meta.avator = avator
+      meta.avatar = avatar
       meta.content = content
       meta.pubTime = pubTime
       meta.lang = tweet.lang

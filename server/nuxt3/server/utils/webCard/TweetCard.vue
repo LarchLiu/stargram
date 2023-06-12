@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 defineProps({
-  avator: String,
+  avatar: String,
   name: String,
   screenName: String,
   content: Array<String>,
@@ -36,7 +36,7 @@ function getLang(lang: LangKeys) {
           alt="avatar"
           width="120"
           height="120"
-          :src="avator"
+          :src="avatar"
           class="rounded-full"
         >
         <div class="ml-20px flex flex-col text-40px">
