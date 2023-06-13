@@ -2,6 +2,7 @@
   "name": "@server/nuxt3",
   "version": "0.0.0",
   "private": true,
+  "packageManager": "pnpm@8.6.0",
   "scripts": {
     "build": "nuxi build",
     "build:turbo": "turbo run build --filter=@server/nuxt3...",
