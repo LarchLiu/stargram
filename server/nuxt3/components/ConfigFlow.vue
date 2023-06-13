@@ -22,7 +22,7 @@ const initialElements = [
     id: 'server-flow',
     label: 'Server Flow',
     type: 'output',
-    position: { x: 600, y: -100 },
+    position: { x: 600, y: -105 },
     style: { backgroundColor: 'rgba(16, 185, 129, 0.3)', width: '1200px', height: '600px' },
   },
   { id: 'webinfo', type: 'select', data: configStore.config.webInfo, position: { x: 50, y: 150 }, class: 'light', parentNode: 'server-flow', expandParent: true },
@@ -127,7 +127,7 @@ function toggleClass() {
       <SelectConfig :data="data" />
     </template>
     <template #node-text-input>
-      <BasicNode :title="{ text: 'Input Text', icon: 'i-carbon-text-annotation-toggle' }">
+      <BasicNode :title="{ text: 'Text Input', icon: 'i-carbon-text-annotation-toggle' }">
         <template #text-input>
           <TextInput />
         </template>

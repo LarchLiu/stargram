@@ -9,7 +9,7 @@ export default defineNuxtConfig({
     '@pinia/nuxt',
   ],
   css: [
-    '@unocss/reset/tailwind.css',
+    '@unocss/reset/tailwind-compat.css',
   ],
   nitro: {
     esbuild: {
@@ -23,6 +23,7 @@ export default defineNuxtConfig({
         '/',
         '/app-init',
         '/self-host',
+        '/user-config',
       ],
     },
     storage: {
