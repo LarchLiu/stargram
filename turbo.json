@@ -6,6 +6,9 @@
       "cache": false,
       "outputs": [".next/**", "!.next/cache/**", "dist/**", "extension/**"]
     },
+    "start": {
+      "cache": false
+    },
     "lint": {
       "outputs": []
     },
