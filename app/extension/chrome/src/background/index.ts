@@ -98,9 +98,6 @@ async function saveToNotion(pageInfo: PageInfo): Promise<SwResponse> {
 
   const url = pageInfo.webUrl
   const webInfo = new WebInfoByApi({
-    urls: {
-      webUrl: url,
-    },
     stargramHub,
   })
 
@@ -123,7 +120,9 @@ async function saveToNotion(pageInfo: PageInfo): Promise<SwResponse> {
   })
 
   try {
-    const info = await chain.call() as SavedNotion
+    const info = await chain.call({
+      webUrl: url,
+    }) as SavedNotion
     return { tabId: pageInfo.tabId, starred: info.starred, storageId: info.storageId }
   }
   catch(error: any) {

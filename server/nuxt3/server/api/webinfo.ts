@@ -7,10 +7,10 @@ export default eventHandler(async (event) => {
   const req = await readBody<{ webUrl: string }>(event)
   const webUrl = req.webUrl
 
-  const ogInfo = new OGInfo({ fn: ogInfoFn, url: webUrl })
+  const ogInfo = new OGInfo({ fn: ogInfoFn })
   try {
-    const webInfo = new WebInfo({ urls: { webUrl }, routes, ogInfo })
-    const webData = await webInfo.call()
+    const webInfo = new WebInfo({ routes, ogInfo })
+    const webData = await webInfo.call({ webUrl })
     return webData
   }
   catch (error: any) {

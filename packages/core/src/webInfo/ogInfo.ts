@@ -3,15 +3,13 @@ import type { WebInfoData } from '../types'
 export type OGInfoFn = (url: string) => Promise<WebInfoData>
 
 export class OGInfo {
-  constructor(fields: { fn: OGInfoFn; url: string }) {
+  constructor(fields: { fn: OGInfoFn }) {
     this.fn = fields.fn
-    this.url = fields.url
   }
 
   private fn
-  private url
 
-  async call() {
-    return await this.fn(this.url)
+  async call(url: string) {
+    return await this.fn(url)
   }
 }

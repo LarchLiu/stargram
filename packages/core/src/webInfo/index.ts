@@ -6,18 +6,16 @@ import type { OGInfo } from './ogInfo'
 export * from './ogInfo'
 
 export class WebInfoByApi {
-  constructor(fields: { urls: WebLoaderUrls; stargramHub: string; headers?: Record<string, string> }) {
-    this.webUrl = fields.urls.webUrl
+  constructor(fields: { stargramHub: string; headers?: Record<string, string> }) {
     this.headers = fields.headers
     this.stargramHub = fields.stargramHub || ''
   }
 
-  private webUrl = ''
   private apiUrl = '/api/webinfo'
   private stargramHub = ''
   private headers?: Record<string, string>
 
-  async call() {
+  async call(urls: WebLoaderUrls) {
     if (!this.stargramHub)
       throw new Error('Stargram error: No StargramHub API.')
 
@@ -26,7 +24,7 @@ export class WebInfoByApi {
         method: 'POST',
         headers: this.headers,
         body: {
-          webUrl: this.webUrl,
+          webUrl: urls.webUrl,
         },
       })
     return info
@@ -38,27 +36,25 @@ export class WebInfoByApi {
 }
 
 export class WebInfo {
-  constructor(fields: { urls: WebLoaderUrls; routes: Routes; headers?: Record<string, string>; ogInfo?: OGInfo }) {
-    this.urls = fields.urls
+  constructor(fields: { routes: Routes; headers?: Record<string, string>; ogInfo?: OGInfo }) {
     this.headers = fields.headers
     this.routes = fields.routes
     this.ogInfo = fields.ogInfo
   }
 
-  private urls: WebLoaderUrls
   private routes: Routes
   private headers?: Record<string, string>
   private ogInfo
 
-  async call() {
-    const domain = getDomain(this.urls.webUrl)
+  async call(urls: WebLoaderUrls) {
+    const domain = getDomain(urls.webUrl)
 
     if (this.routes[domain]) {
       const router = this.routes[domain]
       if (router.paths) {
         for (let i = 0; i < router.paths.length; i++) {
           const pathInfo = router.paths[i]
-          const loaderUrls = pathInfo.filter(this.urls)
+          const loaderUrls = pathInfo.filter(urls)
           if (loaderUrls) {
             const info = await pathInfo.loader(loaderUrls, this.headers)
             info.meta.domain = domain
@@ -71,7 +67,7 @@ export class WebInfo {
       throw new Error(`${router.name} error: Not supported website.`)
     }
     else if (this.ogInfo) {
-      return await this.ogInfo.call()
+      return await this.ogInfo.call(urls.webUrl)
     }
 
     throw new Error('Stargram error: Not supported website.')

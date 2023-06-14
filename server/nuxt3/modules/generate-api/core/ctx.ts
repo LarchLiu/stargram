@@ -47,20 +47,14 @@ export default eventHandler(async (event) => {
         if (config.webInfo.select === 'api') {
           replaceCode += `
   const webInfo = new ${config.webInfo.fn}({
-    urls: {
-      webUrl: url,
-    },
     stargramHub: config.webInfo.${config.webInfo.select}.stargramHub,
   })
 `
         }
         else {
           replaceCode += `
-  const ogInfo = new OGInfo({ fn: ogInfoFn, url })
+  const ogInfo = new OGInfo({ fn: ogInfoFn })
   const webInfo = new ${config.webInfo.fn}({
-    urls: {
-      webUrl: url,
-    },
     routes,
     ogInfo,
   })
@@ -121,7 +115,9 @@ export default eventHandler(async (event) => {
     ${config.dataStorage ? 'dataStorage,' : ''}
   })
 
-  const info = await chain.call().then(_ => true).catch(e => errorMessage(e))
+  const info = await chain.call({
+    webUrl: url,
+  }).then(_ => true).catch(e => errorMessage(e))
 
   let message = ''
   if (typeof info === 'boolean')

@@ -1,7 +1,7 @@
 import type { WebInfo, WebInfoByApi } from '../webInfo'
 import type { WebCard, WebCardByApi } from '../webCard'
 import type { OpenaiSummarizeContent } from '../llm/openai'
-import type { SummarizeData } from '../types'
+import type { SummarizeData, WebLoaderUrls } from '../types'
 import type { IDataStorage } from '../storage'
 import { errorMessage } from '../utils'
 
@@ -23,8 +23,8 @@ export class SaveWebInfoChain {
   private summarizeContent
   private dataStorage
 
-  async call() {
-    const webData = await this.webInfo.call()
+  async call(urls: WebLoaderUrls) {
+    const webData = await this.webInfo.call(urls)
     let summarizeData: SummarizeData = {
       summary: webData.content,
       categories: ['Others'],

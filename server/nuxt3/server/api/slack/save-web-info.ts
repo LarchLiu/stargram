@@ -15,11 +15,8 @@ export default eventHandler(async (event) => {
   const context = body.context as Context
   const config = context.USER_CONFIG as UserConfig
 
-  const ogInfo = new OGInfo({ fn: ogInfoFn, url })
+  const ogInfo = new OGInfo({ fn: ogInfoFn })
   const webInfo = new WebInfo({
-    urls: {
-      webUrl: url,
-    },
     routes,
     ogInfo,
   })
@@ -44,7 +41,9 @@ export default eventHandler(async (event) => {
     dataStorage,
   })
 
-  const info = await chain.call().then(_ => true).catch(e => errorMessage(e))
+  const info = await chain.call({
+    webUrl: url,
+  }).then(_ => true).catch(e => errorMessage(e))
 
   let message = ''
   if (typeof info === 'boolean')
