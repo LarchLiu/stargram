@@ -1,6 +1,2 @@
-[build]
-builder = "nixpacks"
-buildCommand = "pnpm build:nuxt"
-
 [deploy]
-startCommand = "pnpm start:nuxt"
+startCommand = "node /app/server/index.mjs"
