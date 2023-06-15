@@ -152,7 +152,14 @@ export async function getTweetByStatus(status: string) {
     return gatherLegacyFromData(tweets, 'none')
   }
   catch (error: any) {
-    const message = errorMessage(error)
-    throw new Error(`Twitter API error: ${message || error.statusText}`)
+    if (error.status === 403) {
+      headers['x-guest-token'] = ''
+      const tweets = await tweetDetail(status)
+      return gatherLegacyFromData(tweets, 'none')
+    }
+    else {
+      const message = errorMessage(error)
+      throw new Error(`Twitter API error: ${message || error.statusText}`)
+    }
   }
 }
