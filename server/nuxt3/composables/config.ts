@@ -154,7 +154,7 @@ export const webInfoConfig: BasicConfig<ModelsConfig> = {
   info: {
     localFn: {
       displayName: 'Local Function',
-      import: 'import { OGInfo, WebInfo } from \'@stargram/core/webInfo\'\nimport { routes } from \'@stargram/web-hub\'\n',
+      import: 'import { WebInfo } from \'@stargram/core/webInfo\'\nimport { routes } from \'@stargram/web-hub\'\n',
       fn: 'WebInfo',
       config: {
       },

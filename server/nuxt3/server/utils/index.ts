@@ -1,6 +1,4 @@
-import { unfurl } from 'unfurl.js'
-import { getDomain } from '@stargram/core/utils'
-import type { PromptsLanguage, WebInfoData } from '@stargram/core'
+import type { PromptsLanguage } from '@stargram/core'
 import type { AppName, KVConfig, ServerConfig } from '../../composables/config'
 import { cryption } from '~/constants'
 
@@ -78,35 +76,6 @@ export interface UserConfig {
       databaseId: string
       defaultOgImage: string
     }
-  }
-}
-
-export async function ogInfoFn(webUrl: string): Promise<WebInfoData> {
-  const res = await unfurl(webUrl)
-  let content = res.description || ''
-  let title = res.title || ''
-  let url = res.canonical_url || webUrl
-  const domain = getDomain(url)
-  const word = domain.split('.')[0]
-  const siteName = word.charAt(0).toUpperCase() + word.slice(1)
-  if (res.open_graph) {
-    const og = res.open_graph
-    title = og.title
-    content = og.description || content
-    url = og.url || url
-  }
-
-  if (!title || !content)
-    throw new Error('Not Supported Website. No OG info')
-
-  return {
-    title,
-    content,
-    url,
-    meta: {
-      domain,
-      siteName,
-    },
   }
 }
 

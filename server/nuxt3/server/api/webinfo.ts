@@ -1,15 +1,13 @@
-import { OGInfo, WebInfo } from '@stargram/core/webInfo'
+import { WebInfo } from '@stargram/core/webInfo'
 import { errorMessage } from '@stargram/core/utils'
 import { routes } from '@stargram/web-hub'
-import { ogInfoFn } from '../utils'
 
 export default eventHandler(async (event) => {
   const req = await readBody<{ webUrl: string }>(event)
   const webUrl = req.webUrl
 
-  const ogInfo = new OGInfo({ fn: ogInfoFn })
   try {
-    const webInfo = new WebInfo({ routes, ogInfo })
+    const webInfo = new WebInfo({ routes })
     const webData = await webInfo.call({ webUrl })
     return webData
   }

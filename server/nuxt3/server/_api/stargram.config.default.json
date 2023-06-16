@@ -14,7 +14,7 @@
     "userConfig": true,
     "config": null,
     "fn": "WebInfo",
-    "import": "import { OGInfo, WebInfo } from '@stargram/core/webInfo'\nimport { routes } from '@stargram/web-hub'\n"
+    "import": "import { WebInfo } from '@stargram/core/webInfo'\nimport { routes } from '@stargram/web-hub'\n"
   },
   "webCard": {
     "select": "localFn",

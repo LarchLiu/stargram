@@ -8,7 +8,7 @@ export const GITHUB_RAW_URL = 'https://raw.githubusercontent.com'
 export const NOTION_API_URL = 'https://api.notion.com/v1'
 export const OPENAI_CHAT_API = 'https://api.openai.com'
 export const MAX_TOKEN_LENGTH = 2048
-export const SUMMARIZE_PROMPTS = `Please summarize content and then classify it to 1-5 types of classification. Classification names should be short and no explanation or description is needed.
+export const SUMMARIZE_PROMPTS = `You are a summarize professer. Please summarize content in detail and then classify it to 1-5 types of classification. Classification names should be short and no explanation or description is needed.
 You only speak JSON. Do not write text that isn't JSON. The JSON keys must be English word of "summary" and "categories".
 Classification names used with array data.
 The JSON format must be:
@@ -17,11 +17,11 @@ The JSON format must be:
   "categories": ["XXX","YYY","ZZZ"]
 }
 `
-export const USER_PROMPTS = `Please answer in {language}. The Content is {webprompts}:
+export const USER_PROMPTS = `Please summarize in {language}. The Content is {webprompts}:
 =====
 {content}
 =====
-Please answer in {language}.`
+Please summarize in {language}. Remember You only speak JSON.`
 
 export const ANSWER_IN_LANGUAGE: { [key in PromptsLanguage]: string } = {
   'de': 'German',

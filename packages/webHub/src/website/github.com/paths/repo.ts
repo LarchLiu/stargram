@@ -2,6 +2,7 @@ import type { GithubRepoMeta, PathInfo, WebInfoData, WebLoaderUrls } from '@star
 import { strNotEqualWith } from '@stargram/core/utils'
 import { $fetch } from '@stargram/core'
 import { GITHUB_RAW_URL, GITHUB_REPOS_API, USER_AGENT } from '../../../const'
+import { unfurl } from '../../../utils/unfurl'
 
 function repoFilter(urls: WebLoaderUrls): WebLoaderUrls | undefined {
   const regexPath = /github.com\/([^\/]*\/[^\/]*)/g
@@ -27,6 +28,12 @@ async function getRepoInfo(urls: WebLoaderUrls, headers: Record<string, string> 
 
   if (repo) {
     meta.prompts = 'The Github repo info'
+    const webJson = await unfurl(url)
+    if (webJson) {
+      const openGraph = webJson.open_graph
+      if (openGraph && openGraph.images)
+        meta.ogImage = openGraph.images[0].url
+    }
     // fetch repo info
     const repoJson = await $fetch<Record<string, any>>(`${GITHUB_REPOS_API}/${repo}`, { method: 'GET', headers })
     // fetch languages

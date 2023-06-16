@@ -21,12 +21,18 @@ export default defineConfig({
       // into your library
       external: [
         '@stargram/core',
+        '@mozilla/readability',
+        'htmlparser2',
+        'jsdom',
       ],
       output: {
         // Provide global variables to use in the UMD build
         // for externalized deps
         globals: {
           '@stargram/core': '@stargram/core',
+          '@mozilla/readability': '@mozilla/readability',
+          'htmlparser2': 'htmlparser2',
+          'jsdom': 'jsdom',
         },
       },
     },

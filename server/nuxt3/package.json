@@ -20,6 +20,7 @@
     "start:generate": "npx serve .output/public"
   },
   "dependencies": {
+    "@mozilla/readability": "^0.4.4",
     "@stargram/core": "workspace:*",
     "@stargram/web-hub": "workspace:*",
     "@vercel/kv": "^0.2.1",
@@ -27,9 +28,10 @@
     "@vue-flow/controls": "^1.1.0",
     "@vue-flow/core": "^1.20.1",
     "@vue-flow/minimap": "^1.1.1",
+    "htmlparser2": "^9.0.0",
+    "jsdom": "^22.1.0",
     "satori": "^0.9.1",
-    "satori-html": "^0.3.2",
-    "unfurl.js": "^6.3.2"
+    "satori-html": "^0.3.2"
   },
   "devDependencies": {
     "@antfu/eslint-config": "^0.39.4",

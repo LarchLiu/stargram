@@ -1,4 +1,4 @@
-import { OGInfo, WebInfo } from '@stargram/core/webInfo'
+import { WebInfo } from '@stargram/core/webInfo'
 import { routes } from '@stargram/web-hub'
 import { WebCard } from '@stargram/core/webCard'
 import { SupabaseImageStorage } from '@stargram/core/storage/supabase'
@@ -15,10 +15,8 @@ export default eventHandler(async (event) => {
   const context = body.context as Context
   const config = context.USER_CONFIG as UserConfig
 
-  const ogInfo = new OGInfo({ fn: ogInfoFn })
   const webInfo = new WebInfo({
     routes,
-    ogInfo,
   })
 
   const imgStorage = new SupabaseImageStorage({

@@ -1,9 +1,6 @@
 import { $fetch } from 'ofetch'
 import type { Routes, WebInfoData, WebLoaderUrls } from '../types'
 import { getDomain } from '../utils'
-import type { OGInfo } from './ogInfo'
-
-export * from './ogInfo'
 
 export class WebInfoByApi {
   constructor(fields: { stargramHub: string; headers?: Record<string, string> }) {
@@ -36,15 +33,13 @@ export class WebInfoByApi {
 }
 
 export class WebInfo {
-  constructor(fields: { routes: Routes; headers?: Record<string, string>; ogInfo?: OGInfo }) {
+  constructor(fields: { routes: Routes; headers?: Record<string, string> }) {
     this.headers = fields.headers
     this.routes = fields.routes
-    this.ogInfo = fields.ogInfo
   }
 
   private routes: Routes
   private headers?: Record<string, string>
-  private ogInfo
 
   async call(urls: WebLoaderUrls) {
     const domain = getDomain(urls.webUrl)
@@ -66,8 +61,18 @@ export class WebInfo {
       }
       throw new Error(`${router.name} error: Not supported website.`)
     }
-    else if (this.ogInfo) {
-      return await this.ogInfo.call(urls.webUrl)
+    else if (this.routes.common) {
+      const router = this.routes.common
+      if (router.paths) {
+        for (let i = 0; i < router.paths.length; i++) {
+          const pathInfo = router.paths[i]
+          const loaderUrls = pathInfo.filter(urls)
+          if (loaderUrls) {
+            const info = await pathInfo.loader(loaderUrls, this.headers)
+            return info
+          }
+        }
+      }
     }
 
     throw new Error('Stargram error: Not supported website.')

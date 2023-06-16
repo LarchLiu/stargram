@@ -1,9 +1,9 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`handle error > github repo fetch error 1`] = `[FetchError:  (404 Not Found (https://api.github.com/repos/LarchLiu/xxx))]`;
+exports[`handle error > github repo fetch error 1`] = `[FetchError:  (404 Not Found (https://github.com/LarchLiu/xxx))]`;
 
 exports[`handle error > github repo path error 1`] = `[Error: Github error: Not supported website.]`;
 
 exports[`handle error > twitter tweet path error 1`] = `[Error: Twitter error: Not supported website.]`;
 
-exports[`handle error > website domain error 1`] = `[Error: Stargram error: Not supported website.]`;
+exports[`handle error > website domain error 1`] = `[Error: Not Supported Website]`;

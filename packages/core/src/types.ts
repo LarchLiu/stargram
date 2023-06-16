@@ -15,6 +15,9 @@ export interface WebsiteMeta {
   ogImage?: string
   prompts?: string
 }
+export interface CommonMeta extends WebsiteMeta {
+  favicon?: string
+}
 // TODO: remove web meta type to webHub
 export interface GithubRepoMeta extends WebsiteMeta {
   username?: string

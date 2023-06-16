@@ -53,10 +53,8 @@ export default eventHandler(async (event) => {
         }
         else {
           replaceCode += `
-  const ogInfo = new OGInfo({ fn: ogInfoFn })
   const webInfo = new ${config.webInfo.fn}({
     routes,
-    ogInfo,
   })
 `
         }
