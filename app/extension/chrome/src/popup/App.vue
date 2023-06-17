@@ -9,6 +9,7 @@ const notionApiKeyInput = ref('')
 const notionPageLinkInput = ref('')
 const openaiApiKeyInput = ref('')
 const stargramHubInput = ref('')
+const browserlessTokenInput = ref('')
 const saveStatus = ref('')
 const showSettings = ref(false)
 const showLanguage = ref(false)
@@ -71,6 +72,7 @@ function saveSettings() {
       notionApiKey: notionApiKeyInput.value,
       openaiApiKey: openaiApiKeyInput.value,
       stargramHub: stargramHubInput.value,
+      browserlessToken: browserlessTokenInput.value,
       notionDatabaseId,
       notionPageLink,
     },
@@ -84,11 +86,12 @@ function onSettingsClick() {
   showLanguage.value = false
   showSettings.value = !showSettings.value
   if (showSettings.value) {
-    chrome.storage.sync.get(['notionApiKey', 'notionPageLink', 'openaiApiKey', 'stargramHub'], (result) => {
+    chrome.storage.sync.get(['notionApiKey', 'notionPageLink', 'openaiApiKey', 'stargramHub', 'browserlessToken'], (result) => {
       notionApiKeyInput.value = result.notionApiKey || ''
       notionPageLinkInput.value = result.notionPageLink || ''
       openaiApiKeyInput.value = result.openaiApiKey || ''
       stargramHubInput.value = result.stargramHub || ''
+      browserlessTokenInput.value = result.browserlessToken || ''
     })
   }
 }
@@ -150,11 +153,12 @@ watch(promptsLangSelect, (n, _) => {
 })
 
 onMounted(() => {
-  chrome.storage.sync.get(['notionApiKey', 'notionPageLink', 'openaiApiKey', 'stargramHub', 'uiLang', 'promptsLang'], (result) => {
+  chrome.storage.sync.get(['notionApiKey', 'notionPageLink', 'openaiApiKey', 'stargramHub', 'uiLang', 'promptsLang', 'browserlessToken'], (result) => {
     notionApiKeyInput.value = result.notionApiKey || ''
     notionPageLinkInput.value = result.notionPageLink || ''
     openaiApiKeyInput.value = result.openaiApiKey || ''
     stargramHubInput.value = result.stargramHub || ''
+    browserlessTokenInput.value = result.browserlessToken || ''
     uiLangSelect.value = result.uiLang || 'en'
     promptsLangSelect.value = result.promptsLang || 'en'
     locale.value = uiLangSelect.value
@@ -203,6 +207,9 @@ onMounted(() => {
 
       <label for="openaiApiKey">{{ t('settings.openaiApiKey') }}</label>
       <input id="openaiApiKey" v-model="openaiApiKeyInput" class="my-2" type="text" name="notionPageLink">
+
+      <label for="browserlessToken">{{ t('settings.browserlessToken') }}</label>
+      <input id="browserlessToken" v-model="browserlessTokenInput" class="my-2" type="text" name="browserlessToken">
 
       <label for="stargramHub">{{ t('settings.stargramHub') }}</label>
       <input id="stargramHub" v-model="stargramHubInput" class="my-2" type="text" name="notionPageLink">

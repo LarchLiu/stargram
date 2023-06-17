@@ -9,6 +9,7 @@ settings:
   openaiApiKey: Openai API Key
   pictureBed: Picture Bed URL
   stargramHub: Stargram Hub
+  browserlessToken: Browserless Token
   saveSettings: Save
   settingsSaved: Settings saved
   uiLanguage: UI

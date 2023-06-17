@@ -32,9 +32,6 @@ export default defineNuxtConfig({
       },
     },
     rollupConfig: {
-      external: [
-        'canvas',
-      ],
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-expect-error
       plugins: [vue()],

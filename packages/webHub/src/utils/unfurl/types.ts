@@ -11,35 +11,9 @@ export interface Opts {
   size?: number
   /** map of request headers, overrides the defaults */
   headers?: Record<string, string>
-}
-
-export type ReadabilityParse = null | {
-  /** article title */
-  title: string
-
-  /** HTML string of processed article content */
-  content: string
-
-  /** text content of the article, with all the HTML tags removed */
-  textContent: string
-
-  /** length of an article, in characters */
-  length: number
-
-  /** article description, or short excerpt from the content */
-  excerpt: string
-
-  /** author metadata */
-  byline: string
-
-  /** content direction */
-  dir: string
-
-  /** name of the site */
-  siteName: string
-
-  /** content language */
-  lang: string
+  /** use browserless to get website info */
+  browserless?: boolean
+  browserlessToken?: string
 }
 
 export interface Metadata {
@@ -123,5 +97,5 @@ export interface Metadata {
       tags?: string[]
     }
   }
-  readability?: ReadabilityParse
+  content?: string
 }

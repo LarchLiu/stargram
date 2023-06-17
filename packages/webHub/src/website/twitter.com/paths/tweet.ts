@@ -1,4 +1,4 @@
-import type { PathInfo, TwitterTweetMeta, WebInfoData, WebLoaderUrls } from '@stargram/core'
+import type { PathInfo, TwitterTweetMeta, WebInfoData, WebLoaderParams, WebLoaderUrls } from '@stargram/core'
 import { replaceHtmlReservedCharacters, strNotEqualWith } from '@stargram/core/utils'
 import { getTweetByStatus } from '../twitterApi'
 
@@ -14,12 +14,12 @@ function tweetFilter(urls: WebLoaderUrls): WebLoaderUrls | undefined {
   return undefined
 }
 
-async function getTweetInfo(urls: WebLoaderUrls): Promise<WebInfoData> {
+async function getTweetInfo(params: WebLoaderParams): Promise<WebInfoData> {
   let title = ''
   let content = ''
-  const url = urls.webUrl
+  const url = params.urls.webUrl
   const meta: TwitterTweetMeta = {}
-  const path = urls.webPath
+  const path = params.urls.webPath
   if (path) {
     const status = path.split('/')[2]
     if (!status)

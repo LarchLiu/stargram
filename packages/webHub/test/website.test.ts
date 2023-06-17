@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'vitest'
 import { getWebsiteInfo } from './website'
 
-describe('get website info', () => {
+describe('get webhub info', () => {
   test('github info', async () => {
     const res = await getWebsiteInfo('https://github.com/LarchLiu/stargram')
     expect((res.title).includes('stargram')).toBeTruthy()
@@ -13,6 +13,13 @@ describe('get website info', () => {
     expect((res.title).includes('Alex Liu')).toBeTruthy()
     expect(res.url).toBe('https://twitter.com/LarchLiu/status/1594316498377621504')
     // expect(res).toMatchSnapshot()
+  })
+})
+
+describe('get common website info', () => {
+  test('slack info', async () => {
+    const res = await getWebsiteInfo('https://api.slack.com')
+    expect(res.content).toBeDefined()
   })
 })
 

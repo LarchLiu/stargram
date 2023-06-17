@@ -17,6 +17,7 @@ export default eventHandler(async (event) => {
 
   const webInfo = new WebInfo({
     routes,
+    browserlessToken: config.webInfo.localFn.browserlessToken,
   })
 
   const imgStorage = new SupabaseImageStorage({

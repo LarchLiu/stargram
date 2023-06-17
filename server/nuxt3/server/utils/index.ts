@@ -49,6 +49,10 @@ export interface UserConfig {
   webInfo: {
     api: {
       stargramHub: string
+      browserlessToken: string
+    }
+    localFn: {
+      browserlessToken: string
     }
   }
   webCard: {

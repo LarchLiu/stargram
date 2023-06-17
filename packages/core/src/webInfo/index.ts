@@ -3,13 +3,15 @@ import type { Routes, WebInfoData, WebLoaderUrls } from '../types'
 import { getDomain } from '../utils'
 
 export class WebInfoByApi {
-  constructor(fields: { stargramHub: string; headers?: Record<string, string> }) {
+  constructor(fields: { stargramHub: string; browserlessToken: string; headers?: Record<string, string> }) {
     this.headers = fields.headers
     this.stargramHub = fields.stargramHub || ''
+    this.browserlessToken = fields.browserlessToken
   }
 
   private apiUrl = '/api/webinfo'
   private stargramHub = ''
+  private browserlessToken: string
   private headers?: Record<string, string>
 
   async call(urls: WebLoaderUrls) {
@@ -22,6 +24,7 @@ export class WebInfoByApi {
         headers: this.headers,
         body: {
           webUrl: urls.webUrl,
+          browserlessToken: this.browserlessToken,
         },
       })
     return info
@@ -33,13 +36,15 @@ export class WebInfoByApi {
 }
 
 export class WebInfo {
-  constructor(fields: { routes: Routes; headers?: Record<string, string> }) {
+  constructor(fields: { routes: Routes; browserlessToken: string; headers?: Record<string, string> }) {
     this.headers = fields.headers
     this.routes = fields.routes
+    this.browserlessToken = fields.browserlessToken
   }
 
   private routes: Routes
   private headers?: Record<string, string>
+  private browserlessToken: string
 
   async call(urls: WebLoaderUrls) {
     const domain = getDomain(urls.webUrl)
@@ -51,7 +56,7 @@ export class WebInfo {
           const pathInfo = router.paths[i]
           const loaderUrls = pathInfo.filter(urls)
           if (loaderUrls) {
-            const info = await pathInfo.loader(loaderUrls, this.headers)
+            const info = await pathInfo.loader({ urls: loaderUrls, browserlessToken: this.browserlessToken, headers: this.headers })
             info.meta.domain = domain
             info.meta.siteName = router.name
 
@@ -68,7 +73,7 @@ export class WebInfo {
           const pathInfo = router.paths[i]
           const loaderUrls = pathInfo.filter(urls)
           if (loaderUrls) {
-            const info = await pathInfo.loader(loaderUrls, this.headers)
+            const info = await pathInfo.loader({ urls: loaderUrls, browserlessToken: this.browserlessToken, headers: this.headers })
             return info
           }
         }

@@ -18,6 +18,10 @@ export const defaultUserConfig: UserConfig = {
   webInfo: {
     api: {
       stargramHub: '',
+      browserlessToken: '',
+    },
+    localFn: {
+      browserlessToken: '',
     },
   },
   webCard: {

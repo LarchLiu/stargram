@@ -6,6 +6,7 @@ import { OpenaiSummarizeContent } from '@stargram/core/llm/openai'
 import { SaveWebInfoChain } from '@stargram/core/chain/saveWebInfo'
 import type { SavedNotion } from '@stargram/core'
 import type { ContentRequest, ListenerSendResponse, PageInfo, SwResponse } from '~/types'
+import {DEFAULT_STARGRAM_HUB} from '../const'
 
 async function sendSavedStatus(res: SwResponse) {
   chrome.tabs.query({ active: true, lastFocusedWindow: true }, (tabs) => {
@@ -37,14 +38,15 @@ async function sendSavedStatus(res: SwResponse) {
 }
 
 chrome.runtime.onInstalled.addListener(async () => {
-  const result = await chrome.storage.sync.get(['notionApiKey', 'notionDatabaseId', 'openaiApiKey', 'stargramHub', 'uiLang', 'promptsLang'])
+  const result = await chrome.storage.sync.get(['notionApiKey', 'notionDatabaseId', 'openaiApiKey', 'stargramHub', 'uiLang', 'promptsLang', 'browserlessToken'])
   const notionApiKey = result.notionApiKey ?? ''
   const notionDatabaseId = result.notionDatabaseId ?? ''
   const openaiApiKey = result.openaiApiKey ?? ''
-  const stargramHub = result.stargramHub ?? ''
+  const stargramHub = result.stargramHub ?? DEFAULT_STARGRAM_HUB
   const uiLang = result.uiLang ?? 'en'
   const promptsLang = result.promptsLang ?? 'en'
-  await chrome.storage.sync.set({ notionApiKey, notionDatabaseId, openaiApiKey, stargramHub, uiLang, promptsLang })
+  const browserlessToken = result.browserlessToken ?? ''
+  await chrome.storage.sync.set({ notionApiKey, notionDatabaseId, openaiApiKey, stargramHub, uiLang, promptsLang, browserlessToken })
 })
 
 chrome.runtime.onMessage.addListener(async (request: ContentRequest, sender, sendResponse: ListenerSendResponse) => {
@@ -83,12 +85,13 @@ chrome.runtime.onMessage.addListener(async (request: ContentRequest, sender, sen
 })
 
 async function saveToNotion(pageInfo: PageInfo): Promise<SwResponse> {
-  const storage = await chrome.storage.sync.get(['notionApiKey', 'notionDatabaseId', 'openaiApiKey', 'promptsLang', 'stargramHub'])
+  const storage = await chrome.storage.sync.get(['notionApiKey', 'notionDatabaseId', 'openaiApiKey', 'promptsLang', 'stargramHub', 'browserlessToken'])
   const notionApiKey = storage.notionApiKey ?? ''
   const databaseId = storage.notionDatabaseId ?? ''
   const openaiApiKey = storage.openaiApiKey ?? ''
   const promptsLang = storage.promptsLang ?? 'en'
-  const stargramHub = storage.stargramHub ?? ''
+  const stargramHub = storage.stargramHub ?? DEFAULT_STARGRAM_HUB
+  const browserlessToken = storage.browserlessToken ?? ''
 
   if (!notionApiKey || !databaseId) {
     // console.log('Missing Notion API key or Database ID in settings.')
@@ -99,6 +102,7 @@ async function saveToNotion(pageInfo: PageInfo): Promise<SwResponse> {
   const url = pageInfo.webUrl
   const webInfo = new WebInfoByApi({
     stargramHub,
+    browserlessToken,
   })
 
   const webCard = new WebCardByApi({ stargramHub })

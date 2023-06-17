@@ -1,4 +1,4 @@
-import type { GithubRepoMeta, PathInfo, WebInfoData, WebLoaderUrls } from '@stargram/core'
+import type { GithubRepoMeta, PathInfo, WebInfoData, WebLoaderParams, WebLoaderUrls } from '@stargram/core'
 import { strNotEqualWith } from '@stargram/core/utils'
 import { $fetch } from '@stargram/core'
 import { GITHUB_RAW_URL, GITHUB_REPOS_API, USER_AGENT } from '../../../const'
@@ -19,16 +19,17 @@ function repoFilter(urls: WebLoaderUrls): WebLoaderUrls | undefined {
   return undefined
 }
 
-async function getRepoInfo(urls: WebLoaderUrls, headers: Record<string, string> = { 'User-Agent': USER_AGENT }): Promise<WebInfoData> {
+async function getRepoInfo(params: WebLoaderParams): Promise<WebInfoData> {
   let title = ''
   let content = ''
-  let url = urls.webUrl
+  let url = params.urls.webUrl
   const meta: GithubRepoMeta = {}
-  const repo = urls.webPath
+  const repo = params.urls.webPath
+  const headers = params.headers || { 'User-Agent': USER_AGENT }
 
   if (repo) {
     meta.prompts = 'The Github repo info'
-    const webJson = await unfurl(url)
+    const webJson = await unfurl(url, { browserless: false })
     if (webJson) {
       const openGraph = webJson.open_graph
       if (openGraph && openGraph.images)

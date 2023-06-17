@@ -9,6 +9,7 @@ settings:
   openaiApiKey: Openai API Key
   pictureBed: 图床链接地址
   stargramHub: Stargram Hub
+  browserlessToken: Browserless Token
   saveSettings: 保存
   settingsSaved: 设置已保存
   uiLanguage: 界面语言

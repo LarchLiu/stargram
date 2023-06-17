@@ -1,16 +1,15 @@
-import type { CommonMeta, PathInfo, WebInfoData, WebLoaderUrls } from '@stargram/core'
+import type { CommonMeta, PathInfo, WebInfoData, WebLoaderParams, WebLoaderUrls } from '@stargram/core'
 import { getDomain } from '@stargram/core/utils'
 import { unfurl } from '../../../utils/unfurl'
-import { USER_AGENT } from '../../../const'
 
 function filter(urls: WebLoaderUrls): WebLoaderUrls | undefined {
   return urls
 }
 
-async function getWebInfo(urls: WebLoaderUrls, _headers: Record<string, string> = { 'User-Agent': USER_AGENT }): Promise<WebInfoData> {
+async function getWebInfo(params: WebLoaderParams): Promise<WebInfoData> {
   let title = ''
   let content = ''
-  const url = urls.webUrl
+  const url = params.urls.webUrl
   const meta: CommonMeta = {}
   const domain = getDomain(url)
   const word = domain.split('.')[0]
@@ -18,21 +17,20 @@ async function getWebInfo(urls: WebLoaderUrls, _headers: Record<string, string> 
 
   meta.domain = domain
   meta.siteName = siteName
-  meta.prompts = `Website info of ${urls.webUrl}`
+  meta.prompts = `Website info of ${url}`
   // fetch webinfo
-  const webJson = await unfurl(url)
+  const webJson = await unfurl(url, { browserlessToken: params.browserlessToken })
   if (webJson) {
-    const readability = webJson.readability
+    const readability = webJson.content
     const openGraph = webJson.open_graph
     const faviconPath = webJson.favicon?.split('/')
     const favicon = (faviconPath && !faviconPath[faviconPath.length - 1].includes('.ico')) ? webJson.favicon : ''
     meta.favicon = favicon
     title = webJson.title || ''
     content = webJson.description || ''
-    if (readability) {
-      title = readability.title
-      content = readability.textContent
-    }
+    if (readability)
+      content = readability
+
     if (openGraph && openGraph.images)
       meta.ogImage = openGraph.images[0].url
   }

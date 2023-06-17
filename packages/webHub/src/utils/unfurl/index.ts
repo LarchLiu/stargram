@@ -1,10 +1,9 @@
 import { Parser } from 'htmlparser2'
-import { Readability } from '@mozilla/readability'
-import { JSDOM } from 'jsdom'
 import { $fetch } from '@stargram/core'
+import { browserless } from '../browserless'
 import UnexpectedError from './unexpectedError'
 import { keys, schema } from './schema'
-import type { Metadata, Opts, ReadabilityParse } from './types'
+import type { Metadata, Opts } from './types'
 
 interface ParserContext {
   isHtml?: boolean
@@ -28,13 +27,8 @@ function unfurl(url: string, opts?: Opts): Promise<Metadata> {
   if (opts.constructor.name !== 'Object')
     throw new UnexpectedError(UnexpectedError.BAD_OPTIONS)
 
-  typeof opts.oembed === 'boolean' || (opts.oembed = true)
-  typeof opts.compress === 'boolean' || (opts.compress = true)
+  typeof opts.browserless === 'boolean' || (opts.browserless = true)
   typeof opts.headers === 'object' || (opts.headers = defaultHeaders)
-
-  Number.isInteger(opts.follow) || (opts.follow = 50)
-  Number.isInteger(opts.timeout) || (opts.timeout = 0)
-  Number.isInteger(opts.size) || (opts.size = 0)
 
   return getPage(url, opts)
     .then(getMetadata(url, opts))
@@ -75,17 +69,12 @@ async function getPage(url: string, opts: Opts) {
 }
 
 function getMetadata(url: string, opts: Opts) {
-  return function (text: string): Promise<{ oembed: { type?: string; href?: string }; metadata: any[]; article: ReadabilityParse }> {
+  return async function (text: string): Promise<{ metadata: any[]; content: string }> {
     const metadata: any[] = []
     const parserContext: ParserContext = { text: '' }
-
-    const doc = new JSDOM(text, {
-      url,
-    })
-    const reader = new Readability(doc.window.document)
-    const article = reader.parse()
-
-    let oembed: { type?: string; href?: string }
+    let content = ''
+    if (opts.browserless && opts.browserlessToken)
+      content = await browserless(url, opts.browserlessToken)
     let distanceFromRoot = 0
 
     return new Promise((resolve) => {
@@ -108,7 +97,7 @@ function getMetadata(url: string, opts: Opts) {
             ])
           }
 
-          resolve({ oembed, metadata, article })
+          resolve({ metadata, content })
         },
 
         onopentagname(tag: string) {
@@ -133,19 +122,6 @@ function getMetadata(url: string, opts: Opts) {
         ) {
           distanceFromRoot++
 
-          if (opts.oembed && attribs.href) {
-            // handle XML and JSON with a preference towards JSON since its more efficient for us
-            if (
-              tagname === 'link'
-              && (attribs.type === 'text/xml+oembed'
-                || attribs.type === 'application/json+oembed')
-            ) {
-              if (!oembed || oembed.type === 'text/xml+oembed') {
-                // prefer json
-                oembed = attribs
-              }
-            }
-          }
           if (
             tagname === 'link'
             && attribs.href
@@ -217,7 +193,7 @@ function getMetadata(url: string, opts: Opts) {
 }
 
 function parse(url: string) {
-  return function ({ metadata, article }: { metadata: any[]; article: ReadabilityParse }) {
+  return function ({ metadata, content }: { metadata: any[]; content: string }) {
     const parsed: any = {}
     const ogVideoTags: any[] = []
     const articleTags: any[] = []
@@ -307,8 +283,8 @@ function parse(url: string) {
         tags: articleTags,
       }))
     }
-    if (article)
-      parsed.readability = article
+    if (content)
+      parsed.content = content
 
     return parsed as Metadata
   }

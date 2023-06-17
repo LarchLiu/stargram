@@ -47,7 +47,8 @@ export default eventHandler(async (event) => {
         if (config.webInfo.select === 'api') {
           replaceCode += `
   const webInfo = new ${config.webInfo.fn}({
-    stargramHub: config.webInfo.${config.webInfo.select}.stargramHub,
+    stargramHub: config.webInfo.api.stargramHub,
+    browserlessToken: config.webInfo.api.browserlessToken,
   })
 `
         }
@@ -55,6 +56,7 @@ export default eventHandler(async (event) => {
           replaceCode += `
   const webInfo = new ${config.webInfo.fn}({
     routes,
+    browserlessToken: config.webInfo.localFn.browserlessToken,
   })
 `
         }

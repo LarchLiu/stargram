@@ -10,9 +10,11 @@
   },
   "webInfo": {
     "select": "localFn",
-    "public": true,
+    "public": false,
     "userConfig": true,
-    "config": null,
+    "config": {
+      "browserlessToken": ""
+    },
     "fn": "WebInfo",
     "import": "import { WebInfo } from '@stargram/core/webInfo'\nimport { routes } from '@stargram/web-hub'\n"
   },

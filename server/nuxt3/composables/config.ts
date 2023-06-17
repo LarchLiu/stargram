@@ -136,7 +136,7 @@ export const webInfoConfig: BasicConfig<ModelsConfig> = {
     text: 'Website Info',
     icon: 'i-carbon-document-preliminary',
   },
-  public: true,
+  public: false,
   userConfig: true,
   handles: [
     {
@@ -157,6 +157,11 @@ export const webInfoConfig: BasicConfig<ModelsConfig> = {
       import: 'import { WebInfo } from \'@stargram/core/webInfo\'\nimport { routes } from \'@stargram/web-hub\'\n',
       fn: 'WebInfo',
       config: {
+        browserlessToken: {
+          label: 'Browserless Token',
+          value: '',
+          require: false,
+        },
       },
       output: 'Website Info',
     },
@@ -169,6 +174,11 @@ export const webInfoConfig: BasicConfig<ModelsConfig> = {
           label: 'Stargram Hub',
           value: DEFAULT_STARGRAM_HUB,
           require: true,
+        },
+        browserlessToken: {
+          label: 'Browserless Token',
+          value: '',
+          require: false,
         },
       },
       output: 'Website Info',

@@ -74,6 +74,12 @@ export interface PicBedRes {
 
 export type PromptsLanguage = 'de' | 'en' | 'es' | 'fr' | 'kr' | 'ja' | 'it' | 'nl' | 'pt' | 'ru' | 'zh-CN'
 
+export interface WebLoaderParams {
+  urls: WebLoaderUrls
+  browserlessToken?: string
+  headers?: Record<string, string>
+}
+
 export interface PathInfo {
   name: string
   author: string
@@ -81,7 +87,7 @@ export interface PathInfo {
   prompts?: string
   sequence?: number
   filter: (urls: WebLoaderUrls) => WebLoaderUrls | undefined
-  loader: (urls: WebLoaderUrls, headers?: Record<string, string>) => Promise<WebInfoData>
+  loader: (params: WebLoaderParams) => Promise<WebInfoData>
 }
 
 export interface Router {

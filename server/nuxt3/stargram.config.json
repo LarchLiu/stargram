@@ -9,12 +9,15 @@
     }
   },
   "webInfo": {
-    "select": "localFn",
-    "public": true,
+    "select": "api",
+    "public": false,
     "userConfig": true,
-    "config": null,
-    "fn": "WebInfo",
-    "import": "import { WebInfo } from '@stargram/core/webInfo'\nimport { routes } from '@stargram/web-hub'\n"
+    "config": {
+      "stargramHub": "https://stargram.cc",
+      "browserlessToken": ""
+    },
+    "fn": "WebInfoByApi",
+    "import": "import { WebInfoByApi } from '@stargram/core/webInfo'\n"
   },
   "webCard": {
     "select": "localFn",
