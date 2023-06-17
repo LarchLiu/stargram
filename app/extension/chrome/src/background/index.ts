@@ -6,7 +6,8 @@ import { OpenaiSummarizeContent } from '@stargram/core/llm/openai'
 import { SaveWebInfoChain } from '@stargram/core/chain/saveWebInfo'
 import type { SavedNotion } from '@stargram/core'
 import type { ContentRequest, ListenerSendResponse, PageInfo, SwResponse } from '~/types'
-import {DEFAULT_STARGRAM_HUB} from '../const'
+
+const DEFAULT_STARGRAM_HUB = 'https://stargram.cc'
 
 async function sendSavedStatus(res: SwResponse) {
   chrome.tabs.query({ active: true, lastFocusedWindow: true }, (tabs) => {

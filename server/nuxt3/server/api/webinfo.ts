@@ -3,12 +3,12 @@ import { errorMessage } from '@stargram/core/utils'
 import { routes } from '@stargram/web-hub'
 
 export default eventHandler(async (event) => {
-  const req = await readBody<{ webUrl: string; stargramToken: string }>(event)
+  const req = await readBody<{ webUrl: string; browserlessToken: string }>(event)
   const webUrl = req.webUrl
-  const stargramToken = req.stargramToken
+  const browserlessToken = req.browserlessToken
 
   try {
-    const webInfo = new WebInfo({ routes, browserlessToken: stargramToken })
+    const webInfo = new WebInfo({ routes, browserlessToken })
     const webData = await webInfo.call({ webUrl })
     return webData
   }
