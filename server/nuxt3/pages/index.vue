@@ -3,7 +3,7 @@
 </script>
 
 <template>
-  <div>
+  <div mt-4 flex justify-center text-32px>
     Stargram
   </div>
 </template>
