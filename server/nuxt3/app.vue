@@ -4,6 +4,7 @@
 
 <template>
   <NuxtPage />
+  <UNotifications md:w-120 xl:w-120 />
 </template>
 
 <style>

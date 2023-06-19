@@ -5,6 +5,7 @@ import type { OutputConfig, ServerConfig } from '../composables/config'
 
 const text = ref('')
 const config = ref<ServerConfig<OutputConfig>>()
+const toast = useToast()
 const showUserIdInput = ref(false)
 async function onInitClick() {
   const decode = cryption.decode(text.value)
@@ -15,13 +16,25 @@ async function onInitClick() {
       method: 'POST',
       body: text.value, // config.value.app[appName],
     })
-    if (error.value)
-      alert(errorMessage(error.value))
-    else
+    if (error.value) {
+      toast.add({
+        title: errorMessage(error.value),
+        color: 'red',
+        timeout: 2000,
+        icon: 'i-carbon-warning',
+      })
+    }
+    else {
       showUserIdInput.value = true
+    }
   }
   else {
-    alert('Config code error')
+    toast.add({
+      title: 'Config code error',
+      color: 'red',
+      timeout: 2000,
+      icon: 'i-carbon-warning',
+    })
   }
 }
 </script>

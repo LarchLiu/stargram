@@ -20,6 +20,7 @@ export default defineConfig({
     presetIcons({
       scale: 1.2,
       warn: true,
+      prefix: 'uno-',
     }),
     presetTypography(),
     presetWebFonts({

@@ -7,7 +7,12 @@ export default defineNuxtConfig({
     '@vueuse/nuxt',
     '@unocss/nuxt',
     '@pinia/nuxt',
+    '@nuxthq/ui',
   ],
+  ui: {
+    safelistColors: ['green', 'red'],
+    icons: ['carbon', 'twemoji'],
+  },
   css: [
     '@unocss/reset/tailwind-compat.css',
   ],

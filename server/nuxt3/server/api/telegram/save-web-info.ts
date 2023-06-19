@@ -1,4 +1,5 @@
-import { WebInfoByApi } from '@stargram/core/webInfo'
+import { WebInfo } from '@stargram/core/webInfo'
+import { routes } from '@stargram/web-hub'
 import { WebCard } from '@stargram/core/webCard'
 import { SupabaseImageStorage } from '@stargram/core/storage/supabase'
 import { OpenaiSummarizeContent } from '@stargram/core/llm/openai'
@@ -14,9 +15,9 @@ export default eventHandler(async (event) => {
   const context = body.context as Context
   const config = context.USER_CONFIG as UserConfig
 
-  const webInfo = new WebInfoByApi({
-    stargramHub: config.webInfo.api.stargramHub,
-    browserlessToken: config.webInfo.api.browserlessToken,
+  const webInfo = new WebInfo({
+    routes,
+    browserlessToken: config.webInfo.localFn.browserlessToken,
   })
 
   const imgStorage = new SupabaseImageStorage({

@@ -5,6 +5,7 @@ import { cryption } from '~/constants'
 import type { OutUserConfig, ServerConfig } from '~/composables/config'
 
 const route = useRoute()
+const toast = useToast()
 const { code } = route.query
 const regex = /[A-Za-z]+[A-Z0-9][0-9]$/g
 const decode = (code && code.length > 2 && regex.test(code as string)) ? cryption.decode(code as string) : ''
@@ -27,9 +28,9 @@ async function onChange(config: ServerConfig<OutUserConfig>) {
     },
   })
   if (error.value)
-    alert(errorMessage(error.value))
+    toast.add({ title: errorMessage(error.value), color: 'red', timeout: 2000, icon: 'i-carbon-warning' })
   else
-    alert('success')
+    toast.add({ title: 'success', color: 'green', timeout: 2000, icon: 'i-carbon-checkmark-outline' })
 }
 </script>
 
