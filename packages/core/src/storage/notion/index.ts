@@ -97,8 +97,8 @@ export async function saveToNotion(config: NotionDataConfig, info: NotionPage): 
   let ogImage = config.defaultOgImage
   if (info.meta && Object.keys(info.meta).length > 0) {
     const meta = info.meta
-    if (meta.ogImage)
-      ogImage = meta.ogImage
+    if (meta.savedImage)
+      ogImage = meta.savedImage
 
     body.properties = {
       ...body.properties,

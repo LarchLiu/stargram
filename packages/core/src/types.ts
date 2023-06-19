@@ -14,6 +14,7 @@ export interface WebsiteMeta {
   siteName?: string
   ogImage?: string
   prompts?: string
+  savedImage?: string
 }
 export interface CommonMeta extends WebsiteMeta {
   favicon?: string

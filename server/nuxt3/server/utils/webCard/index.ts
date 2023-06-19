@@ -13,13 +13,13 @@ export async function createWebCard(webInfo: WebInfoData): Promise<StorageImage>
     let props
     let card: Component | undefined
     let svg = ''
-    let png: Blob | undefined
+    let ogImage: Blob | undefined
 
     if (webMeta.siteName === 'Github') {
       meta = webMeta as GithubRepoMeta
       imgPath = `${webMeta.domain}/${meta.username}/${meta.reponame}.png`
       if (meta.ogImage)
-        png = await $fetch(meta.ogImage, { responseType: 'blob' })
+        ogImage = await $fetch(meta.ogImage, { responseType: 'blob' })
     }
     else if (webMeta.siteName === 'Twitter') {
       card = TweetCard
@@ -63,13 +63,13 @@ export async function createWebCard(webInfo: WebInfoData): Promise<StorageImage>
       const filename = url.replace(/[<|>|:|"|\\|\/|\.|?|*|#|&|%|~|'|"]/g, '')
       imgPath = `${webMeta.domain}/${filename}.svg`
       if (meta.ogImage)
-        png = await $fetch(meta.ogImage, { responseType: 'blob' })
+        ogImage = await $fetch(meta.ogImage, { responseType: 'blob' })
     }
 
     if (!imgPath)
       throw new Error(`No image path for ${webMeta.siteName}`)
 
-    if (!png) {
+    if (!ogImage) {
       if (!card)
         throw new Error(`No WebCard template for ${webMeta.siteName}`)
 
@@ -88,7 +88,7 @@ export async function createWebCard(webInfo: WebInfoData): Promise<StorageImage>
     }
 
     return {
-      imgData: png,
+      imgData: ogImage,
       imgPath,
     }
   }
