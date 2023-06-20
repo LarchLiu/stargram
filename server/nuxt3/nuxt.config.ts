@@ -15,6 +15,10 @@ export default defineNuxtConfig({
   },
   css: [
     '@unocss/reset/tailwind-compat.css',
+    '@vue-flow/core/dist/style.css',
+    '@vue-flow/core/dist/theme-default.css',
+    '@vue-flow/controls/dist/style.css',
+    '@vue-flow/minimap/dist/style.css',
   ],
   nitro: {
     esbuild: {
