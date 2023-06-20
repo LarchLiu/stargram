@@ -5,6 +5,7 @@ import { storageInfo } from '@stargram/core/storage'
 import type { TLLM } from '@stargram/core/llm'
 import { llmInfo } from '@stargram/core/llm'
 import { WebInfoFunction } from '@stargram/core/webInfo'
+import { WebCardFunction } from '@stargram/core/webCard'
 import type { UserConfig } from '../utils/index'
 import type { Context } from '../utils/tgBot/context'
 
@@ -25,7 +26,7 @@ export default eventHandler(async (event) => {
     config.webCard.config = { stargramHub: body.stargramHub, imgStorage }
   else
     config.webCard.config.imgStorage = imgStorage
-  const webCard = new (WebInfoFunction[config.webCard.select])(config.webCard.config)
+  const webCard = new (WebCardFunction[config.webCard.select])(config.webCard.config)
 
   const summarizeContent = new (llmInfo[config.llm.select as TLLM][`${config.llm.select}SummarizeContent`])(config.llm.config)
 
