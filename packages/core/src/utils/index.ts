@@ -236,12 +236,18 @@ class Cryption {
   }
 
   decode(en: string) {
-    const method = Number.parseInt(en.slice(-1))
-    const salt = en.slice(-2, -1)
-    const str = en.slice(0, -2)
-    const de = this.decrypt(str, salt, method)
+    const regex = /[A-Za-z]+[A-Z0-9][0-9]$/g
+    if (en && en.length > 2 && regex.test(en)) {
+      const method = Number.parseInt(en.slice(-1))
+      const salt = en.slice(-2, -1)
+      const str = en.slice(0, -2)
+      const de = this.decrypt(str, salt, method)
 
-    return de
+      return de
+    }
+    else {
+      return ''
+    }
   }
 }
 

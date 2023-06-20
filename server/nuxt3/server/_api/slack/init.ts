@@ -5,14 +5,21 @@ import { getBotConfig, setBotConfig } from '../../utils'
 export default eventHandler(async (event) => {
   const encode = await readBody(event) as string
   const decode = cryption.decode(encode)
-  const config = JSON.parse(decode)
-  const appId = config.app.config.appId as string
-  const botConfig = await getBotConfig('slack') as BotConfig
+  if (decode) {
+    const config = JSON.parse(decode)
+    const appId = config.app.config.appId as string
+    const botConfig = await getBotConfig('slack') as BotConfig
 
-  botConfig[appId] = { config: encode, userList: [] }
-  if (!botConfig.default)
-    botConfig.default = appId
+    botConfig[appId] = { config: encode, userList: [] }
+    if (!botConfig.default)
+      botConfig.default = appId
 
-  await setBotConfig('slack', botConfig)
-  return 'success'
+    await setBotConfig('slack', botConfig)
+    return 'success'
+  }
+  else {
+    setResponseStatus(event, 400)
+
+    return { error: 'Code Error' }
+  }
 })

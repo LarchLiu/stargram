@@ -7,9 +7,8 @@ import type { OutUserConfig, ServerConfig } from '~/composables/config'
 const route = useRoute()
 const toast = useToast()
 const { code } = route.query
-const regex = /[A-Za-z]+[A-Z0-9][0-9]$/g
-const decode = (code && code.length > 2 && regex.test(code as string)) ? cryption.decode(code as string) : ''
-const { appName, appId, userId } = decode.includes('appName') ? JSON.parse(decode) : { appName: 'a', appId: 'b', userId: 'c' }
+const decode = cryption.decode(code as string)
+const { appName, appId, userId } = (decode && decode.includes('appName')) ? JSON.parse(decode) : { appName: 'a', appId: 'b', userId: 'c' }
 
 const { data } = await useFetch<{ config: string }>(`/api/${appName}/${appId}/adduser`, {
   method: 'GET',

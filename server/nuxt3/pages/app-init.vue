@@ -9,7 +9,7 @@ const toast = useToast()
 const showUserIdInput = ref(false)
 async function onInitClick() {
   const decode = cryption.decode(text.value)
-  if (decode.includes('app') && decode.includes('dataStorage')) {
+  if (decode && decode.includes('app') && decode.includes('dataStorage')) {
     config.value = JSON.parse(decode)
     const appName = config.value?.app.select
     const { error } = await useFetch(`/api/${appName}/init`, {

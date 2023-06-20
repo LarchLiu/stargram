@@ -7,6 +7,7 @@ const kv = useStorage('kv')
 export interface IBotConfig {
   config: string
   userList: string[]
+  token?: string
 }
 export type BotConfig = { default: string } & Record<string, IBotConfig>
 
