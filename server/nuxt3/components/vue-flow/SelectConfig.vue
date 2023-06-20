@@ -60,7 +60,7 @@ function updateHandler() {
 
 <template>
   <div mb-1 flex flex-row items-center justify-start text-12px>
-    <div :class="model.title.icon" />
+    <div :class="model.title.icon" text-1.2rem />
     <dev ml-1 text-12px>
       {{ model.title.text }}
     </dev>

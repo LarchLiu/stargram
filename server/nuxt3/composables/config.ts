@@ -134,7 +134,7 @@ export const appConfig: BasicConfig<AppConfig> = {
 export const webInfoConfig: BasicConfig<ModelsConfig> = {
   title: {
     text: 'Website Info',
-    icon: 'i-carbon-document-preliminary',
+    icon: 'i-carbon-flight-international',
   },
   public: false,
   userConfig: true,
@@ -184,7 +184,7 @@ export const webInfoConfig: BasicConfig<ModelsConfig> = {
 export const webCardConfig: BasicConfig<ModelsConfig> = {
   title: {
     text: 'Website Card',
-    icon: 'i-carbon-image',
+    icon: 'i-carbon-image-search',
   },
   public: true,
   userConfig: true,
