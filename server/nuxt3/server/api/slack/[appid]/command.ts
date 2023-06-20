@@ -30,8 +30,7 @@ export default eventHandler(async (event) => {
       Object.keys(userConfig)
         .filter((key) => {
           const obj = userConfig[key as keyof ServerConfig<KVConfig>]
-          const keys = Object.keys(obj)
-          return !keys.includes('public')
+          return !obj.public
         })
         .forEach(key => myConfig[key] = userConfig[key as keyof ServerConfig<KVConfig>])
     }

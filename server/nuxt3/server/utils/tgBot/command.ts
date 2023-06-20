@@ -85,8 +85,7 @@ async function commandSystem(message: any, command: string, subcommand: string, 
     Object.keys(userConfig)
       .filter((key) => {
         const obj = userConfig[key as keyof ServerConfig<OutUserConfig>]
-        const keys = Object.keys(obj)
-        return !keys.includes('public')
+        return !obj.public
       })
       .forEach(key => myConfig[key] = userConfig[key as keyof ServerConfig<OutUserConfig>])
   }
