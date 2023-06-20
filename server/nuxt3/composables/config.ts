@@ -150,12 +150,10 @@ export const webInfoConfig: BasicConfig<ModelsConfig> = {
       position: Position.Right,
     },
   ],
-  select: 'localFn',
+  select: 'WebInfo',
   info: {
-    localFn: {
+    WebInfo: {
       displayName: 'Local Function',
-      import: 'import { WebInfo } from \'@stargram/core/webInfo\'\nimport { routes } from \'@stargram/web-hub\'\n',
-      fn: 'WebInfo',
       config: {
         browserlessToken: {
           label: 'Browserless Token',
@@ -165,10 +163,8 @@ export const webInfoConfig: BasicConfig<ModelsConfig> = {
       },
       output: 'Website Info',
     },
-    api: {
+    WebInfoByApi: {
       displayName: 'Public API',
-      import: 'import { WebInfoByApi } from \'@stargram/core/webInfo\'\n',
-      fn: 'WebInfoByApi',
       config: {
         stargramHub: {
           label: 'Stargram Hub',
@@ -204,20 +200,16 @@ export const webCardConfig: BasicConfig<ModelsConfig> = {
       position: Position.Right,
     },
   ],
-  select: 'localFn',
+  select: 'WebCard',
   info: {
-    localFn: {
+    WebCard: {
       displayName: 'Local Function',
-      import: 'import { WebCard } from \'@stargram/core/webCard\'\n',
-      fn: 'WebCard',
       config: {
       },
       output: 'Image',
     },
-    api: {
+    WebCardByApi: {
       displayName: 'Public API',
-      import: 'import { WebCardByApi } from \'@stargram/core/webCard\'\n',
-      fn: 'WebCardByApi',
       config: {
         stargramHub: {
           label: 'Stargram Hub',
@@ -248,12 +240,10 @@ export const imgStorageConfig: BasicConfig<ModelsConfig> = {
       position: Position.Right,
     },
   ],
-  select: 'supabase',
+  select: 'SupabaseImageStorage',
   info: {
-    supabase: {
+    SupabaseImageStorage: {
       displayName: 'Supabase Storage',
-      import: 'import { SupabaseImageStorage } from \'@stargram/core/storage/supabase\'\n',
-      fn: 'SupabaseImageStorage',
       config: {
         url: {
           label: 'Supabase URL',
@@ -294,12 +284,10 @@ export const dataStorageConfig: BasicConfig<ModelsConfig> = {
       position: Position.Right,
     },
   ],
-  select: 'notion',
+  select: 'NotionDataStorage',
   info: {
-    notion: {
+    NotionDataStorage: {
       displayName: 'Notion Storage',
-      import: 'import { NotionDataStorage } from \'@stargram/core/storage/notion\'\n',
-      fn: 'NotionDataStorage',
       config: {
         apiKey: {
           label: 'API Key',
@@ -340,12 +328,10 @@ export const llmConfig: BasicConfig<ModelsConfig> = {
       position: Position.Right,
     },
   ],
-  select: 'openai',
+  select: 'Openai',
   info: {
-    openai: {
+    Openai: {
       displayName: 'Openai',
-      import: 'import { OpenaiSummarizeContent } from \'@stargram/core/llm/openai\'\n',
-      fn: 'OpenaiSummarizeContent',
       config: {
         apiKey: {
           label: 'API Token',

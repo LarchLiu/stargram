@@ -42,12 +42,12 @@ export default eventHandler(async (event) => {
       })
       Object.keys(userConfig).forEach((key) => {
         const _key = key as keyof ServerConfig<OutUserConfig>
-        _userConfig[key] = { [userConfig[_key].select]: userConfig[_key].config }
+        _userConfig[key] = userConfig[_key]
       })
       publicKey.forEach((key) => {
         const _key = key as keyof ServerConfig<OutUserConfig>
         if (!_userConfig[_key])
-          _userConfig[key] = { [thisConfig[_key].select]: thisConfig[_key].config, public: true }
+          _userConfig[key] = thisConfig[_key].config
       })
       await setUserConfig('slack', appId, userId, _userConfig)
     }

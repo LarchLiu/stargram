@@ -1,15 +1,16 @@
 import { cryption } from '../../../constants/index'
 import type { BotConfig } from '../../utils'
 import { getBotConfig, setBotConfig } from '../../utils'
+import type { OutUserConfig, ServerConfig } from '~/composables/config'
 
 export default eventHandler(async (event) => {
   const result: Record<string, any> = {}
   const encode = await readBody(event) as string
   const decode = cryption.decode(encode)
   if (decode) {
-    const config = JSON.parse(decode)
+    const config = JSON.parse(decode) as ServerConfig<OutUserConfig>
     const domain = `${getRequestProtocol(event)}://${getRequestHost(event)}`
-    const token = config.app.config.botToken.trim() as string
+    const token = config.app.config!.botToken.trim() as string
     const test = /(\d+:[A-Za-z0-9_-]{35})/.test(token)
     if (!test) {
       setResponseStatus(event, 400)
@@ -19,7 +20,7 @@ export default eventHandler(async (event) => {
     const id = token.split(':')[0]
     result[id] = {
       webhook: await bindTelegramWebHook(token, url).catch(e => e.message),
-      command: await bindCommandForTelegram(token, config.app.config.language.trim()).catch(e => e.message),
+      command: await bindCommandForTelegram(token, config.app.config!.language.trim()).catch(e => e.message),
     }
     if (result[id].webhook.result) {
       const botConfig = await getBotConfig('telegram') as BotConfig

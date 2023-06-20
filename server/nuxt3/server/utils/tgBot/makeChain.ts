@@ -14,12 +14,13 @@ export async function TelegramSaveWebInfoChain(stargramHub: string, text: string
       if (!url.startsWith('http'))
         url = `https://${url}`
 
-      $fetch(`${stargramHub}/api/telegram/save-web-info`, {
+      $fetch(`${stargramHub}/api/save-web-info`, {
         method: 'POST',
         body: {
           context,
           url,
           stargramHub,
+          appName: 'telegram',
         },
       }).catch(e => console.error(errorMessage(e)))
       i += 1

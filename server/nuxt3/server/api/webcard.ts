@@ -4,7 +4,8 @@ import { errorMessage } from '@stargram/core/utils'
 import { storageInfo } from '@stargram/core/storage'
 import type { WebInfoData } from '@stargram/core'
 import type { IDataStorage, IImageStorage, TStorage } from '@stargram/core/storage'
-import { SupabaseImageStorage } from '@stargram/core/storage/supabase'
+import { cryption } from '~/constants'
+import type { OutUserConfig, ServerConfig } from '~/composables/config'
 
 export default eventHandler(async (event) => {
   try {
@@ -19,12 +20,30 @@ export default eventHandler(async (event) => {
     } = await readBody(event)
     let imgStorage: IImageStorage
     if (byApi) {
-      imgStorage = new SupabaseImageStorage({
-        url: process.env.SUPABASE_URL || '',
-        anonKey: process.env.SUPABASE_ANON_KEY || '',
-        bucket: process.env.SUPABASE_STORAGE_BUCKET || '',
-        upsert: true,
-      })
+      let botConfig
+      let fnName = ''
+      let imgConfig
+      const telegramConfig = await getBotConfig('telegram')
+      if (telegramConfig.default) {
+        const id = telegramConfig.default.split(':')[0]
+        botConfig = JSON.parse(cryption.decode(telegramConfig[id].config)) as ServerConfig<OutUserConfig>
+        fnName = botConfig.imgStorage.select
+        imgConfig = botConfig.imgStorage.config
+      }
+      else {
+        const slackConfig = await getBotConfig('slack')
+        if (slackConfig.default) {
+          const id = slackConfig.default
+          botConfig = JSON.parse(cryption.decode(slackConfig[id].config)) as ServerConfig<OutUserConfig>
+          fnName = botConfig.imgStorage.select
+          imgConfig = botConfig.imgStorage.config
+        }
+      }
+      if (!fnName || !imgConfig) {
+        setResponseStatus(event, 400)
+        return { error: 'No Public Image Storage' }
+      }
+      imgStorage = new (storageInfo.ImageStorage[fnName])(imgConfig) as IImageStorage
     }
     else {
       imgStorage = new (storageInfo[imgType.type as TStorage][imgType.name])(imgCfg) as IImageStorage

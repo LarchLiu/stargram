@@ -23,7 +23,7 @@ watch(outputEl, () => {
 <template>
   <div flex flex-col text-10px>
     <pre max-h-100 style="overflow: scroll; border:1px solid #b1aeae; border-radius: 4px;">
-      <code>{{ `\n${JSON.stringify(store.kvConfig, null, 2)}` }}</code>
+      <code>{{ `\n${JSON.stringify(store.outUserConfig, null, 2)}` }}</code>
     </pre>
     <pre mt-2 max-h-50 style="overflow: scroll; border:1px solid #b1aeae; border-radius: 4px;">
       <code>{{ `\n${store.encodeUserConfig}` }}</code>

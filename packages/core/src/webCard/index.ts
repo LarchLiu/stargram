@@ -105,3 +105,8 @@ export class WebCard {
     return imgRes
   }
 }
+
+export const WebCardFunction: Record<string, any> = {
+  WebCard,
+  WebCardByApi,
+}

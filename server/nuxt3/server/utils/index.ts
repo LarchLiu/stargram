@@ -1,5 +1,4 @@
-import type { PromptsLanguage } from '@stargram/core'
-import type { AppName, KVConfig, ServerConfig } from '../../composables/config'
+import type { AppName, OutUserConfig, ServerConfig } from '../../composables/config'
 import { cryption } from '~/constants'
 
 const kv = useStorage('kv')
@@ -38,54 +37,39 @@ export interface AppConfig {
 
 export interface UserConfig {
   app: {
-    telegram: {
-      botToken: string
-      language: string
-    }
-    slack: {
-      appId: string
-      webhook: string
-    }
+    select: string
+    public: boolean
+    config: Record<string, any>
   }
   webInfo: {
-    api: {
-      stargramHub: string
-      browserlessToken: string
-    }
-    localFn: {
-      browserlessToken: string
-    }
+    select: string
+    public: boolean
+    config: Record<string, any>
   }
   webCard: {
-    api: {
-      stargramHub: string
-    }
+    select: string
+    public: boolean
+    config: Record<string, any>
   }
   llm: {
-    openai: {
-      apiKey: string
-      apiHost: string
-      lang: PromptsLanguage
-    }
+    select: string
+    public: boolean
+    config: Record<string, any>
   }
   imgStorage: {
-    supabase: {
-      url: string
-      bucket: string
-      anonKey: string
-    }
+    select: string
+    public: boolean
+    config: Record<string, any>
   }
   dataStorage: {
-    notion: {
-      apiKey: string
-      databaseId: string
-      defaultOgImage: string
-    }
+    select: string
+    public: boolean
+    config: Record<string, any>
   }
 }
 
 export async function getBotConfig(app: AppName) {
-  return await kv.getItem(`${app}${ConfigKey.botConfigKey}`) || {}
+  return await kv.getItem(`${app}${ConfigKey.botConfigKey}`) as BotConfig || {}
 }
 
 export async function setBotConfig(app: AppName, config: BotConfig) {
@@ -100,7 +84,7 @@ export async function setUserConfig(app: AppName, appId: string, userId: string,
 export async function getUserConfig(app: AppName, appId: string, userId: string) {
   const encode = await kv.getItem(`${app}${ConfigKey.userConfigKey}:${appId}:${userId}`) as string
   if (encode) {
-    const config = JSON.parse(cryption.decode(encode)) as ServerConfig<KVConfig>
+    const config = JSON.parse(cryption.decode(encode)) as ServerConfig<OutUserConfig>
     return config
   }
   else {

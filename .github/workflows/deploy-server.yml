@@ -18,14 +18,6 @@ jobs:
       - name: Install
         run: pnpm install
 
-      - name: overwrite config json file
-        if: ${{ github.event.action == 'deploy' }}
-        uses: DamianReeves/write-file-action@master
-        with:
-          path: server/nuxt3/starnexus.config.json
-          contents: ${{ github.event.client_payload.outConfig }}
-          write-mode: overwrite
-
       - name: prewrite
         if: ${{ !(github.event.client_payload.prewrite.content == '') }}
         uses: DamianReeves/write-file-action@master

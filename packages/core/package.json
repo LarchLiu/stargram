@@ -29,6 +29,11 @@
       "require": "./chain/saveWebInfo.cjs",
       "import": "./chain/saveWebInfo.js"
     },
+    "./llm": {
+      "types": "./llm.d.ts",
+      "require": "./llm.cjs",
+      "import": "./llm.js"
+    },
     "./llm/openai": {
       "types": "./llm/openai.d.ts",
       "require": "./llm/openai.cjs",
@@ -77,6 +82,9 @@
     "chain/saveWebInfo.cjs",
     "chain/saveWebInfo.js",
     "chain/saveWebInfo.d.ts",
+    "llm.cjs",
+    "llm.js",
+    "llm.d.ts",
     "llm/openai.cjs",
     "llm/openai.js",
     "llm/openai.d.ts",

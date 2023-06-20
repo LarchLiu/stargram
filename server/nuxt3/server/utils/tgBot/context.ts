@@ -6,49 +6,34 @@ import { CONST, ENV, TG_CONFIG } from './env'
 const kv = useStorage('kv')
 export const defaultUserConfig: UserConfig = {
   app: {
-    telegram: {
-      botToken: '',
-      language: '',
-    },
-    slack: {
-      appId: '',
-      webhook: '',
-    },
+    select: '',
+    public: false,
+    config: {},
   },
   webInfo: {
-    api: {
-      stargramHub: '',
-      browserlessToken: '',
-    },
-    localFn: {
-      browserlessToken: '',
-    },
+    select: '',
+    public: true,
+    config: {},
   },
   webCard: {
-    api: {
-      stargramHub: '',
-    },
+    select: '',
+    public: true,
+    config: {},
   },
   llm: {
-    openai: {
-      apiKey: '',
-      apiHost: '',
-      lang: 'en',
-    },
+    select: '',
+    public: false,
+    config: {},
   },
   imgStorage: {
-    supabase: {
-      url: '',
-      bucket: '',
-      anonKey: '',
-    },
+    select: '',
+    public: true,
+    config: {},
   },
   dataStorage: {
-    notion: {
-      apiKey: '',
-      databaseId: '',
-      defaultOgImage: '',
-    },
+    select: '',
+    public: false,
+    config: {},
   },
 }
 /**

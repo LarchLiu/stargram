@@ -1,6 +1,5 @@
 import vue from '@vitejs/plugin-vue'
 import { appDescription } from './constants/index'
-import GenerateApi from './modules/generate-api/vite'
 
 export default defineNuxtConfig({
   modules: [
@@ -45,11 +44,6 @@ export default defineNuxtConfig({
       // @ts-expect-error
       plugins: [vue()],
     },
-  },
-  vite: {
-    plugins: [
-      GenerateApi(),
-    ],
   },
   app: {
     head: {

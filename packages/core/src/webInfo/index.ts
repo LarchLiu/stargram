@@ -87,3 +87,8 @@ export class WebInfo {
     return ''
   }
 }
+
+export const WebInfoFunction: Record<string, any> = {
+  WebInfo,
+  WebInfoByApi,
+}

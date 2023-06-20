@@ -12,12 +12,13 @@ export async function SlackSaveWebInfoChain(stargramHub: string, text: string, u
       if (!url.startsWith('http'))
         url = `https://${url}`
 
-      $fetch(`${stargramHub}/api/slack/save-web-info`, {
+      $fetch(`${stargramHub}/api/save-web-info`, {
         method: 'POST',
         body: {
           context: { USER_CONFIG: userConfig },
           url,
           stargramHub,
+          appName: 'slack',
         },
       }).catch(e => console.error(errorMessage(e)))
 
@@ -30,8 +31,8 @@ export async function SlackSaveWebInfoChain(stargramHub: string, text: string, u
   }
 }
 
-export function sendMessageToSlackBot(config: { webhook: string }, message: string) {
-  return $fetch(config.webhook, {
+export function sendMessageToSlackBot(webhook: string, message: string) {
+  return $fetch(webhook, {
     body: {
       blocks: [
         {

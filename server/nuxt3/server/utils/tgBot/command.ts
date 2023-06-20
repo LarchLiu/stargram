@@ -3,7 +3,7 @@ import {
 } from '../../utils/tgBot/telegram'
 import type { Context } from '../../utils/tgBot/context'
 import { CONST, ENV, I18N } from '../../utils/tgBot/env'
-import type { KVConfig, ServerConfig } from '../../../composables/config'
+import type { OutUserConfig, ServerConfig } from '../../../composables/config'
 import { cryption } from '~/constants'
 
 type ScopeType = 'all_private_chats' | 'all_group_chats' | 'all_chat_administrators'
@@ -84,11 +84,11 @@ async function commandSystem(message: any, command: string, subcommand: string, 
   if (userConfig) {
     Object.keys(userConfig)
       .filter((key) => {
-        const obj = userConfig[key as keyof ServerConfig<KVConfig>]
+        const obj = userConfig[key as keyof ServerConfig<OutUserConfig>]
         const keys = Object.keys(obj)
         return !keys.includes('public')
       })
-      .forEach(key => myConfig[key] = userConfig[key as keyof ServerConfig<KVConfig>])
+      .forEach(key => myConfig[key] = userConfig[key as keyof ServerConfig<OutUserConfig>])
   }
   const showConfig = JSON.stringify(myConfig, null, 2)
   msg += '<pre>'

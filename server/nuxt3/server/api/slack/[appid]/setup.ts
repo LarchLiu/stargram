@@ -30,7 +30,9 @@ export default eventHandler(async (event) => {
         const webhook = res.incoming_webhook.url
         const config = {
           app: {
-            slack: {
+            select: 'slack',
+            public: false,
+            config: {
               webhook,
             },
           },
