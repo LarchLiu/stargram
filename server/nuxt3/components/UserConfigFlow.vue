@@ -39,9 +39,6 @@ function onConfirm() {
           </div>
           <div flex flex-col text-10px>
             <select v-model="model.select" autocomplete="off" class="vue-flow">
-              <option value="" disabled>
-                Please Select
-              </option>
               <option v-for="o in model.options" :key="o.value" :value="o.value">
                 {{ o.label }}
               </option>

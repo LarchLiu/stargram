@@ -67,9 +67,6 @@ function updateHandler() {
   </div>
   <div flex flex-col text-10px>
     <select ref="inputEl" v-model="model.select" autocomplete="off" class="vue-flow" @change="updateHandler">
-      <option value="" disabled>
-        Please Select
-      </option>
       <option v-for="o in options" :key="o.value" :value="o.value">
         {{ o.label }}
       </option>

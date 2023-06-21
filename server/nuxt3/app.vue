@@ -39,6 +39,7 @@ select.vue-flow {
   color: #636161;
   padding: 2px;
   text-overflow: ellipsis;
+  background-color: field;
 }
 input.vue-flow {
   width: 100%;
@@ -46,6 +47,7 @@ input.vue-flow {
   border-radius: 4px;
   color: #636161;
   padding: 2px;
+  height: inherit;
 }
 textarea.vue-flow {
   width: 100%;

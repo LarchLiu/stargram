@@ -26,17 +26,17 @@ const appConfig = computed(() => {
     const showAppSelect = false
     for (let i = 0; i < keys.length; i++) {
       const key = keys[i] as keyof ServerConfig<OutUserConfig>
-      const value = defaultConfig[key]
+      const value = JSON.parse(JSON.stringify(defaultConfig[key])) as BasicConfig<ModelsConfig>
       if (key === 'app') {
         if (showAppSelect)
-          config[key] = { ...defaultConfig[key] }
+          config[key] = value
       }
       else if (value.userConfig && !value.public) {
-        config[key] = { ...defaultConfig[key] }
+        config[key] = value
       }
 
       if (config[key]) {
-        const info = defaultConfig[key].info
+        const info = value.info
         const infoKeys = Object.keys(info)
         const options = infoKeys.map((m) => {
           return {
