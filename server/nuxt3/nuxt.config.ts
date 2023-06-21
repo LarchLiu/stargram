@@ -31,7 +31,6 @@ export default defineNuxtConfig({
         '/',
         '/app-init',
         '/self-host',
-        '/user-config',
       ],
     },
     storage: {
