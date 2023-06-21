@@ -114,9 +114,6 @@ importers:
       unplugin-vue-components:
         specifier: ^0.25.0
         version: 0.25.0(vue@3.3.4)
-      vite-plugin-replace:
-        specifier: 0.1.1
-        version: 0.1.1(vite@4.3.9)
       vue:
         specifier: ^3.3.4
         version: 3.3.4
@@ -20477,14 +20474,6 @@ packages:
     transitivePeerDependencies:
       - rollup
       - supports-color
-    dev: true
-
-  /vite-plugin-replace@0.1.1(vite@4.3.9):
-    resolution: {integrity: sha512-v+okl3JNt2pf1jDYijw+WPVt6h9FWa/atTi+qnSFBqmKThLTDhlesx0r3bh+oFPmxRJmis5tNx9HtN6lGFoqWg==}
-    peerDependencies:
-      vite: ^2
-    dependencies:
-      vite: 4.3.9(@types/node@18.16.16)(sass@1.62.1)
     dev: true
 
   /vite-plugin-vue-inspector@3.4.2(vite@4.3.9):

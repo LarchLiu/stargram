@@ -1,10 +1,10 @@
 import { defineConfig } from 'vite'
-import { replaceCodePlugin } from 'vite-plugin-replace'
 import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 import { commonConfig, plugins, r } from './vite.config'
 import { __DEV__, outputDir } from './const'
+import { replaceCodePlugin } from './plugins/replaceCode'
 
 // bundling the content script
 export default defineConfig({
