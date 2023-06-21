@@ -3,12 +3,14 @@ import type { BotConfig } from '../../../utils'
 import { getBotConfig, setBotConfig } from '../../../utils'
 import type { OutUserConfig, ServerConfig } from '../../../../composables/config'
 
+const kv = useStorage('kv')
+
 export default eventHandler(async (event) => {
   const method = getMethod(event)
   if (method === 'GET') {
     const appId = event.context.params!.appid
-    const botConfig = await getBotConfig('slack') as BotConfig
-    const encodeConfig = botConfig[appId]?.config
+    const userId = getQuery(event).userId as string
+    const encodeConfig = await kv.getItem(`slack${ConfigKey.userConfigKey}:${appId}:${userId}`)
     return { config: encodeConfig }
   }
   else if (method === 'POST') {

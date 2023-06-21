@@ -1,34 +1,16 @@
 <script setup lang="ts">
-import { defaultConfig } from '../composables/config'
 import type { BasicConfig, ModelName, ModelsConfig, OutUserConfig, ServerConfig } from '../composables/config'
 
 const props = defineProps<{
-  config: ServerConfig<OutUserConfig>
-  showAppSelect: Boolean
+  config: ServerConfig<BasicConfig<ModelsConfig> & { options: Record<string, any>[] }>
 }>()
 
 const emit = defineEmits<{
   change: [config: ServerConfig<OutUserConfig>]
 }>()
-const userConfig = computed(() => {
-  const keys = Object.keys(props.config)
-  const config: any = {}
-  for (let i = 0; i < keys.length; i++) {
-    const key = keys[i] as keyof ServerConfig<OutUserConfig>
-    const value = props.config[key]
-    if (key === 'app') {
-      if (props.showAppSelect) {
-        config[key] = defaultConfig[key]
-        config[key].select = value.select
-      }
-    }
-    else if (!value.public) {
-      config[key] = defaultConfig[key]
-      config[key].select = value.select
-    }
-  }
-  return config as ServerConfig<BasicConfig<ModelsConfig>>
-})
+
+const userConfig = ref(props.config)
+
 function onConfirm() {
   const keys = Object.keys(userConfig.value)
   const obj: Record<string, any> = {}
@@ -56,7 +38,14 @@ function onConfirm() {
             </div>
           </div>
           <div flex flex-col text-10px>
-            <div>{{ model.info[model.select as keyof ModelsConfig].displayName }}</div>
+            <select v-model="model.select" autocomplete="off" class="vue-flow">
+              <option value="" disabled>
+                Please Select
+              </option>
+              <option v-for="o in model.options" :key="o.value" :value="o.value">
+                {{ o.label }}
+              </option>
+            </select>
             <div v-for="c in model.info[model.select as keyof ModelsConfig].config" :key="c.label">
               <div mt-2 text-gray>
                 {{ c.label }} <span v-if="c.require" text-red>*</span>

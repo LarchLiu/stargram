@@ -3,12 +3,15 @@ import type { BotConfig } from '../../../utils'
 import { getBotConfig, setBotConfig } from '../../../utils'
 import type { OutUserConfig, ServerConfig } from '../../../../composables/config'
 
+const kv = useStorage('kv')
+
 export default eventHandler(async (event) => {
   const method = getMethod(event)
   if (method === 'GET') {
-    const appId = event.context.params!.token
-    const botConfig = await getBotConfig('telegram') as BotConfig
-    const encodeConfig = botConfig[appId]?.config
+    const token = event.context.params!.token as string
+    const appId = token.split(':')[0]
+    const userId = getQuery(event).userId as string
+    const encodeConfig = await kv.getItem(`telegram${ConfigKey.userConfigKey}:${appId}:${userId}`)
     return { config: encodeConfig }
   }
   else if (method === 'POST') {

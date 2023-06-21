@@ -2,20 +2,60 @@
 import { errorMessage } from '@stargram/core/utils'
 import UserConfigFlow from '~/components/UserConfigFlow.vue'
 import { cryption } from '~/constants'
-import type { OutUserConfig, ServerConfig } from '~/composables/config'
+import type { BasicConfig, ModelsConfig, OutUserConfig, ServerConfig } from '~/composables/config'
 
 const route = useRoute()
 const toast = useToast()
 const { code } = route.query
 const decode = cryption.decode(code as string)
-const { appName, appId, userId } = (decode && decode.includes('appName')) ? JSON.parse(decode) : { appName: 'a', appId: 'b', userId: 'c' }
-
+const { appName, appId, userId } = (decode && decode.includes('appName')) ? JSON.parse(decode) : { appName: '', appId: '', userId: '' }
 const { data } = await useFetch<{ config: string }>(`/api/${appName}/${appId}/adduser`, {
   method: 'GET',
+  query: {
+    userId,
+  },
 })
 const appConfig = computed(() => {
-  if (data.value?.config)
-    return JSON.parse(cryption.decode(data.value.config)) as ServerConfig<OutUserConfig>
+  if (appName && appId && userId) {
+    let userConfig: ServerConfig<OutUserConfig> | undefined
+    if (data.value?.config)
+      userConfig = JSON.parse(cryption.decode(data.value.config))
+
+    const keys = Object.keys(defaultConfig)
+    const config: any = {}
+    const showAppSelect = false
+    for (let i = 0; i < keys.length; i++) {
+      const key = keys[i] as keyof ServerConfig<OutUserConfig>
+      const value = defaultConfig[key]
+      if (key === 'app') {
+        if (showAppSelect)
+          config[key] = { ...defaultConfig[key] }
+      }
+      else if (value.userConfig && !value.public) {
+        config[key] = { ...defaultConfig[key] }
+      }
+
+      if (config[key]) {
+        const info = defaultConfig[key].info
+        const infoKeys = Object.keys(info)
+        const options = infoKeys.map((m) => {
+          return {
+            value: m,
+            label: info[m as keyof typeof info].displayName,
+          }
+        })
+        config[key].options = options
+        if (userConfig) {
+          const select = userConfig[key].select
+          config[key].select = select
+          Object.keys(userConfig[key].config!).forEach((k) => {
+            config[key].info[select].config[k].value = userConfig![key].config![k]
+          })
+        }
+      }
+    }
+    return config as ServerConfig<BasicConfig<ModelsConfig> & { options: Record<string, any>[] }>
+  }
 })
 
 async function onChange(config: ServerConfig<OutUserConfig>) {
@@ -35,7 +75,7 @@ async function onChange(config: ServerConfig<OutUserConfig>) {
 
 <template>
   <div>
-    <UserConfigFlow v-if="appConfig" :show-app-select="false" :config="appConfig" @change="onChange" />
+    <UserConfigFlow v-if="appConfig" :config="appConfig" @change="onChange" />
     <div v-else>
       {{ `${decode === '' ? 'Code error.' : 'App not init.'}` }}
     </div>
