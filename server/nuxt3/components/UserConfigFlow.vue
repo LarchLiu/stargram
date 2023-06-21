@@ -28,9 +28,9 @@ function onConfirm() {
 
 <template>
   <div flex justify-center>
-    <div mt-4 flex justify-center gap-4 rounded class="bg-stripes-black">
+    <div mt-4 flex justify-center gap-4 rounded lt-sm:flex-col class="bg-stripes-black lt-sm:w-4/5">
       <div v-for="model in userConfig" :key="model.select" class="basicflow customnodeflow">
-        <div class="vue-flow__node-select">
+        <div class="vue-flow__node-select lt-sm:w-full!">
           <div mb-1 flex flex-row items-center justify-start text-12px>
             <div :class="model.title.icon" text-1.2rem />
             <div ml-1 text-12px>
