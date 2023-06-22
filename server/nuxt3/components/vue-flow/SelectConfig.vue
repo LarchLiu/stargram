@@ -61,12 +61,12 @@ function updateHandler() {
 <template>
   <div mb-1 flex flex-row items-center justify-start text-12px>
     <div :class="model.title.icon" text-1.2rem />
-    <dev ml-1 text-12px>
+    <div ml-1 text-12px>
       {{ model.title.text }}
-    </dev>
+    </div>
   </div>
   <div flex flex-col text-10px>
-    <select ref="inputEl" v-model="model.select" autocomplete="off" class="vue-flow" @change="updateHandler">
+    <select ref="inputEl" v-model="model.select" :name="model.title.text" autocomplete="off" class="vue-flow" @change="updateHandler">
       <option v-for="o in options" :key="o.value" :value="o.value">
         {{ o.label }}
       </option>
@@ -75,7 +75,7 @@ function updateHandler() {
       <div mt-2 text-gray>
         {{ c.label }} <span v-if="c.require" text-red>*</span>
       </div>
-      <input v-model="c.value" class="vue-flow">
+      <input v-model="c.value" type="password" :name="c.label" class="vue-flow">
     </div>
   </div>
   <div mt-2 flex items-center justify-end text-10px text-gray>

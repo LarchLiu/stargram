@@ -38,7 +38,7 @@ function onConfirm() {
             </div>
           </div>
           <div flex flex-col text-10px>
-            <select v-model="model.select" autocomplete="off" class="vue-flow">
+            <select v-model="model.select" :name="model.title.text" autocomplete="off" class="vue-flow">
               <option v-for="o in model.options" :key="o.value" :value="o.value">
                 {{ o.label }}
               </option>
@@ -47,7 +47,7 @@ function onConfirm() {
               <div mt-2 text-gray>
                 {{ c.label }} <span v-if="c.require" text-red>*</span>
               </div>
-              <input v-model="c.value" class="vue-flow">
+              <input v-model="c.value" type="password" :name="c.label" class="vue-flow">
             </div>
           </div>
         </div>
