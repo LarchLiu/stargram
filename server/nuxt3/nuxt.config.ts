@@ -20,6 +20,7 @@ export default defineNuxtConfig({
     '@vue-flow/minimap/dist/style.css',
   ],
   nitro: {
+    compressPublicAssets: true,
     esbuild: {
       options: {
         target: 'esnext',
