@@ -45,7 +45,7 @@ const appConfig = computed(() => {
           }
         })
         config[key].options = options
-        if (userConfig) {
+        if (userConfig && userConfig[key]) {
           const select = userConfig[key].select
           config[key].select = select
           Object.keys(userConfig[key].config!).forEach((k) => {

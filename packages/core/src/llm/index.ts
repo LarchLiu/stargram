@@ -1,13 +1,8 @@
-import { OpenaiSummarizeContent } from './openai'
+import type { LlmInfo } from './types'
+import { Openai } from './openai'
 
-export type TLLM = 'Openai'
-
-export type LlmInfo = {
-  [key in TLLM]: Record<string, any>
-}
+export * from './types'
 
 export const llmInfo: LlmInfo = {
-  Openai: {
-    OpenaiSummarizeContent,
-  },
+  Openai,
 }

@@ -30,6 +30,7 @@ const initialElements = [
   { id: 'card', type: 'select', data: configStore.config.webCard, position: { x: 350, y: 50 }, class: 'light', parentNode: 'server-flow', expandParent: true },
   { id: 'img', type: 'select', data: configStore.config.imgStorage, position: { x: 650, y: 50 }, class: 'light', parentNode: 'server-flow', expandParent: true },
   { id: 'data', type: 'select', data: configStore.config.dataStorage, position: { x: 950, y: 300 }, class: 'light', parentNode: 'server-flow', expandParent: true },
+  { id: 'vector', type: 'select', data: configStore.config.vectorStorage, position: { x: 80, y: 370 }, class: 'light', parentNode: 'server-flow', expandParent: true },
 
   { id: 'config-kv', source: 'config', target: 'kv' },
   { id: 'kv-server', source: 'kv', target: 'server' },
@@ -40,6 +41,7 @@ const initialElements = [
   { id: 'webinfo-card', source: 'webinfo', target: 'card', type: 'smoothstep' },
   { id: 'webinfo-data', source: 'webinfo', target: 'data', type: 'smoothstep' },
   { id: 'llm-data', source: 'llm', target: 'data' },
+  { id: 'llm-vector', source: 'llm', target: 'vector', sourceHandle: 'data', type: 'smoothstep', label: 'embedding' },
   { id: 'card-img', source: 'card', target: 'img' },
   { id: 'img-data', source: 'img', target: 'data' },
   { id: 'data-app', source: 'data', target: 'app', type: 'smoothstep', targetHandle: 'result', markerEnd: MarkerType.ArrowClosed },

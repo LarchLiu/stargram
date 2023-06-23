@@ -12,7 +12,7 @@ export default eventHandler(async (event) => {
             const stargramHub = `${getRequestProtocol(event)}://${getRequestHost(event)}`
             const userConfig = await getUserConfig('slack', raw.api_app_id, rawEvent.user)
             if (userConfig) {
-              const message = await SlackSaveWebInfoChain(stargramHub, text, userConfig).catch((error) => {
+              const message = await SlackSaveWebInfoChain(stargramHub, text, userConfig, raw.api_app_id, rawEvent.user).catch((error) => {
                 sendMessageToSlackBot(userConfig.app.config!.webhook, error.message).catch((err) => {
                   console.error(errorMessage(err))
                 })

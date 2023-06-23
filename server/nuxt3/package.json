@@ -27,6 +27,7 @@
     "@vue-flow/controls": "^1.1.0",
     "@vue-flow/core": "^1.20.1",
     "@vue-flow/minimap": "^1.1.1",
+    "langchain": "^0.0.96",
     "satori": "^0.9.1",
     "satori-html": "^0.3.2"
   },

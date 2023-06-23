@@ -124,10 +124,14 @@
   },
   "peerDependencies": {
     "@supabase/supabase-js": "^2.22.0",
+    "langchain": "^0.0.96",
     "ofetch": "^1.0.1"
   },
   "peerDependenciesMeta": {
     "@supabase/supabase-js": {
+      "optional": true
+    },
+    "langchain": {
       "optional": true
     },
     "ofetch": {

@@ -1,8 +1,10 @@
 import { errorMessage } from '@stargram/core/utils'
+import type { EmbeddingsInfo } from '@stargram/core'
 import { routes } from '@stargram/web-hub'
 import { SaveWebInfoChain } from '@stargram/core/chain/saveWebInfo'
 import { storageInfo } from '@stargram/core/storage'
 import type { TLLM } from '@stargram/core/llm'
+import type { VectorMetaData } from '@stargram/core/storage'
 import { llmInfo } from '@stargram/core/llm'
 import { WebInfoFunction } from '@stargram/core/webInfo'
 import { WebCardFunction } from '@stargram/core/webCard'
@@ -14,6 +16,8 @@ export default eventHandler(async (event) => {
   const url = body.url
   const context = body.context as Context
   const appName = body.appName
+  const botId = body.botId
+  const userId = body.userId
   const config = context.USER_CONFIG as UserConfig
 
   if (config.webInfo.select === 'WebInfo')
@@ -28,15 +32,25 @@ export default eventHandler(async (event) => {
     config.webCard.config.imgStorage = imgStorage
   const webCard = new (WebCardFunction[config.webCard.select])(config.webCard.config)
 
-  const summarizeContent = new (llmInfo[config.llm.select as TLLM][`${config.llm.select}SummarizeContent`])(config.llm.config)
+  const llm = new (llmInfo[config.llm.select as TLLM])(config.llm.config)
 
   const dataStorage = new (storageInfo.DataStorage[config.dataStorage.select])(config.dataStorage.config)
+
+  const embeddingsInfo: EmbeddingsInfo = llm.embeddingsInfo()
+  const metaData: VectorMetaData = {
+    url,
+    appName,
+    botId,
+    userId,
+  }
+  const vectorStorage = new (storageInfo.VectorStorage[config.vectorStorage.select])({ ...config.vectorStorage.config, embeddingsInfo, metaData })
 
   const chain = new SaveWebInfoChain({
     webInfo,
     webCard,
-    summarizeContent,
+    llm,
     dataStorage,
+    vectorStorage,
   })
 
   const info = await chain.call({

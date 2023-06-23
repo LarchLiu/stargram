@@ -1,6 +1,6 @@
 import { errorMessage } from '@stargram/core/utils'
 
-export async function SlackSaveWebInfoChain(stargramHub: string, text: string, userConfig: any) {
+export async function SlackSaveWebInfoChain(stargramHub: string, text: string, userConfig: any, botId: string, userId: string) {
   const regex = /(http(s)?:\/\/)?[a-zA-Z0-9][-a-zA-Z0-9]{0,62}(\.[a-zA-Z0-9][-a-zA-Z0-9]{0,62})+(:[0-9]{1,5})?[-a-zA-Z0-9()@:%_\\\+\.~#?&//=]*/g
   const matchs = text.match(regex)
   if (matchs) {
@@ -19,6 +19,8 @@ export async function SlackSaveWebInfoChain(stargramHub: string, text: string, u
           url,
           stargramHub,
           appName: 'slack',
+          botId,
+          userId,
         },
       }).catch(e => console.error(errorMessage(e)))
 

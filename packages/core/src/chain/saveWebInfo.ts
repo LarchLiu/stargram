@@ -1,27 +1,30 @@
 import type { WebInfo, WebInfoByApi } from '../webInfo'
 import type { WebCard, WebCardByApi } from '../webCard'
-import type { OpenaiSummarizeContent } from '../llm/openai'
+import type { Openai } from '../llm/openai'
 import type { SummarizeData, WebLoaderUrls } from '../types'
-import type { IDataStorage } from '../storage'
+import type { IDataStorage, IVectorStorage } from '../storage'
 import { errorMessage } from '../utils'
 
 export class SaveWebInfoChain {
   constructor(fields: {
     webInfo: WebInfo | WebInfoByApi
     webCard?: WebCard | WebCardByApi
-    summarizeContent?: OpenaiSummarizeContent
+    llm?: Openai
     dataStorage: IDataStorage
+    vectorStorage?: IVectorStorage
   }) {
     this.webInfo = fields.webInfo
     this.webCard = fields.webCard
-    this.summarizeContent = fields.summarizeContent
+    this.llm = fields.llm
     this.dataStorage = fields.dataStorage
+    this.vectorStorage = fields.vectorStorage
   }
 
   private webInfo
   private webCard
-  private summarizeContent
+  private llm
   private dataStorage
+  private vectorStorage
 
   async call(urls: WebLoaderUrls) {
     const webData = await this.webInfo.call(urls)
@@ -30,8 +33,11 @@ export class SaveWebInfoChain {
       categories: ['Others'],
     }
 
-    if (this.summarizeContent)
-      summarizeData = await this.summarizeContent.call(webData)
+    if (this.llm) {
+      summarizeData = await this.llm.summarize(webData)
+      if (this.vectorStorage)
+        this.vectorStorage.save(webData)
+    }
 
     const savedData = await this.dataStorage.create({ ...webData, ...summarizeData })
 

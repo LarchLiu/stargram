@@ -1,28 +1,34 @@
 import { $fetch } from 'ofetch'
+import { OpenAIEmbeddings } from 'langchain/embeddings/openai'
 import type { PromptsLanguage, SummarizeData, WebInfoData } from '../../types'
 import { countWord, getPromptsByTemplate, preprocessText } from '../../utils'
 import { ANSWER_IN_LANGUAGE, OPENAI_CHAT_API, SUMMARIZE_PROMPTS, USER_PROMPTS } from '../../const'
+import type { OpenaiConfig } from '../types'
+import { CLLM } from '../types'
 import { ProviderType, getSummaryPrompt } from './prompt'
 
-export class OpenaiSummarizeContent {
-  constructor(fields: { apiKey: string; apiHost?: string; webData?: WebInfoData; lang?: PromptsLanguage }) {
-    this.apiKey = fields.apiKey
-    this.webData = fields.webData
-    this.lang = fields.lang
-    this.apiHost = fields.apiHost
+export class Openai extends CLLM<OpenaiConfig> {
+  constructor(config: OpenaiConfig, webData?: WebInfoData) {
+    super(config, webData)
   }
 
-  private apiKey
-  private webData
-  private lang
-  private apiHost
-
-  async call(webData?: WebInfoData) {
+  async summarize(webData?: WebInfoData) {
     if (!webData && !this.webData)
       throw new Error('OpenaiSummarizeContent error: No WebInfo Data')
 
     const info = webData || this.webData
-    return await summarizeContent(this.apiKey, info!, this.lang, this.apiHost)
+    return await summarizeContent(this.config.apiKey, info!, this.config.lang, this.config.apiHost)
+  }
+
+  embeddingsInfo() {
+    const embeddings = new OpenAIEmbeddings({ openAIApiKey: this.config.apiKey }, {
+      basePath: `${this.config.apiHost}/v1`,
+    })
+    return {
+      embeddings,
+      indexName: 'openai_documents',
+      queryName: 'openai_match_documents',
+    }
   }
 }
 

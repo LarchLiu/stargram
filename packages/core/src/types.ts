@@ -1,3 +1,5 @@
+import type { Embeddings } from 'langchain/embeddings/base'
+
 export interface WebInfoData {
   title: string
   url: string
@@ -100,4 +102,10 @@ export interface Router {
 
 export interface Routes {
   [name: string]: Router
+}
+
+export interface EmbeddingsInfo {
+  embeddings: Embeddings
+  indexName: string
+  queryName?: string
 }

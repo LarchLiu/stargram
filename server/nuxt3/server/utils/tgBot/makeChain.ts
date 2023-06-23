@@ -21,6 +21,8 @@ export async function TelegramSaveWebInfoChain(stargramHub: string, text: string
           url,
           stargramHub,
           appName: 'telegram',
+          botId: context.SHARE_CONTEXT.currentBotId,
+          userId: context.SHARE_CONTEXT.chatId,
         },
       }).catch(e => console.error(errorMessage(e)))
       i += 1

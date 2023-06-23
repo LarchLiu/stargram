@@ -1,8 +1,11 @@
 import { createClient } from '@supabase/supabase-js'
+import { SupabaseVectorStore } from 'langchain/vectorstores/supabase'
+import { Document } from 'langchain/document'
+import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter'
 import { $fetch } from 'ofetch'
-import type { WebCardData } from '../../types'
-import { ImageStorage } from '../types'
-import type { StorageImage, StorageType } from '../types'
+import type { WebCardData, WebInfoData } from '../../types'
+import { ImageStorage, VectorStorage } from '../types'
+import type { SavedVector, StorageImage, StorageType, VectorConfig } from '../types'
 
 export interface SupabaseImageConfig {
   anonKey: string
@@ -85,6 +88,69 @@ export class SupabaseImageStorage extends ImageStorage<SupabaseImageConfig, WebC
     return {
       type: 'ImageStorage',
       name: 'SupabaseImageStorage',
+    }
+  }
+}
+
+export interface SupabaseVectorConfig extends VectorConfig {
+  anonKey: string
+  url: string
+}
+export class SupabaseVectorStorage extends VectorStorage<SupabaseVectorConfig, Document<SavedVector>[]> {
+  constructor(config: SupabaseVectorConfig, data?: WebInfoData) {
+    super(config, data)
+    this.client = createClient(this.config.url, this.config.anonKey)
+  }
+
+  private client
+
+  async save(data?: WebInfoData) {
+    if (!data && !this.data)
+      throw new Error('ImageStorage error: No Storage Data')
+
+    const storageData = (data || this.data)!
+    const rawDoc = new Document({ pageContent: storageData.content, metadata: this.config.metaData })
+
+    /* Split text into chunks */
+    const textSplitter = new RecursiveCharacterTextSplitter({
+      chunkSize: 300,
+      chunkOverlap: 40,
+    })
+
+    const docs = await textSplitter.splitDocuments([rawDoc])
+    const store = new SupabaseVectorStore(this.config.embeddingsInfo.embeddings, {
+      client: this.client,
+      tableName: this.config.embeddingsInfo.indexName,
+    })
+    await store.addDocuments(docs)
+  }
+
+  async query(question: string) {
+    const vectorStore = await SupabaseVectorStore.fromExistingIndex(
+      this.config.embeddingsInfo.embeddings,
+      {
+        client: this.client,
+        tableName: this.config.embeddingsInfo.indexName,
+        queryName: this.config.embeddingsInfo.queryName,
+      })
+
+    const result = await vectorStore.similaritySearch(question, 2, {
+      appName: this.config.metaData.appName,
+      botId: this.config.metaData.botId,
+      userId: this.config.metaData.userId,
+    })
+
+    return result as Document<SavedVector>[]
+  }
+
+  getConfig(): SupabaseVectorConfig {
+    return this.config
+  }
+
+  getType(): StorageType {
+    return {
+      type: 'VectorStorage',
+      name: 'SupabaseVectorStorage',
     }
   }
 }

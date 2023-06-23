@@ -1,5 +1,5 @@
 import { NotionDataStorage } from './notion'
-import { SupabaseImageStorage } from './supabase'
+import { SupabaseImageStorage, SupabaseVectorStorage } from './supabase'
 import type { TStorage } from './types'
 
 export * from './types'
@@ -19,6 +19,6 @@ export const storageInfo: StorageInfo = {
     SupabaseImageStorage,
   },
   VectorStorage: {
-
+    SupabaseVectorStorage,
   },
 }

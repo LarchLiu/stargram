@@ -66,6 +66,11 @@ export interface UserConfig {
     public: boolean
     config: Record<string, any>
   }
+  vectorStorage: {
+    select: string
+    public: boolean
+    config: Record<string, any>
+  }
 }
 
 export async function getBotConfig(app: AppName) {

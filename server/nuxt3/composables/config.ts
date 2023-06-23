@@ -9,6 +9,7 @@ export interface ServerConfig<T> {
   llm: T
   imgStorage: T
   dataStorage: T
+  vectorStorage: T
   kvStorage: T
   server: T
 }
@@ -309,6 +310,40 @@ export const dataStorageConfig: BasicConfig<ModelsConfig> = {
     },
   },
 }
+export const vectorStorageConfig: BasicConfig<ModelsConfig> = {
+  title: {
+    text: 'Vector Storage',
+    icon: 'i-carbon-save-image',
+  },
+  public: false,
+  userConfig: true,
+  handles: [
+    {
+      id: 'input',
+      type: 'target',
+      position: Position.Left,
+    },
+  ],
+  select: 'SupabaseVectorStorage',
+  info: {
+    SupabaseVectorStorage: {
+      displayName: 'Supabase Storage',
+      config: {
+        url: {
+          label: 'Supabase URL',
+          value: '',
+          require: true,
+        },
+        anonKey: {
+          label: 'Anon Key',
+          value: '',
+          require: true,
+        },
+      },
+      output: '',
+    },
+  },
+}
 export const llmConfig: BasicConfig<ModelsConfig> = {
   title: {
     text: 'LLM',
@@ -326,6 +361,11 @@ export const llmConfig: BasicConfig<ModelsConfig> = {
       id: 'output',
       type: 'source',
       position: Position.Right,
+    },
+    {
+      id: 'data',
+      type: 'source',
+      position: Position.Bottom,
     },
   ],
   select: 'Openai',
@@ -469,6 +509,7 @@ export const defaultConfig: ServerConfig<BasicConfig<ModelsConfig>> = {
   webInfo: webInfoConfig,
   webCard: webCardConfig,
   llm: llmConfig,
+  vectorStorage: vectorStorageConfig,
   imgStorage: imgStorageConfig,
   dataStorage: dataStorageConfig,
   kvStorage: kvStorageConfig,

@@ -23,6 +23,20 @@ export const USER_PROMPTS = `Please summarize in {language}. The Content is {web
 =====
 Please summarize in {language}. Remember You only speak JSON.`
 
+export const QA_PROMPT = `您是提供有用建议的人工智能助手。您被提供以下长文档的提取部分和一个问题。根据所提供的上下文提供对话式回答。
+
+  您只应提供引用下文的超链接。不要编造超链接。
+  
+  如果您在下文中找不到答案，请说“嗯，我不确定。”不要试图编造答案。
+  
+  如果问题与上下文无关，请礼貌地回答您只回答与上下文相关的问题。
+
+Question: {question}
+=========
+{context}
+=========
+Answer in Markdown:`
+
 export const ANSWER_IN_LANGUAGE: { [key in PromptsLanguage]: string } = {
   'de': 'German',
   'en': 'English',

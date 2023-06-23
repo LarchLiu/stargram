@@ -35,6 +35,11 @@ export const defaultUserConfig: UserConfig = {
     public: false,
     config: {},
   },
+  vectorStorage: {
+    select: '',
+    public: false,
+    config: {},
+  },
 }
 /**
  * 上下文信息

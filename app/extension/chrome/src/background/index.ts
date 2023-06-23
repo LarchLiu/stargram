@@ -2,7 +2,7 @@ import { errorMessage } from '@stargram/core/utils'
 import { NotionDataStorage } from '@stargram/core/storage/notion'
 import { WebCardByApi } from '@stargram/core/webCard'
 import { WebInfoByApi } from '@stargram/core/webInfo'
-import { OpenaiSummarizeContent } from '@stargram/core/llm/openai'
+import { Openai } from '@stargram/core/llm/openai'
 import { SaveWebInfoChain } from '@stargram/core/chain/saveWebInfo'
 import type { SavedNotion } from '@stargram/core'
 import type { ContentRequest, ListenerSendResponse, PageInfo, SwResponse } from '~/types'
@@ -108,7 +108,7 @@ async function saveToNotion(pageInfo: PageInfo): Promise<SwResponse> {
 
   const webCard = new WebCardByApi({ stargramHub })
 
-  const summarize = new OpenaiSummarizeContent({ apiKey: openaiApiKey, lang: promptsLang })
+  const openai = new Openai({ apiKey: openaiApiKey, lang: promptsLang })
   const notion = new NotionDataStorage(
     {
       apiKey: notionApiKey,
@@ -120,7 +120,7 @@ async function saveToNotion(pageInfo: PageInfo): Promise<SwResponse> {
   const chain = new SaveWebInfoChain({
     webInfo,
     webCard,
-    summarizeContent: summarize,
+    llm: openai,
     dataStorage: notion,
   })
 

@@ -40,6 +40,7 @@ export default defineConfig({
       // into your library
       external: [
         '@supabase/supabase-js',
+        /langchain\/.*/,
         'ofetch',
       ],
       output: {
