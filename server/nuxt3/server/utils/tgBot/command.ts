@@ -4,10 +4,11 @@ import {
 import type { Context } from '../../utils/tgBot/context'
 import { CONST, ENV, I18N } from '../../utils/tgBot/env'
 import type { OutUserConfig, ServerConfig } from '../../../composables/config'
+import { TelegramQAChain } from './makeChain'
 import { cryption } from '~/constants'
 
 type ScopeType = 'all_private_chats' | 'all_group_chats' | 'all_chat_administrators'
-type CommandType = '/start' | '/config'
+type CommandType = '/start' | '/config' | '/qa'
 interface CommandOpt {
   scopes: ScopeType[]
   fn: (message: any, command: any, subcommand: any, context: any) => Promise<any>
@@ -57,6 +58,11 @@ const commandHandlers: CommandHandlers = {
     fn: commandSystem,
     needAuth: commandAuthCheck.default,
   },
+  '/qa': {
+    scopes: ['all_private_chats', 'all_chat_administrators'],
+    fn: commandQA,
+    needAuth: commandAuthCheck.default,
+  },
 }
 
 async function commandCreateNewChatContext(message: any, command: string, subcommand: string, context: Context) {
@@ -69,7 +75,7 @@ async function commandCreateNewChatContext(message: any, command: string, subcom
         userId: context.CURRENT_CHAT_CONTEXT.chat_id,
       }
       const encode = cryption.encode(JSON.stringify(info))
-      return sendMessageToTelegramWithContext(context)(`User ID: ${context.CURRENT_CHAT_CONTEXT.chat_id}\nGo to this link to set your config: ${domain}/user-config?code=${encode}`)
+      return sendMessageToTelegramWithContext(context)(`User ID: ${context.CURRENT_CHAT_CONTEXT.chat_id}\nSet Config: [Go to this link](${domain}/user-config?code=${encode})`)
     }
   }
   catch (e: any) {
@@ -78,7 +84,7 @@ async function commandCreateNewChatContext(message: any, command: string, subcom
 }
 
 async function commandSystem(message: any, command: string, subcommand: string, context: Context) {
-  let msg = 'Current User Config:\n'
+  let msg = 'Current User Config:\n\n'
   const userConfig = await getUserConfig('telegram', context.SHARE_CONTEXT.currentBotId, context.CURRENT_CHAT_CONTEXT.chat_id)
   const myConfig: any = {}
   if (userConfig) {
@@ -90,11 +96,26 @@ async function commandSystem(message: any, command: string, subcommand: string, 
       .forEach(key => myConfig[key] = userConfig[key as keyof ServerConfig<OutUserConfig>])
   }
   const showConfig = JSON.stringify(myConfig, null, 2)
-  msg += '<pre>'
-  msg += `<code>${showConfig}</code>`
-  msg += '</pre>'
-  context.CURRENT_CHAT_CONTEXT.parse_mode = 'HTML'
+  msg += '```\n'
+  msg += `${showConfig}\n`
+  msg += '```'
   return sendMessageToTelegramWithContext(context)(msg)
+}
+
+async function commandQA(message: any, command: string, subcommand: string, context: Context) {
+  const question = subcommand
+  if (!question) {
+    return sendMessageToTelegramWithContext(context)('Please enter your question with command. The format is: /qa <your question>')
+  }
+  else {
+    try {
+      const msg = await TelegramQAChain(question, context)
+      return sendMessageToTelegramWithContext(context)(msg)
+    }
+    catch (e: any) {
+      return sendMessageToTelegramWithContext(context)(`ERROR: ${e.message}`)
+    }
+  }
 }
 
 export async function handleCommandMessage(message: any, context: Context) {

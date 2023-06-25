@@ -20,6 +20,7 @@ export default {
       summary: '當前支持的命令如下：\n',
       start: '獲取您的ID和设置网址',
       config: '查看用户设置',
+      qa: '提问',
     },
   },
 }

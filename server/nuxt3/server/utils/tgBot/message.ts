@@ -150,7 +150,7 @@ async function msgProcessByStarNuxts(message: any, context: Context) {
   try {
     // console.log(`Ask:${message.text}` || '')
     setTimeout(() => sendChatActionToTelegramWithContext(context)('typing').catch(console.error), 0)
-    const res = await TelegramSaveWebInfoChain(context.SHARE_CONTEXT.currentHost, message.text, context)
+    const res = await TelegramSaveWebInfoChain(message.text, context)
     return sendMessageToTelegramWithContext(context)(res)
   }
   catch (e) {

@@ -1,4 +1,6 @@
 import type { Embeddings } from 'langchain/embeddings/base'
+import type { BaseLanguageModel } from 'langchain/base_language'
+import type { Document } from 'langchain/document'
 
 export interface WebInfoData {
   title: string
@@ -105,7 +107,23 @@ export interface Routes {
 }
 
 export interface EmbeddingsInfo {
+  llmModel: BaseLanguageModel
   embeddings: Embeddings
   indexName: string
   queryName?: string
+}
+
+export interface QARes {
+  text: string
+  sourceDocuments?: Document<VectorMetaData>[]
+}
+export interface SavedVector {
+  metadata: VectorMetaData
+  pageContent: string
+}
+export interface VectorMetaData {
+  source?: string
+  appName: string
+  botId: string
+  userId: string
 }

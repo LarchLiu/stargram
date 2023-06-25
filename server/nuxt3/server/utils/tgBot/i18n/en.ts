@@ -17,6 +17,7 @@ export default {
       summary: 'The following commands are currently supported:\n',
       start: 'Get your ID and settings url',
       config: 'Preview user config',
+      qa: 'Ask your question',
     },
   },
 }

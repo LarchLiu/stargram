@@ -1,4 +1,11 @@
+import { errorMessage } from '@stargram/core/utils'
+import type { EmbeddingsInfo, VectorMetaData } from '@stargram/core'
+import { QAChain } from '@stargram/core/chain/qa'
+import { storageInfo } from '@stargram/core/storage'
+import type { TLLM } from '@stargram/core/llm'
+import { llmInfo } from '@stargram/core/llm'
 import type { AppName, OutUserConfig, ServerConfig } from '../../composables/config'
+import type { Context } from './tgBot/context'
 import { cryption } from '~/constants'
 
 const kv = useStorage('kv')
@@ -94,5 +101,53 @@ export async function getUserConfig(app: AppName, appId: string, userId: string)
   }
   else {
     return false
+  }
+}
+
+export async function MakeQAChain(question: string, context: Context, appName: string, botId: string, userId: string) {
+  const config = context.USER_CONFIG as UserConfig
+
+  const llm = new (llmInfo[config.llm.select as TLLM])(config.llm.config)
+
+  const embeddingsInfo: EmbeddingsInfo = llm.embeddingsInfo()
+  const metaData: VectorMetaData = {
+    appName,
+    botId,
+    userId,
+  }
+  const vectorStorage = new (storageInfo.VectorStorage[config.vectorStorage.select])({ ...config.vectorStorage.config, embeddingsInfo, metaData })
+
+  const chain = new QAChain({
+    vectorStorage,
+  })
+
+  const info = await chain.call(question, config.llm.config.lang).catch(e => errorMessage(e))
+
+  let message = 'Answer: '
+  let meta = 'Source: '
+  if (typeof info === 'string') {
+    message = `Error Info: ${info}\n`
+  }
+  else {
+    message += info.text
+    if (info.sourceDocuments) {
+      const uniqueUrls = new Set(info.sourceDocuments.map((d) => {
+        return d.metadata.source
+      }))
+      const uniqueMatchs = [...uniqueUrls]
+      meta += uniqueMatchs.join('\n') || ''
+      message += `\n${meta}`
+    }
+  }
+
+  try {
+    if (appName === 'telegram')
+      return (await sendMessageToTelegramWithContext(context)(message))
+    else if (appName === 'slack')
+      return (await sendMessageToSlackBot(config.app.config.webhook, message))
+  }
+  catch (error) {
+    console.error(error)
+    return new Response(errorToString(error), { status: 200 })
   }
 }

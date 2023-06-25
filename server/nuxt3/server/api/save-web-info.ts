@@ -1,10 +1,9 @@
 import { errorMessage } from '@stargram/core/utils'
-import type { EmbeddingsInfo } from '@stargram/core'
+import type { EmbeddingsInfo, VectorMetaData } from '@stargram/core'
 import { routes } from '@stargram/web-hub'
 import { SaveWebInfoChain } from '@stargram/core/chain/saveWebInfo'
 import { storageInfo } from '@stargram/core/storage'
 import type { TLLM } from '@stargram/core/llm'
-import type { VectorMetaData } from '@stargram/core/storage'
 import { llmInfo } from '@stargram/core/llm'
 import { WebInfoFunction } from '@stargram/core/webInfo'
 import { WebCardFunction } from '@stargram/core/webCard'
@@ -38,7 +37,7 @@ export default eventHandler(async (event) => {
 
   const embeddingsInfo: EmbeddingsInfo = llm.embeddingsInfo()
   const metaData: VectorMetaData = {
-    url,
+    source: url,
     appName,
     botId,
     userId,

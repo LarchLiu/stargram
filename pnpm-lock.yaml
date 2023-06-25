@@ -124,11 +124,11 @@ importers:
   packages/core:
     dependencies:
       '@supabase/supabase-js':
-        specifier: ^2.22.0
-        version: 2.22.0
+        specifier: ^2.26.0
+        version: 2.26.0
       langchain:
         specifier: ^0.0.96
-        version: 0.0.96(@supabase/supabase-js@2.22.0)
+        version: 0.0.96(@supabase/supabase-js@2.26.0)
     devDependencies:
       ofetch:
         specifier: ^1.1.1
@@ -174,6 +174,9 @@ importers:
       '@stargram/web-hub':
         specifier: workspace:*
         version: link:../../packages/webHub
+      '@supabase/supabase-js':
+        specifier: ^2.26.0
+        version: 2.26.0
       '@vercel/kv':
         specifier: ^0.2.2
         version: 0.2.2
@@ -191,7 +194,7 @@ importers:
         version: 1.1.1(@vue-flow/core@1.20.2)
       langchain:
         specifier: ^0.0.96
-        version: 0.0.96(@supabase/supabase-js@2.22.0)
+        version: 0.0.96(@supabase/supabase-js@2.26.0)
       satori:
         specifier: ^0.10.1
         version: 0.10.1
@@ -4781,24 +4784,24 @@ packages:
       - encoding
     dev: false
 
-  /@supabase/gotrue-js@2.27.0:
-    resolution: {integrity: sha512-KWoo6giZDLuF2wcN+g8DZPnTa6n9k3v7WNWTUpniPjE8H3MPMJcHka+8uHQFpvMFGUNt+ULNNbhGiaVR4PzJyA==}
+  /@supabase/gotrue-js@2.31.0:
+    resolution: {integrity: sha512-YcwlbbNfedlue/HVIXtYBb4fuOrs29gNOTl6AmyxPp4zryRxzFvslVN9kmLDBRUAVU9fnPJh2bgOR3chRjJX5w==}
     dependencies:
       cross-fetch: 3.1.6
     transitivePeerDependencies:
       - encoding
     dev: false
 
-  /@supabase/postgrest-js@1.6.1:
-    resolution: {integrity: sha512-WDBUPOCOwcZonaCwEodwdA8hwWYOiXroDF9vWGxZxKAnuSVE2Ieci/kvhR4EsWvgGST2h90LRowgO+msXe8+fA==}
+  /@supabase/postgrest-js@1.7.1:
+    resolution: {integrity: sha512-xPRYLaZrkLbXNlzmHW6Wtf9hmcBLjjI5xUz2zj8oE2hgXGaYoZBBkpN9bmW9i17Z1f6Ujxa942AqK439XOA36A==}
     dependencies:
       cross-fetch: 3.1.6
     transitivePeerDependencies:
       - encoding
     dev: false
 
-  /@supabase/realtime-js@2.7.2:
-    resolution: {integrity: sha512-Fi6xAl5PUkqnjl3wo4rdcQIbMG3+yTRX1aUZe/yfvTG84RMvmCXJ1yN6MmafVLeZpU1xkaz5Vx4L0tnHcLiy6w==}
+  /@supabase/realtime-js@2.7.3:
+    resolution: {integrity: sha512-c7TzL81sx2kqyxsxcDduJcHL9KJdCOoKimGP6lQSqiZKX42ATlBZpWbyy9KFGFBjAP4nyopMf5JhPi2ZH9jyNw==}
     dependencies:
       '@types/phoenix': 1.5.6
       '@types/websocket': 1.0.5
@@ -4815,13 +4818,13 @@ packages:
       - encoding
     dev: false
 
-  /@supabase/supabase-js@2.22.0:
-    resolution: {integrity: sha512-omkgSWL1HwnpXZZy+yshFLx/qqxwk9kx9jbRM6IHNEylKrH/sz6JX7rGyIOmN9niDxMRjsCu1nwuBhD6IiF2xg==}
+  /@supabase/supabase-js@2.26.0:
+    resolution: {integrity: sha512-RXmTPTobaYAwkSobadHZmEVLmzX3SGrtRZIGfLWnLv92VzBRrjuXn0a+bJqKl50GUzsyqPA+j5pod7EwMkcH5A==}
     dependencies:
       '@supabase/functions-js': 2.1.1
-      '@supabase/gotrue-js': 2.27.0
-      '@supabase/postgrest-js': 1.6.1
-      '@supabase/realtime-js': 2.7.2
+      '@supabase/gotrue-js': 2.31.0
+      '@supabase/postgrest-js': 1.7.1
+      '@supabase/realtime-js': 2.7.3
       '@supabase/storage-js': 2.5.1
       cross-fetch: 3.1.6
     transitivePeerDependencies:
@@ -13233,7 +13236,7 @@ packages:
     resolution: {integrity: sha512-Xq9nH7KlWZmXAtodXDDRE7vs6DU1gTU8zYDHDiWLSip45Egwq3plLHzPn27NgvzL2r1LMPC1vdqh98sQxtqj4A==}
     dev: true
 
-  /langchain@0.0.96(@supabase/supabase-js@2.22.0):
+  /langchain@0.0.96(@supabase/supabase-js@2.26.0):
     resolution: {integrity: sha512-m1d0IWjwZK+D19uBfgmfp5sUTxJXcjJb/YuIyn2cGNmXGqOH2r2cl0TUnhuFKxTXpMTXgTywd7MYF5U5/qkNTQ==}
     engines: {node: '>=18'}
     peerDependencies:
@@ -13384,7 +13387,7 @@ packages:
         optional: true
     dependencies:
       '@anthropic-ai/sdk': 0.4.4
-      '@supabase/supabase-js': 2.22.0
+      '@supabase/supabase-js': 2.26.0
       ansi-styles: 5.2.0
       binary-extensions: 2.2.0
       camelcase: 6.3.0

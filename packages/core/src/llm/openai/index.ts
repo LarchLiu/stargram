@@ -1,5 +1,6 @@
 import { $fetch } from 'ofetch'
 import { OpenAIEmbeddings } from 'langchain/embeddings/openai'
+import { ChatOpenAI } from 'langchain/chat_models/openai'
 import type { PromptsLanguage, SummarizeData, WebInfoData } from '../../types'
 import { countWord, getPromptsByTemplate, preprocessText } from '../../utils'
 import { ANSWER_IN_LANGUAGE, OPENAI_CHAT_API, SUMMARIZE_PROMPTS, USER_PROMPTS } from '../../const'
@@ -24,7 +25,11 @@ export class Openai extends CLLM<OpenaiConfig> {
     const embeddings = new OpenAIEmbeddings({ openAIApiKey: this.config.apiKey }, {
       basePath: `${this.config.apiHost}/v1`,
     })
+    const model = new ChatOpenAI({ openAIApiKey: this.config.apiKey, modelName: 'gpt-3.5-turbo', temperature: 0.2 }, {
+      basePath: `${this.config.apiHost}/v1`,
+    })
     return {
+      llmModel: model,
       embeddings,
       indexName: 'openai_documents',
       queryName: 'openai_match_documents',

@@ -5,7 +5,7 @@ import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter'
 import { $fetch } from 'ofetch'
 import type { WebCardData, WebInfoData } from '../../types'
 import { ImageStorage, VectorStorage } from '../types'
-import type { SavedVector, StorageImage, StorageType, VectorConfig } from '../types'
+import type { StorageImage, StorageType, VectorConfig } from '../types'
 
 export interface SupabaseImageConfig {
   anonKey: string
@@ -16,7 +16,11 @@ export interface SupabaseImageConfig {
 export class SupabaseImageStorage extends ImageStorage<SupabaseImageConfig, WebCardData> {
   constructor(config: SupabaseImageConfig, data?: StorageImage) {
     super(config, data)
-    this.client = createClient(this.config.url, this.config.anonKey)
+    this.client = createClient(this.config.url, this.config.anonKey, {
+      auth: {
+        persistSession: false,
+      },
+    })
     this.storageUrl = `${this.config.url}/storage/v1/object/public/${this.config.bucket}`
   }
 
@@ -96,10 +100,14 @@ export interface SupabaseVectorConfig extends VectorConfig {
   anonKey: string
   url: string
 }
-export class SupabaseVectorStorage extends VectorStorage<SupabaseVectorConfig, Document<SavedVector>[]> {
+export class SupabaseVectorStorage extends VectorStorage<SupabaseVectorConfig> {
   constructor(config: SupabaseVectorConfig, data?: WebInfoData) {
     super(config, data)
-    this.client = createClient(this.config.url, this.config.anonKey)
+    this.client = createClient(this.config.url, this.config.anonKey, {
+      auth: {
+        persistSession: false,
+      },
+    })
   }
 
   private client
@@ -125,7 +133,7 @@ export class SupabaseVectorStorage extends VectorStorage<SupabaseVectorConfig, D
     await store.addDocuments(docs)
   }
 
-  async query(question: string) {
+  async getRetriever() {
     const vectorStore = await SupabaseVectorStore.fromExistingIndex(
       this.config.embeddingsInfo.embeddings,
       {
@@ -133,14 +141,7 @@ export class SupabaseVectorStorage extends VectorStorage<SupabaseVectorConfig, D
         tableName: this.config.embeddingsInfo.indexName,
         queryName: this.config.embeddingsInfo.queryName,
       })
-
-    const result = await vectorStore.similaritySearch(question, 2, {
-      appName: this.config.metaData.appName,
-      botId: this.config.metaData.botId,
-      userId: this.config.metaData.userId,
-    })
-
-    return result as Document<SavedVector>[]
+    return vectorStore.asRetriever()
   }
 
   getConfig(): SupabaseVectorConfig {

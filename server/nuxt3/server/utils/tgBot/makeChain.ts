@@ -1,9 +1,10 @@
 import { errorMessage } from '@stargram/core/utils'
 import type { Context } from './context'
 
-export async function TelegramSaveWebInfoChain(stargramHub: string, text: string, context: Context) {
+export async function TelegramSaveWebInfoChain(text: string, context: Context) {
   const regex = /(http(s)?:\/\/)?[a-zA-Z0-9][-a-zA-Z0-9]{0,62}(\.[a-zA-Z0-9][-a-zA-Z0-9]{0,62})+(:[0-9]{1,5})?[-a-zA-Z0-9()@:%_\\\+\.~#?&//=]*/g
   const matchs = text.match(regex)
+  const stargramHub = context.SHARE_CONTEXT.currentHost
   // const infoArr = []
   if (matchs) {
     let i = 0
@@ -74,4 +75,9 @@ export async function TelegramSaveWebInfoChain(stargramHub: string, text: string
   else {
     throw new Error('No Supported Website.')
   }
+}
+
+export async function TelegramQAChain(question: string, context: Context) {
+  MakeQAChain(question, context, 'telegram', context.SHARE_CONTEXT.currentBotId, context.SHARE_CONTEXT.chatId)
+  return `Question: ${question}`
 }

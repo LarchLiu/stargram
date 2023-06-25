@@ -22,6 +22,7 @@
   "dependencies": {
     "@stargram/core": "workspace:*",
     "@stargram/web-hub": "workspace:*",
+    "@supabase/supabase-js": "^2.26.0",
     "@vercel/kv": "^0.2.2",
     "@vue-flow/background": "^1.2.0",
     "@vue-flow/controls": "^1.1.0",

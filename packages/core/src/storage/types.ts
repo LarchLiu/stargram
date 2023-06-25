@@ -1,5 +1,5 @@
-import type { Document } from 'langchain/document'
-import type { EmbeddingsInfo, SummarizeData, WebInfoData } from '../types'
+import type { BaseRetriever } from 'langchain/schema'
+import type { EmbeddingsInfo, SummarizeData, VectorMetaData, WebInfoData } from '../types'
 
 export type TStorage = 'DataStorage' | 'ImageStorage' | 'VectorStorage'
 export interface StorageType {
@@ -66,27 +66,17 @@ export abstract class ImageStorage<T, R extends SavedImage> implements IImageSto
   abstract getConfig(): T
 }
 
-export interface SavedVector {
-  metadata: VectorMetaData
-  pageContent: string
-}
-export interface VectorMetaData {
-  url: string
-  appName: string
-  botId: string
-  userId: string
-}
 export interface IVectorStorage {
   save(data?: WebInfoData): Promise<void>
-  query(question: string): Promise<Document<SavedVector>[]>
+  getRetriever(): Promise<BaseRetriever>
   getType(): StorageType
-  getConfig(): any
+  getConfig(): VectorConfig
 }
 export interface VectorConfig {
   embeddingsInfo: EmbeddingsInfo
   metaData: VectorMetaData
 }
-export abstract class VectorStorage<T extends VectorConfig, R extends Document<SavedVector>[]> implements IVectorStorage {
+export abstract class VectorStorage<T extends VectorConfig> implements IVectorStorage {
   constructor(config: T, data?: WebInfoData) {
     this.config = config
     this.data = data
@@ -96,7 +86,7 @@ export abstract class VectorStorage<T extends VectorConfig, R extends Document<S
   protected data?: WebInfoData
 
   abstract save(data?: WebInfoData): Promise<void>
-  abstract query(question: string): Promise<R>
+  abstract getRetriever(): Promise<BaseRetriever>
   abstract getType(): StorageType
   abstract getConfig(): T
 }

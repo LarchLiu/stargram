@@ -11,6 +11,7 @@ import * as path from 'node:path'
 export const entrypoints = {
   'chain': 'chain/index',
   'chain/saveWebInfo': 'chain/saveWebInfo',
+  'chain/qa': 'chain/qa',
   'llm': 'llm/index',
   'llm/openai': 'llm/openai/index',
   'storage': 'storage/index',
