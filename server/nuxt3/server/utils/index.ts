@@ -104,7 +104,7 @@ export async function getUserConfig(app: AppName, appId: string, userId: string)
   }
 }
 
-export async function MakeQAChain(question: string, context: Context, appName: string, botId: string, userId: string) {
+export async function MakeQAChain(question: string, context: { USER_CONFIG: UserConfig }, appName: string, botId: string, userId: string) {
   const config = context.USER_CONFIG as UserConfig
 
   const llm = new (llmInfo[config.llm.select as TLLM])(config.llm.config)
@@ -142,7 +142,7 @@ export async function MakeQAChain(question: string, context: Context, appName: s
 
   try {
     if (appName === 'telegram')
-      return (await sendMessageToTelegramWithContext(context)(message))
+      return (await sendMessageToTelegramWithContext(context as Context)(message))
     else if (appName === 'slack')
       return (await sendMessageToSlackBot(config.app.config.webhook, message))
   }

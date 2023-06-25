@@ -288,7 +288,9 @@ describe('utils', () => {
     expect(countAfter).toMatchSnapshot()
   })
   test('Cryption', async () => {
-    const crytion = new Cryption(32456, 46981)
+    const C1 = 32456
+    const C2 = 46981
+    const crytion = new Cryption(C1, C2)
     const config = {
       app: {
         telegram: {

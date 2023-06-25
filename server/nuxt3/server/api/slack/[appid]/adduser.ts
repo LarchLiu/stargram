@@ -49,7 +49,7 @@ export default eventHandler(async (event) => {
       publicKey.forEach((key) => {
         const _key = key as keyof ServerConfig<OutUserConfig>
         if (!_userConfig[_key])
-          _userConfig[key] = thisConfig[_key].config
+          _userConfig[key] = thisConfig[_key]
       })
       await setUserConfig('slack', appId, userId, _userConfig)
     }

@@ -1,5 +1,6 @@
 import { cryption } from '../../../../constants/index'
 import type { KVConfig, ServerConfig } from '../../../../composables/config'
+import type { UserConfig } from '../../../utils'
 
 export default eventHandler(async (event) => {
   const raw = await readBody(event)
@@ -42,6 +43,23 @@ export default eventHandler(async (event) => {
           text: {
             type: 'mrkdwn',
             text: `\`\`\`\n${showConfig}\n\`\`\``,
+          },
+        },
+      ],
+    }
+  }
+  else if (raw.command === '/qa') {
+    const userConfig = await getUserConfig('slack', raw.api_app_id, raw.user_id)
+    const question = raw.text
+    if (userConfig)
+      MakeQAChain(question, { USER_CONFIG: userConfig as UserConfig }, 'slack', raw.api_app_id, raw.user_id)
+    return {
+      blocks: [
+        {
+          type: 'section',
+          text: {
+            type: 'mrkdwn',
+            text: `Question: ${question}`,
           },
         },
       ],
