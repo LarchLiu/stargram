@@ -486,7 +486,7 @@ export const serverConfig: BasicConfig<ModelsConfig> = {
       output: 'Server',
     },
     cloudflare: {
-      displayName: 'Cloudflare Worker',
+      displayName: 'Cloudflare Pages',
       config: {
         token: {
           label: 'Cloudflare Token',
@@ -494,7 +494,7 @@ export const serverConfig: BasicConfig<ModelsConfig> = {
           require: true,
         },
         siteid: {
-          label: 'Worker Name',
+          label: 'Project Name',
           value: '',
           require: true,
         },

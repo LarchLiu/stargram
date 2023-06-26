@@ -114,7 +114,7 @@ export class SupabaseVectorStorage extends VectorStorage<SupabaseVectorConfig> {
 
   async save(data?: WebInfoData) {
     if (!data && !this.data)
-      throw new Error('ImageStorage error: No Storage Data')
+      throw new Error('VectorStorage error: No Storage Data')
 
     const storageData = (data || this.data)!
     const rawDoc = new Document({ pageContent: storageData.content, metadata: this.config.metaData })
@@ -126,11 +126,10 @@ export class SupabaseVectorStorage extends VectorStorage<SupabaseVectorConfig> {
     })
 
     const docs = await textSplitter.splitDocuments([rawDoc])
-    const store = new SupabaseVectorStore(this.config.embeddingsInfo.embeddings, {
+    await SupabaseVectorStore.fromDocuments(docs, this.config.embeddingsInfo.embeddings, {
       client: this.client,
       tableName: this.config.embeddingsInfo.indexName,
     })
-    await store.addDocuments(docs)
   }
 
   async getRetriever() {
@@ -140,6 +139,11 @@ export class SupabaseVectorStorage extends VectorStorage<SupabaseVectorConfig> {
         client: this.client,
         tableName: this.config.embeddingsInfo.indexName,
         queryName: this.config.embeddingsInfo.queryName,
+        filter: {
+          appName: this.config.metaData.appName,
+          botId: this.config.metaData.botId,
+          userId: this.config.metaData.userId,
+        },
       })
     return vectorStore.asRetriever()
   }
