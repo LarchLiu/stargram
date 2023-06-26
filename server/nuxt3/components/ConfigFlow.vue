@@ -1,5 +1,6 @@
 <!-- eslint-disable no-console -->
 <script setup lang="ts">
+import { errorMessage } from '@stargram/core/utils'
 import type { Elements } from '@vue-flow/core'
 import { MarkerType, Panel, VueFlow, useVueFlow } from '@vue-flow/core'
 import { Background } from '@vue-flow/background'
@@ -11,6 +12,7 @@ import SelectConfig from './vue-flow/SelectConfig.vue'
 import PreviewConfig from './vue-flow/PreviewConfig.vue'
 
 const configStore = useConfigStore()
+const toast = useToast()
 
 const initialElements = [
   { id: 'config', type: 'preview-config', position: { x: 0, y: -430 }, class: 'light' },
@@ -96,11 +98,25 @@ function updatePos() {
  */
 async function logToObject() {
   const outConfig = useConfigStore().outConfig
-  return await $fetch('/api/config', {
+  await $fetch('/api/config', {
     method: 'POST',
     body: { outConfig },
+  }).then((res) => {
+    toast.add({
+      title: res as string,
+      color: 'green',
+      timeout: 5000,
+      icon: 'i-carbon-checkmark-outline',
+    })
+  }).catch((err) => {
+    console.log(err)
+    toast.add({
+      title: errorMessage(err),
+      color: 'red',
+      timeout: 5000,
+      icon: 'i-carbon-warning',
+    })
   })
-  // return console.log(toObject())
 }
 
 /**

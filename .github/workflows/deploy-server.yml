@@ -18,6 +18,10 @@ jobs:
       - name: Install
         run: pnpm install
 
+      - name: run scripts
+        if: ${{ !(github.event.client_payload.runScripts.run == '') }}
+        run: ${{ github.event.client_payload.runScripts.run }}
+
       - name: prewrite
         if: ${{ !(github.event.client_payload.prewrite.content == '') }}
         uses: DamianReeves/write-file-action@master
@@ -34,8 +38,8 @@ jobs:
           CLOUDFLARE_API_TOKEN: ${{ github.event.client_payload.clitoken }}
           NETLIFY_AUTH_TOKEN: ${{ github.event.client_payload.clitoken }}
           NETLIFY_SITE_ID: ${{ github.event.client_payload.siteid }}
-          KV_REST_API_URL: ${{ github.event.client_payload.kvurl }}
-          KV_REST_API_TOKEN: ${{ github.event.client_payload.kvtoken }}
+          KV_REST_API_URL: ${{ github.event.client_payload.KV_REST_API_URL }}
+          KV_REST_API_TOKEN: ${{ github.event.client_payload.KV_REST_API_TOKEN }}
 
       - name: deploy server
         run: ${{ github.event.client_payload.build }}
@@ -44,5 +48,5 @@ jobs:
           CLOUDFLARE_API_TOKEN: ${{ github.event.client_payload.clitoken }}
           NETLIFY_AUTH_TOKEN: ${{ github.event.client_payload.clitoken }}
           NETLIFY_SITE_ID: ${{ github.event.client_payload.siteid }}
-          KV_REST_API_URL: ${{ github.event.client_payload.kvurl }}
-          KV_REST_API_TOKEN: ${{ github.event.client_payload.kvtoken }}
+          KV_REST_API_URL: ${{ github.event.client_payload.KV_REST_API_URL }}
+          KV_REST_API_TOKEN: ${{ github.event.client_payload.KV_REST_API_TOKEN }}

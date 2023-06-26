@@ -430,6 +430,27 @@ export const kvStorageConfig: BasicConfig<ModelsConfig> = {
       },
       output: 'Env Vars',
     },
+    cloudflareKVHTTP: {
+      displayName: 'Cloudflare KV',
+      config: {
+        accountId: {
+          label: 'Account ID',
+          value: '',
+          require: true,
+        },
+        namespaceId: {
+          label: 'Namespace ID',
+          value: '',
+          require: true,
+        },
+        apiToken: {
+          label: 'Api Token',
+          value: '',
+          require: true,
+        },
+      },
+      output: 'Env Vars',
+    },
   },
 }
 export const serverConfig: BasicConfig<ModelsConfig> = {
