@@ -5,7 +5,6 @@ import type { Elements } from '@vue-flow/core'
 import { MarkerType, Panel, VueFlow, useVueFlow } from '@vue-flow/core'
 import { Background } from '@vue-flow/background'
 import { Controls } from '@vue-flow/controls'
-import { MiniMap } from '@vue-flow/minimap'
 import BasicNode from './vue-flow/BasicNode.vue'
 import TextInput from './vue-flow/TextInput.vue'
 import SelectConfig from './vue-flow/SelectConfig.vue'
@@ -160,8 +159,6 @@ function toggleClass() {
     </template>
     <Background :pattern-color="dark ? '#FFFFFB' : '#aaa'" :gap="8" />
 
-    <MiniMap />
-
     <Controls />
 
     <Panel position="top-right" class="controls">
@@ -216,11 +213,6 @@ function toggleClass() {
 </template>
 
 <style lang="scss">
-.vue-flow__minimap {
-  transform: scale(75%);
-  transform-origin: bottom right;
-}
-
 .basicflow.dark{background:#57534e;color:#fffffb}
 .basicflow.dark .vue-flow__node{background:#292524;color:#fffffb}
 .basicflow.dark .vue-flow__controls .vue-flow__controls-button{background:#292524;fill:#fffffb;border-color:#fffffb}
