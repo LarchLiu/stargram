@@ -28,6 +28,7 @@ export default eventHandler(async (event) => {
         replaced = nuxtConfig.replace(matchs[1], JSON.stringify(kv, null, '\t'))
         fs.writeFileSync(filename, replaced)
       }
+      console.error(prebuild)
 
       return 'Check nuxt.config.ts, DO NOT SAVE this change to git!!!'
     }
