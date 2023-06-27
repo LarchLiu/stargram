@@ -4,11 +4,13 @@ import type { BasicConfig, ModelsConfig } from '../../composables/config'
 
 interface Props {
   data: BasicConfig<ModelsConfig>
+  needHandler?: Boolean
 }
 const props = defineProps<Props>()
 const model = props.data
 const info = model.info
 const infoKeys = Object.keys(info)
+const view = ref(false)
 const options = infoKeys.map((m) => {
   return {
     value: m,
@@ -41,6 +43,9 @@ const outputHandleStyle = computed(() => {
     bottom: 'auto',
   }
 })
+const inputType = computed(() => {
+  return view.value ? 'text' : 'password'
+})
 watch(outputEl, () => {
   nextTick(() => {
     outputOffsetTop.value = outputEl.value?.offsetTop || 0
@@ -56,13 +61,22 @@ function updateHandler() {
     outputOffsetHeight.value = outputEl.value?.offsetHeight || 0
   })
 }
+
+function onViewClick() {
+  view.value = !view.value
+}
 </script>
 
 <template>
-  <div mb-1 flex flex-row items-center justify-start text-12px>
-    <div :class="model.title.icon" text-1.2rem />
-    <div ml-1 text-12px>
-      {{ model.title.text }}
+  <div mb-1 flex flex-row items-center justify-between>
+    <div flex flex-row items-center justify-start text-12px>
+      <div :class="model.title.icon" text-1.2rem />
+      <div ml-1 text-12px>
+        {{ model.title.text }}
+      </div>
+    </div>
+    <div flex items-center>
+      <div text-0.8rem :class="[view ? 'uno-carbon-view-off' : 'uno-carbon-view']" icon-btn @click="onViewClick" />
     </div>
   </div>
   <div flex flex-col text-10px>
@@ -75,19 +89,23 @@ function updateHandler() {
       <div mt-2 text-gray>
         {{ c.label }} <span v-if="c.require" text-red>*</span>
       </div>
-      <input v-model="c.value" type="password" :name="c.label" class="vue-flow">
+      <input v-model="c.value" :type="inputType" :name="c.label" class="vue-flow">
     </div>
   </div>
-  <div mt-2 flex items-center justify-end text-10px text-gray>
-    <div ref="outputEl">
-      {{ info[model.select as keyof typeof info].output }}
+  <div v-if="needHandler">
+    <div mt-2 flex items-center justify-end text-10px text-gray>
+      <div ref="outputEl">
+        {{ info[model.select as keyof typeof info].output }}
+      </div>
     </div>
   </div>
-  <Handle
-    v-for="h in model.handles"
-    :id="h.id" :key="h.id" :type="h.type" :position="h.position"
-    :style="h.id === 'input' ? inputHandleStyle : (h.id === 'output' ? outputHandleStyle : '')"
-  />
+  <div v-if="needHandler">
+    <Handle
+      v-for="h in model.handles"
+      :id="h.id" :key="h.id" :type="h.type" :position="h.position"
+      :style="h.id === 'input' ? inputHandleStyle : (h.id === 'output' ? outputHandleStyle : '')"
+    />
+  </div>
 </template>
 
 <style scoped>

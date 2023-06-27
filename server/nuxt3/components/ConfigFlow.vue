@@ -142,7 +142,7 @@ function toggleClass() {
     :elevate-edges-on-select="true"
   >
     <template #node-select="{ data }">
-      <SelectConfig :data="data" />
+      <SelectConfig :data="data" :need-handler="true" />
     </template>
     <template #node-text-input>
       <BasicNode :title="{ text: 'Text Input', icon: 'i-carbon-text-annotation-toggle' }">
@@ -152,9 +152,9 @@ function toggleClass() {
       </BasicNode>
     </template>
     <template #node-preview-config>
-      <BasicNode :title="{ text: 'Preview Config', icon: 'i-carbon-settings-view' }">
-        <template #preview-config>
-          <PreviewConfig />
+      <BasicNode :title="{ text: 'Preview Config', icon: 'i-carbon-settings-view' }" :need-view-button="true">
+        <template #preview-config="{ view }">
+          <PreviewConfig :view="view" />
         </template>
       </BasicNode>
     </template>
