@@ -44,7 +44,7 @@ export default eventHandler(async (event) => {
         ...kvConfig,
       }
       const runScripts = {
-        run: `node server/nuxt3/scripts/changeKVStorage.js --kv ${JSON.stringify(kv, null, 2)}`,
+        run: `node server/nuxt3/scripts/changeKVStorage.js --kv '${JSON.stringify(kv, null, 2)}'`,
       }
       if (outConfig.server.select === 'netlify') {
         const kvEnvs = Object.keys(kvConfig).map((key) => {
