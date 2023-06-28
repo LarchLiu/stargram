@@ -35,8 +35,14 @@ export class SaveWebInfoChain {
 
     if (this.llm) {
       summarizeData = await this.llm.summarize(webData)
-      if (this.vectorStorage)
-        this.vectorStorage.save(webData)
+      if (this.vectorStorage) {
+        if (this.dataStorage) {
+          this.dataStorage.query(urls.webUrl).then((res) => {
+            if (!res)
+              this.vectorStorage!.save(webData)
+          })
+        }
+      }
     }
 
     const savedData = await this.dataStorage.create({ ...webData, ...summarizeData })

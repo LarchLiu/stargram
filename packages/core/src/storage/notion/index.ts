@@ -26,6 +26,29 @@ export class NotionDataStorage extends DataStorage<NotionDataConfig, SavedNotion
     return await saveToNotion(this.config, notion)
   }
 
+  async query(url: string) {
+    const checkData = await $fetch<any>(`${NOTION_API_URL}/databases/${this.config.databaseId}/query`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Notion-Version': '2022-06-28',
+        'Authorization': `Bearer ${this.config.apiKey}`,
+      },
+      body: {
+        filter: {
+          property: 'URL',
+          rich_text: {
+            contains: url,
+          },
+        },
+      },
+    })
+    if (checkData.results.length > 0)
+      return true
+    else
+      return false
+  }
+
   async updateOgImage(info: SavedNotion, url: string) {
     return await updateOgImage(this.config, info.storageId, url)
   }
