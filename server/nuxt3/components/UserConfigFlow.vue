@@ -4,12 +4,14 @@ import SelectConfig from './vue-flow/SelectConfig.vue'
 
 const props = defineProps<{
   config: ServerConfig<BasicConfig<ModelsConfig> & { options: Record<string, any>[] }>
+  appInfo: { appName: string; botId: string; userId: string }
 }>()
 
 const emit = defineEmits<{
   change: [config: ServerConfig<OutUserConfig>]
 }>()
 
+const { copy, copied } = useClipboard()
 const userConfig = ref(props.config)
 
 function onConfirm() {
@@ -24,6 +26,32 @@ function onConfirm() {
     }
   })
   emit('change', obj as ServerConfig<OutUserConfig>)
+}
+
+const outUserConfig = computed(() => {
+  const keys = Object.keys(userConfig.value!)
+  const config: Record<string, any> = {}
+  keys.forEach((k) => {
+    const c = userConfig.value![k as ModelName]
+    const select = c.select as keyof typeof c.info
+    if (c.userConfig) {
+      const _config = getConfigKV(c.info[select].config)
+      config[k] = { select: c.select, public: c.public, config: _config }
+    }
+  })
+  return config
+})
+
+function copyUserConfig() {
+  const config = JSON.parse(JSON.stringify(outUserConfig.value))
+  config.app = {
+    public: true,
+    appName: props.appInfo.appName,
+    botId: props.appInfo.botId,
+    userId: props.appInfo.userId,
+    stargramHub: `${location.protocol}//${location.host}`,
+  }
+  copy(JSON.stringify(config))
 }
 </script>
 
@@ -40,6 +68,13 @@ function onConfirm() {
   <div mt-4 flex justify-center>
     <button btn @click="onConfirm">
       Confirm
+    </button>
+  </div>
+  <div mt-4 flex flex-col items-center>
+    Copy config for extension
+    <button mt-4 btn @click="copyUserConfig">
+      <span v-if="!copied">Copy</span>
+      <span v-else>Copied!</span>
     </button>
   </div>
 </template>

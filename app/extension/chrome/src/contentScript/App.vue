@@ -80,7 +80,7 @@ async function handleSaveToNotion() {
 
   chrome.runtime.sendMessage(
     {
-      action: 'saveToNotion',
+      action: 'saveToDB',
       data: pageInfo,
     },
   )
@@ -90,8 +90,8 @@ chrome.runtime.onMessage.addListener(async (request: SwRequest, sender, sendResp
   const action = request.action
   const data = request.data
 
-  // TODO: remove saveToNotion from popup
-  if (action === 'saveToNotion') {
+  // TODO: remove saveToDB from popup
+  if (action === 'saveToDB') {
     handleSaveToNotion()
     sendResponse({ message: 'Handling save to Notion in the content script', error: false })
   }

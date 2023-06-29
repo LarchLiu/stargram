@@ -43,10 +43,17 @@ export class NotionDataStorage extends DataStorage<NotionDataConfig, SavedNotion
         },
       },
     })
-    if (checkData.results.length > 0)
-      return true
-    else
-      return false
+    if (checkData.results.length > 0) {
+      let starred = false
+      let storageId = ''
+      if (checkData.results[0].properties.Status.select.name === 'Starred')
+        starred = true
+      storageId = checkData.results[0].id
+      return {
+        starred, storageId,
+      }
+    }
+    else { return undefined }
   }
 
   async updateOgImage(info: SavedNotion, url: string) {

@@ -4,6 +4,7 @@ popup:
   error: Error
 settings:
   title: Settings
+  userConfig: User Config
   notionApiKey: Notion API Key
   notionPageLink: Notion Page Link
   openaiApiKey: Openai API Key

@@ -75,7 +75,7 @@ async function onChange(config: ServerConfig<OutUserConfig>) {
 
 <template>
   <div>
-    <UserConfigFlow v-if="appConfig" :config="appConfig" @change="onChange" />
+    <UserConfigFlow v-if="appConfig" :config="appConfig" :app-info="{ appName, botId: appId, userId }" @change="onChange" />
     <div v-else>
       {{ `${decode === '' ? 'Code error.' : 'App not init.'}` }}
     </div>

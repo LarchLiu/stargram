@@ -3,17 +3,15 @@ import { onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { iconGithub, iconLanguage, iconSetting, starSrc, version } from '~/const'
 import type { ListenerResponse } from '~/types'
+import SelectConfig from '~/components/SelectConfig.vue'
 
 const { t, locale } = useI18n()
-const notionApiKeyInput = ref('')
-const notionPageLinkInput = ref('')
-const openaiApiKeyInput = ref('')
-const stargramHubInput = ref('')
-const browserlessTokenInput = ref('')
 const saveStatus = ref('')
 const showSettings = ref(false)
 const showLanguage = ref(false)
 const uiLangSelect = ref('en')
+const userConfigInput = ref('')
+const userConfig = ref()
 const promptsLangSelect = ref('en')
 const saveBtn = ref<HTMLDivElement>()
 const saveBtnEnable = ref(true)
@@ -40,7 +38,7 @@ async function onSaveClick() {
 
   chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
     if (tabs.length && tabs[0].id) {
-      chrome.tabs.sendMessage(tabs[0].id, { action: 'saveToNotion' }, (response: ListenerResponse) => {
+      chrome.tabs.sendMessage(tabs[0].id, { action: 'saveToDB' }, (response: ListenerResponse) => {
         if (chrome.runtime.lastError) {
           saveStatus.value = `${t('popup.error')}: ${chrome.runtime.lastError.message}`
         }
@@ -53,45 +51,38 @@ async function onSaveClick() {
   })
 }
 
-function extractDatabaseIdFromPageLink(pageLink: string) {
-  const regex = /([a-f0-9]{32})/
-  const match = pageLink.match(regex)
-
-  if (match)
-    return match[0]
-
-  return ''
-}
-
 function saveSettings() {
-  const notionPageLink = notionPageLinkInput.value
-  const notionDatabaseId = extractDatabaseIdFromPageLink(notionPageLink)
-
-  chrome.storage.sync.set(
-    {
-      notionApiKey: notionApiKeyInput.value,
-      openaiApiKey: openaiApiKeyInput.value,
-      stargramHub: stargramHubInput.value,
-      browserlessToken: browserlessTokenInput.value,
-      notionDatabaseId,
-      notionPageLink,
-    },
-    () => {
-      showSettings.value = false
-    },
-  )
+  if (userConfig.value) {
+    console.log(userConfig.value)
+    chrome.storage.sync.set(
+      {
+        userConfig: JSON.stringify(userConfig.value)
+      },
+      () => {
+        showSettings.value = false
+      },
+    )
+  }
+  else {
+    chrome.storage.sync.set(
+      {
+        userConfig: userConfigInput.value
+      },
+      () => {
+        showSettings.value = false
+      },
+    )
+  }
 }
 
 function onSettingsClick() {
   showLanguage.value = false
   showSettings.value = !showSettings.value
   if (showSettings.value) {
-    chrome.storage.sync.get(['notionApiKey', 'notionPageLink', 'openaiApiKey', 'stargramHub', 'browserlessToken'], (result) => {
-      notionApiKeyInput.value = result.notionApiKey || ''
-      notionPageLinkInput.value = result.notionPageLink || ''
-      openaiApiKeyInput.value = result.openaiApiKey || ''
-      stargramHubInput.value = result.stargramHub || ''
-      browserlessTokenInput.value = result.browserlessToken || ''
+    chrome.storage.sync.get(['userConfig'], (result) => {
+      userConfigInput.value = result.userConfig || ''
+      if (userConfigInput.value)
+        userConfig.value = JSON.parse(userConfigInput.value)
     })
   }
 }
@@ -153,15 +144,13 @@ watch(promptsLangSelect, (n, _) => {
 })
 
 onMounted(() => {
-  chrome.storage.sync.get(['notionApiKey', 'notionPageLink', 'openaiApiKey', 'stargramHub', 'uiLang', 'promptsLang', 'browserlessToken'], (result) => {
-    notionApiKeyInput.value = result.notionApiKey || ''
-    notionPageLinkInput.value = result.notionPageLink || ''
-    openaiApiKeyInput.value = result.openaiApiKey || ''
-    stargramHubInput.value = result.stargramHub || ''
-    browserlessTokenInput.value = result.browserlessToken || ''
+  chrome.storage.sync.get(['uiLang', 'userConfig'], (result) => {
+    userConfigInput.value = result.userConfig || ''
     uiLangSelect.value = result.uiLang || 'en'
     promptsLangSelect.value = result.promptsLang || 'en'
     locale.value = uiLangSelect.value
+    if (userConfigInput.value)
+      userConfig.value = JSON.parse(userConfigInput.value)
   })
 })
 </script>
@@ -199,21 +188,17 @@ onMounted(() => {
       </div>
     </footer>
     <div v-if="showSettings" flex flex-col bg-white p-2 text-14px>
-      <label for="notionApiKey">{{ t('settings.notionApiKey') }}</label>
-      <input id="notionApiKey" v-model="notionApiKeyInput" class="my-2" type="text" name="notionApiKey">
-
-      <label for="notionPageLink">{{ t('settings.notionPageLink') }}</label>
-      <input id="notionPageLink" v-model="notionPageLinkInput" class="my-2" type="text" name="notionPageLink">
-
-      <label for="openaiApiKey">{{ t('settings.openaiApiKey') }}</label>
-      <input id="openaiApiKey" v-model="openaiApiKeyInput" class="my-2" type="text" name="notionPageLink">
-
-      <label for="browserlessToken">{{ t('settings.browserlessToken') }}</label>
-      <input id="browserlessToken" v-model="browserlessTokenInput" class="my-2" type="text" name="browserlessToken">
-
-      <label for="stargramHub">{{ t('settings.stargramHub') }}</label>
-      <input id="stargramHub" v-model="stargramHubInput" class="my-2" type="text" name="notionPageLink">
-
+      <div v-if="userConfig">
+        <div v-for="(model, key) in userConfig" :key="model.select" class="basicflow customnodeflow">
+          <div v-if="!model.public" class="vue-flow__node-select" mb-2>
+            <SelectConfig :data="model" @update="(k: string, v: any) => userConfig[key].config[k] = v" />
+          </div>
+        </div>
+      </div>
+      <div v-else>
+        <label for="userConfig">{{ t('settings.userConfig') }}</label>
+        <input id="userConfig" v-model="userConfigInput" class="my-2" type="text" name="notionApiKey">
+      </div>
       <button class="gh-btn mt-2" type="submit" @click="saveSettings">
         {{ t('settings.saveSettings') }}
       </button>
@@ -386,6 +371,7 @@ input {
   border-width: 1px;
   font-size: 14px;
   height: 20px;
+  border-radius: 4px;
 }
 label {
   color: #838892;
@@ -480,6 +466,42 @@ select.min-select {
   100% {
     background-position: 0% 90%, 20% 90%, 45% 70%, 60% 110%, 75% 80%, 95% 70%, 110% 10%;
     background-size: 0% 0%, 0% 0%,  0% 0%,  0% 0%,  0% 0%,  0% 0%;
+  }
+}
+
+.customnodeflow {
+  .vue-flow__node-select {
+    border:1px solid #777;
+    padding:10px;
+    border-radius:4px;
+    background: white;
+    display:flex;
+    flex-direction:column;
+    gap:4px;
+
+    &:hover {
+      border-color: #292524;
+      box-shadow:0 5px 10px #0000004d;
+    }
+
+    &.selected {
+      border:1px solid transparent;
+      box-shadow:0 5px 10px #0000004d;
+      background: linear-gradient(90deg, #fff, #fff), linear-gradient(45deg, #54c8fa,#be1cfa, #54c8fa);
+      background-origin: border-box;
+      background-clip: padding-box,border-box;
+    }
+  }
+}
+.customnodeflow.dark {
+  .vue-flow__node-select {
+    &.selected {
+      border:1px solid transparent;
+      box-shadow:0 5px 10px #0000004d;
+      background: linear-gradient(90deg, #292524, #292524), linear-gradient(45deg, #54c8fa,#be1cfa, #54c8fa);
+      background-origin: border-box;
+      background-clip: padding-box,border-box;
+    }
   }
 }
 </style>

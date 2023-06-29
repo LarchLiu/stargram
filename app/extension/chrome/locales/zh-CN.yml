@@ -4,6 +4,7 @@ popup:
   error: 错误
 settings:
   title: 设置
+  userConfig: 用户设置
   notionApiKey: Notion API Key
   notionPageLink: Notion 页面链接
   openaiApiKey: Openai API Key

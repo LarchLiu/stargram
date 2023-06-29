@@ -13,6 +13,7 @@ export interface StorageImage {
 }
 
 export interface SavedData {
+  starred: boolean
   storageId: string | number
 }
 
@@ -22,7 +23,7 @@ export interface SavedImage {
 
 export interface IDataStorage {
   create(data?: StorageData): Promise<SavedData>
-  query(url: string): Promise<boolean>
+  query(url: string): Promise<SavedData | undefined>
   updateOgImage(info: SavedData, url: string): Promise<SavedImage>
   getType(): StorageType
   getConfig(): any
@@ -36,7 +37,7 @@ export abstract class DataStorage<T, R extends SavedData> implements IDataStorag
 
   protected config: T
   protected data?: StorageData
-  abstract query(url: string): Promise<boolean>
+  abstract query(url: string): Promise<SavedData | undefined>
   abstract create(data?: StorageData): Promise<R>
   abstract updateOgImage(info: R, url: string): Promise<SavedImage>
   abstract getType(): StorageType
