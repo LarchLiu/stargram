@@ -1,6 +1,7 @@
 import type { CommonMeta, PathInfo, WebInfoData, WebLoaderParams, WebLoaderUrls } from '@stargram/core'
 import { getDomain } from '@stargram/core/utils'
 import { unfurl } from '../../../utils/unfurl'
+import { articleExtractor } from '../../../utils/article-extractor'
 
 function filter(urls: WebLoaderUrls): WebLoaderUrls | undefined {
   return urls
@@ -19,22 +20,39 @@ async function getWebInfo(params: WebLoaderParams): Promise<WebInfoData> {
   meta.siteName = siteName
   meta.prompts = `Website info of ${url}`
   // fetch webinfo
-  const webJson = await unfurl(url, { browserlessToken: params.browserlessToken })
+  const webJson = await articleExtractor(url)
   if (webJson) {
     const readability = webJson.content
-    const openGraph = webJson.open_graph
-    const faviconPath = webJson.favicon?.split('/')
-    const favicon = (faviconPath && !faviconPath[faviconPath.length - 1].includes('.ico')) ? webJson.favicon : ''
-    meta.favicon = favicon
+    const openGraph = webJson.image
+    // TODO: wait for article-extractor to export favicon
+    // const faviconPath = webJson.favicon?.split('/')
+    // const favicon = (faviconPath && !faviconPath[faviconPath.length - 1].includes('.ico')) ? webJson.favicon : ''
+    meta.favicon = ''
     title = webJson.title || ''
-    content = webJson.description || ''
+    content = `${title}\n${webJson.description || ''}`
     if (readability)
-      content = readability
+      content = `${title}\n${readability.replace(/(<[^>]+>|\{[^}]+\})/g, '')}`
 
-    if (openGraph && openGraph.images)
-      meta.ogImage = openGraph.images[0].url
+    if (openGraph)
+      meta.ogImage = openGraph
   }
+  else if (params.browserlessToken) {
+    const webJson = await unfurl(url, { browserlessToken: params.browserlessToken })
+    if (webJson) {
+      const readability = webJson.content
+      const openGraph = webJson.open_graph
+      const faviconPath = webJson.favicon?.split('/')
+      const favicon = (faviconPath && !faviconPath[faviconPath.length - 1].includes('.ico')) ? webJson.favicon : ''
+      meta.favicon = favicon
+      title = webJson.title || ''
+      content = webJson.description || ''
+      if (readability)
+        content = readability
 
+      if (openGraph && openGraph.images)
+        meta.ogImage = openGraph.images[0].url
+    }
+  }
   if (!title || !content)
     throw new Error('Not Supported Website')
 

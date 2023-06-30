@@ -46,6 +46,9 @@
       "optional": false
     }
   },
+  "dependencies": {
+    "@extractus/article-extractor": "v7.2.16"
+  },
   "devDependencies": {
     "@stargram/generate-routes": "workspace:*"
   }
