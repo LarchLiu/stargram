@@ -1,7 +1,7 @@
 {
   "name": "@stargram/core",
   "type": "module",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "Stargram core package",
   "author": "Alex Liu <larch.liu@gmail.com>",
   "license": "MIT",
