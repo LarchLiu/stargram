@@ -39,15 +39,16 @@
     "test": "vitest"
   },
   "peerDependencies": {
+    "@extractus/article-extractor": "v7.2.16",
     "@stargram/core": "workspace:*"
   },
   "peerDependenciesMeta": {
+    "@extractus/article-extractor": {
+      "optional": false
+    },
     "@stargram/core": {
       "optional": false
     }
-  },
-  "dependencies": {
-    "@extractus/article-extractor": "v7.2.16"
   },
   "devDependencies": {
     "@stargram/generate-routes": "workspace:*"

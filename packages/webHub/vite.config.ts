@@ -21,12 +21,14 @@ export default defineConfig({
       // into your library
       external: [
         '@stargram/core',
+        '@extractus/article-extractor',
       ],
       output: {
         // Provide global variables to use in the UMD build
         // for externalized deps
         globals: {
           '@stargram/core': '@stargram/core',
+          '@extractus/article-extractor': '@extractus/article-extractor',
         },
       },
     },

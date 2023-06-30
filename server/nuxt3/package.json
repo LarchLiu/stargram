@@ -20,6 +20,7 @@
     "start:generate": "npx serve .output/public"
   },
   "dependencies": {
+    "@extractus/article-extractor": "v7.2.16",
     "@stargram/core": "workspace:*",
     "@stargram/web-hub": "workspace:*",
     "@supabase/supabase-js": "^2.26.0",
