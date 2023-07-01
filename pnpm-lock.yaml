@@ -126,9 +126,12 @@ importers:
       '@supabase/supabase-js':
         specifier: ^2.26.0
         version: 2.26.0
+      chromadb:
+        specifier: ^1.5.3
+        version: 1.5.3
       langchain:
         specifier: ^0.0.96
-        version: 0.0.96(@supabase/supabase-js@2.26.0)
+        version: 0.0.96(@supabase/supabase-js@2.26.0)(chromadb@1.5.3)
     devDependencies:
       ofetch:
         specifier: ^1.1.1
@@ -198,9 +201,12 @@ importers:
       '@vue-flow/minimap':
         specifier: ^1.1.1
         version: 1.1.1(@vue-flow/core@1.20.2)
+      chromadb:
+        specifier: ^1.5.3
+        version: 1.5.3
       langchain:
         specifier: ^0.0.96
-        version: 0.0.96(@supabase/supabase-js@2.26.0)
+        version: 0.0.96(@supabase/supabase-js@2.26.0)(chromadb@1.5.3)
       satori:
         specifier: ^0.10.1
         version: 0.10.1
@@ -8045,6 +8051,10 @@ packages:
     engines: {node: '>=10'}
     dev: true
 
+  /chromadb@1.5.3:
+    resolution: {integrity: sha512-oQYs3cbSJJiSMYipL/5btX8U3bnW5X1CEMpJnl83XEGWR0uvRp8GtoznKPKPTcuVBMMtKkE1MdeMckWA72M4lw==}
+    dev: false
+
   /chrome-trace-event@1.0.3:
     resolution: {integrity: sha512-p3KULyQg4S7NIHixdwbGX+nFHkoBiA4YQmyWtjb8XngSKV124nJmRysgAeujbUVb15vh+RvFUfCPqU7rXk+hZg==}
     engines: {node: '>=6.0'}
@@ -13261,7 +13271,7 @@ packages:
     resolution: {integrity: sha512-Xq9nH7KlWZmXAtodXDDRE7vs6DU1gTU8zYDHDiWLSip45Egwq3plLHzPn27NgvzL2r1LMPC1vdqh98sQxtqj4A==}
     dev: true
 
-  /langchain@0.0.96(@supabase/supabase-js@2.26.0):
+  /langchain@0.0.96(@supabase/supabase-js@2.26.0)(chromadb@1.5.3):
     resolution: {integrity: sha512-m1d0IWjwZK+D19uBfgmfp5sUTxJXcjJb/YuIyn2cGNmXGqOH2r2cl0TUnhuFKxTXpMTXgTywd7MYF5U5/qkNTQ==}
     engines: {node: '>=18'}
     peerDependencies:
@@ -13416,6 +13426,7 @@ packages:
       ansi-styles: 5.2.0
       binary-extensions: 2.2.0
       camelcase: 6.3.0
+      chromadb: 1.5.3
       decamelize: 5.0.1
       expr-eval: 2.0.2
       flat: 5.0.2

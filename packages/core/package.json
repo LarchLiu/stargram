@@ -132,11 +132,15 @@
   },
   "peerDependencies": {
     "@supabase/supabase-js": "^2.26.0",
+    "chromadb": "^1.5.3",
     "langchain": "^0.0.96",
     "ofetch": "^1.1.1"
   },
   "peerDependenciesMeta": {
     "@supabase/supabase-js": {
+      "optional": true
+    },
+    "chromadb": {
       "optional": true
     },
     "langchain": {

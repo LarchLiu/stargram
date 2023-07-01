@@ -42,6 +42,7 @@ export default defineConfig({
       external: [
         '@supabase/supabase-js',
         /langchain\/.*/,
+        'chromadb',
         'ofetch',
       ],
       output: {
@@ -49,6 +50,7 @@ export default defineConfig({
         // for externalized deps
         globals: {
           '@supabase/supabase-js': '@supabase/supabase-js',
+          'chromadb': 'chromadb',
           'ofetch': 'ofetch',
         },
       },
