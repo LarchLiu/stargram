@@ -1,13 +1,8 @@
 // https://github.com/sparticleinc/chatgpt-google-summary-extension/blob/main/src/content-script/prompt.ts
 
-import { countWord } from '../../utils'
+import { countWord } from '../utils'
 
-export enum ProviderType {
-  ChatGPT = 'chatgpt',
-  GPT3 = 'gpt3',
-}
-
-export function getSummaryPrompt(transcript = '', providerConfigs?: ProviderType) {
+export function getSummaryPrompt(transcript = '') {
   const text = transcript
     ? transcript
       .replace(/&#39;/g, '\'')
@@ -16,17 +11,15 @@ export function getSummaryPrompt(transcript = '', providerConfigs?: ProviderType
       .replace(/^(\s)+|(\s)$/g, '')
     : ''
 
-  return truncateTranscript(text, providerConfigs)
+  return truncateTranscript(text)
 }
 
 // Seems like 15,000 bytes is the limit for the prompt
 const textLimit = 14000
-// const limit = 1100 // 1000 is a buffer
-const countLimit = 800
 // const apiLimit = 2000
 const apiCountLimit = 1300
 
-function truncateTranscript(str: string, providerConfigs?: ProviderType) {
+function truncateTranscript(str: string) {
   let textStr = str
 
   const textBytes = textToBinaryString(str).length
@@ -36,12 +29,12 @@ function truncateTranscript(str: string, providerConfigs?: ProviderType) {
     textStr = newStr
   }
 
-  return truncateTranscriptByToken(textStr, providerConfigs)
+  return truncateTranscriptByToken(textStr)
 }
 
-function truncateTranscriptByToken(str: string, providerConfigs?: ProviderType) {
+function truncateTranscriptByToken(str: string) {
   // const tokenLimit = providerConfigs === ProviderType.GPT3 ? apiLimit : limit
-  const wordCountLimit = providerConfigs === ProviderType.GPT3 ? apiCountLimit : countLimit
+  const wordCountLimit = apiCountLimit
   let count = countWord(str)
 
   if (count > wordCountLimit) {

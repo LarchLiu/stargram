@@ -6,7 +6,7 @@ import { countWord, getPromptsByTemplate, preprocessText } from '../../utils'
 import { ANSWER_IN_LANGUAGE, OPENAI_CHAT_API, SUMMARIZE_PROMPTS, USER_PROMPTS } from '../../const'
 import type { OpenaiConfig } from '../types'
 import { CLLM } from '../types'
-import { ProviderType, getSummaryPrompt } from './prompt'
+import { getSummaryPrompt } from '../prompt'
 
 export class Openai extends CLLM<OpenaiConfig> {
   constructor(config: OpenaiConfig, webData?: WebInfoData) {
@@ -46,7 +46,7 @@ export async function summarizeContent(apiKey: string, websiteInfo: WebInfoData,
   const host = apiHost === OPENAI_CHAT_API ? `${apiHost}/v1` : apiHost
 
   if (wordCount > 40) {
-    content = getSummaryPrompt(content, ProviderType.GPT3)
+    content = getSummaryPrompt(content)
 
     const kv = {
       content,
