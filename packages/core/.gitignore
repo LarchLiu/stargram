@@ -16,6 +16,9 @@ llm/openai.d.ts
 storage.cjs
 storage.js
 storage.d.ts
+storage/chroma.cjs
+storage/chroma.js
+storage/chroma.d.ts
 storage/notion.cjs
 storage/notion.js
 storage/notion.d.ts

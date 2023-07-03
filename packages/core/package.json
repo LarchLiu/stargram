@@ -49,6 +49,11 @@
       "require": "./storage.cjs",
       "import": "./storage.js"
     },
+    "./storage/chroma": {
+      "types": "./storage/chroma.d.ts",
+      "require": "./storage/chroma.cjs",
+      "import": "./storage/chroma.js"
+    },
     "./storage/notion": {
       "types": "./storage/notion.d.ts",
       "require": "./storage/notion.cjs",
@@ -99,6 +104,9 @@
     "storage.cjs",
     "storage.js",
     "storage.d.ts",
+    "storage/chroma.cjs",
+    "storage/chroma.js",
+    "storage/chroma.d.ts",
     "storage/notion.cjs",
     "storage/notion.js",
     "storage/notion.d.ts",
