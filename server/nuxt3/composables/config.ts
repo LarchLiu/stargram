@@ -342,6 +342,17 @@ export const vectorStorageConfig: BasicConfig<ModelsConfig> = {
       },
       output: '',
     },
+    ChromaVectorStorage: {
+      displayName: 'Chroma Storage',
+      config: {
+        url: {
+          label: 'Chroma URL',
+          value: '',
+          require: true,
+        },
+      },
+      output: '',
+    },
   },
 }
 export const llmConfig: BasicConfig<ModelsConfig> = {

@@ -9,6 +9,7 @@ export const entrypoints = {
   'llm': 'llm/index',
   'llm/openai': 'llm/openai/index',
   'storage': 'storage/index',
+  'storage/chroma': 'storage/chroma/index',
   'storage/notion': 'storage/notion/index',
   'storage/supabase': 'storage/supabase/index',
   'utils': 'utils/index',
@@ -42,6 +43,7 @@ export default defineConfig({
       external: [
         '@supabase/supabase-js',
         /langchain\/.*/,
+        'chromadb',
         'ofetch',
       ],
       output: {
@@ -49,6 +51,7 @@ export default defineConfig({
         // for externalized deps
         globals: {
           '@supabase/supabase-js': '@supabase/supabase-js',
+          'chromadb': 'chromadb',
           'ofetch': 'ofetch',
         },
       },
