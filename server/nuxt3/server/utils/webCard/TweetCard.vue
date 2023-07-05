@@ -3,7 +3,7 @@ defineProps({
   avatar: String,
   name: String,
   screenName: String,
-  content: Array<String>,
+  content: Array<string>,
   pubTime: String,
   lang: String,
 })

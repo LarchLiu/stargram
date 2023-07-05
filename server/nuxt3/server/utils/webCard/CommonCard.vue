@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 defineProps({
   title: String,
-  content: Array<String>,
+  content: Array<string>,
   favicon: String,
   lang: String,
 })

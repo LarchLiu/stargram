@@ -24,10 +24,9 @@ async function getWebInfo(params: WebLoaderParams): Promise<WebInfoData> {
   if (webJson) {
     const readability = webJson.content
     const openGraph = webJson.image
-    // TODO: wait for article-extractor to export favicon
-    // const faviconPath = webJson.favicon?.split('/')
-    // const favicon = (faviconPath && !faviconPath[faviconPath.length - 1].includes('.ico')) ? webJson.favicon : ''
-    meta.favicon = ''
+    const faviconPath = webJson.favicon?.split('/')
+    const favicon = (faviconPath && !faviconPath[faviconPath.length - 1].includes('.ico')) ? webJson.favicon : ''
+    meta.favicon = favicon
     title = webJson.title || ''
     content = `${title}\n${webJson.description || ''}`
     if (readability)

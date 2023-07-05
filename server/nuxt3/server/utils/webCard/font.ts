@@ -227,7 +227,7 @@ export async function loadDynamicFont(text: string, fonts: string[]) {
 
 const cache = new Map()
 
-function withCache(fn: Function) {
+function withCache(fn: (...args: any[]) => Promise<string | SatoriOptions['fonts']>) {
   return async (emojiType: string, code: string, text: string) => {
     const key = `${emojiType}:${code}:${text}`
     if (cache.has(key))

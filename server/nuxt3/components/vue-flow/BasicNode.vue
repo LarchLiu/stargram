@@ -4,7 +4,7 @@ interface TitleData {
   icon: string
 }
 
-defineProps<{ title: TitleData; needViewButton?: Boolean }>()
+defineProps<{ title: TitleData; needViewButton?: boolean }>()
 
 const view = ref(false)
 function onViewClick() {

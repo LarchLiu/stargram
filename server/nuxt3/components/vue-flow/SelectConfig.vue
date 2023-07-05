@@ -4,7 +4,7 @@ import type { BasicConfig, ModelsConfig } from '../../composables/config'
 
 interface Props {
   data: BasicConfig<ModelsConfig>
-  needHandler?: Boolean
+  needHandler?: boolean
 }
 const props = defineProps<Props>()
 const model = props.data
