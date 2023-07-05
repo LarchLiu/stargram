@@ -1,9 +1,10 @@
 import { errorMessage } from '@stargram/core/utils'
 import { $fetch } from '@stargram/core'
+import { featuresMap, graphQLMap, tokens } from './constants'
 
 // https://github.com/mikf/gallery-dl/blob/a53cfc845e12d9e98fefd07e43ebffaec488c18f/gallery_dl/extractor/twitter.py#L716-L726
 const headers = {
-  'authorization': 'Bearer AAAAAAAAAAAAAAAAAAAAAPYXBAAAAAAACLXUNDekMxqa8h%2F40K4moUkGsoc%3DTYfbDKbT3jJPCEVnMYqilB28NHfOPqkca3qaAxGfsyKCs0wRbw',
+  'authorization': '',
   // Bearer AAAAAAAAAAAAAAAAAAAAAPYXBAAAAAAACLXUNDekMxqa8h%2F40K4moUkGsoc%3DTYfbDKbT3jJPCEVnMYqilB28NHfOPqkca3qaAxGfsyKCs0wRbw
   // reference: https://github.com/dangeredwolf/FixTweet/blob/f3082bbb0d69798687481a605f6760b2eb7558e0/src/constants.ts#L23-L25
   'x-guest-token': '',
@@ -12,8 +13,22 @@ const headers = {
   // 'Referer': 'https://twitter.com/',
 }
 
+let tries = 0
+
 async function newGuestToken() {
   let guestToken = ''
+  // eslint-disable-next-line n/prefer-global/buffer
+  const authorization = `Basic ${Buffer.from(tokens[tries++ % tokens.length]).toString('base64')}`
+  const response = await $fetch(
+    'https://api.twitter.com/oauth2/token',
+    {
+      method: 'POST',
+      query: { grant_type: 'client_credentials' },
+      headers: {
+        Authorization: authorization,
+      },
+    })
+  headers.authorization = `${response.token_type} ${response.access_token}`
   const activate = await $fetch(
     'https://api.twitter.com/1.1/guest/activate.json',
     {
@@ -56,9 +71,13 @@ async function paginationTweets(endpoint: string, userId: string, variables = {}
     userId,
   }
 
-  const { data } = await $fetch(`https://twitter.com/i/api${endpoint}?variables=${encodeURI(JSON.stringify(params))}`, {
+  const { data } = await $fetch(`https://twitter.com/i/api${endpoint}`, {
     headers,
     method: 'GET',
+    query: {
+      variables: JSON.stringify(params),
+      features: featuresMap.UserTweets,
+    },
   })
 
   if (data && Object.keys(data).length) {
@@ -81,7 +100,8 @@ async function paginationTweets(endpoint: string, userId: string, variables = {}
 // https://github.com/mikf/gallery-dl/blob/a53cfc845e12d9e98fefd07e43ebffaec488c18f/gallery_dl/extractor/twitter.py#L795-L805
 function tweetDetail(status: string) {
   return paginationTweets(
-    '/graphql/ItejhtHVxU7ksltgMmyaLA/TweetDetail',
+    // '/graphql/ItejhtHVxU7ksltgMmyaLA/TweetDetail',
+    graphQLMap.TweetDetail,
     '',
     {
       focalTweetId: status,
