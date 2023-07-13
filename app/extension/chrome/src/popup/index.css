@@ -31,6 +31,18 @@ input {
   border-style: solid;
 }
 
+::-webkit-input-placeholder { /* Edge */
+  color: #a6abb6;
+}
+
+:-ms-input-placeholder { /* Internet Explorer 10-11 */
+  color: #a6abb6;
+}
+
+::placeholder {
+  color: #a6abb6;
+}
+
 :root {
   --el-color-primary: rgb(38, 22, 47);
   --el-color-primary-light-3: rgb(98, 93, 100);

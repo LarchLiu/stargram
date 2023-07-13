@@ -1,15 +1,15 @@
 import type { WebInfo, WebInfoByApi } from '../webInfo'
 import type { WebCard, WebCardByApi } from '../webCard'
-import type { Openai } from '../llm/openai'
+import type { ILLM } from '../llm'
 import type { SummarizeData, WebLoaderUrls } from '../types'
-import type { IDataStorage, IVectorStorage } from '../storage'
+import type { IDataStorage, IVectorStorage, SavedData } from '../storage'
 import { errorMessage } from '../utils'
 
 export class SaveWebInfoChain {
   constructor(fields: {
     webInfo: WebInfo | WebInfoByApi
     webCard?: WebCard | WebCardByApi
-    llm?: Openai
+    llm?: ILLM
     dataStorage: IDataStorage
     vectorStorage?: IVectorStorage
   }) {
@@ -26,26 +26,28 @@ export class SaveWebInfoChain {
   private dataStorage
   private vectorStorage
 
-  async call(urls: WebLoaderUrls) {
+  async call(urls: WebLoaderUrls, update?: boolean) {
+    let dataStorageRes: SavedData | undefined
+    if (this.dataStorage) {
+      dataStorageRes = await this.dataStorage.query(urls.webUrl)
+      if (dataStorageRes) {
+        if (!update)
+          return dataStorageRes
+      }
+    }
     const webData = await this.webInfo.call(urls)
     let summarizeData: SummarizeData = {
       summary: webData.content,
       categories: ['Others'],
     }
 
-    if (this.llm) {
+    if (this.llm)
       summarizeData = await this.llm.summarize(webData)
-      if (this.vectorStorage) {
-        if (this.dataStorage) {
-          this.dataStorage.query(urls.webUrl).then((res) => {
-            if (!res)
-              this.vectorStorage!.save(webData)
-          })
-        }
-      }
-    }
 
-    const savedData = await this.dataStorage.create({ ...webData, ...summarizeData })
+    if (this.vectorStorage)
+      this.vectorStorage.save(webData)
+
+    const savedData = dataStorageRes ? await this.dataStorage.update(dataStorageRes, { ...webData, ...summarizeData }) : await this.dataStorage.create({ ...webData, ...summarizeData })
 
     if (this.webCard) {
       if (!this.webCard.localFn) {

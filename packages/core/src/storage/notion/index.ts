@@ -26,6 +26,23 @@ export class NotionDataStorage extends DataStorage<NotionDataConfig, SavedNotion
     return await saveToNotion(this.config, notion)
   }
 
+  async update(savedData: SavedNotion, data?: StorageData) {
+    if (!data && !this.data)
+      throw new Error('DataStorage error: No Storage Data')
+
+    const storageData = (data || this.data)!
+
+    const notion: NotionPage = {
+      title: storageData.title,
+      summary: storageData.summary,
+      url: storageData.url,
+      categories: storageData.categories,
+      status: 'Starred',
+      meta: storageData.meta,
+    }
+    return await updateToNotion(savedData, this.config, notion)
+  }
+
   async query(url: string) {
     const checkData = await $fetch<any>(`${NOTION_API_URL}/databases/${this.config.databaseId}/query`, {
       method: 'POST',
@@ -191,54 +208,55 @@ export async function saveToNotion(config: NotionDataConfig, info: NotionPage): 
     }
   }
 
-  // check notion page exists
-  const checkData = await $fetch<any>(`${NOTION_API_URL}/databases/${config.databaseId}/query`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Notion-Version': '2022-06-28',
-      'Authorization': `Bearer ${apiKey}`,
-    },
-    body: {
-      filter: {
-        property: 'URL',
-        rich_text: {
-          contains: info.url,
-        },
-      },
-    },
-  })
-
   let storageId = ''
-  let starred = false
-  if (checkData.results.length > 0) {
-    if (checkData.results[0].properties.Status.select.name === 'Starred')
-      starred = true
-    storageId = checkData.results[0].id
-  }
+  const starred = false
 
-  if (storageId) {
-    body.properties = {
-      ...body.properties,
-      Status: {
-        select: {
-          name: starred ? 'Unstarred' : 'Starred',
-        },
-      },
-    }
-    // update notion page info
-    await $fetch(`${NOTION_API_URL}/pages/${storageId}`, {
-      method: 'PATCH',
-      headers: {
-        'Authorization': `Bearer ${apiKey}`,
-        'Notion-Version': '2022-06-28',
-        'Content-Type': 'application/json',
-      },
-      body,
-    })
+  // // check notion page exists
+  // const checkData = await $fetch<any>(`${NOTION_API_URL}/databases/${config.databaseId}/query`, {
+  //   method: 'POST',
+  //   headers: {
+  //     'Content-Type': 'application/json',
+  //     'Notion-Version': '2022-06-28',
+  //     'Authorization': `Bearer ${apiKey}`,
+  //   },
+  //   body: {
+  //     filter: {
+  //       property: 'URL',
+  //       rich_text: {
+  //         contains: info.url,
+  //       },
+  //     },
+  //   },
+  // })
 
-    return { starred: !starred, storageId }
-  }
+  // if (checkData.results.length > 0) {
+  //   if (checkData.results[0].properties.Status.select.name === 'Starred')
+  //     starred = true
+  //   storageId = checkData.results[0].id
+  // }
+
+  // if (storageId) {
+  //   body.properties = {
+  //     ...body.properties,
+  //     Status: {
+  //       select: {
+  //         name: starred ? 'Unstarred' : 'Starred',
+  //       },
+  //     },
+  //   }
+  //   // update notion page info
+  //   await $fetch(`${NOTION_API_URL}/pages/${storageId}`, {
+  //     method: 'PATCH',
+  //     headers: {
+  //       'Authorization': `Bearer ${apiKey}`,
+  //       'Notion-Version': '2022-06-28',
+  //       'Content-Type': 'application/json',
+  //     },
+  //     body,
+  //   })
+
+  //   return { starred: !starred, storageId }
+  // }
 
   if (ogImage) {
     const imageBlock = {
@@ -263,6 +281,141 @@ export async function saveToNotion(config: NotionDataConfig, info: NotionPage): 
   })
 
   storageId = newPageResponse.id
+
+  return { starred: !starred, storageId }
+}
+
+export async function updateToNotion(savedData: SavedNotion, config: NotionDataConfig, info: NotionPage): Promise<SavedNotion> {
+  const apiKey = config.apiKey
+  const storageId = savedData.storageId
+  const starred = savedData.starred
+  let catOpt = [{
+    name: 'Others',
+  }]
+
+  catOpt = info.categories.map((item) => {
+    item = item.trim()
+    if (item.endsWith('.'))
+      item = item.slice(0, -1)
+
+    return {
+      name: item,
+    }
+  })
+
+  const body: Record<string, any> = {
+    parent: {
+      database_id: config.databaseId,
+    },
+    properties: {
+      Title: {
+        title: [
+          {
+            text: {
+              content: info.title,
+            },
+          },
+        ],
+      },
+      Summary: {
+        rich_text: [
+          {
+            text: {
+              content: info.summary,
+            },
+          },
+        ],
+      },
+      URL: {
+        url: info.url,
+      },
+      Categories: {
+        multi_select: catOpt,
+      },
+      Status: {
+        select: {
+          name: starred ? 'Unstarred' : 'Starred',
+        },
+      },
+    },
+  }
+  let ogImage = config.defaultOgImage
+  if (info.meta && Object.keys(info.meta).length > 0) {
+    const meta = info.meta
+    if (meta.savedImage)
+      ogImage = meta.savedImage
+
+    body.properties = {
+      ...body.properties,
+      OgImage: {
+        url: ogImage,
+      },
+    }
+    body.properties = {
+      ...body.properties,
+      Website: {
+        select: {
+          name: meta.siteName,
+        },
+      },
+    }
+    if (info.meta.domain === GITHUB_DOMAIN) {
+      const github = meta as GithubRepoMeta
+      if (github.languages) {
+        const languages = github.languages.map((lang) => {
+          return {
+            name: lang,
+          }
+        })
+        body.properties = {
+          ...body.properties,
+          Languages: {
+            multi_select: languages,
+          },
+        }
+      }
+      if (github.tags) {
+        const tags = github.tags.map((tag) => {
+          return {
+            name: tag,
+          }
+        })
+        body.properties = {
+          ...body.properties,
+          Tags: {
+            multi_select: tags,
+          },
+        }
+      }
+    }
+    else if (info.meta.domain === TWITTER_DOMAIN) {
+      const twitter = meta as TwitterTweetMeta
+      if (twitter.tags) {
+        const tags = twitter.tags.map((tag) => {
+          return {
+            name: tag,
+          }
+        })
+        body.properties = {
+          ...body.properties,
+          Tags: {
+            multi_select: tags,
+          },
+        }
+      }
+    }
+  }
+
+  // update notion page info
+  await $fetch(`${NOTION_API_URL}/pages/${storageId}`, {
+    method: 'PATCH',
+    headers: {
+      'Authorization': `Bearer ${apiKey}`,
+      'Notion-Version': '2022-06-28',
+      'Content-Type': 'application/json',
+    },
+    body,
+  })
 
   return { starred: !starred, storageId }
 }

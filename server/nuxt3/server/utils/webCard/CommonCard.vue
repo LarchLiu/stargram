@@ -14,7 +14,7 @@ defineProps({
         {{ title }}
       </div>
 
-      <div class="h-320px flex flex-col overflow-hidden pt-30px text-30px">
+      <div class="h-320px flex flex-col pt-30px text-30px" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
         <div v-for="(c, i) in content" :key="i" class="flex" :lang="lang ? lang : 'zh-CN'">
           {{ c }}
         </div>

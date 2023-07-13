@@ -21,6 +21,7 @@ interface SwResponse {
   error?: string
   tabId?: number
   storageId?: string
+  url?: string
 }
 
 interface ListenerResponse {

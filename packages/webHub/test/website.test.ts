@@ -2,6 +2,11 @@ import { describe, expect, test } from 'vitest'
 import { getWebsiteInfo } from './website'
 
 describe('get webhub info', () => {
+  // test('segmentfault info', async () => {
+  //   const res = await getWebsiteInfo('https://segmentfault.com/a/1190000008879966')
+  //   expect(res).toMatchSnapshot()
+  // })
+
   test('github info', async () => {
     const res = await getWebsiteInfo('https://github.com/LarchLiu/stargram')
     expect((res.title).includes('stargram')).toBeTruthy()

@@ -1,20 +1,30 @@
 <script setup lang="ts">
 import { onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { iconGithub, iconLanguage, iconSetting, starSrc, version } from '~/const'
-import type { ListenerResponse } from '~/types'
+import { iconGithub, iconLanguage, iconSetting, iconSync, iconPlay, iconStop, starSrc, version } from '~/const'
+import type { ContentRequest, ListenerSendResponse, ListenerResponse } from '~/types'
 import SelectConfig from '~/components/SelectConfig.vue'
 
 const { t, locale } = useI18n()
 const saveStatus = ref('')
 const showSettings = ref(false)
 const showLanguage = ref(false)
+const showSync = ref(false)
 const uiLangSelect = ref('en')
 const userConfigInput = ref('')
+const githubToken = ref('')
 const userConfig = ref()
 const promptsLangSelect = ref('en')
 const saveBtn = ref<HTMLDivElement>()
 const saveBtnEnable = ref(true)
+const stopSyncMarks = ref(false)
+const stopSyncGithbu = ref(false)
+const marksCount = ref(0)
+const currentMark = ref(0)
+const githubCount = ref(0)
+const currentGithub = ref(0)
+let syncResultCount = 0
+let bookMarks: { title: string; url: string | undefined}[] = []
 let starTimer: NodeJS.Timeout
 let bubblyTimer: NodeJS.Timeout
 const colorPreset = [
@@ -77,6 +87,7 @@ function saveSettings() {
 
 function onSettingsClick() {
   showLanguage.value = false
+  showSync.value = false
   showSettings.value = !showSettings.value
   if (showSettings.value) {
     chrome.storage.sync.get(['userConfig'], (result) => {
@@ -88,6 +99,7 @@ function onSettingsClick() {
 }
 function onLanguageClick() {
   showSettings.value = false
+  showSync.value = false
   showLanguage.value = !showLanguage.value
   if (showLanguage.value) {
     chrome.storage.sync.get(['uiLang', 'promptsLang'], (result) => {
@@ -95,6 +107,62 @@ function onLanguageClick() {
       promptsLangSelect.value = result.promptsLang || ''
     })
   }
+}
+
+function onSyncClick() {
+  showSettings.value = false
+  showLanguage.value = false
+  showSync.value = !showSync.value
+  if (showSync.value) {
+    chrome.storage.sync.get(['githubToken'], (result) => {
+      githubToken.value = result.githubToken || ''
+    })
+  }
+}
+
+function getBookmarks(tree: chrome.bookmarks.BookmarkTreeNode[]) {
+  tree.map((item) => {
+      if (item.children) {
+        getBookmarks(item.children)
+      }
+      else {
+        marksCount.value++
+        bookMarks.push({
+          title: item.title,
+          url: item.url,
+        })
+        if (marksCount.value === 1) {
+          setTimeout(() => {
+            currentMark.value = 0
+            syncResultCount = 2
+            const pageInfo = {
+              webUrl: bookMarks[currentMark.value].url
+            }
+            chrome.runtime.sendMessage(
+              {
+                action: 'syncBookmarks',
+                data: pageInfo,
+              },
+            )
+            console.log(item.title, marksCount.value)
+          }, 1000)
+        }
+      }
+    })
+}
+
+function onBookmarksSync() {
+  chrome.bookmarks.getTree((bookmarkTreeNodes) => {
+    const bookmarkTree = bookmarkTreeNodes[0].children ?? []
+    marksCount.value = 0
+    currentMark.value = 0
+    bookMarks = []
+    getBookmarks(bookmarkTree)
+  })
+}
+
+function onGithubSync() {
+
 }
 
 function genRandomColor() {
@@ -152,6 +220,49 @@ onMounted(() => {
     if (userConfigInput.value)
       userConfig.value = JSON.parse(userConfigInput.value)
   })
+  chrome.runtime.onMessage.addListener(async (request: ContentRequest, sender, sendResponse: ListenerSendResponse) => {
+    const action = request.action
+    if (action === 'syncBookmarksResult') {
+      let end = false
+      syncResultCount++
+      sendResponse({ message: 'ok' })
+      if (syncResultCount % 3 === 0 || (marksCount.value - (currentMark.value + 1) < 3)) {
+        syncResultCount = 0
+        for (let i = 0; i < 3; i++) {
+          if (currentMark.value < marksCount.value) {
+            if(!stopSyncMarks.value) {
+              currentMark.value++
+              const pageInfo = {
+                webUrl: bookMarks[currentMark.value].url
+              }
+              chrome.runtime.sendMessage(
+                {
+                  action: 'syncBookmarks',
+                  data: pageInfo,
+                },
+              )
+              console.log(bookMarks[currentMark.value].title, marksCount.value)
+            }
+          }
+          else {
+            end = true
+            break
+          }
+        }
+      }
+      if (end) {
+        const offset = 100
+        const duration = 3000
+        ElNotification({
+          title: 'Stargram',
+          type: 'success',
+          message: 'Sync Bookmars successful 👌',
+          offset,
+          duration,
+        })
+      }
+    }
+  })
 })
 </script>
 
@@ -169,12 +280,15 @@ onMounted(() => {
     </div>
     <footer class="mt-2 flex flex-col bg-[#f0f0f0] p-2 text-12px">
       <div flex items-center justify-between>
-        <div flex>
+        <div flex items-center>
           <div class="setting" cursor-pointer @click="onSettingsClick">
             <img :src="iconSetting" height="18">
           </div>
           <div class="language" ml-2 cursor-pointer @click="onLanguageClick">
             <img :src="iconLanguage" height="18">
+          </div>
+          <div class="sync" ml-2 cursor-pointer @click="onSyncClick">
+            <img :src="iconSync" height="20">
           </div>
         </div>
         <div flex items-center>
@@ -254,6 +368,39 @@ onMounted(() => {
             {{ t('settings.ru') }}
           </option>
         </select>
+      </div>
+    </div>
+    <div v-if="showSync" bg-white p-2 text-14px>
+      <div>{{ t('settings.syncSettings') }}</div>
+      <div class="divider" />
+      <div my-2 flex justify-between items-center>
+        <label class="inline-block h-5">{{ t('settings.syncBookmarks') }}</label>
+        <div flex items-cente>
+          <div v-if="currentMark < marksCount">
+            <div cursor-pointer @click="stopSyncMarks = !stopSyncMarks">
+              <img :src="stopSyncMarks ? iconPlay : iconStop" height="18">
+            </div>
+          </div>
+          <div class="sync-ping" ml-2 cursor-pointer @click="onBookmarksSync">
+            <img :src="iconSync" height="18">
+          </div>
+        </div>
+      </div>
+      <div my-2 flex justify-between items-center>
+        <div flex items-center>
+          <label class="inline-block h-5" pr-2>{{ t('settings.syncGithub') }}</label>
+          <input v-model="githubToken" text-12px placeholder="Github Token" type="password" name="githubToken">
+        </div>
+        <div flex items-center>
+          <div v-if="currentGithub < githubCount">
+            <div cursor-pointer @click="stopSyncGithbu = !stopSyncGithbu">
+              <img :src="stopSyncGithbu ? iconPlay : iconStop" height="18">
+            </div>
+          </div>
+          <div class="sync-ping" cursor-pointer @click="onGithubSync">
+            <img :src="iconSync" height="18">
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -339,7 +486,7 @@ onMounted(() => {
     }
   }
 }
-
+.sync:hover img,
 .setting:hover img {
   animation: spin 0.5s 0.5s;
 }

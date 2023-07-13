@@ -16,6 +16,9 @@ settings:
   uiLanguage: UI
   promptsLanguage: Prompts
   languageSettings: Languages
+  syncSettings: Sync
+  syncBookmarks: Bookmarks
+  syncGithub: Github
   de: German
   en: English
   es: Spanish

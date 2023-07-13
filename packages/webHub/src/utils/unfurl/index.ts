@@ -17,7 +17,7 @@ interface ParserContext {
 
 const defaultHeaders = {
   'Accept': 'text/html, application/xhtml+xml',
-  'User-Agent': 'facebookexternalhit',
+  'User-Agent': 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/111.0',
 }
 
 function unfurl(url: string, opts?: Opts): Promise<Metadata> {
@@ -40,10 +40,6 @@ async function getPage(url: string, opts: Opts) {
     headers: opts.headers,
   })
 
-  const html = res._data
-  const contentType = res.headers.get('Content-Type') || ''
-  const contentLength = res.headers.get('Content-Length')
-
   if (res.status !== 200) {
     throw new UnexpectedError({
       ...UnexpectedError.BAD_HTTP_STATUS,
@@ -53,6 +49,9 @@ async function getPage(url: string, opts: Opts) {
       },
     })
   }
+
+  const contentType = res.headers.get('Content-Type') || ''
+  const contentLength = res.headers.get('Content-Length')
 
   if (/text\/html|application\/xhtml+xml/.test(contentType) === false) {
     throw new UnexpectedError({
@@ -64,6 +63,7 @@ async function getPage(url: string, opts: Opts) {
       },
     })
   }
+  const html = res._data ?? ''
 
   return html
 }

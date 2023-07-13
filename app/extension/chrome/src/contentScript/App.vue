@@ -59,7 +59,7 @@ function startTwink() {
   }
 }
 
-async function handleSaveToNotion() {
+async function handleSaveToDB() {
   // console.log('Handling save to Notion in the content script', document)
   startTwink()
 
@@ -92,7 +92,7 @@ chrome.runtime.onMessage.addListener(async (request: SwRequest, sender, sendResp
 
   // TODO: remove saveToDB from popup
   if (action === 'saveToDB') {
-    handleSaveToNotion()
+    handleSaveToDB()
     sendResponse({ message: 'Handling save to Notion in the content script', error: false })
   }
   else if (action === 'starredStatusToContent') {
@@ -187,7 +187,7 @@ function createButton(starred: boolean) {
     gap: '0.5em',
   })
   a.addEventListener('click', () => {
-    handleSaveToNotion()
+    handleSaveToDB()
   })
   const icon = document.createElement('img')
   icon.src = starred ? starFillSrc : starSrc

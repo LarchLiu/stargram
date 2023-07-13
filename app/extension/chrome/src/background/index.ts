@@ -1,8 +1,6 @@
 import { errorMessage } from '@stargram/core/utils'
-import { NotionDataStorage } from '@stargram/core/storage/notion'
 import { WebCardByApi } from '@stargram/core/webCard'
 import { WebInfoByApi } from '@stargram/core/webInfo'
-import { Openai } from '@stargram/core/llm/openai'
 import { SaveWebInfoChain } from '@stargram/core/chain/saveWebInfo'
 import type { EmbeddingsInfo, VectorMetaData, SavedNotion } from '@stargram/core'
 import { storageInfo } from '@stargram/core/storage'
@@ -11,6 +9,12 @@ import { llmInfo } from '@stargram/core/llm'
 import type { ContentRequest, ListenerSendResponse, PageInfo, SwResponse } from '~/types'
 
 const DEFAULT_STARGRAM_HUB = 'https://stargram.cc'
+let stopSyncMarks = false
+let stopSyncGithbu = false
+let marksCount = 0
+let currentMark = 0
+let githubCount = 0
+let currentGithub = 0
 
 async function sendSavedStatus(res: SwResponse) {
   chrome.tabs.query({ active: true, lastFocusedWindow: true }, (tabs) => {
@@ -79,6 +83,27 @@ chrome.runtime.onMessage.addListener(async (request: ContentRequest, sender, sen
       })
     }
     sendResponse({ message: 'checking' })
+  }
+  else if (action === 'syncBookmarks') {
+    if (request.data) {
+      const pageData = request.data
+      saveToDB(pageData).then((res) => {
+        chrome.runtime.sendMessage({
+          action: 'syncBookmarksResult',
+          data: res
+        })
+      }).catch((err) => {
+        chrome.runtime.sendMessage({
+          action: 'syncBookmarksResult',
+          data: err
+        })
+      })
+      sendResponse({ message: 'handling save to DB' })
+    }
+    else {
+      // console.log('Error: request.data is undefined.')
+      sendResponse({ message: 'Error: request.data is undefined.', error: true })
+    }
   }
   return true
 })
