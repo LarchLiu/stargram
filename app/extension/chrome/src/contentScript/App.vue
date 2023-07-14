@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { fail } from 'assert';
 import { ref } from 'vue'
 import { GITHUB_DOMAIN, GITHUB_URL, starFillSrc, starSrc } from '~/const'
 import type { ListenerSendResponse, PageInfo, SwRequest } from '~/types'
@@ -157,6 +158,23 @@ chrome.runtime.onMessage.addListener(async (request: SwRequest, sender, sendResp
     }
 
     sendResponse({ message: 'ok', error: false })
+  }
+  else if (action === 'syncBookmarksStatus') {
+    const status = request.syncStatus
+    if (status && status.isEnd) {
+      const offset = 100
+      const duration = 3000
+      const successCount = status.successCount
+      const failCount = status.failCount
+      ElNotification({
+        title: 'Stargram',
+        type: 'success',
+        message: `Sync Bookmars Finished 🎉\nSuccess: ${successCount}\nFail: ${failCount}`,
+        offset,
+        duration,
+        appendTo: notification.value,
+      })
+    }
   }
   else {
     sendResponse({ message: 'Unknow action', error: true })

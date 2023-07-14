@@ -11,10 +11,17 @@ import type { ContentRequest, ListenerSendResponse, PageInfo, SwResponse } from 
 const DEFAULT_STARGRAM_HUB = 'https://stargram.cc'
 let stopSyncMarks = false
 let stopSyncGithbu = false
+let syncMarksEnd = false
+let syncGithubEnd = false
 let marksCount = 0
-let currentMark = 0
+let marksIdx = 0
 let githubCount = 0
-let currentGithub = 0
+let githubIdx = 0
+let syncMarksCount = 0
+let bookmarks: string[] = []
+let syncMarksSuccessCount = 0
+let syncMarksFailCount = 0
+const maxConcurrent = 3 // openai rate limit
 
 async function sendSavedStatus(res: SwResponse) {
   chrome.tabs.query({ active: true, lastFocusedWindow: true }, (tabs) => {
@@ -42,6 +49,68 @@ async function sendSavedStatus(res: SwResponse) {
         })
       }
     })
+  }
+}
+
+function sendSyncBookmarksStatus() {
+  chrome.runtime.sendMessage({
+    action: 'syncBookmarksStatus',
+    syncStatus: { index: marksIdx, count: marksCount, state: stopSyncMarks, 
+      isEnd: syncMarksEnd, successCount: syncMarksSuccessCount, failCount: syncMarksFailCount }
+  })
+}
+
+function sendSyncBookmarksStatusToContent() {
+  if (syncMarksSuccessCount + syncMarksFailCount === marksCount) {
+    chrome.tabs.query({ active: true, lastFocusedWindow: true }, (tabs) => {
+      if (tabs.length === 0)
+        return
+      if (tabs[0].id) {
+        chrome.tabs.sendMessage(tabs[0].id, {
+          action: 'syncBookmarksStatus',
+          syncStatus: { index: marksIdx, count: marksCount, state: stopSyncMarks, 
+            isEnd: syncMarksEnd, successCount: syncMarksSuccessCount, failCount: syncMarksFailCount }
+        })
+      }
+    })
+  }
+}
+
+function syncMarksToDB() {
+  if (syncMarksCount % maxConcurrent === 0 || (marksCount - marksIdx < maxConcurrent)) {
+    syncMarksCount = syncMarksCount % maxConcurrent
+    for (let i = 0; i < maxConcurrent; i++) {
+      if (marksIdx < marksCount) {
+        if(!stopSyncMarks) {
+          const pageData = { webUrl: bookmarks[marksIdx], starred: false }
+          saveToDB(pageData)
+          .then((res) => {
+            if (res.error)
+              syncMarksFailCount++
+            else
+              syncMarksSuccessCount++
+          })
+          .catch(() => {
+            syncMarksFailCount++
+          })
+          .finally(() => {
+            syncMarksCount++
+            sendSyncBookmarksStatus()
+            syncMarksToDB()
+          })
+          marksIdx++
+        }
+        else {
+          sendSyncBookmarksStatus()
+        }
+      }
+      else {
+        syncMarksEnd = true
+        sendSyncBookmarksStatus()
+        sendSyncBookmarksStatusToContent()
+        break
+      }
+    }
   }
 }
 
@@ -85,24 +154,31 @@ chrome.runtime.onMessage.addListener(async (request: ContentRequest, sender, sen
     sendResponse({ message: 'checking' })
   }
   else if (action === 'syncBookmarks') {
-    if (request.data) {
-      const pageData = request.data
-      saveToDB(pageData).then((res) => {
-        chrome.runtime.sendMessage({
-          action: 'syncBookmarksResult',
-          data: res
-        })
-      }).catch((err) => {
-        chrome.runtime.sendMessage({
-          action: 'syncBookmarksResult',
-          data: err
-        })
-      })
+    if (request.syncData) {
+      bookmarks = request.syncData
+      marksCount = bookmarks.length
+      marksIdx = 0
+      syncMarksCount = 0
+      syncMarksSuccessCount = 0
+      syncMarksFailCount = 0
+      syncMarksEnd = false
+      stopSyncMarks = false
+      syncMarksToDB()
       sendResponse({ message: 'handling save to DB' })
     }
     else {
       // console.log('Error: request.data is undefined.')
       sendResponse({ message: 'Error: request.data is undefined.', error: true })
+    }
+  }
+  else if (action === 'syncBookmarksStatus') {
+    sendSyncBookmarksStatus()
+  }
+  else if (action === 'syncBookmarksState') {
+    stopSyncMarks = request.syncState ?? false
+    if (!stopSyncMarks) {
+      syncMarksCount = 0
+      syncMarksToDB()
     }
   }
   return true

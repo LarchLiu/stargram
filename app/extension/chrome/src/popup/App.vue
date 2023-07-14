@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref, watch } from 'vue'
+import { onMounted, ref, watch, Ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { iconGithub, iconLanguage, iconSetting, iconSync, iconPlay, iconStop, starSrc, version } from '~/const'
 import type { ContentRequest, ListenerSendResponse, ListenerResponse } from '~/types'
@@ -20,11 +20,14 @@ const saveBtnEnable = ref(true)
 const stopSyncMarks = ref(false)
 const stopSyncGithbu = ref(false)
 const marksCount = ref(0)
-const currentMark = ref(0)
+const marksIdx = ref(0)
 const githubCount = ref(0)
-const currentGithub = ref(0)
-let syncResultCount = 0
-let bookMarks: { title: string; url: string | undefined}[] = []
+const githubIdx = ref(0)
+const syncMarksSuccessCount = ref(0)
+const syncMarksFailCount = ref(0)
+const syncMarksEnd = ref(false)
+const syncGithubEnd = ref(false)
+let bookmarks: string[] = []
 let starTimer: NodeJS.Timeout
 let bubblyTimer: NodeJS.Timeout
 const colorPreset = [
@@ -122,42 +125,39 @@ function onSyncClick() {
 
 function getBookmarks(tree: chrome.bookmarks.BookmarkTreeNode[]) {
   tree.map((item) => {
-      if (item.children) {
-        getBookmarks(item.children)
-      }
-      else {
-        marksCount.value++
-        bookMarks.push({
-          title: item.title,
-          url: item.url,
-        })
-        if (marksCount.value === 1) {
-          setTimeout(() => {
-            currentMark.value = 0
-            syncResultCount = 2
-            const pageInfo = {
-              webUrl: bookMarks[currentMark.value].url
-            }
-            chrome.runtime.sendMessage(
-              {
-                action: 'syncBookmarks',
-                data: pageInfo,
-              },
-            )
-            console.log(item.title, marksCount.value)
-          }, 1000)
-        }
-      }
-    })
+    if (item.children) {
+      getBookmarks(item.children)
+    }
+    else {
+      marksCount.value++
+      bookmarks.push(item.url || '')
+    }
+  })
+}
+
+function sendSyncBookmarksState() {
+  stopSyncMarks.value = !stopSyncMarks.value
+  chrome.runtime.sendMessage(
+    {
+      action: 'syncBookmarksState',
+      syncState: stopSyncMarks.value,
+    },
+  )
 }
 
 function onBookmarksSync() {
   chrome.bookmarks.getTree((bookmarkTreeNodes) => {
     const bookmarkTree = bookmarkTreeNodes[0].children ?? []
     marksCount.value = 0
-    currentMark.value = 0
-    bookMarks = []
+    marksIdx.value = 0
+    bookmarks = []
     getBookmarks(bookmarkTree)
+    chrome.runtime.sendMessage(
+      {
+        action: 'syncBookmarks',
+        syncData: bookmarks,
+      },
+    )
   })
 }
 
@@ -220,46 +220,21 @@ onMounted(() => {
     if (userConfigInput.value)
       userConfig.value = JSON.parse(userConfigInput.value)
   })
+  chrome.runtime.sendMessage({
+    action: 'syncBookmarksStatus',
+  })
   chrome.runtime.onMessage.addListener(async (request: ContentRequest, sender, sendResponse: ListenerSendResponse) => {
     const action = request.action
-    if (action === 'syncBookmarksResult') {
-      let end = false
-      syncResultCount++
+    if (action === 'syncBookmarksStatus') {
+      const status = request.syncStatus
       sendResponse({ message: 'ok' })
-      if (syncResultCount % 3 === 0 || (marksCount.value - (currentMark.value + 1) < 3)) {
-        syncResultCount = 0
-        for (let i = 0; i < 3; i++) {
-          if (currentMark.value < marksCount.value) {
-            if(!stopSyncMarks.value) {
-              currentMark.value++
-              const pageInfo = {
-                webUrl: bookMarks[currentMark.value].url
-              }
-              chrome.runtime.sendMessage(
-                {
-                  action: 'syncBookmarks',
-                  data: pageInfo,
-                },
-              )
-              console.log(bookMarks[currentMark.value].title, marksCount.value)
-            }
-          }
-          else {
-            end = true
-            break
-          }
-        }
-      }
-      if (end) {
-        const offset = 100
-        const duration = 3000
-        ElNotification({
-          title: 'Stargram',
-          type: 'success',
-          message: 'Sync Bookmars successful 👌',
-          offset,
-          duration,
-        })
+      if (status) {
+        marksIdx.value = status.index
+        marksCount.value = status.count
+        stopSyncMarks.value = status.state
+        syncMarksSuccessCount.value = status.successCount
+        syncMarksFailCount.value = status.failCount
+        syncMarksEnd.value = status.isEnd
       }
     }
   })
@@ -376,15 +351,33 @@ onMounted(() => {
       <div my-2 flex justify-between items-center>
         <label class="inline-block h-5">{{ t('settings.syncBookmarks') }}</label>
         <div flex items-cente>
-          <div v-if="currentMark < marksCount">
-            <div cursor-pointer @click="stopSyncMarks = !stopSyncMarks">
-              <img :src="stopSyncMarks ? iconPlay : iconStop" height="18">
+          <div v-if="marksIdx < marksCount" flex items-center>
+            <div cursor-pointer @click="sendSyncBookmarksState()">
+              <img class="hover:bg-#E6E6E6 hover:border hover:rounded-full" :src="stopSyncMarks ? iconPlay : iconStop" height="18">
             </div>
           </div>
-          <div class="sync-ping" ml-2 cursor-pointer @click="onBookmarksSync">
-            <img :src="iconSync" height="18">
+          <div ml-2 cursor-pointer @click="onBookmarksSync">
+            <img class="hover:bg-#E6E6E6 hover:border hover:rounded-full" :src="iconSync" height="18">
           </div>
         </div>
+      </div>
+      <div v-if="marksIdx < marksCount || syncMarksEnd" flex items-center>
+        <el-tooltip
+          effect="dark"
+          :content="`Total: ${marksCount} Success: ${syncMarksSuccessCount} Fail: ${syncMarksFailCount}`"
+          placement="top"
+        >
+          <div w-full>
+            <el-progress
+              :text-inside="true"
+              :stroke-width="16"
+              :percentage="marksIdx/marksCount*100"
+              color="#67c23a"
+            >
+              <span>{{marksIdx}}</span>
+            </el-progress>
+          </div>
+        </el-tooltip>
       </div>
       <div my-2 flex justify-between items-center>
         <div flex items-center>
@@ -392,13 +385,13 @@ onMounted(() => {
           <input v-model="githubToken" text-12px placeholder="Github Token" type="password" name="githubToken">
         </div>
         <div flex items-center>
-          <div v-if="currentGithub < githubCount">
+          <div v-if="githubIdx < githubCount">
             <div cursor-pointer @click="stopSyncGithbu = !stopSyncGithbu">
-              <img :src="stopSyncGithbu ? iconPlay : iconStop" height="18">
+              <img class="hover:bg-#E6E6E6 hover:border hover:rounded-full" :src="stopSyncGithbu ? iconPlay : iconStop" height="18">
             </div>
           </div>
-          <div class="sync-ping" cursor-pointer @click="onGithubSync">
-            <img :src="iconSync" height="18">
+          <div cursor-pointer @click="onGithubSync">
+            <img class="hover:bg-#E6E6E6 hover:border hover:rounded-full" :src="iconSync" height="18">
           </div>
         </div>
       </div>

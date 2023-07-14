@@ -32,11 +32,24 @@ interface ListenerResponse {
 interface SwRequest {
   action: string
   data?: SwResponse
+  syncStatus?: SyncStatus
+}
+
+interface SyncStatus {
+  index: number
+  count: number
+  state: boolean
+  isEnd: boolean
+  successCount: number
+  failCount: number
 }
 
 interface ContentRequest {
   action: string
   data?: PageInfo
+  syncData?: string[]
+  syncState?: boolean
+  syncStatus?: SyncStatus
 }
 
 type ListenerSendResponse = (response: ListenerResponse) => void
