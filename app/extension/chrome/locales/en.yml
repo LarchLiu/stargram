@@ -19,6 +19,9 @@ settings:
   syncSettings: Sync
   syncBookmarks: Bookmarks
   syncGithub: Github
+  githubUser: User
+  githubUserPlaceholder: Default - Token's owner
+  githubError: Please set Github Token
   de: German
   en: English
   es: Spanish

@@ -31,6 +31,8 @@ const syncGithubFailCount = ref(0)
 const syncMarksEnd = ref(false)
 const syncGithubEnd = ref(false)
 const fetchGithubStarredEnd = ref(true)
+const showGithubSetting = ref(false)
+const showGithubError = ref(false)
 let bookmarks: string[] = []
 let starTimer: NodeJS.Timeout
 let bubblyTimer: NodeJS.Timeout
@@ -121,14 +123,19 @@ function onSyncClick() {
   showLanguage.value = false
   showSync.value = !showSync.value
   if (showSync.value) {
-    chrome.storage.sync.get(['githubToken'], (result) => {
+    chrome.storage.sync.get(['githubToken', 'githubUser'], (result) => {
       githubToken.value = result.githubToken || ''
+      githubUser.value = result.githubUser || ''
     })
   }
 }
 
 function saveGithubToken() {
   chrome.storage.sync.set({ githubToken: githubToken.value})
+}
+
+function saveGithubUser() {
+  chrome.storage.sync.set({ githubUser: githubUser.value})
 }
 
 function getBookmarks(tree: chrome.bookmarks.BookmarkTreeNode[]) {
@@ -181,6 +188,7 @@ function onBookmarksSync() {
 
 async function onGithubSync() {
   if (githubToken.value) {
+    showGithubError.value = false
     githubCount.value = 0
     githubIdx.value = 0
     fetchGithubStarredEnd.value = false
@@ -193,6 +201,9 @@ async function onGithubSync() {
         }
       },
     )
+  }
+  else {
+    showGithubError.value = true
   }
 }
 
@@ -400,7 +411,7 @@ onMounted(() => {
         <div flex items-cente>
           <div v-if="marksIdx < marksCount" flex items-center>
             <div cursor-pointer @click="sendSyncBookmarksState()">
-              <img class="hover:bg-#E6E6E6 hover:border hover:rounded-full" :src="stopSyncMarks ? iconPlay : iconStop" height="18">
+              <img class="hover:bg-#E6E6E6 hover:border hover:rounded-full" :src="stopSyncMarks ? iconPlay : iconStop" height="16">
             </div>
           </div>
           <div ml-2 cursor-pointer @click="onBookmarksSync">
@@ -429,11 +440,14 @@ onMounted(() => {
       <div my-2 flex justify-between items-center>
         <div flex items-center>
           <label class="inline-block h-5" pr-2>{{ t('settings.syncGithub') }}</label>
+          <div cursor-pointer @click="showGithubSetting = !showGithubSetting">
+            <img class="hover:bg-#E6E6E6 hover:border hover:rounded-full" :src="iconSetting" height="14">
+          </div>
         </div>
         <div flex items-center>
           <div v-if="fetchGithubStarredEnd && githubIdx < githubCount">
             <div cursor-pointer @click="sendSyncGithubState()">
-              <img class="hover:bg-#E6E6E6 hover:border hover:rounded-full" :src="stopSyncGithub ? iconPlay : iconStop" height="18">
+              <img class="hover:bg-#E6E6E6 hover:border hover:rounded-full" :src="stopSyncGithub ? iconPlay : iconStop" height="16">
             </div>
           </div>
           <div cursor-pointer @click="onGithubSync">
@@ -472,8 +486,18 @@ onMounted(() => {
           </div>
         </el-tooltip>
       </div>
-      <div mt-2>
-        <input v-model="githubToken" text-12px placeholder="Github Token" type="password" name="githubToken" @change="saveGithubToken">
+      <div v-if="showGithubError && !githubToken">
+        <span text-12px text-red>{{ t('settings.githubError') }}</span>
+      </div>
+      <div v-if="showGithubSetting">
+        <div my-2 flex justify-between items-center>
+          <label class="inline-block h-5" pr-2>Token <span text-red>*</span></label>
+          <input v-model="githubToken" text-12px placeholder="Github Token" type="password" name="githubToken" @change="saveGithubToken">
+        </div>
+        <div my-2 flex justify-between items-center>
+          <label class="inline-block h-5" pr-2>{{ t('settings.githubUser') }}</label>
+          <input v-model="githubUser" text-12px :placeholder="t('settings.githubUserPlaceholder')" name="githubUser" @change="saveGithubUser">
+        </div>
       </div>
     </div>
   </div>

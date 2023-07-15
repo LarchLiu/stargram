@@ -19,6 +19,9 @@ settings:
   syncSettings: 同步设置
   syncBookmarks: 书签 
   syncGithub: Github
+  githubUser: 用户
+  githubUserPlaceholder: 默认 - Token 的拥有者
+  githubError: 请设置 Github Token
   de: 德语
   en: 英语
   es: 西班牙语

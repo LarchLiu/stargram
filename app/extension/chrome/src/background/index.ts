@@ -268,7 +268,7 @@ chrome.runtime.onMessage.addListener(async (request: ContentRequest, sender, sen
       
       do {
         if (githubUser)
-          api = `https://api.github.com/users/LarchLiu/starred?per_page=${maxGithubPerPage}&page=${page}`
+          api = `https://api.github.com/users/${githubUser}/starred?per_page=${maxGithubPerPage}&page=${page}`
         else
           api = `https://api.github.com/user/starred?per_page=${maxGithubPerPage}&page=${page}`
         const res = await fetch(api, {
@@ -288,7 +288,7 @@ chrome.runtime.onMessage.addListener(async (request: ContentRequest, sender, sen
       } while(starredCountOfPage === maxGithubPerPage)
       fetchGithubStarredEnd = true
       githubCount = githubStarred.length
-      
+
       sendSyncGithubStatus()
       syncGithubToDB()
       sendResponse({ message: 'handling save to DB' })
