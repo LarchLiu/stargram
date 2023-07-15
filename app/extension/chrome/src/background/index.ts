@@ -10,7 +10,7 @@ import type { ContentRequest, ListenerSendResponse, PageInfo, SwResponse } from 
 
 const DEFAULT_STARGRAM_HUB = 'https://stargram.cc'
 let stopSyncMarks = false
-let stopSyncGithbu = false
+let stopSyncGithub = false
 let syncMarksEnd = false
 let syncGithubEnd = false
 let marksCount = 0
@@ -18,9 +18,13 @@ let marksIdx = 0
 let githubCount = 0
 let githubIdx = 0
 let syncMarksCount = 0
+let syncGithubCount = 0
 let bookmarks: string[] = []
+let githubStarred: string[] = []
 let syncMarksSuccessCount = 0
 let syncMarksFailCount = 0
+let syncGithubSuccessCount = 0
+let syncGithubFailCount = 0
 const maxConcurrent = 3 // openai rate limit
 
 async function sendSavedStatus(res: SwResponse) {
@@ -114,6 +118,68 @@ function syncMarksToDB() {
   }
 }
 
+function sendSyncGithubStatus() {
+  chrome.runtime.sendMessage({
+    action: 'syncGithubStatus',
+    syncStatus: { index: githubIdx, count: githubCount, state: stopSyncGithub, 
+      isEnd: syncGithubEnd, successCount: syncGithubSuccessCount, failCount: syncGithubFailCount }
+  })
+}
+
+function sendSyncGithubStatusToContent() {
+  if (syncGithubSuccessCount + syncGithubFailCount === githubCount) {
+    chrome.tabs.query({ active: true, lastFocusedWindow: true }, (tabs) => {
+      if (tabs.length === 0)
+        return
+      if (tabs[0].id) {
+        chrome.tabs.sendMessage(tabs[0].id, {
+          action: 'syncGithubStatus',
+          syncStatus: { index: githubIdx, count: githubCount, state: stopSyncGithub, 
+            isEnd: syncGithubEnd, successCount: syncGithubSuccessCount, failCount: syncGithubFailCount }
+        })
+      }
+    })
+  }
+}
+
+function syncGithubToDB() {
+  if (syncGithubCount % maxConcurrent === 0 || (githubCount - githubIdx < maxConcurrent)) {
+    syncGithubCount = syncGithubCount % maxConcurrent
+    for (let i = 0; i < maxConcurrent; i++) {
+      if (githubIdx < githubCount) {
+        if(!stopSyncGithub) {
+          const pageData = { webUrl: githubStarred[githubIdx], starred: false }
+          saveToDB(pageData)
+          .then((res) => {
+            if (res.error)
+              syncGithubFailCount++
+            else
+              syncGithubSuccessCount++
+          })
+          .catch(() => {
+            syncGithubFailCount++
+          })
+          .finally(() => {
+            syncGithubCount++
+            sendSyncGithubStatus()
+            syncGithubToDB()
+          })
+          githubIdx++
+        }
+        else {
+          sendSyncGithubStatus()
+        }
+      }
+      else {
+        syncGithubEnd = true
+        sendSyncGithubStatus()
+        sendSyncGithubStatusToContent()
+        break
+      }
+    }
+  }
+}
+
 chrome.runtime.onInstalled.addListener(async () => {
   const result = await chrome.storage.sync.get(['uiLang', 'userConfig'])
   const uiLang = result.uiLang ?? 'en'
@@ -179,6 +245,34 @@ chrome.runtime.onMessage.addListener(async (request: ContentRequest, sender, sen
     if (!stopSyncMarks) {
       syncMarksCount = 0
       syncMarksToDB()
+    }
+  }
+  else if (action === 'syncGithubStarred') {
+    if (request.syncData) {
+      githubStarred = request.syncData
+      githubCount = githubStarred.length
+      githubIdx = 0
+      syncGithubCount = 0
+      syncGithubSuccessCount = 0
+      syncGithubFailCount = 0
+      syncGithubEnd = false
+      stopSyncGithub = false
+      syncGithubToDB()
+      sendResponse({ message: 'handling save to DB' })
+    }
+    else {
+      // console.log('Error: request.data is undefined.')
+      sendResponse({ message: 'Error: request.data is undefined.', error: true })
+    }
+  }
+  else if (action === 'syncGithubStatus') {
+    sendSyncGithubStatus()
+  }
+  else if (action === 'syncGithubState') {
+    stopSyncGithub = request.syncState ?? false
+    if (!stopSyncGithub) {
+      syncGithubCount = 0
+      syncGithubToDB()
     }
   }
   return true

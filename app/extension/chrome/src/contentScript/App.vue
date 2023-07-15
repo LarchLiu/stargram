@@ -176,6 +176,23 @@ chrome.runtime.onMessage.addListener(async (request: SwRequest, sender, sendResp
       })
     }
   }
+  else if (action === 'syncGithubStatus') {
+    const status = request.syncStatus
+    if (status && status.isEnd) {
+      const offset = 100
+      const duration = 3000
+      const successCount = status.successCount
+      const failCount = status.failCount
+      ElNotification({
+        title: 'Stargram',
+        type: 'success',
+        message: `Sync Github Starred Finished 🎉\nSuccess: ${successCount}\nFail: ${failCount}`,
+        offset,
+        duration,
+        appendTo: notification.value,
+      })
+    }
+  }
   else {
     sendResponse({ message: 'Unknow action', error: true })
   }

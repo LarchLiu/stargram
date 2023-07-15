@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref, watch, Ref } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { iconGithub, iconLanguage, iconSetting, iconSync, iconPlay, iconStop, starSrc, version } from '~/const'
 import type { ContentRequest, ListenerSendResponse, ListenerResponse } from '~/types'
@@ -13,21 +13,27 @@ const showSync = ref(false)
 const uiLangSelect = ref('en')
 const userConfigInput = ref('')
 const githubToken = ref('')
+const githubUser = ref('')
 const userConfig = ref()
 const promptsLangSelect = ref('en')
 const saveBtn = ref<HTMLDivElement>()
 const saveBtnEnable = ref(true)
 const stopSyncMarks = ref(false)
-const stopSyncGithbu = ref(false)
+const stopSyncGithub = ref(false)
 const marksCount = ref(0)
 const marksIdx = ref(0)
 const githubCount = ref(0)
 const githubIdx = ref(0)
 const syncMarksSuccessCount = ref(0)
 const syncMarksFailCount = ref(0)
+const syncGithubSuccessCount = ref(0)
+const syncGithubFailCount = ref(0)
 const syncMarksEnd = ref(false)
 const syncGithubEnd = ref(false)
+const fetchStarredEnd = ref(true)
+const maxGithubPerPage = 100
 let bookmarks: string[] = []
+let githubStarred: string[] = []
 let starTimer: NodeJS.Timeout
 let bubblyTimer: NodeJS.Timeout
 const colorPreset = [
@@ -123,6 +129,10 @@ function onSyncClick() {
   }
 }
 
+function saveGithubToken() {
+  chrome.storage.sync.set({ githubToken: githubToken.value})
+}
+
 function getBookmarks(tree: chrome.bookmarks.BookmarkTreeNode[]) {
   tree.map((item) => {
     if (item.children) {
@@ -145,6 +155,16 @@ function sendSyncBookmarksState() {
   )
 }
 
+function sendSyncGithubState() {
+  stopSyncGithub.value = !stopSyncGithub.value
+  chrome.runtime.sendMessage(
+    {
+      action: 'syncGithubState',
+      syncState: stopSyncGithub.value,
+    },
+  )
+}
+
 function onBookmarksSync() {
   chrome.bookmarks.getTree((bookmarkTreeNodes) => {
     const bookmarkTree = bookmarkTreeNodes[0].children ?? []
@@ -161,8 +181,45 @@ function onBookmarksSync() {
   })
 }
 
-function onGithubSync() {
+async function onGithubSync() {
+  if (githubToken.value) {
+    githubCount.value = 0
+    githubIdx.value = 0
+    fetchStarredEnd.value = false
+    githubStarred = []
 
+    let api = ''
+    let page = 1
+    let starredCountOfPage = 0
+    
+    do {
+      if (githubUser.value)
+        api = `https://api.github.com/users/LarchLiu/starred?per_page=${maxGithubPerPage}&page=${page}`
+      else
+        api = `https://api.github.com/user/starred?per_page=${maxGithubPerPage}&page=${page}`
+      const res = await fetch(api, {
+        headers: {
+          Accept: 'application/vnd.github+json',
+          Authorization: `Bearer ${githubToken.value}`,
+          'X-GitHub-Api-Version': '2022-11-28'
+        }
+      })
+      if (res.status === 200) {
+        const starred = await res.json()
+        starredCountOfPage = starred.length
+        githubCount.value += starredCountOfPage
+        githubStarred = githubStarred.concat(starred.map((item: any) => item.html_url))
+      }
+      page++
+    } while(starredCountOfPage === maxGithubPerPage)
+    fetchStarredEnd.value = true
+    chrome.runtime.sendMessage(
+      {
+        action: 'syncGithubStarred',
+        syncData: githubStarred,
+      },
+    )
+  }
 }
 
 function genRandomColor() {
@@ -223,6 +280,9 @@ onMounted(() => {
   chrome.runtime.sendMessage({
     action: 'syncBookmarksStatus',
   })
+  chrome.runtime.sendMessage({
+    action: 'syncGithubStatus',
+  })
   chrome.runtime.onMessage.addListener(async (request: ContentRequest, sender, sendResponse: ListenerSendResponse) => {
     const action = request.action
     if (action === 'syncBookmarksStatus') {
@@ -235,6 +295,18 @@ onMounted(() => {
         syncMarksSuccessCount.value = status.successCount
         syncMarksFailCount.value = status.failCount
         syncMarksEnd.value = status.isEnd
+      }
+    }
+    else if (action === 'syncGithubStatus') {
+      const status = request.syncStatus
+      sendResponse({ message: 'ok' })
+      if (status) {
+        githubIdx.value = status.index
+        githubCount.value = status.count
+        stopSyncGithub.value = status.state
+        syncGithubSuccessCount.value = status.successCount
+        syncGithubFailCount.value = status.failCount
+        syncGithubEnd.value = status.isEnd
       }
     }
   })
@@ -372,7 +444,7 @@ onMounted(() => {
               :text-inside="true"
               :stroke-width="16"
               :percentage="marksIdx/marksCount*100"
-              color="#67c23a"
+              color="black"
             >
               <span>{{marksIdx}}</span>
             </el-progress>
@@ -382,18 +454,51 @@ onMounted(() => {
       <div my-2 flex justify-between items-center>
         <div flex items-center>
           <label class="inline-block h-5" pr-2>{{ t('settings.syncGithub') }}</label>
-          <input v-model="githubToken" text-12px placeholder="Github Token" type="password" name="githubToken">
         </div>
         <div flex items-center>
-          <div v-if="githubIdx < githubCount">
-            <div cursor-pointer @click="stopSyncGithbu = !stopSyncGithbu">
-              <img class="hover:bg-#E6E6E6 hover:border hover:rounded-full" :src="stopSyncGithbu ? iconPlay : iconStop" height="18">
+          <div v-if="fetchStarredEnd && githubIdx < githubCount">
+            <div cursor-pointer @click="sendSyncGithubState()">
+              <img class="hover:bg-#E6E6E6 hover:border hover:rounded-full" :src="stopSyncGithub ? iconPlay : iconStop" height="18">
             </div>
           </div>
           <div cursor-pointer @click="onGithubSync">
             <img class="hover:bg-#E6E6E6 hover:border hover:rounded-full" :src="iconSync" height="18">
           </div>
         </div>
+      </div>
+      <div v-if="!fetchStarredEnd" flex items-center>
+        <div w-full>
+          <el-progress 
+            :percentage="100"
+            :indeterminate="true"
+            color="black"
+            :text-inside="true"
+            :stroke-width="16"
+          >
+            <span></span>
+          </el-progress>
+        </div>
+      </div>
+      <div v-if="(githubIdx < githubCount || syncGithubEnd) && fetchStarredEnd" flex items-center>
+        <el-tooltip
+          effect="dark"
+          :content="`Total: ${githubCount} Success: ${syncGithubSuccessCount} Fail: ${syncGithubFailCount}`"
+          placement="top"
+        >
+          <div w-full>
+            <el-progress
+              :text-inside="true"
+              :stroke-width="16"
+              :percentage="githubIdx/githubCount*100"
+              color="black"
+            >
+              <span>{{githubIdx}}</span>
+            </el-progress>
+          </div>
+        </el-tooltip>
+      </div>
+      <div mt-2>
+        <input v-model="githubToken" text-12px placeholder="Github Token" type="password" name="githubToken" @change="saveGithubToken">
       </div>
     </div>
   </div>
@@ -487,6 +592,9 @@ onMounted(() => {
 .language:hover img {
   animation: ping 0.5s 0.5s;
 }
+.rotate {
+  animation: rotate 0.5s 0s infinite
+}
 .gh-btn-sm {
   padding: 3px 12px;
   font-size: 12px;
@@ -531,6 +639,14 @@ select.min-select {
 .divider {
   border-top: 1px solid #b0b9c4;
   margin-top: 8px;
+}
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 @keyframes twink {
   0% {
