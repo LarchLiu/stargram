@@ -12,6 +12,7 @@ settings:
   stargramHub: Stargram Hub
   browserlessToken: Browserless Token
   saveSettings: 保存
+  clearSettings: 清除
   settingsSaved: 设置已保存
   uiLanguage: 界面语言
   promptsLanguage: 提示词语言

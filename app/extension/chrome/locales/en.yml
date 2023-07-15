@@ -12,6 +12,7 @@ settings:
   stargramHub: Stargram Hub
   browserlessToken: Browserless Token
   saveSettings: Save
+  clearSettings: Clear
   settingsSaved: Settings saved
   uiLanguage: UI
   promptsLanguage: Prompts

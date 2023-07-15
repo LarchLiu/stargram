@@ -94,6 +94,16 @@ function saveSettings() {
   }
 }
 
+function clearSettings() {
+  userConfigInput.value = ''
+  userConfig.value = undefined
+  chrome.storage.sync.set(
+    {
+      userConfig: ''
+    },
+  )
+}
+
 function onSettingsClick() {
   showLanguage.value = false
   showSync.value = false
@@ -342,12 +352,15 @@ onMounted(() => {
           </div>
         </div>
       </div>
-      <div v-else>
+      <div v-else flex flex-col>
         <label for="userConfig">{{ t('settings.userConfig') }}</label>
         <input id="userConfig" v-model="userConfigInput" class="my-2" type="text" name="notionApiKey">
       </div>
       <button class="gh-btn mt-2" type="submit" @click="saveSettings">
         {{ t('settings.saveSettings') }}
+      </button>
+      <button class="gh-btn mt-2 bg-red! text-white!" type="submit" @click="clearSettings">
+        {{ t('settings.clearSettings') }}
       </button>
     </div>
     <div v-if="showLanguage" bg-white p-2 text-14px>
@@ -736,12 +749,12 @@ select.min-select {
 
     &:hover {
       border-color: #292524;
-      box-shadow:0 5px 10px #0000004d;
+      box-shadow:0 2px 3px #0000004d;
     }
 
     &.selected {
       border:1px solid transparent;
-      box-shadow:0 5px 10px #0000004d;
+      box-shadow:0 2px 3px #0000004d;
       background: linear-gradient(90deg, #fff, #fff), linear-gradient(45deg, #54c8fa,#be1cfa, #54c8fa);
       background-origin: border-box;
       background-clip: padding-box,border-box;
