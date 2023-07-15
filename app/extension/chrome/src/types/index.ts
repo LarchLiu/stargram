@@ -42,6 +42,7 @@ interface SyncStatus {
   isEnd: boolean
   successCount: number
   failCount: number
+  fetchEnd: boolean
 }
 
 interface ContentRequest {
@@ -50,6 +51,7 @@ interface ContentRequest {
   syncData?: string[]
   syncState?: boolean
   syncStatus?: SyncStatus
+  fetchGithubData?: { token: string; user?: string }
 }
 
 type ListenerSendResponse = (response: ListenerResponse) => void

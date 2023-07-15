@@ -25,7 +25,9 @@ let syncMarksSuccessCount = 0
 let syncMarksFailCount = 0
 let syncGithubSuccessCount = 0
 let syncGithubFailCount = 0
+let fetchGithubStarredEnd = true
 const maxConcurrent = 3 // openai rate limit
+const maxGithubPerPage = 100
 
 async function sendSavedStatus(res: SwResponse) {
   chrome.tabs.query({ active: true, lastFocusedWindow: true }, (tabs) => {
@@ -121,7 +123,7 @@ function syncMarksToDB() {
 function sendSyncGithubStatus() {
   chrome.runtime.sendMessage({
     action: 'syncGithubStatus',
-    syncStatus: { index: githubIdx, count: githubCount, state: stopSyncGithub, 
+    syncStatus: { index: githubIdx, count: githubCount, state: stopSyncGithub, fetchEnd: fetchGithubStarredEnd,
       isEnd: syncGithubEnd, successCount: syncGithubSuccessCount, failCount: syncGithubFailCount }
   })
 }
@@ -134,7 +136,7 @@ function sendSyncGithubStatusToContent() {
       if (tabs[0].id) {
         chrome.tabs.sendMessage(tabs[0].id, {
           action: 'syncGithubStatus',
-          syncStatus: { index: githubIdx, count: githubCount, state: stopSyncGithub, 
+          syncStatus: { index: githubIdx, count: githubCount, state: stopSyncGithub, fetchEnd: fetchGithubStarredEnd,
             isEnd: syncGithubEnd, successCount: syncGithubSuccessCount, failCount: syncGithubFailCount }
         })
       }
@@ -248,15 +250,46 @@ chrome.runtime.onMessage.addListener(async (request: ContentRequest, sender, sen
     }
   }
   else if (action === 'syncGithubStarred') {
-    if (request.syncData) {
-      githubStarred = request.syncData
-      githubCount = githubStarred.length
+    if (request.fetchGithubData) {
+      const { user: githubUser, token: githubToken } = request.fetchGithubData
+      githubStarred = []
       githubIdx = 0
+      githubCount = 0
       syncGithubCount = 0
       syncGithubSuccessCount = 0
       syncGithubFailCount = 0
       syncGithubEnd = false
       stopSyncGithub = false
+      fetchGithubStarredEnd = false
+
+      let api = ''
+      let page = 1
+      let starredCountOfPage = 0
+      
+      do {
+        if (githubUser)
+          api = `https://api.github.com/users/LarchLiu/starred?per_page=${maxGithubPerPage}&page=${page}`
+        else
+          api = `https://api.github.com/user/starred?per_page=${maxGithubPerPage}&page=${page}`
+        const res = await fetch(api, {
+          headers: {
+            Accept: 'application/vnd.github+json',
+            Authorization: `Bearer ${githubToken}`,
+            'X-GitHub-Api-Version': '2022-11-28'
+          }
+        })
+        if (res.status === 200) {
+          const starred = await res.json()
+          starredCountOfPage = starred.length
+          githubCount += starredCountOfPage
+          githubStarred = githubStarred.concat(starred.map((item: any) => item.html_url))
+        }
+        page++
+      } while(starredCountOfPage === maxGithubPerPage)
+      fetchGithubStarredEnd = true
+      githubCount = githubStarred.length
+      
+      sendSyncGithubStatus()
       syncGithubToDB()
       sendResponse({ message: 'handling save to DB' })
     }

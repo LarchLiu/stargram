@@ -30,10 +30,8 @@ const syncGithubSuccessCount = ref(0)
 const syncGithubFailCount = ref(0)
 const syncMarksEnd = ref(false)
 const syncGithubEnd = ref(false)
-const fetchStarredEnd = ref(true)
-const maxGithubPerPage = 100
+const fetchGithubStarredEnd = ref(true)
 let bookmarks: string[] = []
-let githubStarred: string[] = []
 let starTimer: NodeJS.Timeout
 let bubblyTimer: NodeJS.Timeout
 const colorPreset = [
@@ -185,38 +183,14 @@ async function onGithubSync() {
   if (githubToken.value) {
     githubCount.value = 0
     githubIdx.value = 0
-    fetchStarredEnd.value = false
-    githubStarred = []
-
-    let api = ''
-    let page = 1
-    let starredCountOfPage = 0
-    
-    do {
-      if (githubUser.value)
-        api = `https://api.github.com/users/LarchLiu/starred?per_page=${maxGithubPerPage}&page=${page}`
-      else
-        api = `https://api.github.com/user/starred?per_page=${maxGithubPerPage}&page=${page}`
-      const res = await fetch(api, {
-        headers: {
-          Accept: 'application/vnd.github+json',
-          Authorization: `Bearer ${githubToken.value}`,
-          'X-GitHub-Api-Version': '2022-11-28'
-        }
-      })
-      if (res.status === 200) {
-        const starred = await res.json()
-        starredCountOfPage = starred.length
-        githubCount.value += starredCountOfPage
-        githubStarred = githubStarred.concat(starred.map((item: any) => item.html_url))
-      }
-      page++
-    } while(starredCountOfPage === maxGithubPerPage)
-    fetchStarredEnd.value = true
+    fetchGithubStarredEnd.value = false
     chrome.runtime.sendMessage(
       {
         action: 'syncGithubStarred',
-        syncData: githubStarred,
+        fetchGithubData: {
+          token: githubToken.value,
+          user: githubUser.value,
+        }
       },
     )
   }
@@ -307,6 +281,7 @@ onMounted(() => {
         syncGithubSuccessCount.value = status.successCount
         syncGithubFailCount.value = status.failCount
         syncGithubEnd.value = status.isEnd
+        fetchGithubStarredEnd.value = status.fetchEnd
       }
     }
   })
@@ -456,7 +431,7 @@ onMounted(() => {
           <label class="inline-block h-5" pr-2>{{ t('settings.syncGithub') }}</label>
         </div>
         <div flex items-center>
-          <div v-if="fetchStarredEnd && githubIdx < githubCount">
+          <div v-if="fetchGithubStarredEnd && githubIdx < githubCount">
             <div cursor-pointer @click="sendSyncGithubState()">
               <img class="hover:bg-#E6E6E6 hover:border hover:rounded-full" :src="stopSyncGithub ? iconPlay : iconStop" height="18">
             </div>
@@ -466,7 +441,7 @@ onMounted(() => {
           </div>
         </div>
       </div>
-      <div v-if="!fetchStarredEnd" flex items-center>
+      <div v-if="!fetchGithubStarredEnd" flex items-center>
         <div w-full>
           <el-progress 
             :percentage="100"
@@ -479,7 +454,7 @@ onMounted(() => {
           </el-progress>
         </div>
       </div>
-      <div v-if="(githubIdx < githubCount || syncGithubEnd) && fetchStarredEnd" flex items-center>
+      <div v-if="(githubIdx < githubCount || syncGithubEnd) && fetchGithubStarredEnd" flex items-center>
         <el-tooltip
           effect="dark"
           :content="`Total: ${githubCount} Success: ${syncGithubSuccessCount} Fail: ${syncGithubFailCount}`"
