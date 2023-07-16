@@ -132,7 +132,7 @@
   "scripts": {
     "dev": "vite build --watch",
     "build": "pnpm clean && vite build && tsc --declaration -p tsconfig.types.json --emitDeclarationOnly && node scripts/create-entrypoints.js && node scripts/check-tree-shaking.js",
-    "clean": "rm -rf dist/ && node scripts/create-entrypoints.js clean",
+    "clean": "rimraf dist/ && node scripts/create-entrypoints.js clean",
     "lint": "eslint src",
     "prepublishOnly": "pnpm build",
     "tscheck": "tsc --noEmit",
@@ -159,6 +159,7 @@
     }
   },
   "devDependencies": {
-    "ofetch": "^1.1.1"
+    "ofetch": "^1.1.1",
+    "rimraf": "^5.0.1"
   }
 }
