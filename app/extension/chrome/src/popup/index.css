@@ -43,6 +43,10 @@ input {
   color: #a6abb6;
 }
 
+::-webkit-scrollbar {
+  display: none; /* Chrome Safari */
+}
+
 :root {
   --el-color-primary: rgb(38, 22, 47);
   --el-color-primary-light-3: rgb(98, 93, 100);

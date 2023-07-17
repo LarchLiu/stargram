@@ -310,213 +310,223 @@ onMounted(() => {
 </script>
 
 <template>
-  <div w-240px>
-    <div m-5 flex justify-center>
-      <button
-        ref="saveBtn"
-        :disabled="!saveBtnEnable"
-        class="gh-btn gh-btn-sm inline-flex items-center disabled:cursor-not-allowed"
-        @click="onSaveClick"
-      >
-        <img :src="starSrc" height="18"><span ml-2>Stargram</span>
-      </button>
-    </div>
-    <footer class="mt-2 flex flex-col bg-[#f0f0f0] p-2 text-12px">
-      <div flex items-center justify-between>
-        <div flex items-center>
-          <div class="setting" cursor-pointer @click="onSettingsClick">
-            <img :src="iconSetting" height="18">
-          </div>
-          <div class="language" ml-2 cursor-pointer @click="onLanguageClick">
-            <img :src="iconLanguage" height="18">
-          </div>
-          <div class="sync" ml-2 cursor-pointer @click="onSyncClick">
-            <img :src="iconSync" height="20">
-          </div>
-        </div>
-        <div flex items-center>
-          <div class="github" mx-2 cursor-pointer>
-            <a href="https://github.com/LarchLiu/stargram" target="_blank">
-              <img :src="iconGithub" height="18">
-            </a>
-          </div>
-          <span text-gray>{{ `v${version}` }}</span>
-        </div>
-      </div>
-    </footer>
-    <div v-if="showSettings" flex flex-col bg-white p-2 text-14px>
-      <div v-if="userConfig">
-        <div v-for="(model, key) in userConfig" :key="model.select" class="basicflow customnodeflow">
-          <div v-if="!model.public" class="vue-flow__node-select" mb-2>
-            <SelectConfig :data="model" @update="(k: string, v: any) => userConfig[key].config[k] = v" />
-          </div>
-        </div>
-      </div>
-      <div v-else flex flex-col>
-        <label for="userConfig">{{ t('settings.userConfig') }}</label>
-        <input id="userConfig" v-model="userConfigInput" class="my-2" type="text" name="notionApiKey">
-      </div>
-      <button class="gh-btn mt-2" type="submit" @click="saveSettings">
-        {{ t('settings.saveSettings') }}
-      </button>
-      <button class="gh-btn mt-2 bg-red! text-white!" type="submit" @click="clearSettings">
-        {{ t('settings.clearSettings') }}
-      </button>
-    </div>
-    <div v-if="showLanguage" bg-white p-2 text-14px>
-      <div>{{ t('settings.languageSettings') }}</div>
-      <div class="divider" />
-      <div my-2 flex justify-between>
-        <label class="inline-block h-5">{{ t('settings.uiLanguage') }}</label>
-        <select v-model="uiLangSelect" autocomplete="off" class="min-select" style="max-width: 128px;">
-          <option value="en">
-            {{ t('settings.en') }}
-          </option>
-          <option value="zh-CN">
-            {{ t('settings.zhCN') }}
-          </option>
-        </select>
-      </div>
-      <div mb-2 flex justify-between>
-        <label class="inline-block h-5">{{ t('settings.promptsLanguage') }}</label>
-        <select v-model="promptsLangSelect" autocomplete="off" class="min-select" style="max-width: 128px;">
-          <option value="en">
-            {{ t('settings.en') }}
-          </option>
-          <option value="zh-CN">
-            {{ t('settings.zhCN') }}
-          </option>
-          <option value="de">
-            {{ t('settings.de') }}
-          </option>
-          <option value="es">
-            {{ t('settings.es') }}
-          </option>
-          <option value="fr">
-            {{ t('settings.fr') }}
-          </option>
-          <option value="kr">
-            {{ t('settings.kr') }}
-          </option>
-          <option value="nl">
-            {{ t('settings.nl') }}
-          </option>
-          <option value="it">
-            {{ t('settings.it') }}
-          </option>
-          <option value="ja">
-            {{ t('settings.ja') }}
-          </option>
-          <option value="pt">
-            {{ t('settings.pt') }}
-          </option>
-          <option value="ru">
-            {{ t('settings.ru') }}
-          </option>
-        </select>
-      </div>
-    </div>
-    <div v-if="showSync" bg-white p-2 text-14px>
-      <div>{{ t('settings.syncSettings') }}</div>
-      <div class="divider" />
-      <div my-2 flex justify-between items-center>
-        <label class="inline-block h-5">{{ t('settings.syncBookmarks') }}</label>
-        <div flex items-cente>
-          <div v-if="marksIdx < marksCount" flex items-center>
-            <div cursor-pointer @click="sendSyncBookmarksState()">
-              <img class="hover:bg-#E6E6E6 hover:border hover:rounded-full" :src="stopSyncMarks ? iconPlay : iconStop" height="16">
-            </div>
-          </div>
-          <div ml-2 cursor-pointer @click="onBookmarksSync">
-            <img class="hover:bg-#E6E6E6 hover:border hover:rounded-full" :src="iconSync" height="18">
-          </div>
-        </div>
-      </div>
-      <div v-if="marksIdx < marksCount || syncMarksEnd" flex items-center>
-        <el-tooltip
-          effect="dark"
-          :content="`Total: ${marksCount} Success: ${syncMarksSuccessCount} Fail: ${syncMarksFailCount}`"
-          placement="top"
-        >
-          <div w-full>
-            <el-progress
-              :text-inside="true"
-              :stroke-width="16"
-              :percentage="marksIdx/marksCount*100"
-              color="black"
-            >
-              <span>{{marksIdx}}</span>
-            </el-progress>
-          </div>
-        </el-tooltip>
-      </div>
-      <div my-2 flex justify-between items-center>
-        <div flex items-center>
-          <label class="inline-block h-5" pr-2>{{ t('settings.syncGithub') }}</label>
-          <div cursor-pointer @click="showGithubSetting = !showGithubSetting">
-            <img class="hover:bg-#E6E6E6 hover:border hover:rounded-full" :src="iconSetting" height="14">
-          </div>
-        </div>
-        <div flex items-center>
-          <div v-if="fetchGithubStarredEnd && githubIdx < githubCount">
-            <div cursor-pointer @click="sendSyncGithubState()">
-              <img class="hover:bg-#E6E6E6 hover:border hover:rounded-full" :src="stopSyncGithub ? iconPlay : iconStop" height="16">
-            </div>
-          </div>
-          <div cursor-pointer @click="onGithubSync">
-            <img class="hover:bg-#E6E6E6 hover:border hover:rounded-full" :src="iconSync" height="18">
-          </div>
-        </div>
-      </div>
-      <div v-if="!fetchGithubStarredEnd" flex items-center>
-        <div w-full>
-          <el-progress 
-            :percentage="100"
-            :indeterminate="true"
-            color="black"
-            :text-inside="true"
-            :stroke-width="16"
+  <div class="scrollbar-none">
+    <el-scrollbar max-height="600px">
+      <div w-240px>
+        <div p-5 flex justify-center>
+          <button
+            ref="saveBtn"
+            :disabled="!saveBtnEnable"
+            class="gh-btn gh-btn-sm inline-flex items-center disabled:cursor-not-allowed"
+            @click="onSaveClick"
           >
-            <span></span>
-          </el-progress>
+            <img :src="starSrc" height="18"><span ml-2>Stargram</span>
+          </button>
         </div>
-      </div>
-      <div v-if="(githubIdx < githubCount || syncGithubEnd) && fetchGithubStarredEnd" flex items-center>
-        <el-tooltip
-          effect="dark"
-          :content="`Total: ${githubCount} Success: ${syncGithubSuccessCount} Fail: ${syncGithubFailCount}`"
-          placement="top"
-        >
-          <div w-full>
-            <el-progress
-              :text-inside="true"
-              :stroke-width="16"
-              :percentage="githubIdx/githubCount*100"
-              color="black"
-            >
-              <span>{{githubIdx}}</span>
-            </el-progress>
+        <footer class="mt-2 flex flex-col bg-[#f0f0f0] p-2 text-12px">
+          <div flex items-center justify-between>
+            <div flex items-center>
+              <div class="setting" cursor-pointer @click="onSettingsClick">
+                <img :src="iconSetting" height="18">
+              </div>
+              <div class="language" ml-2 cursor-pointer @click="onLanguageClick">
+                <img :src="iconLanguage" height="18">
+              </div>
+              <div class="sync" ml-2 cursor-pointer @click="onSyncClick">
+                <img :src="iconSync" height="20">
+              </div>
+            </div>
+            <div flex items-center>
+              <div class="github" mx-2 cursor-pointer>
+                <a href="https://github.com/LarchLiu/stargram" target="_blank">
+                  <img :src="iconGithub" height="18">
+                </a>
+              </div>
+              <span text-gray>{{ `v${version}` }}</span>
+            </div>
           </div>
-        </el-tooltip>
-      </div>
-      <div v-if="showGithubError && !githubToken">
-        <span text-12px text-red>{{ t('settings.githubError') }}</span>
-      </div>
-      <div v-if="showGithubSetting">
-        <div my-2 flex justify-between items-center>
-          <label class="inline-block h-5" pr-2>Token <span text-red>*</span></label>
-          <input v-model="githubToken" text-12px placeholder="Github Token" type="password" name="githubToken" @change="saveGithubToken">
+        </footer>
+        <div v-if="showSettings" flex flex-col bg-white p-2 text-14px>
+          <div v-if="userConfig">
+            <div v-for="(model, key) in userConfig" :key="model.select" class="basicflow customnodeflow">
+              <div v-if="!model.public" class="vue-flow__node-select" mb-2>
+                <SelectConfig :data="model" @update="(k: string, v: any) => userConfig[key].config[k] = v" />
+              </div>
+            </div>
+          </div>
+          <div v-else flex flex-col>
+            <label for="userConfig">{{ t('settings.userConfig') }}</label>
+            <input id="userConfig" v-model="userConfigInput" class="my-2" type="text" name="notionApiKey">
+          </div>
+          <button class="gh-btn mt-2" type="submit" @click="saveSettings">
+            {{ t('settings.saveSettings') }}
+          </button>
+          <button class="gh-btn mt-2 bg-red! text-white!" type="submit" @click="clearSettings">
+            {{ t('settings.clearSettings') }}
+          </button>
         </div>
-        <div my-2 flex justify-between items-center>
-          <label class="inline-block h-5" pr-2>{{ t('settings.githubUser') }}</label>
-          <input v-model="githubUser" text-12px :placeholder="t('settings.githubUserPlaceholder')" name="githubUser" @change="saveGithubUser">
+        <div v-if="showLanguage" bg-white p-2 text-14px>
+          <div>{{ t('settings.languageSettings') }}</div>
+          <div class="divider" />
+          <div my-2 flex justify-between>
+            <label class="inline-block h-5">{{ t('settings.uiLanguage') }}</label>
+            <select v-model="uiLangSelect" autocomplete="off" class="min-select" style="max-width: 128px;">
+              <option value="en">
+                {{ t('settings.en') }}
+              </option>
+              <option value="zh-CN">
+                {{ t('settings.zhCN') }}
+              </option>
+            </select>
+          </div>
+          <div mb-2 flex justify-between>
+            <label class="inline-block h-5">{{ t('settings.promptsLanguage') }}</label>
+            <select v-model="promptsLangSelect" autocomplete="off" class="min-select" style="max-width: 128px;">
+              <option value="en">
+                {{ t('settings.en') }}
+              </option>
+              <option value="zh-CN">
+                {{ t('settings.zhCN') }}
+              </option>
+              <option value="de">
+                {{ t('settings.de') }}
+              </option>
+              <option value="es">
+                {{ t('settings.es') }}
+              </option>
+              <option value="fr">
+                {{ t('settings.fr') }}
+              </option>
+              <option value="kr">
+                {{ t('settings.kr') }}
+              </option>
+              <option value="nl">
+                {{ t('settings.nl') }}
+              </option>
+              <option value="it">
+                {{ t('settings.it') }}
+              </option>
+              <option value="ja">
+                {{ t('settings.ja') }}
+              </option>
+              <option value="pt">
+                {{ t('settings.pt') }}
+              </option>
+              <option value="ru">
+                {{ t('settings.ru') }}
+              </option>
+            </select>
+          </div>
+        </div>
+        <div v-if="showSync" bg-white p-2 text-14px>
+          <div>{{ t('settings.syncSettings') }}</div>
+          <div class="divider" />
+          <div my-2 flex justify-between items-center>
+            <label class="inline-block h-5">{{ t('settings.syncBookmarks') }}</label>
+            <div flex items-cente>
+              <div v-if="marksIdx < marksCount" flex items-center>
+                <div cursor-pointer @click="sendSyncBookmarksState()">
+                  <img class="hover:bg-#E6E6E6 hover:border hover:rounded-full" :src="stopSyncMarks ? iconPlay : iconStop" height="16">
+                </div>
+              </div>
+              <div ml-2 cursor-pointer @click="onBookmarksSync">
+                <img class="hover:bg-#E6E6E6 hover:border hover:rounded-full" :src="iconSync" height="18">
+              </div>
+            </div>
+          </div>
+          <div v-if="marksIdx < marksCount || syncMarksEnd" flex items-center>
+            <el-tooltip
+              effect="dark"
+              :content="`Total: ${marksCount} Success: ${syncMarksSuccessCount} Fail: ${syncMarksFailCount}`"
+              placement="top"
+            >
+              <div w-full>
+                <el-progress
+                  :text-inside="true"
+                  :stroke-width="16"
+                  :percentage="marksIdx/marksCount*100"
+                  color="black"
+                >
+                  <span>{{marksIdx}}</span>
+                </el-progress>
+              </div>
+            </el-tooltip>
+          </div>
+          <div my-2 flex justify-between items-center>
+            <div flex items-center>
+              <label class="inline-block h-5" pr-2>{{ t('settings.syncGithub') }}</label>
+              <div cursor-pointer @click="showGithubSetting = !showGithubSetting">
+                <img class="hover:bg-#E6E6E6 hover:border hover:rounded-full" :src="iconSetting" height="14">
+              </div>
+            </div>
+            <div flex items-center>
+              <div v-if="fetchGithubStarredEnd && githubIdx < githubCount">
+                <div cursor-pointer @click="sendSyncGithubState()">
+                  <img class="hover:bg-#E6E6E6 hover:border hover:rounded-full" :src="stopSyncGithub ? iconPlay : iconStop" height="16">
+                </div>
+              </div>
+              <div cursor-pointer @click="onGithubSync">
+                <img class="hover:bg-#E6E6E6 hover:border hover:rounded-full" :src="iconSync" height="18">
+              </div>
+            </div>
+          </div>
+          <div v-if="!fetchGithubStarredEnd" flex items-center>
+            <div w-full>
+              <el-progress 
+                :percentage="100"
+                :indeterminate="true"
+                color="black"
+                :text-inside="true"
+                :stroke-width="16"
+              >
+                <span></span>
+              </el-progress>
+            </div>
+          </div>
+          <div v-if="(githubIdx < githubCount || syncGithubEnd) && fetchGithubStarredEnd" flex items-center>
+            <el-tooltip
+              effect="dark"
+              :content="`Total: ${githubCount} Success: ${syncGithubSuccessCount} Fail: ${syncGithubFailCount}`"
+              placement="top"
+            >
+              <div w-full>
+                <el-progress
+                  :text-inside="true"
+                  :stroke-width="16"
+                  :percentage="githubIdx/githubCount*100"
+                  color="black"
+                >
+                  <span>{{githubIdx}}</span>
+                </el-progress>
+              </div>
+            </el-tooltip>
+          </div>
+          <div v-if="showGithubError && !githubToken">
+            <span text-12px text-red>{{ t('settings.githubError') }}</span>
+          </div>
+          <div v-if="showGithubSetting">
+            <div my-2 flex justify-between items-center>
+              <label class="inline-block h-5" pr-2>Token <span text-red>*</span></label>
+              <input v-model="githubToken" text-12px placeholder="Github Token" type="password" name="githubToken" @change="saveGithubToken">
+            </div>
+            <div my-2 flex justify-between items-center>
+              <label class="inline-block h-5" pr-2>{{ t('settings.githubUser') }}</label>
+              <input v-model="githubUser" text-12px :placeholder="t('settings.githubUserPlaceholder')" name="githubUser" @change="saveGithubUser">
+            </div>
+          </div>
         </div>
       </div>
-    </div>
+    </el-scrollbar>
   </div>
 </template>
 
 <style lang="scss" scoped>
+.scrollbar-none {
+  scrollbar-width: none; /* firefox */
+  -ms-overflow-style: none; /* IE 10+ */
+  overflow-x: hidden;
+  overflow-y: auto;
+}
 .gh-btn {
   position: relative;
   color: var(--color-btn-text);
