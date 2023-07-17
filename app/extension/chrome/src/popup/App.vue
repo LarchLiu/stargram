@@ -232,17 +232,14 @@ function animateButton() {
     clearTimeout(bubblyTimer)
 
   saveBtnEnable.value = false
-  saveBtn.value?.classList.remove('star-animate')
+  saveBtn.value?.classList.remove('star-emit')
   saveBtn.value?.classList.remove('bubbly-animate')
-  saveBtn.value?.classList.add('star-animate')
+  saveBtn.value?.classList.remove('star-wait')
+  saveBtn.value?.classList.remove('star-back')
+  saveBtn.value?.classList.add('star-emit')
 
   starTimer = setTimeout(() => {
-    saveBtn.value?.classList.add('bubbly-animate')
-    bubblyTimer = setTimeout(() => {
-      saveBtnEnable.value = true
-      saveBtn.value?.classList.remove('star-animate')
-      saveBtn.value?.classList.remove('bubbly-animate')
-    }, 900)
+    saveBtn.value?.classList.add('star-wait')
   }, 900)
 }
 
@@ -280,6 +277,28 @@ onMounted(() => {
   })
   chrome.runtime.onMessage.addListener(async (request: ContentRequest, sender, sendResponse: ListenerSendResponse) => {
     const action = request.action
+    if (action === 'savedStatusToPopup') {
+      saveBtnEnable.value = true
+      saveBtn.value?.classList.add('star-back')
+      setTimeout(() => {
+        if (request.data?.error) {
+          saveBtnEnable.value = true
+          saveBtn.value?.classList.remove('star-emit')
+          saveBtn.value?.classList.remove('star-wait')
+          saveBtn.value?.classList.remove('star-back')
+        }
+        else {
+          saveBtn.value?.classList.add('bubbly-animate')
+          bubblyTimer = setTimeout(() => {
+            saveBtnEnable.value = true
+            saveBtn.value?.classList.remove('star-emit')
+            saveBtn.value?.classList.remove('star-wait')
+            saveBtn.value?.classList.remove('star-back')
+            saveBtn.value?.classList.remove('bubbly-animate')
+          }, 800)
+        }
+      }, 800)
+    }
     if (action === 'syncBookmarksStatus') {
       const status = request.syncStatus
       sendResponse({ message: 'ok' })
@@ -590,9 +609,19 @@ onMounted(() => {
   &:enabled:active {
     transform: scale(0.9);
   }
-  &.star-animate {
+  &.star-emit {
     img {
-      animation: star-emit 1.8s;
+      animation: star-emit 1s;
+    }
+  }
+  &.star-wait {
+    img {
+      animation: star-wait 120s;
+    }
+  }
+  &.star-back {
+    img {
+      animation: star-back 0.8s;
     }
   }
   &.bubbly-animate {
@@ -691,20 +720,30 @@ select.min-select {
   0% {
     transform: translate(3px, -3px)
   }
-  10% {
+  20% {
     transform: translate(0px)
   }
-  20% {
+  40% {
     transform: translate(5px, -5px)
   }
-  35% {
+  70% {
     transform: translate(0px)
   }
-  50% {
+  100% {
     transform: translate(100px, -100px)
   }
-  99% {
-    transform: translate(90px, -90px)
+}
+@keyframes star-wait {
+  0% {
+    transform: translate(100px, -100px)
+  }
+  100% {
+    transform: translate(200px, -200px)
+  }
+}
+@keyframes star-back {
+  0% {
+    transform: translate(-90px, 90px)
   }
   100% {
     transform: translate(0px)

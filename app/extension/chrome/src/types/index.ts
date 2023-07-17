@@ -14,6 +14,7 @@ interface PageInfo extends WebLoaderUrls {
   starred: boolean
   tabId?: number
   storageId?: string
+  error?: string
 }
 
 interface SwResponse {

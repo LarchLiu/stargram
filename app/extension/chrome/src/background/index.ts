@@ -50,12 +50,16 @@ async function sendSavedStatus(res: SwResponse) {
         return
       if (tabs[0].id) {
         chrome.tabs.sendMessage(tabs[0].id, {
-          action: 'sendResponseToContent',
+          action: 'savedStatusToContent',
           data: res,
         })
       }
     })
   }
+  chrome.runtime.sendMessage({
+    action: 'savedStatusToPopup',
+    data: res,
+  })
 }
 
 function sendSyncBookmarksStatus() {
