@@ -154,7 +154,7 @@ export const webInfoConfig: BasicConfig<ModelsConfig> = {
   select: 'WebInfo',
   info: {
     WebInfo: {
-      displayName: 'Local Function',
+      displayName: 'Server Function',
       config: {
         browserlessToken: {
           label: 'Browserless Token',

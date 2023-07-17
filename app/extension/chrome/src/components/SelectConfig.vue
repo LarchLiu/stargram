@@ -4,7 +4,7 @@ import { ref, computed } from 'vue'
 interface Props {
   data: {
     select: string
-    config: Record<string, string>
+    config: Record<string, { label: string; require: boolean; value: any }>
   }
 }
 const props = defineProps<Props>()
@@ -33,11 +33,11 @@ function onViewClick() {
     </div>
   </div>
   <div text-12px>
-    <div v-for="(_, k) in model.config" :key="k" flex flex-col >
-      <div mt-2 text-gray>
-        {{ k }}
+    <div v-for="(v, k) in model.config" :key="k" flex flex-col >
+      <div mt-2 mb-1 text-gray>
+        {{ v.label }} <span v-if="v.require" text-red>*</span>
       </div>
-      <input v-model="model.config[k]" :type="inputType" :name="k" @change="emit('update', k, model.config[k])">
+      <input v-model="v.value" :type="inputType" :name="k" @change="emit('update', k, v.value)">
     </div>
   </div>
 </template>

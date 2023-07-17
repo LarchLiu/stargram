@@ -366,16 +366,17 @@ onMounted(() => {
           </div>
         </footer>
         <div v-if="showSettings" flex flex-col bg-white p-2 text-14px>
+          <div>{{ t('settings.userConfig') }}</div>
+          <div class="divider mb-2" />
           <div v-if="userConfig">
             <div v-for="(model, key) in userConfig" :key="model.select" class="basicflow customnodeflow">
               <div v-if="!model.public" class="vue-flow__node-select" mb-2>
-                <SelectConfig :data="model" @update="(k: string, v: any) => userConfig[key].config[k] = v" />
+                <SelectConfig :data="model" @update="(k: string, v: any) => userConfig[key].config[k].value = v" />
               </div>
             </div>
           </div>
           <div v-else flex flex-col>
-            <label for="userConfig">{{ t('settings.userConfig') }}</label>
-            <input id="userConfig" v-model="userConfigInput" class="my-2" type="text" name="notionApiKey">
+            <input id="userConfig" v-model="userConfigInput" placeholder="Copy from website" class="my-2" type="text" name="notionApiKey">
           </div>
           <button class="gh-btn mt-2" type="submit" @click="saveSettings">
             {{ t('settings.saveSettings') }}
@@ -399,7 +400,7 @@ onMounted(() => {
             </select>
           </div>
           <div mb-2 flex justify-between>
-            <label class="inline-block h-5">{{ t('settings.promptsLanguage') }}</label>
+            <label class="inline-block h-5">{{ t('settings.summarizeLanguage') }}</label>
             <select v-model="promptsLangSelect" autocomplete="off" class="min-select" style="max-width: 128px;">
               <option value="en">
                 {{ t('settings.en') }}

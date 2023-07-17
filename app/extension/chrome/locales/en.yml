@@ -15,7 +15,7 @@ settings:
   clearSettings: Clear
   settingsSaved: Settings saved
   uiLanguage: UI
-  promptsLanguage: Prompts
+  summarizeLanguage: Summarization
   languageSettings: Languages
   syncSettings: Sync
   syncBookmarks: Bookmarks

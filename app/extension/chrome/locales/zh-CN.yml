@@ -15,7 +15,7 @@ settings:
   clearSettings: 清除
   settingsSaved: 设置已保存
   uiLanguage: 界面语言
-  promptsLanguage: 提示词语言
+  summarizeLanguage: 总结语言
   languageSettings: 语言设置
   syncSettings: 同步设置
   syncBookmarks: 书签 

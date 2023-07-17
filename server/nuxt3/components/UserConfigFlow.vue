@@ -35,7 +35,7 @@ const outUserConfig = computed(() => {
     const c = userConfig.value![k as ModelName]
     const select = c.select as keyof typeof c.info
     if (c.userConfig) {
-      const _config = getConfigKV(c.info[select].config)
+      const _config = c.info[select].config
       config[k] = { select: c.select, public: c.public, config: _config }
     }
   })
