@@ -72,7 +72,6 @@ async function onSaveClick() {
 
 function saveSettings() {
   if (userConfig.value) {
-    console.log(userConfig.value)
     chrome.storage.sync.set(
       {
         userConfig: JSON.stringify(userConfig.value)

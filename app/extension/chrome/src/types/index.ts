@@ -57,6 +57,12 @@ interface ContentRequest {
 
 type ListenerSendResponse = (response: ListenerResponse) => void
 
+interface IConfig {
+  label: string
+  value: string
+  require: boolean
+}
+
 export type {
   PageData,
   ListenerResponse,
@@ -67,4 +73,5 @@ export type {
   GithubRepoMeta,
   WebLoaderUrls,
   PageInfo,
+  IConfig,
 }

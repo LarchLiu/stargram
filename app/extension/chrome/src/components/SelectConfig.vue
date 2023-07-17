@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+import type { IConfig } from '../types'
 
 interface Props {
   data: {
     select: string
-    config: Record<string, { label: string; require: boolean; value: any }>
+    config: Record<string, IConfig>
   }
 }
 const props = defineProps<Props>()

@@ -6,7 +6,7 @@ import type { EmbeddingsInfo, VectorMetaData, SavedNotion } from '@stargram/core
 import { storageInfo } from '@stargram/core/storage'
 import type { TLLM } from '@stargram/core/llm'
 import { llmInfo } from '@stargram/core/llm'
-import type { ContentRequest, ListenerSendResponse, PageInfo, SwResponse } from '~/types'
+import type { ContentRequest, ListenerSendResponse, PageInfo, SwResponse, IConfig } from '~/types'
 
 const DEFAULT_STARGRAM_HUB = 'https://stargram.cc'
 let stopSyncMarks = false
@@ -28,6 +28,15 @@ let syncGithubFailCount = 0
 let fetchGithubStarredEnd = true
 const maxConcurrent = 3 // openai rate limit
 const maxGithubPerPage = 100
+
+function getConfigKV(config: Record<string, IConfig>) {
+  const _obj: Record<string, any> = {}
+  Object.keys(config).forEach((x) => {
+    _obj[x] = config[x].value
+  })
+
+  return Object.keys(_obj).length ? _obj : null
+}
 
 async function sendSavedStatus(res: SwResponse) {
   chrome.tabs.query({ active: true, lastFocusedWindow: true }, (tabs) => {
@@ -325,15 +334,16 @@ async function saveToDB(pageInfo: PageInfo): Promise<SwResponse> {
     const url = pageInfo.webUrl
     const webInfo = new WebInfoByApi({
       stargramHub,
-      browserlessToken: config.webInfo.config.browserlessToken,
+      browserlessToken: config.webInfo.config?.browserlessToken?.value,
     })
 
     const webCard = new WebCardByApi({ stargramHub })
 
+    const llmConfig = getConfigKV(config.llm.config)
+    const llm = new (llmInfo[config.llm.select as TLLM])(llmConfig)
 
-    const llm = new (llmInfo[config.llm.select as TLLM])(config.llm.config)
-
-    const dataStorage = new (storageInfo.DataStorage[config.dataStorage.select])(config.dataStorage.config)
+    const dataStorageConfig = getConfigKV(config.dataStorage.config)
+    const dataStorage = new (storageInfo.DataStorage[config.dataStorage.select])(dataStorageConfig)
 
     const embeddingsInfo: EmbeddingsInfo = llm.embeddingsInfo()
     const metaData: VectorMetaData = {
@@ -342,7 +352,8 @@ async function saveToDB(pageInfo: PageInfo): Promise<SwResponse> {
       botId: config.app.botId,
       userId: config.app.userId,
     }
-    const vectorStorage = new (storageInfo.VectorStorage[config.vectorStorage.select])({ ...config.vectorStorage.config, embeddingsInfo, metaData })
+    const vectorStorageConfig = getConfigKV(config.vectorStorage.config)
+    const vectorStorage = new (storageInfo.VectorStorage[config.vectorStorage.select])({ ...vectorStorageConfig, embeddingsInfo, metaData })
 
     const chain = new SaveWebInfoChain({
       webInfo,
@@ -427,7 +438,8 @@ async function checkStarredStatus(url: string, tabId: number): Promise<SwRespons
   let storageId = ''
   if (userConfig) {
     const config = JSON.parse(userConfig)
-    const dataStorage = new (storageInfo.DataStorage[config.dataStorage.select])(config.dataStorage.config)
+    const dataStorageConfig = getConfigKV(config.dataStorage.config)
+    const dataStorage = new (storageInfo.DataStorage[config.dataStorage.select])(dataStorageConfig)
     try {
       const res = await dataStorage.query(url)
       if (res) {
