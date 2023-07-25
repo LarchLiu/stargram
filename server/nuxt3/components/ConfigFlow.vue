@@ -96,8 +96,8 @@ function updatePos() {
  * toObject transforms your current graph data to an easily persist-able object
  */
 async function logToObject() {
-  const outConfig = useConfigStore().outConfig
-  await $fetch('/api/config', {
+  const outConfig = configStore.outConfig
+  await $fetch('/api/deploy', {
     method: 'POST',
     body: { outConfig },
   }).then((res) => {
