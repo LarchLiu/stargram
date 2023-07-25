@@ -1,7 +1,7 @@
 {
   "name": "@stargram/web-hub",
   "type": "module",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "Stargram core package",
   "author": "Alex Liu <larch.liu@gmail.com>",
   "license": "MIT",
