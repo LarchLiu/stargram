@@ -2,6 +2,7 @@
 
 import * as fs from 'node:fs'
 import * as path from 'node:path'
+import process from 'node:process'
 
 // This lists all the entrypoints for the library. Each key corresponds to an
 // importable path, eg. `import { AgentExecutor } from "langchain/agents"`.

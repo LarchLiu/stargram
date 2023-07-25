@@ -1,4 +1,5 @@
 import * as fs from 'node:fs'
+import process from 'node:process'
 import { errorMessage } from '@stargram/core/utils'
 import { $fetch } from 'ofetch'
 import type { OutputConfig, ServerConfig } from '../../composables/config'

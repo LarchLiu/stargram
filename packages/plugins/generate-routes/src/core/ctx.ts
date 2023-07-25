@@ -1,5 +1,6 @@
 import { dirname, isAbsolute, parse as parsePath, relative, resolve } from 'node:path'
 import { promises as fs } from 'node:fs'
+import process from 'node:process'
 import { slash, throttle, toArray } from '@antfu/utils'
 import type { Import } from 'unimport'
 import { createUnimport, scanDirExports } from 'unimport'

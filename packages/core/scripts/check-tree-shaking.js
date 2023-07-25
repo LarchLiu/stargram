@@ -1,6 +1,7 @@
 // https://github.com/hwchase17/langchainjs/blob/main/langchain/scripts/check-tree-shaking.js
 /* eslint-disable no-console */
 import fs from 'node:fs/promises'
+import process from 'node:process'
 import { rollup } from 'rollup'
 
 const packageJson = JSON.parse(await fs.readFile('package.json', 'utf-8'))
