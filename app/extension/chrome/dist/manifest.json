@@ -5,6 +5,7 @@
   "description": "Manage all your Starred Pages",
   "permissions": [
     "tabs",
+    "bookmarks",
     "activeTab",
     "storage",
     "scripting"
