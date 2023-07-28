@@ -69,6 +69,9 @@ onMounted(() => {
       Init
     </button>
   </div>
+  <div my-4 flex justify-center>
+    Setup your bot then send command <span font-bold>&nbsp;/start&nbsp;</span> to configure your custom settings.
+  </div>
 </template>
 
 <style lang="scss" scoped>

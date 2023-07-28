@@ -6,6 +6,9 @@ import type { BasicConfig, ModelsConfig, OutUserConfig, ServerConfig } from '~/c
 
 const route = useRoute()
 const toast = useToast()
+const showBot = ref(false)
+const telegramBot = ref<Record<string, any>[]>([])
+const slackBot = ref<Record<string, any>[]>([])
 const { code } = route.query
 const decode = cryption.decode(code as string)
 const { appName, appId, userId } = (decode && decode.includes('appName')) ? JSON.parse(decode) : { appName: '', appId: '', userId: '' }
@@ -71,13 +74,45 @@ async function onChange(config: ServerConfig<OutUserConfig>) {
   else
     toast.add({ title: 'success', color: 'green', timeout: 2000, icon: 'i-carbon-checkmark-outline' })
 }
+
+onMounted(async () => {
+  if (!code) {
+    const data = await $fetch<{ telegram: Record<string, any>[]; slack: Record<string, any>[] }>('/api/botInfo')
+    if (data) {
+      showBot.value = true
+      telegramBot.value = data.telegram
+      slackBot.value = data.slack
+    }
+  }
+})
 </script>
 
 <template>
   <div>
     <UserConfigFlow v-if="appConfig" :config="appConfig" :app-info="{ appName, botId: appId, userId }" @change="onChange" />
-    <div v-else>
-      {{ `${decode === '' ? 'Code error.' : 'App not init.'}` }}
+    <div v-else-if="showBot">
+      <div my-4 flex justify-center>
+        Setup your bot then send command <span font-bold>&nbsp;/start&nbsp;</span> to configure your custom settings.
+      </div>
+      <div flex justify-center gap-4>
+        <div v-for="telegram in telegramBot" :key="telegram.id" class="btn">
+          <a flex items-center target="_blank" :href="`https://t.me/${telegram.username}`">
+            <div uno-logos-telegram mr-2 />
+            {{ telegram.first_name }}
+          </a>
+        </div>
+      </div>
+      <div mt-2 flex justify-center gap-4>
+        <div v-for="slack in slackBot" :key="slack.appId" class="btn">
+          <a flex items-center target="_blank" :href="`https://slack.com/oauth/v2/authorize?client_id=${slack.clientId}&scope=commands,incoming-webhook&user_scope=im:history`">
+            <div uno-logos-slack-icon mr-2 />
+            {{ slack.appId }}
+          </a>
+        </div>
+      </div>
+    </div>
+    <div v-else my-4 flex justify-center>
+      {{ `${decode === '' ? 'Waitting...' : 'App not init.'}` }}
     </div>
   </div>
 </template>

@@ -37,6 +37,7 @@
   "devDependencies": {
     "@antfu/eslint-config": "^0.39.8",
     "@iconify-json/carbon": "^1.1.18",
+    "@iconify-json/logos": "^1.1.33",
     "@iconify-json/twemoji": "^1.1.11",
     "@nuxt/devtools": "^0.7.1",
     "@nuxthq/ui": "^2.6.0",

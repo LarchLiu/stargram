@@ -10,7 +10,7 @@ export default eventHandler(async (event) => {
     const appId = config.app.config.appId as string
     const botConfig = await getBotConfig('slack') as BotConfig
 
-    botConfig[appId] = { config: encode, userList: [] }
+    botConfig[appId] = { config: encode, userList: [], token: config.app.config.clientId }
     if (!botConfig.default)
       botConfig.default = appId
 
