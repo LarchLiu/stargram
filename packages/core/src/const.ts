@@ -17,7 +17,7 @@ The JSON format must be:
   "categories": ["XXX","YYY","ZZZ"]
 }
 `
-export const USER_PROMPTS = `Please summarize in {language}. The Content is {webprompts}:
+export const USER_PROMPTS = `Please summarize in {language}. Remember You only speak JSON. The Content is {webprompts}:
 =====
 {content}
 =====

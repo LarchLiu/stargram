@@ -30,7 +30,7 @@ export default defineNuxtConfig({
       crawlLinks: false,
       routes: [
         '/',
-        '/app-init',
+        '/app-config',
         '/self-host',
       ],
     },

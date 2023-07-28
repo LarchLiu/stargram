@@ -154,7 +154,7 @@ export const webInfoConfig: BasicConfig<ModelsConfig> = {
   select: 'WebInfo',
   info: {
     WebInfo: {
-      displayName: 'Server Function',
+      displayName: 'Local Service',
       config: {
         browserlessToken: {
           label: 'Browserless Token',
@@ -204,7 +204,7 @@ export const webCardConfig: BasicConfig<ModelsConfig> = {
   select: 'WebCard',
   info: {
     WebCard: {
-      displayName: 'Local Function',
+      displayName: 'Local Service',
       config: {
       },
       output: 'Image',
