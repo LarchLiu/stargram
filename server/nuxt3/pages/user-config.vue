@@ -91,7 +91,7 @@ onMounted(async () => {
   <div>
     <UserConfigFlow v-if="appConfig" :config="appConfig" :app-info="{ appName, botId: appId, userId }" @change="onChange" />
     <div v-else-if="showBot">
-      <div my-4 flex justify-center>
+      <div flex justify-center py-4>
         Setup your bot then send command <span font-bold>&nbsp;/start&nbsp;</span> to configure your custom settings.
       </div>
       <div flex justify-center gap-4>
@@ -111,7 +111,7 @@ onMounted(async () => {
         </div>
       </div>
     </div>
-    <div v-else my-4 flex justify-center>
+    <div v-else flex justify-center py-4>
       {{ `${decode === '' ? 'Waitting...' : 'App not init.'}` }}
     </div>
   </div>
