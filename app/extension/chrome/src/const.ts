@@ -1,4 +1,4 @@
-import { version } from '../package.json'
+import { version } from './manifest.json'
 
 const GITHUB_DOMAIN = 'github.com'
 const GITHUB_URL = 'https://github.com'

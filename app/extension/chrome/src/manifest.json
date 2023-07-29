@@ -29,7 +29,6 @@
   "background": {
     "service_worker": "/background/index.js"
   },
-  "options_page": "/settings/index.html",
   "icons": {
     "16": "/assets/icon/icon16.png",
     "32": "/assets/icon/icon32.png",
