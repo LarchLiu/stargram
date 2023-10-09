@@ -54,33 +54,48 @@ export async function summarizeContent(apiKey: string, websiteInfo: WebInfoData,
       webprompts: websiteInfo.meta.prompts || '',
     }
     const userPrompts = getPromptsByTemplate(USER_PROMPTS, kv)
-    const openaiData = await $fetch<any>(`${host}/chat/completions`, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${apiKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: {
-        model: 'gpt-3.5-turbo',
-        messages: [
-          {
-            role: 'system',
-            content: SUMMARIZE_PROMPTS,
-          },
-          {
-            role: 'user',
-            content: userPrompts,
-          },
-        ],
-        max_tokens: 800,
-        temperature: 0.3,
-      },
-    })
+    let returnRes = false
+    const maxRetry = 5
+    let retry = 0
+    while (!returnRes) {
+      const openaiData = await $fetch<any>(`${host}/chat/completions`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${apiKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: {
+          model: 'gpt-3.5-turbo',
+          messages: [
+            {
+              role: 'system',
+              content: SUMMARIZE_PROMPTS,
+            },
+            {
+              role: 'user',
+              content: userPrompts,
+            },
+          ],
+          max_tokens: 800,
+          temperature: 0.3,
+        },
+      })
 
-    const text = openaiData.choices[0].message.content
-    const json = JSON.parse(text)
-    summary = json.summary
-    categories = json.categories
+      const text = openaiData.choices[0].message.content
+      try {
+        const json = JSON.parse(text)
+        summary = json.summary
+        categories = json.categories
+        returnRes = true
+      }
+      catch (error) {
+        retry++
+        if (retry === maxRetry) {
+          returnRes = true
+          throw error
+        }
+      }
+    }
   }
   else {
     summary = content
