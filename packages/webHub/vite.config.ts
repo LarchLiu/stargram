@@ -22,6 +22,9 @@ export default defineConfig({
       external: [
         '@stargram/core',
         '@extractus/article-extractor',
+        'crypto-js',
+        'oauth-1.0a',
+        'query-string',
       ],
       output: {
         // Provide global variables to use in the UMD build
@@ -29,6 +32,9 @@ export default defineConfig({
         globals: {
           '@stargram/core': '@stargram/core',
           '@extractus/article-extractor': '@extractus/article-extractor',
+          'crypto-js': 'crypto-js',
+          'oauth-1.0a': 'oauth-1.0a',
+          'query-string': 'query-string',
         },
       },
     },

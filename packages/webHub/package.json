@@ -40,7 +40,10 @@
   },
   "peerDependencies": {
     "@extractus/article-extractor": "^7.2.17",
-    "@stargram/core": "workspace:*"
+    "@stargram/core": "workspace:*",
+    "crypto-js": "^4.2.0",
+    "oauth-1.0a": "^2.2.6",
+    "query-string": "^8.1.0"
   },
   "peerDependenciesMeta": {
     "@extractus/article-extractor": {
@@ -48,9 +51,19 @@
     },
     "@stargram/core": {
       "optional": false
+    },
+    "crypto-js": {
+      "optional": false
+    },
+    "oauth-1.0a": {
+      "optional": false
+    },
+    "query-string": {
+      "optional": false
     }
   },
   "devDependencies": {
-    "@stargram/generate-routes": "workspace:*"
+    "@stargram/generate-routes": "workspace:*",
+    "@types/crypto-js": "^4.2.1"
   }
 }
