@@ -161,6 +161,16 @@ export const webInfoConfig: BasicConfig<ModelsConfig> = {
           value: '',
           require: false,
         },
+        twitterOauthToken: {
+          label: 'Twitter Oauth Token',
+          value: '',
+          require: false,
+        },
+        twitterOauthTokenSecret: {
+          label: 'Twitter Oauth Token Secret',
+          value: '',
+          require: false,
+        },
       },
       output: 'Website Info',
     },
@@ -174,6 +184,16 @@ export const webInfoConfig: BasicConfig<ModelsConfig> = {
         },
         browserlessToken: {
           label: 'Browserless Token',
+          value: '',
+          require: false,
+        },
+        twitterOauthToken: {
+          label: 'Twitter Oauth Token',
+          value: '',
+          require: false,
+        },
+        twitterOauthTokenSecret: {
+          label: 'Twitter Oauth Token Secret',
           value: '',
           require: false,
         },

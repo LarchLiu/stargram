@@ -6,8 +6,8 @@ import queryString from 'query-string'
 import { baseUrl, consumerKey, consumerSecret, gqlFeatures, gqlMap } from './constants'
 
 let tokenIndex = 0
-const oauthTokens = import.meta.env.VITE_TWITTER_OAUTH_TOKEN?.split(',')
-const oauthTokenSecrets = import.meta.env.VITE_TWITTER_OAUTH_TOKEN_SECRET?.split(',')
+let oauthTokens: string[] = []
+let oauthTokenSecrets: string[] = []
 
 async function twitterGot(url: string, params: any) {
   if (!oauthTokens?.length || !oauthTokenSecrets?.length || oauthTokens.length !== oauthTokenSecrets.length)
@@ -145,8 +145,10 @@ function gatherLegacyFromData(entries: any, filter = 'tweet-') {
   return tweets
 }
 
-export async function getTweetByStatus(status: string) {
+export async function getTweetByStatus(status: string, tokens: string, tokenSecrets: string) {
   try {
+    oauthTokens = tokens.split(',')
+    oauthTokenSecrets = tokenSecrets.split(',')
     const tweets = await tweetDetail(status)
     return gatherLegacyFromData(tweets, 'none')
   }

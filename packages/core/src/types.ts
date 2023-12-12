@@ -82,6 +82,8 @@ export type PromptsLanguage = 'de' | 'en' | 'es' | 'fr' | 'kr' | 'ja' | 'it' | '
 export interface WebLoaderParams {
   urls: WebLoaderUrls
   browserlessToken?: string
+  twitterOauthToken?: string
+  twitterOauthTokenSecret?: string
   headers?: Record<string, string>
 }
 

@@ -3,9 +3,9 @@ import { replaceHtmlReservedCharacters, strNotEqualWith } from '@stargram/core/u
 import { getTweetByStatus } from '../twitterApi'
 
 function tweetFilter(urls: WebLoaderUrls): WebLoaderUrls | undefined {
-  const regexPath = /twitter.com\/([^\/]*\/status\/[^\?]*)/g
+  const regexPath = /(twitter|x).com\/([^\/]*\/status\/[^\?]*)/g
   const pathMatch = regexPath.exec(urls.webUrl)
-  const webPath = pathMatch ? pathMatch[1] : ''
+  const webPath = pathMatch ? pathMatch[2] : ''
   const id = webPath.split('/')[0]
 
   if (strNotEqualWith(id, ['home', 'explore', 'notifications', 'messages', 'search']))
@@ -20,6 +20,9 @@ async function getTweetInfo(params: WebLoaderParams): Promise<WebInfoData> {
   const url = params.urls.webUrl
   const meta: TwitterTweetMeta = {}
   const path = params.urls.webPath
+  const oauthTokens = params.twitterOauthToken || ''
+  const oauthTokenSecrets = params.twitterOauthTokenSecret || ''
+
   if (path) {
     const status = path.split('/')[2]
     if (!status)
@@ -27,7 +30,7 @@ async function getTweetInfo(params: WebLoaderParams): Promise<WebInfoData> {
 
     meta.prompts = 'The tweet and retweet info'
     // fetch tweets info
-    const resJson = await getTweetByStatus(status)
+    const resJson = await getTweetByStatus(status, oauthTokens, oauthTokenSecrets)
     const tweets = resJson as any[]
     tweets.forEach((t) => {
       let fullText = t.full_text

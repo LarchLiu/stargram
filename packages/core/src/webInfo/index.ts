@@ -3,16 +3,26 @@ import type { Routes, WebInfoData, WebLoaderUrls } from '../types'
 import { getDomain } from '../utils'
 
 export class WebInfoByApi {
-  constructor(fields: { stargramHub: string; browserlessToken: string; headers?: Record<string, string> }) {
+  constructor(fields: {
+    stargramHub: string
+    browserlessToken: string
+    headers?: Record<string, string>
+    twitterOauthToken?: string
+    twitterOauthTokenSecret?: string
+  }) {
     this.headers = fields.headers
     this.stargramHub = fields.stargramHub || ''
     this.browserlessToken = fields.browserlessToken
+    this.twitterOauthToken = fields.twitterOauthToken || ''
+    this.twitterOauthTokenSecret = fields.twitterOauthTokenSecret || ''
   }
 
   private apiUrl = '/api/webinfo'
   private stargramHub = ''
   private browserlessToken: string
   private headers?: Record<string, string>
+  private twitterOauthToken: string
+  private twitterOauthTokenSecret: string
 
   async call(urls: WebLoaderUrls) {
     if (!this.stargramHub)
@@ -25,6 +35,8 @@ export class WebInfoByApi {
         body: {
           webUrl: urls.webUrl,
           browserlessToken: this.browserlessToken,
+          twitterOauthToken: this.twitterOauthToken,
+          twitterOauthTokenSecret: this.twitterOauthTokenSecret,
         },
       })
     return info
@@ -36,18 +48,31 @@ export class WebInfoByApi {
 }
 
 export class WebInfo {
-  constructor(fields: { routes: Routes; browserlessToken: string; headers?: Record<string, string> }) {
+  constructor(fields: {
+    routes: Routes
+    browserlessToken: string
+    headers?: Record<string, string>
+    twitterOauthToken?: string
+    twitterOauthTokenSecret?: string
+  }) {
     this.headers = fields.headers
     this.routes = fields.routes
     this.browserlessToken = fields.browserlessToken
+    this.twitterOauthToken = fields.twitterOauthToken || ''
+    this.twitterOauthTokenSecret = fields.twitterOauthTokenSecret || ''
   }
 
   private routes: Routes
   private headers?: Record<string, string>
   private browserlessToken: string
+  private twitterOauthToken: string
+  private twitterOauthTokenSecret: string
 
   async call(urls: WebLoaderUrls) {
-    const domain = getDomain(urls.webUrl)
+    let domain = getDomain(urls.webUrl)
+
+    if (domain === 'x.com')
+      domain = 'twitter.com'
 
     if (this.routes[domain]) {
       const router = this.routes[domain]
@@ -56,7 +81,13 @@ export class WebInfo {
           const pathInfo = router.paths[i]
           const loaderUrls = pathInfo.filter(urls)
           if (loaderUrls) {
-            const info = await pathInfo.loader({ urls: loaderUrls, browserlessToken: this.browserlessToken, headers: this.headers })
+            const info = await pathInfo.loader({
+              urls: loaderUrls,
+              browserlessToken: this.browserlessToken,
+              headers: this.headers,
+              twitterOauthToken: this.twitterOauthToken,
+              twitterOauthTokenSecret: this.twitterOauthTokenSecret,
+            })
             info.meta.domain = domain
             info.meta.siteName = router.name
 
