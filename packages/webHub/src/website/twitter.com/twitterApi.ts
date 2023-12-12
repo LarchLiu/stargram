@@ -10,8 +10,8 @@ const oauthTokens = import.meta.env.VITE_TWITTER_OAUTH_TOKEN?.split(',')
 const oauthTokenSecrets = import.meta.env.VITE_TWITTER_OAUTH_TOKEN_SECRET?.split(',')
 
 async function twitterGot(url: string, params: any) {
-  // if (!config.twitter.oauthTokens?.length || !config.twitter.oauthTokenSecrets?.length || config.twitter.oauthTokens.length !== config.twitter.oauthTokenSecrets.length)
-  //   throw new Error('Invalid twitter oauth tokens')
+  if (!oauthTokens?.length || !oauthTokenSecrets?.length || oauthTokens.length !== oauthTokenSecrets.length)
+    throw new Error('Invalid twitter oauth tokens')
 
   const oauth = new OAuth({
     consumer: {
