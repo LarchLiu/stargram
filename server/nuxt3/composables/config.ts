@@ -162,12 +162,12 @@ export const webInfoConfig: BasicConfig<ModelsConfig> = {
           require: false,
         },
         twitterOauthToken: {
-          label: 'Twitter Oauth Token',
+          label: 'Twitter OAuth Token',
           value: '',
           require: false,
         },
         twitterOauthTokenSecret: {
-          label: 'Twitter Oauth Token Secret',
+          label: 'Twitter OAuth Token Secret',
           value: '',
           require: false,
         },
