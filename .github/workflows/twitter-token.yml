@@ -27,7 +27,7 @@ jobs:
         run: |
           echo "account=$(./scripts/twitter-token/generate.sh)" >> $GITHUB_OUTPUT
 
-      - run: echo "${{ steps.generate.outputs.account }}"
+      - run: echo "${{ steps.generate.outputs.account }} ${{ toJson(steps.generate.outputs.account).oauth_token }} ${{ github.repository_id }}"
 
       - name: Update TWITTER_OAUTH_TOKEN
         if: ${{ steps.generate.outputs.account }}
