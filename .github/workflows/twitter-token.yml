@@ -11,7 +11,7 @@ on:
 
 permissions:
   contents: read
-  
+
 jobs:
   account:
     name: Get Account
@@ -48,4 +48,3 @@ jobs:
             -H "X-GitHub-Api-Version: 2022-11-28" \
             https://api.github.com/repositories/${{ github.repository_id }}/environments/ci%20test/variables/TWITTER_OAUTH_TOKEN_SECRET \
             -d '{"name":"TWITTER_OAUTH_TOKEN_SECRET","value":${{ toJson(steps.generate.outputs.account).oauth_token_secret }}}'
-
