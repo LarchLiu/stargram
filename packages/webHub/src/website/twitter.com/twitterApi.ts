@@ -149,6 +149,8 @@ export async function getTweetByStatus(status: string, tokens: string, tokenSecr
   try {
     oauthTokens = tokens.split(',')
     oauthTokenSecrets = tokenSecrets.split(',')
+    if (tokenIndex >= oauthTokens.length)
+      tokenIndex = 0
     const tweets = await tweetDetail(status)
     return gatherLegacyFromData(tweets, 'none')
   }
