@@ -25,7 +25,7 @@ jobs:
       - name: Run sh and generate account
         id: generate
         run: |
-          echo "account=$(chmod +x ./scripts/twitter-token/generate.sh)" >> $GITHUB_OUTPUT
+          echo "account=$(./scripts/twitter-token/generate.sh)" >> $GITHUB_OUTPUT
 
       - run: echo "${{ steps.generate.outputs.account }}"
 
