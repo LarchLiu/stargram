@@ -38,7 +38,7 @@ jobs:
             -H "Authorization: Bearer ${{ secrets.MY_GITHUB_TOKEN }}" \
             -H "X-GitHub-Api-Version: 2022-11-28" \
             https://api.github.com/repositories/${{ github.repository_id }}/environments/ci%20test/variables/TWITTER_OAUTH_TOKEN \
-            -d '{"name":"TWITTER_OAUTH_TOKEN","value":${{ fromJSON(steps.generate.outputs.account).oauth_token }}}'
+            -d '{"name":"TWITTER_OAUTH_TOKEN","value":"${{ fromJSON(steps.generate.outputs.account).oauth_token }}"}'
 
       - name: Update TWITTER_OAUTH_TOKEN_SECRET
         if: ${{ steps.generate.outputs.account }}
@@ -49,4 +49,4 @@ jobs:
             -H "Authorization: Bearer ${{ secrets.MY_GITHUB_TOKEN }}" \
             -H "X-GitHub-Api-Version: 2022-11-28" \
             https://api.github.com/repositories/${{ github.repository_id }}/environments/ci%20test/variables/TWITTER_OAUTH_TOKEN_SECRET \
-            -d '{"name":"TWITTER_OAUTH_TOKEN_SECRET","value":${{ fromJSON(steps.generate.outputs.account).oauth_token_secret }}}'
+            -d '{"name":"TWITTER_OAUTH_TOKEN_SECRET","value":"${{ fromJSON(steps.generate.outputs.account).oauth_token_secret }}"}'
