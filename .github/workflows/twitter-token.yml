@@ -27,7 +27,7 @@ jobs:
         run: |
           echo "account=$(chmod +x ./scripts/twitter-token/generate.sh)" >> $GITHUB_OUTPUT
 
-      - name: Update variables
+      - name: Update TWITTER_OAUTH_TOKEN
         if: ${{ steps.generate.outputs.account }}
         run: |
           curl -L \
@@ -38,6 +38,8 @@ jobs:
             https://api.github.com/repositories/${{ github.repository_id }}/environments/ci%20test/variables/TWITTER_OAUTH_TOKEN \
             -d '{"name":"TWITTER_OAUTH_TOKEN","value":${{ toJson(steps.generate.outputs.account).oauth_token }}}'
 
+      - name: Update TWITTER_OAUTH_TOKEN_SECRET
+        if: ${{ steps.generate.outputs.account }}
         run: |
           curl -L \
             -X PATCH \
