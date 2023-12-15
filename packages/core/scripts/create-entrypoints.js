@@ -16,7 +16,6 @@ export const entrypoints = {
   'llm': 'llm/index',
   'llm/openai': 'llm/openai/index',
   'storage': 'storage/index',
-  'storage/chroma': 'storage/chroma/index',
   'storage/notion': 'storage/notion/index',
   'storage/supabase': 'storage/supabase/index',
   'utils': 'utils/index',

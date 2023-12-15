@@ -29,7 +29,7 @@
     "@vue-flow/controls": "^1.1.0",
     "@vue-flow/core": "^1.27.1",
     "@vue-flow/minimap": "^1.2.0",
-    "chromadb": "^1.7.1",
+    "chromadb": "^1.5.5",
     "crypto-js": "^4.2.0",
     "langchain": "^0.0.207",
     "oauth-1.0a": "^2.2.6",

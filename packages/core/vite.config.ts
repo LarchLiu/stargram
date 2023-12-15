@@ -1,6 +1,5 @@
 import { resolve } from 'node:path'
 import { defineConfig } from 'vite'
-import vue from '@vitejs/plugin-vue'
 
 export const entrypoints = {
   'chain': 'chain/index',
@@ -9,7 +8,6 @@ export const entrypoints = {
   'llm': 'llm/index',
   'llm/openai': 'llm/openai/index',
   'storage': 'storage/index',
-  'storage/chroma': 'storage/chroma/index',
   'storage/notion': 'storage/notion/index',
   'storage/supabase': 'storage/supabase/index',
   'utils': 'utils/index',
@@ -41,7 +39,6 @@ export default defineConfig({
       // make sure to externalize deps that shouldn't be bundled
       // into your library
       external: [
-        '@google/generative-ai',
         '@supabase/supabase-js',
         /langchain\/.*/,
         'chromadb',
@@ -51,7 +48,6 @@ export default defineConfig({
         // Provide global variables to use in the UMD build
         // for externalized deps
         globals: {
-          '@google/generative-ai': '@google/generative-ai',
           '@supabase/supabase-js': '@supabase/supabase-js',
           'chromadb': 'chromadb',
           'ofetch': 'ofetch',
@@ -59,7 +55,4 @@ export default defineConfig({
       },
     },
   },
-  plugins: [
-    vue(),
-  ],
 })
