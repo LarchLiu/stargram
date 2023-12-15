@@ -39,7 +39,7 @@
     "test": "vitest"
   },
   "peerDependencies": {
-    "@extractus/article-extractor": "^7.2.17",
+    "@extractus/article-extractor": "^8.0.4",
     "@stargram/core": "workspace:*",
     "crypto-js": "^4.2.0",
     "oauth-1.0a": "^2.2.6",

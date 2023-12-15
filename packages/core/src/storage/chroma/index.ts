@@ -39,9 +39,6 @@ export class ChromaVectorStorage extends VectorStorage<ChromaVectorConfig> {
       {
         collectionName: this.config.embeddingsInfo.indexName,
         url: this.config.url,
-        // TODO: remove this eslint rule after langchainjs add filter options
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-expect-error
         filter: {
           appName: this.config.metaData.appName,
           botId: this.config.metaData.botId,

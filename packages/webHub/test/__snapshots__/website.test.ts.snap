@@ -1,6 +1,6 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`handle error > github repo fetch error 1`] = `[FetchError:  (404 Not Found (https://github.com/LarchLiu/xxx))]`;
+exports[`handle error > github repo fetch error 1`] = `[FetchError: [GET] "https://github.com/LarchLiu/xxx": 404 Not Found]`;
 
 exports[`handle error > github repo path error 1`] = `[Error: Github error: Not supported website.]`;
 

@@ -1,4 +1,4 @@
-import type { BaseRetriever } from 'langchain/schema'
+import type { BaseRetriever } from 'langchain/schema/retriever'
 import type { EmbeddingsInfo, SummarizeData, VectorMetaData, WebInfoData } from '../types'
 
 export type TStorage = 'DataStorage' | 'ImageStorage' | 'VectorStorage'
