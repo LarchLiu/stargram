@@ -31,8 +31,8 @@ export class Openai extends CLLM<OpenaiConfig> {
     return {
       llmModel: model,
       embeddings,
-      indexName: 'openai_documents',
-      queryName: 'openai_match_documents',
+      indexName: 'stargram_documents',
+      queryName: 'stargram_match_documents',
     }
   }
 }
