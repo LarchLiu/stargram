@@ -123,6 +123,9 @@ importers:
 
   packages/core:
     dependencies:
+      '@google/generative-ai':
+        specifier: ^0.1.1
+        version: 0.1.1
       '@supabase/supabase-js':
         specifier: ^2.39.0
         version: 2.39.0
@@ -2171,6 +2174,11 @@ packages:
     resolution: {integrity: sha512-DyqylONj1ZaBnzj+uBnVfzdjjCkFCL2aA9ESHLyUOGSqb03RpbLMImP1ekIQXYs4KLk9jAjJfZAU8hXfWSahEg==}
     dependencies:
       '@floating-ui/core': 1.2.6
+    dev: false
+
+  /@google/generative-ai@0.1.1:
+    resolution: {integrity: sha512-cbzKa8mT9YkTrT4XUuENIuvlqiJjwDgcD2Ks4L99Az9dWLgdXn8xnETEAZLOpqzoGx+1PuATZqlUnVRAeLbMgA==}
+    engines: {node: '>=18.0.0'}
     dev: false
 
   /@grpc/grpc-js@1.8.17:

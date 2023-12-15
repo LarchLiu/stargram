@@ -41,6 +41,7 @@ export default defineConfig({
       // make sure to externalize deps that shouldn't be bundled
       // into your library
       external: [
+        '@google/generative-ai',
         '@supabase/supabase-js',
         /langchain\/.*/,
         'chromadb',
@@ -50,6 +51,7 @@ export default defineConfig({
         // Provide global variables to use in the UMD build
         // for externalized deps
         globals: {
+          '@google/generative-ai': '@google/generative-ai',
           '@supabase/supabase-js': '@supabase/supabase-js',
           'chromadb': 'chromadb',
           'ofetch': 'ofetch',
