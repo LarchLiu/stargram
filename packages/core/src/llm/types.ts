@@ -18,12 +18,17 @@ export abstract class CLLM<T> implements ILLM {
   abstract embeddingsInfo(): EmbeddingsInfo
 }
 
-export type TLLM = 'Openai'
+export type TLLM = 'Openai' | 'Googleai'
 
 export interface OpenaiConfig {
   apiKey: string
   apiHost?: string
   lang?: PromptsLanguage
+}
+
+export interface GoogleaiConfig {
+  apiKey: string
+  lang: PromptsLanguage
 }
 
 export type LlmInfo = {

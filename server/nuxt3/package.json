@@ -21,6 +21,8 @@
   },
   "dependencies": {
     "@extractus/article-extractor": "^8.0.4",
+    "@google/generative-ai": "^0.1.2",
+    "@langchain/google-genai": "^0.0.3",
     "@stargram/core": "workspace:*",
     "@stargram/web-hub": "workspace:*",
     "@supabase/supabase-js": "^2.39.0",
@@ -31,7 +33,7 @@
     "@vue-flow/minimap": "^1.2.0",
     "chromadb": "^1.5.5",
     "crypto-js": "^4.2.0",
-    "langchain": "^0.0.207",
+    "langchain": "^0.0.208",
     "oauth-1.0a": "^2.2.6",
     "query-string": "^8.1.0",
     "satori": "^0.10.11",

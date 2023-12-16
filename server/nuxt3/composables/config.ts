@@ -422,6 +422,22 @@ export const llmConfig: BasicConfig<ModelsConfig> = {
       },
       output: 'Summary',
     },
+    Googleai: {
+      displayName: 'Google AI',
+      config: {
+        apiKey: {
+          label: 'API Key',
+          value: '',
+          require: true,
+        },
+        lang: {
+          label: 'Summary Language',
+          value: 'en',
+          require: false,
+        },
+      },
+      output: 'Summary',
+    },
   },
 }
 export const kvStorageConfig: BasicConfig<ModelsConfig> = {

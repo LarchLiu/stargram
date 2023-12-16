@@ -13,6 +13,9 @@ llm.d.ts
 llm/openai.cjs
 llm/openai.js
 llm/openai.d.ts
+llm/googleai.cjs
+llm/googleai.js
+llm/googleai.d.ts
 storage.cjs
 storage.js
 storage.d.ts

@@ -1,0 +1,25 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`googleai > summarize in en 1`] = `
+{
+  "categories": [
+    "Vue.js",
+    "Vite.js",
+    "Low-code",
+    "Design",
+    "Open source",
+  ],
+  "summary": "Poto is an open source, low-code platform for designers powered by Vue.js and Vite.js. It features templates for tutorials, the ability to record and replay the process of creating templates, reusable custom blocks, export to image, custom plugins, and the ability to use data from REST API or JavaScript snippet. It also has built-in themes.",
+}
+`;
+
+exports[`googleai > summarize in zh-CN 1`] = `
+{
+  "categories": [
+    "Vue.js",
+    "Vite.js",
+    "设计工具",
+  ],
+  "summary": "张三月一日，Alex Liu 在 twitter 上出品了一个新项目 Poto，这是一个开源码的低编程平台。这个平台用到了多种开源工具，包含 Vue.js，Vite.js，VueUse，Pinia，Turborepo，Vercel 等。",
+}
+`;

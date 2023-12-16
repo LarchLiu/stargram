@@ -15,6 +15,7 @@ export const entrypoints = {
   'chain/qa': 'chain/qa',
   'llm': 'llm/index',
   'llm/openai': 'llm/openai/index',
+  'llm/googleai': 'llm/googleai/index',
   'storage': 'storage/index',
   'storage/notion': 'storage/notion/index',
   'storage/supabase': 'storage/supabase/index',

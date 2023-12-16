@@ -31,7 +31,7 @@ const initialElements = [
   { id: 'card', type: 'select', data: configStore.config.webCard, position: { x: 350, y: 50 }, class: 'light', parentNode: 'server-flow', expandParent: true },
   { id: 'img', type: 'select', data: configStore.config.imgStorage, position: { x: 650, y: 50 }, class: 'light', parentNode: 'server-flow', expandParent: true },
   { id: 'data', type: 'select', data: configStore.config.dataStorage, position: { x: 950, y: 300 }, class: 'light', parentNode: 'server-flow', expandParent: true },
-  { id: 'vector', type: 'select', data: configStore.config.vectorStorage, position: { x: 60, y: 360 }, class: 'light', parentNode: 'server-flow', expandParent: true },
+  { id: 'vector', type: 'select', data: configStore.config.vectorStorage, position: { x: 60, y: 320 }, class: 'light', parentNode: 'server-flow', expandParent: true },
 
   { id: 'config-kv', source: 'config', target: 'kv' },
   { id: 'kv-server', source: 'kv', target: 'server' },

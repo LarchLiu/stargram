@@ -7,6 +7,7 @@ export const entrypoints = {
   'chain/qa': 'chain/qa',
   'llm': 'llm/index',
   'llm/openai': 'llm/openai/index',
+  'llm/googleai': 'llm/googleai/index',
   'storage': 'storage/index',
   'storage/notion': 'storage/notion/index',
   'storage/supabase': 'storage/supabase/index',
@@ -39,6 +40,8 @@ export default defineConfig({
       // make sure to externalize deps that shouldn't be bundled
       // into your library
       external: [
+        '@google/generative-ai',
+        '@langchain/google-genai',
         '@supabase/supabase-js',
         /langchain\/.*/,
         'chromadb',
@@ -48,6 +51,8 @@ export default defineConfig({
         // Provide global variables to use in the UMD build
         // for externalized deps
         globals: {
+          '@google/generative-ai': '@google/generative-ai',
+          '@langchain/google-genai': '@langchain/google-genai',
           '@supabase/supabase-js': '@supabase/supabase-js',
           'chromadb': 'chromadb',
           'ofetch': 'ofetch',
