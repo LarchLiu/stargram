@@ -52,6 +52,7 @@ jobs:
       - run: pnpm test
         env:
           VITE_OPENAI_API_KEY: ${{secrets.VITE_OPENAI_API_KEY}}
+          VITE_GOOGLE_API_KEY: ${{secrets.VITE_GOOGLE_API_KEY}}
           VITE_NOTION_API_KEY: ${{secrets.VITE_NOTION_API_KEY}}
           VITE_NOTION_DATABASE_ID: ${{secrets.VITE_NOTION_DATABASE_ID}}
           VITE_BROWSERLESS_TOKEN: ${{secrets.VITE_BROWSERLESS_TOKEN}}
