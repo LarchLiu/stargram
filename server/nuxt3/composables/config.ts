@@ -518,6 +518,17 @@ export const kvStorageConfig: BasicConfig<ModelsConfig> = {
       },
       output: 'Env Vars',
     },
+    redis: {
+      displayName: 'Redis',
+      config: {
+        url: {
+          label: 'Redis Url',
+          value: '',
+          require: true,
+        },
+      },
+      output: 'Env Vars',
+    },
   },
 }
 export const serverConfig: BasicConfig<ModelsConfig> = {

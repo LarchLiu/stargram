@@ -19,6 +19,9 @@ async function onInit() {
 
   await $fetch(`/api/${appName}/init`, {
     method: 'POST',
+    headers: {
+      'Content-Type': 'text/plain',
+    },
     body: cryption.encode(JSON.stringify(userConfig)),
   }).then((res) => {
     toast.add({

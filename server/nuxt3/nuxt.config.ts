@@ -1,3 +1,4 @@
+// import process from 'node:process'
 import vue from '@vitejs/plugin-vue'
 import { appDescription } from './constants/index'
 
@@ -37,6 +38,16 @@ export default defineNuxtConfig({
       kv: {
         driver: 'vercelKV',
       },
+      // kv: {
+      //   driver: 'redis',
+      //   url: process.env.REDIS_URL,
+      // },
+      // kv: {
+      //   driver: 'cloudflareKVHTTP',
+      //   accountId: process.env.CF_ACCOUNT_ID,
+      //   namespaceId: process.env.CF_NAMESPACE_ID,
+      //   apiToken: process.env.CF_API_TOKEN,
+      // },
     },
     rollupConfig: {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment

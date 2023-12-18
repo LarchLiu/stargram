@@ -6,7 +6,7 @@ import type { OutUserConfig, ServerConfig } from '../../../../composables/config
 const kv = useStorage('kv')
 
 export default eventHandler(async (event) => {
-  const method = getMethod(event)
+  const method = event.method
   if (method === 'GET') {
     const token = event.context.params!.token as string
     const appId = token.split(':')[0]

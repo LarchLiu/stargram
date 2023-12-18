@@ -1,7 +1,7 @@
 import { getBotConfig } from '../utils'
 
 export default eventHandler(async (event) => {
-  const method = getMethod(event)
+  const method = event.method
   if (method === 'GET') {
     const telegramConfig = await getBotConfig('telegram')
     const telegramBot = []
