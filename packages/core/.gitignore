@@ -25,6 +25,9 @@ storage/notion.d.ts
 storage/supabase.cjs
 storage/supabase.js
 storage/supabase.d.ts
+storage/postgres.cjs
+storage/postgres.js
+storage/postgres.d.ts
 utils.cjs
 utils.js
 utils.d.ts

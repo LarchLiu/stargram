@@ -14,20 +14,20 @@ const configStore = useConfigStore()
 const toast = useToast()
 
 const initialElements = [
-  { id: 'config', type: 'preview-config', position: { x: 0, y: -430 }, class: 'light' },
-  { id: 'kv', type: 'select', data: configStore.config.kvStorage, position: { x: 600, y: -430 }, class: 'light' },
-  { id: 'server', type: 'select', data: configStore.config.server, position: { x: 900, y: -430 }, class: 'light' },
-  { id: 'text', type: 'text-input', position: { x: 0, y: 300 }, class: 'light' },
-  { id: 'app', type: 'select', data: configStore.config.app, position: { x: 300, y: 300 }, class: 'light' },
+  { id: 'config', type: 'preview-config', position: { x: 0, y: -360 }, class: 'light' },
+  { id: 'kv', type: 'select', data: configStore.config.kvStorage, position: { x: 600, y: -360 }, class: 'light' },
+  { id: 'server', type: 'select', data: configStore.config.server, position: { x: 900, y: -360 }, class: 'light' },
+  { id: 'text', type: 'text-input', position: { x: 0, y: 395 }, class: 'light' },
+  { id: 'app', type: 'select', data: configStore.config.app, position: { x: 300, y: 395 }, class: 'light' },
   {
     id: 'server-flow',
     label: 'Server Flow',
     type: 'output',
     position: { x: 600, y: -105 },
-    style: { backgroundColor: 'rgba(16, 185, 129, 0.3)', width: '1200px', height: '600px' },
+    style: { backgroundColor: 'rgba(16, 185, 129, 0.3)', width: '1200px', height: '690px' },
   },
   { id: 'webinfo', type: 'select', data: configStore.config.webInfo, position: { x: 60, y: 50 }, class: 'light', parentNode: 'server-flow', expandParent: true },
-  { id: 'llm', type: 'select', data: configStore.config.llm, position: { x: 350, y: 300 }, class: 'light', parentNode: 'server-flow', expandParent: true },
+  { id: 'llm', type: 'select', data: configStore.config.llm, position: { x: 350, y: 393 }, class: 'light', parentNode: 'server-flow', expandParent: true },
   { id: 'card', type: 'select', data: configStore.config.webCard, position: { x: 350, y: 50 }, class: 'light', parentNode: 'server-flow', expandParent: true },
   { id: 'img', type: 'select', data: configStore.config.imgStorage, position: { x: 650, y: 50 }, class: 'light', parentNode: 'server-flow', expandParent: true },
   { id: 'data', type: 'select', data: configStore.config.dataStorage, position: { x: 950, y: 300 }, class: 'light', parentNode: 'server-flow', expandParent: true },

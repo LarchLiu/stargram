@@ -64,6 +64,11 @@
       "require": "./storage/supabase.cjs",
       "import": "./storage/supabase.js"
     },
+    "./storage/postgres": {
+      "types": "./storage/postgres.d.ts",
+      "require": "./storage/postgres.cjs",
+      "import": "./storage/postgres.js"
+    },
     "./utils": {
       "types": "./utils.d.ts",
       "require": "./utils.cjs",
@@ -113,6 +118,9 @@
     "storage/supabase.cjs",
     "storage/supabase.js",
     "storage/supabase.d.ts",
+    "storage/postgres.cjs",
+    "storage/postgres.js",
+    "storage/postgres.d.ts",
     "utils.cjs",
     "utils.js",
     "utils.d.ts",

@@ -35,6 +35,7 @@
     "crypto-js": "^4.2.0",
     "langchain": "^0.0.208",
     "oauth-1.0a": "^2.2.6",
+    "pg": "^8.11.3",
     "query-string": "^8.1.0",
     "satori": "^0.10.11",
     "satori-html": "^0.3.2"

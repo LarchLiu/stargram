@@ -1,5 +1,6 @@
 import { NotionDataStorage } from './notion'
 import { SupabaseImageStorage, SupabaseVectorStorage } from './supabase'
+import { PGVectorStorage } from './postgres'
 import type { TStorage } from './types'
 
 export * from './types'
@@ -19,6 +20,7 @@ export const storageInfo: StorageInfo = {
     SupabaseImageStorage,
   },
   VectorStorage: {
+    PGVectorStorage,
     SupabaseVectorStorage,
   },
 }

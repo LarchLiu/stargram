@@ -19,6 +19,7 @@ export const entrypoints = {
   'storage': 'storage/index',
   'storage/notion': 'storage/notion/index',
   'storage/supabase': 'storage/supabase/index',
+  'storage/postgres': 'storage/postgres/index',
   'utils': 'utils/index',
   'webCard': 'webCard/index',
   'webInfo': 'webInfo/index',

@@ -362,11 +362,31 @@ export const vectorStorageConfig: BasicConfig<ModelsConfig> = {
       },
       output: '',
     },
-    ChromaVectorStorage: {
-      displayName: 'Chroma Storage',
+    PGVectorStorage: {
+      displayName: 'PGVector Storage',
       config: {
-        url: {
-          label: 'Chroma URL',
+        host: {
+          label: 'Host',
+          value: '',
+          require: true,
+        },
+        port: {
+          label: 'Port',
+          value: '5432',
+          require: true,
+        },
+        user: {
+          label: 'User',
+          value: '',
+          require: true,
+        },
+        password: {
+          label: 'Password',
+          value: '',
+          require: true,
+        },
+        dababase: {
+          label: 'Database',
           value: '',
           require: true,
         },
