@@ -57,6 +57,12 @@ export class PGVectorStorage extends VectorStorage<PGVectorConfig> {
           port: Number.parseInt(this.config.port),
         },
         tableName: this.config.embeddingsInfo.indexName,
+        columns: {
+          idColumnName: 'id',
+          vectorColumnName: 'embedding',
+          contentColumnName: 'content',
+          metadataColumnName: 'metadata',
+        },
         filter: {
           appName: this.config.metaData.appName,
           botId: this.config.metaData.botId,
