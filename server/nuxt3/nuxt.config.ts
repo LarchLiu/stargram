@@ -1,6 +1,36 @@
-// import process from 'node:process'
+import process from 'node:process'
 import vue from '@vitejs/plugin-vue'
 import { appDescription } from './constants/index'
+
+export type KV_DRIVER_TYPE = 'vercelKV' | 'cloudflareKVHTTP' | 'redis'
+
+function getKVStorageConfig() {
+  let config: {
+    driver: KV_DRIVER_TYPE
+    [option: string]: any
+  } = { driver: process.env.KV_DRIVER }
+
+  switch (process.env.KV_DRIVER) {
+    case 'cloudflareKVHTTP':
+      config = {
+        ...config,
+        accountId: process.env.CF_ACCOUNT_ID,
+        namespaceId: process.env.CF_NAMESPACE_ID,
+        apiToken: process.env.CF_API_TOKEN,
+      }
+      break
+    case 'redis':
+      config = {
+        ...config,
+        url: process.env.REDIS_URL,
+      }
+      break
+    case 'vercelKV':
+    default:
+      break
+  }
+  return config
+}
 
 export default defineNuxtConfig({
   modules: [
@@ -35,19 +65,7 @@ export default defineNuxtConfig({
       ],
     },
     storage: {
-      kv: {
-        driver: 'vercelKV',
-      },
-      // kv: {
-      //   driver: 'redis',
-      //   url: process.env.REDIS_URL,
-      // },
-      // kv: {
-      //   driver: 'cloudflareKVHTTP',
-      //   accountId: process.env.CF_ACCOUNT_ID,
-      //   namespaceId: process.env.CF_NAMESPACE_ID,
-      //   apiToken: process.env.CF_API_TOKEN,
-      // },
+      kv: getKVStorageConfig(),
     },
     rollupConfig: {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
