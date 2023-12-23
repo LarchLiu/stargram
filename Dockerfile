@@ -1,5 +1,10 @@
 FROM node:18-slim as builder
 
+ARG KV_DRIVER
+ENV KV_DRIVER=$KV_DRIVER
+
+RUN echo $KV_DRIVER
+
 RUN npm i -g pnpm
 
 ADD ./ /app
