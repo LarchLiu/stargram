@@ -3,28 +3,6 @@ FROM node:18-slim as builder
 ARG KV_DRIVER
 ENV KV_DRIVER=$KV_DRIVER
 
-RUN echo $KV_DRIVER
-
-RUN npm i -g pnpm
-
-ADD ./ /app
-WORKDIR /app
-
-RUN pnpm i
-RUN pnpm build:nuxt
-
-
-FROM node:18-slim
-
-RUN mkdir /app
-COPY --from=builder /app/server/nuxt3/.output /app/
-WORKDIR /app
-
-EXPOSE 3000
-
-ARG KV_DRIVER
-ENV KV_DRIVER=$KV_DRIVER
-
 ARG KV_REST_API_URL
 ENV KV_REST_API_URL=$KV_REST_API_URL
 
@@ -48,6 +26,25 @@ ENV CF_NAMESPACE_ID=$CF_NAMESPACE_ID
 
 ARG CF_API_TOKEN
 ENV CF_API_TOKEN=$CF_API_TOKEN
+
+RUN npm i -g pnpm
+
+ADD ./ /app
+WORKDIR /app
+
+RUN pnpm i
+RUN pnpm build:nuxt
+
+
+FROM node:18-slim
+
+RUN echo $KV_DRIVER
+
+RUN mkdir /app
+COPY --from=builder /app/server/nuxt3/.output /app/
+WORKDIR /app
+
+EXPOSE 3000
 
 ENV NODE_ENV=production
 
