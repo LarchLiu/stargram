@@ -38,11 +38,11 @@ RUN pnpm build:nuxt
 
 FROM node:18-slim
 
-RUN echo $KV_DRIVER
-
 RUN mkdir /app
 COPY --from=builder /app/server/nuxt3/.output /app/
 WORKDIR /app
+
+RUN echo $KV_DRIVER
 
 EXPOSE 3000
 
