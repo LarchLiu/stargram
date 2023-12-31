@@ -40,7 +40,7 @@ describe('handle error', () => {
     })
   })
   test('website domain error', async () => {
-    await getWebsiteInfo('https://domain-error.com/xxx/yyy').catch((err) => {
+    await getWebsiteInfo('https://domain.error/xxx/yyy').catch((err) => {
       expect(err).toMatchSnapshot()
     })
   })
