@@ -5,5 +5,3 @@ exports[`handle error > github repo fetch error 1`] = `[FetchError: [GET] "https
 exports[`handle error > github repo path error 1`] = `[Error: Github error: Not supported website.]`;
 
 exports[`handle error > twitter tweet path error 1`] = `[Error: Twitter error: Not supported website.]`;
-
-exports[`handle error > website domain error 1`] = `[FetchError: request to https://domain.error/xxx/yyy failed, reason: Client network socket disconnected before secure TLS connection was established]`;
