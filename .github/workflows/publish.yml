@@ -30,6 +30,8 @@ jobs:
 
       - run: pnpm install
       - run: pnpm run build
+        env:
+          KV_DRIVER: vercelKV
 
       - name: Save files action
         uses: LarchLiu/actions-save-files@v1
