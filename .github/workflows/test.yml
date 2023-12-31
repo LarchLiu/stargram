@@ -51,7 +51,7 @@ jobs:
       - run: pnpm build
       - run: pnpm test
         env:
-          KV_DRIVER: ${{secrets.KV_DRIVER}}
+          KV_DRIVER: vercelKV
           VITE_OPENAI_API_KEY: ${{secrets.VITE_OPENAI_API_KEY}}
           VITE_GOOGLE_API_KEY: ${{secrets.VITE_GOOGLE_API_KEY}}
           VITE_NOTION_API_KEY: ${{secrets.VITE_NOTION_API_KEY}}
