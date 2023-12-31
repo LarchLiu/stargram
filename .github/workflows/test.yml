@@ -48,10 +48,10 @@ jobs:
           cache: pnpm
 
       - run: pnpm install
-      - run: pnpm build
+      - run: pnpm build:nuxt
       - run: pnpm test
         env:
-          KV_DRIVER: vercelKV
+          KV_DRIVER: ${{secrets.KV_DRIVER}}
           VITE_OPENAI_API_KEY: ${{secrets.VITE_OPENAI_API_KEY}}
           VITE_GOOGLE_API_KEY: ${{secrets.VITE_GOOGLE_API_KEY}}
           VITE_NOTION_API_KEY: ${{secrets.VITE_NOTION_API_KEY}}
