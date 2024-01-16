@@ -1,6 +1,7 @@
 import process from 'node:process'
 import vue from '@vitejs/plugin-vue'
 import { appDescription } from './constants/index'
+import { pwa } from './config/pwa'
 
 export type KV_DRIVER_TYPE = 'vercelKV' | 'cloudflareKVHTTP' | 'redis'
 
@@ -38,6 +39,7 @@ export default defineNuxtConfig({
     '@unocss/nuxt',
     '@pinia/nuxt',
     '@nuxthq/ui',
+    '@vite-pwa/nuxt',
   ],
   ui: {
     safelistColors: ['green', 'red'],
@@ -89,4 +91,5 @@ export default defineNuxtConfig({
   devtools: {
     enabled: true,
   },
+  pwa,
 })
