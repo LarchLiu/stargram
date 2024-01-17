@@ -8,6 +8,15 @@ export const pwa: ModuleOptions = {
   registerType: 'autoUpdate',
   scope,
   base: scope,
+  srcDir: './service-worker',
+  filename: 'sw.ts',
+  strategies: 'injectManifest',
+  injectRegister: false,
+  includeManifestIcons: false,
+  injectManifest: {
+    globPatterns: ['**/*.{js,json,css,html,txt,svg,png,ico,webp,woff,woff2,ttf,eot,otf,wasm}'],
+    globIgnores: ['emojis/**', 'manifest**.webmanifest'],
+  },
   manifest: {
     id: scope,
     scope,
@@ -25,9 +34,10 @@ export const pwa: ModuleOptions = {
         src: 'pwa-512x512.png',
         sizes: '512x512',
         type: 'image/png',
+        purpose: 'any',
       },
       {
-        src: 'pwa-512x512.png',
+        src: 'maskable-icon.png',
         sizes: '512x512',
         type: 'image/png',
         purpose: 'maskable',
@@ -38,20 +48,29 @@ export const pwa: ModuleOptions = {
         src: 'pwa-512x512.png',
         sizes: '512x512',
         type: 'image/png',
-        form_factor: 'wide',
-        label: 'Homescreen of Awesome App',
-      },
-      {
-        src: 'pwa-512x512.png',
-        sizes: '512x512',
-        type: 'image/png',
         label: 'Homescreen of Awesome App',
       },
     ],
+    share_target: {
+      action: '/web-share-target',
+      method: 'POST',
+      enctype: 'multipart/form-data',
+      params: {
+        title: 'title',
+        text: 'text',
+        url: 'url',
+        files: [
+          {
+            name: 'files',
+            accept: ['image/*', 'video/*'],
+          },
+        ],
+      },
+    },
   },
   workbox: {
     globPatterns: ['**/*.{js,css,html,txt,png,ico,svg}'],
-    navigateFallbackDenylist: [/^\/api\//],
+    navigateFallbackDenylist: [/^\/api\//, /^\/self-host/, /^\/user-config/, /^\/app-config/],
     navigateFallback: '/',
     cleanupOutdatedCaches: true,
     runtimeCaching: [
