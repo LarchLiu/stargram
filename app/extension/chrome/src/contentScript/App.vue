@@ -7,7 +7,7 @@ import type { ListenerSendResponse, PageInfo, SwRequest } from '~/types'
 const notification = ref()
 const offset = 100
 const duration = 3000
-let twinkTimer: NodeJS.Timer
+let twinkTimer: NodeJS.Timeout
 let starred = false
 let twinkStarred = false
 let storageId = ''
