@@ -1,0 +1,63 @@
+<script setup lang="ts">
+import { v4 as uuidv4 } from 'uuid'
+
+const userId = useLocalStorage('userId', '')
+const { copy } = useClipboard()
+const router = useRouter()
+const _userId = ref('')
+const edit = ref(false)
+
+async function getConfigUrl() {
+  const { data } = await useFetch<string>('/api/stargram-user-config', {
+    method: 'POST',
+    body: {
+      userId: _userId.value ? _userId.value : userId.value,
+    },
+  })
+
+  return data.value
+}
+
+async function redirectToConfig() {
+  const url = await getConfigUrl()
+  if (url)
+    router.push(url)
+}
+</script>
+
+<template>
+  <div flex justify-center>
+    <ClientOnly>
+      <div mt-4 flex flex-col>
+        User ID
+        <div v-if="userId && !edit" mt-2 flex items-center>
+          {{ userId }}
+          <div uno-carbon-edit ml-2 title="Refresh" h-24px w-24px cursor-pointer @click="edit = true" />
+        </div>
+        <div v-else mt-2 flex items-center>
+          <input
+            v-model="_userId"
+            class="rounded-[4px] text-[#636161]"
+            type="text"
+            border="1px solid #636161"
+            w-350px p-2px
+          >
+          <div uno-carbon-rotate-360 ml-1 title="Refresh" h-24px w-24px cursor-pointer @click="_userId = uuidv4()" />
+          <div uno-carbon-copy title="Copy" ml-1 h-24px w-24px cursor-pointer @click="copy(_userId)" />
+        </div>
+        <div mt-4 flex justify-center>
+          <button btn @click="userId = _userId">
+            Save
+          </button>
+          <button ml-4 btn @click="redirectToConfig()">
+            Config
+          </button>
+        </div>
+      </div>
+    </ClientOnly>
+  </div>
+</template>
+
+<style scoped>
+
+</style>

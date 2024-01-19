@@ -3,7 +3,9 @@
 </script>
 
 <template>
-  <div mt-4 flex justify-center text-32px>
-    Stargram
+  <div flex justify-center text-32px>
+    <div mt-4>
+      Stargram
+    </div>
   </div>
 </template>
