@@ -34,6 +34,9 @@ function getKVStorageConfig() {
 }
 
 export default defineNuxtConfig({
+  runtimeConfig: {
+    appId: process.env.STARGRAM_ID,
+  },
   modules: [
     '@vueuse/nuxt',
     '@unocss/nuxt',

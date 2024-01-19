@@ -11,13 +11,20 @@ import type { UserConfig } from '../utils/index'
 import type { Context } from '../utils/tgBot/context'
 
 export default eventHandler(async (event) => {
+  const { appId } = useRuntimeConfig()
   const body = await readBody(event)
   const url = body.url
   const context = body.context as Context
   const appName = body.appName
-  const botId = body.botId
+  const botId = appName === 'stargram' ? appId : body.botId
   const userId = body.userId
-  const config = context.USER_CONFIG as UserConfig
+  const config = appName === 'stargram' ? await getUserConfig('stargram', appId, userId) as UserConfig : context.USER_CONFIG as UserConfig
+  const stargramHub = appName === 'stargram' ? `${getRequestProtocol(event)}://${getRequestHost(event)}` : body.stargramHub
+
+  if (appName === 'stargram' && !config) {
+    setResponseStatus(event, 400)
+    return { error: 'There is no user config.' }
+  }
 
   if (config.webInfo.select === 'WebInfo')
     config.webInfo.config.routes = routes
@@ -26,7 +33,7 @@ export default eventHandler(async (event) => {
   const imgStorage = new (storageInfo.ImageStorage[config.imgStorage.select])(config.imgStorage.config)
 
   if (config.webCard.select === 'WebCard')
-    config.webCard.config = { stargramHub: body.stargramHub, imgStorage }
+    config.webCard.config = { stargramHub, imgStorage }
   else
     config.webCard.config.imgStorage = imgStorage
   const webCard = new (WebCardFunction[config.webCard.select])(config.webCard.config)
@@ -67,6 +74,8 @@ export default eventHandler(async (event) => {
       return (await sendMessageToTelegramWithContext(context)(message))
     else if (appName === 'slack')
       return (await sendMessageToSlackBot(config.app.config.webhook, message))
+    else if (appName === 'stargram')
+      return (message)
   }
   catch (error) {
     console.error(error)

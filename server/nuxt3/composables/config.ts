@@ -65,6 +65,7 @@ export type AppName = keyof AppConfig
 export interface AppConfig {
   telegram: ModelConfig
   slack: ModelConfig
+  stargram: ModelConfig
 }
 // @unocss-include
 export const appConfig: BasicConfig<AppConfig> = {
@@ -104,6 +105,17 @@ export const appConfig: BasicConfig<AppConfig> = {
         language: {
           label: 'Command Language',
           value: 'en',
+          require: true,
+        },
+      },
+      output: 'Text',
+    },
+    stargram: {
+      displayName: 'Stargram',
+      config: {
+        appId: {
+          label: 'App ID',
+          value: '',
           require: true,
         },
       },

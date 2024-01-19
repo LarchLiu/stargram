@@ -69,10 +69,17 @@ async function onChange(config: ServerConfig<OutUserConfig>) {
       userConfig: cryption.encode(JSON.stringify(config)),
     },
   })
-  if (error.value)
+  if (error.value) {
     toast.add({ title: errorMessage(error.value), color: 'red', timeout: 2000, icon: 'i-carbon-warning' })
-  else
+  }
+  else {
+    if (appName === 'stargram') {
+      const id = useLocalStorage('userId', '')
+      id.value = userId
+    }
+
     toast.add({ title: 'success', color: 'green', timeout: 2000, icon: 'i-carbon-checkmark-outline' })
+  }
 }
 
 onMounted(async () => {
