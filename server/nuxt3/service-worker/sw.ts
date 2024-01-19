@@ -45,7 +45,7 @@ if (import.meta.env.PROD) {
     /^\/sw.js$/,
     // exclude webmanifest: has its own cache
     /^\/manifest-(.*).webmanifest$/,
-    /^\/self-host/, /^\/user-config/, /^\/app-config/, /^\/share-target/,
+    /^\/self-host/, /^\/user-config/, /^\/app-config/, /^\/share-target/, /^\/settings/,
   ]
 }
 
