@@ -20,6 +20,7 @@ export type BotConfig = { default: string } & Record<string, IBotConfig>
 export const ConfigKey = {
   botConfigKey: '_bot_config',
   userConfigKey: '_user_config',
+  notificationKey: '_notification',
 }
 
 export interface AppConfig {

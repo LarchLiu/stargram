@@ -7,8 +7,14 @@ import type { TLLM } from '@stargram/core/llm'
 import { llmInfo } from '@stargram/core/llm'
 import { WebInfoFunction } from '@stargram/core/webInfo'
 import { WebCardFunction } from '@stargram/core/webCard'
+import webpush from 'web-push'
 import type { UserConfig } from '../utils/index'
 import type { Context } from '../utils/tgBot/context'
+
+const VAPID_MAIL = 'mailto:larch.liu@gmail.com'
+const runtimeConfig = useRuntimeConfig()
+webpush.setVapidDetails(VAPID_MAIL, runtimeConfig.public.VAPID_PUBLIC_KEY as string, runtimeConfig.VAPID_PRIVATE_KEY as string)
+const kv = useStorage('kv')
 
 export default eventHandler(async (event) => {
   const { appId } = useRuntimeConfig()
@@ -70,12 +76,27 @@ export default eventHandler(async (event) => {
     message = `Save failed 🐛. ${url}\nError Info: ${info}\n`
 
   try {
-    if (appName === 'telegram')
+    if (appName === 'telegram') {
       return (await sendMessageToTelegramWithContext(context)(message))
-    else if (appName === 'slack')
+    }
+    else if (appName === 'slack') {
       return (await sendMessageToSlackBot(config.app.config.webhook, message))
-    else if (appName === 'stargram')
+    }
+    else if (appName === 'stargram') {
+      const config = await kv.getItem(`stargram${ConfigKey.notificationKey}:${appId}:${userId}`) as any[]
+      if (config) {
+        for (const subscription of config) {
+          webpush.sendNotification(subscription, JSON.stringify({
+            title: 'Stargram Notification',
+            content: `${message}`,
+            imageUrl: '',
+            openUrl: '',
+          }))
+            .catch(error => console.error(error))
+        }
+      }
       return (message)
+    }
   }
   catch (error) {
     console.error(error)

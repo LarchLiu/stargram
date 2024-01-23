@@ -1,28 +1,45 @@
 <!-- eslint-disable no-console -->
 <script setup lang="ts">
+const runtimeConfig = useRuntimeConfig()
+const userId = useLocalStorage('userId', '')
+function urlBase64ToUint8Array(base64String: string) {
+  const padding = '='.repeat((4 - base64String.length % 4) % 4)
+  const base64 = `${base64String}${padding}`
+    .replace(/-/g, '+')
+    .replace(/_/g, '/')
+
+  const rawData = window.atob(base64)
+  const outputArray = new Uint8Array(rawData.length)
+
+  for (let i = 0; i < rawData.length; ++i)
+    outputArray[i] = rawData.charCodeAt(i)
+
+  return outputArray
+}
 function displayConfirmNotification() {
   console.log('displayConfirmNotification !!!')
   if ('serviceWorker' in navigator) {
     const options: NotificationOptions = {
       body: 'You successfully subscribed to our Notification service!',
-      icon: 'src/images/icons/app-icon-96x96.png',
-      image: 'src/images/main-image-sm.jpg',
-      dir: 'ltr',
+      // icon: 'src/images/icons/app-icon-96x96.png',
+      // image: 'src/images/main-image-sm.jpg',
+      dir: 'auto',
       lang: 'en-US', // BCP 47,
       vibrate: [100, 50, 200],
-      badge: 'src/images/icons/app-icon-96x96.png',
+      // badge: 'src/images/icons/app-icon-96x96.png',
       tag: 'confirm-notification',
+      data: {
+        url: '',
+      },
       renotify: true,
       actions: [
         {
           action: 'confirm',
           title: 'Okay',
-          icon: 'src/images/icons/app-icon-96x96.png',
         },
         {
           action: 'cancel',
           title: 'Cancel',
-          icon: 'src/images/icons/app-icon-96x96.png',
         },
       ],
     }
@@ -34,7 +51,7 @@ function displayConfirmNotification() {
 
 function configurePushSubscription() {
   console.log('configurePushSubscription !!!')
-  if ('serviceWorker' in navigator) {
+  if ('serviceWorker' in navigator && 'PushManager' in window) {
     console.log('serviceWorker !!!')
     let serviceWorkerRegistration: ServiceWorkerRegistration
     navigator.serviceWorker.ready
@@ -49,7 +66,7 @@ function configurePushSubscription() {
           // Create a new subscription
           return serviceWorkerRegistration.pushManager.subscribe({
             userVisibleOnly: true,
-            applicationServerKey: 'BPg36y0YwKrMOgutw18ZeX9Ps3fBy5tNnA_OdPIoraBn4u7ptTxJKt14bNcT3WC67b_zaMe5UQgflinBotYubEM',
+            applicationServerKey: urlBase64ToUint8Array(runtimeConfig.public.VAPID_PUBLIC_KEY as string),
           })
         }
         else {
@@ -57,14 +74,14 @@ function configurePushSubscription() {
         }
       })
       .then((pushSubscription) => {
-        console.log('subscription !!!', JSON.stringify(pushSubscription))
+        console.log('subscription !!!', { ...JSON.parse(JSON.stringify(pushSubscription)), userId: userId.value })
         return $fetch('/api/subscriptions', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
           },
-          body: JSON.stringify(pushSubscription),
+          body: { ...JSON.parse(JSON.stringify(pushSubscription)), userId: userId.value },
         })
       })
       .then(() => {

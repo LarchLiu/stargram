@@ -39,7 +39,8 @@
     "pg": "^8.11.3",
     "query-string": "^8.1.0",
     "satori": "^0.10.11",
-    "satori-html": "^0.3.2"
+    "satori-html": "^0.3.2",
+    "web-push": "^3.6.7"
   },
   "devDependencies": {
     "@iconify-json/carbon": "^1.1.26",
@@ -48,6 +49,7 @@
     "@nuxt/devtools": "^1.0.6",
     "@nuxthq/ui": "^2.7.0",
     "@pinia/nuxt": "^0.5.1",
+    "@types/web-push": "^3.6.3",
     "@unocss/eslint-config": "^0.58.0",
     "@unocss/nuxt": "^0.58.0",
     "@vite-pwa/nuxt": "^0.4.0",

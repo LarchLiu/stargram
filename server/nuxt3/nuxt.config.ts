@@ -27,6 +27,12 @@ function getKVStorageConfig() {
       }
       break
     case 'vercelKV':
+      config = {
+        ...config,
+        url: process.env.KV_REST_API_URL,
+        token: process.env.KV_REST_API_TOKEN,
+      }
+      break
     default:
       break
   }
@@ -36,6 +42,10 @@ function getKVStorageConfig() {
 export default defineNuxtConfig({
   runtimeConfig: {
     appId: process.env.STARGRAM_ID,
+    VAPID_PRIVATE_KEY: process.env.VAPID_PRIVATE_KEY,
+    public: {
+      VAPID_PUBLIC_KEY: process.env.VAPID_PUBLIC_KEY,
+    },
   },
   modules: [
     '@vueuse/nuxt',

@@ -1,31 +1,38 @@
 /// <reference lib="WebWorker" />
 /// <reference types="vite/client" />
-import {
-  createNotificationOptions,
-  findNotification,
-} from './notification'
-import type { PushPayload } from '~/service-worker/types'
 
 declare const self: ServiceWorkerGlobalScope
 
 export function onPush(event: PushEvent) {
-  const promise = isClientFocused().then((isFocused) => {
-    if (isFocused)
-      return Promise.resolve()
+  const data = JSON.parse(event.data!.text())
+  const options = {
+    body: data.content,
+    // icon: '/pwa-192x192.png',
+    badge: '/pwa-192x192.png',
+    data: {
+      url: data.openUrl,
+    },
+  }
+  event.waitUntil(
+    self.registration.showNotification(data.title, options),
+  )
+  // const promise = isClientFocused().then((isFocused) => {
+  //   if (isFocused)
+  //     return Promise.resolve()
 
-    const options: PushPayload = event.data!.json()
+  //   const options: PushPayload = event.data!.json()
 
-    return findNotification(options)
-      .catch((e) => {
-        console.error('unhandled error finding notification', e)
-        return Promise.resolve(undefined)
-      })
-      .then((notificationInfo) => {
-        return self.registration.showNotification(options.title, createNotificationOptions(options, notificationInfo))
-      })
-  })
+  //   return findNotification(options)
+  //     .catch((e) => {
+  //       console.error('unhandled error finding notification', e)
+  //       return Promise.resolve(undefined)
+  //     })
+  //     .then((notificationInfo) => {
+  //       return self.registration.showNotification(options.title, createNotificationOptions(options, notificationInfo))
+  //     })
+  // })
 
-  event.waitUntil(promise)
+  // event.waitUntil(promise)
 }
 
 export function onNotificationClick(event: NotificationEvent) {
