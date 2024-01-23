@@ -55,7 +55,7 @@ function saveWebInfo(text: string) {
     toast.add({
       title: `Found ${i} Website. Saving...`,
       color: 'green',
-      timeout: 5000,
+      timeout: 2000,
       icon: 'i-carbon-checkmark-outline',
     })
   }
