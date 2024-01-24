@@ -29,7 +29,7 @@ function displayConfirmNotification() {
       // badge: 'src/images/icons/app-icon-96x96.png',
       tag: 'confirm-notification',
       data: {
-        url: '',
+        url: '/',
       },
       renotify: true,
       actions: [

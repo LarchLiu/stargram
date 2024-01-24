@@ -67,13 +67,18 @@ export default eventHandler(async (event) => {
 
   const info = await chain.call({
     webUrl: url,
-  }).then(_ => true).catch(e => errorMessage(e))
+  }).catch(e => errorMessage(e))
 
   let message = ''
-  if (typeof info === 'boolean')
-    message = `Saved to Stargram 🎉. ${url}\n`
-  else
+  let openUrl = '/share-target'
+  if (typeof info === 'string') {
     message = `Save failed 🐛. ${url}\nError Info: ${info}\n`
+  }
+  else {
+    message = `Saved to Stargram 🎉. ${url}\n`
+    // openUrl = `/${config.dataStorage.select}/${info.storageId}`
+    openUrl = '/'
+  }
 
   try {
     if (appName === 'telegram') {
@@ -90,7 +95,7 @@ export default eventHandler(async (event) => {
             title: 'Stargram Notification',
             content: `${message}`,
             imageUrl: '',
-            openUrl: '',
+            openUrl,
           }))
             .catch(error => console.error(error))
         }
