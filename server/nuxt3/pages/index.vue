@@ -158,10 +158,8 @@ const displayButton = computed(() => {
 })
 
 onMounted(async () => {
-  if (_userId.value) {
-    console.log('getDataList')
+  if (_userId.value)
     await getDataList()
-  }
 })
 </script>
 
@@ -177,13 +175,11 @@ onMounted(async () => {
             Enable Notifications
           </button>
         </div>
-        <div>
+        <div flex justify-center>
           <div mt-4 flex flex-wrap justify-center gap-4 rounded lt-sm:flex-col class="lt-sm:w-4/5">
             <div v-for="item in dataList" :key="item.url">
               <div border="1px solid #636161" class="lt-sm:w-full!" h-260px w-350px rounded>
-                <div>
-                  <img :src="item.meta.ogImage" rounded-t>
-                </div>
+                <img :src="item.meta.ogImage" rounded-t>
                 <div class="p-2 text-[#636161]">
                   {{ item.title }}
                 </div>
