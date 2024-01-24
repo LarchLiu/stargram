@@ -28,6 +28,7 @@ export interface IDataStorage {
   updateOgImage(info: SavedData, url: string): Promise<SavedImage>
   getType(): StorageType
   getConfig(): any
+  list(pageSize: number, page?: number | string): Promise<{ data: StorageData[]; nextPage: number | string | undefined }>
 }
 
 export abstract class DataStorage<T, R extends SavedData> implements IDataStorage {
@@ -44,6 +45,7 @@ export abstract class DataStorage<T, R extends SavedData> implements IDataStorag
   abstract updateOgImage(info: R, url: string): Promise<SavedImage>
   abstract getType(): StorageType
   abstract getConfig(): T
+  abstract list(pageSize: number, page?: number | string): Promise<{ data: StorageData[]; nextPage: number | string | undefined }>
 }
 
 export interface IImageStorage {

@@ -1,5 +1,5 @@
 import { $fetch } from 'ofetch'
-import type { GithubRepoMeta, NotionDataConfig, NotionPage, SavedNotion, TwitterTweetMeta } from '../../types'
+import type { GithubRepoMeta, NotionDataConfig, NotionPage, SavedNotion, TwitterTweetMeta, WebsiteMeta } from '../../types'
 import { GITHUB_DOMAIN, NOTION_API_URL, TWITTER_DOMAIN } from '../../const'
 import { DataStorage } from '../types'
 import type { StorageData, StorageType } from '../types'
@@ -86,6 +86,48 @@ export class NotionDataStorage extends DataStorage<NotionDataConfig, SavedNotion
       type: 'DataStorage',
       name: 'NotionDataStorage',
     }
+  }
+
+  async list(pageSize: number, startCursor?: string): Promise<{ data: StorageData[]; nextPage: string | undefined }> {
+    const body = startCursor
+      ? {
+          page_size: pageSize,
+          start_cursor: startCursor,
+        }
+      : {
+          page_size: pageSize,
+        }
+    const checkData = await $fetch<any>(`${NOTION_API_URL}/databases/${this.config.databaseId}/query`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Notion-Version': '2022-06-28',
+        'Authorization': `Bearer ${this.config.apiKey}`,
+      },
+      body,
+    })
+    const res = {
+      data: [] as StorageData[],
+      nextPage: checkData.has_more && checkData.next_cursor ? checkData.next_cursor as string : undefined,
+    }
+    if (checkData.results.length > 0) {
+      checkData.results.forEach((item: any) => {
+        res.data.push({
+          title: item.properties.Title.title[0].plain_text as string,
+          summary: item.properties.Summary.rich_text[0].plain_text as string,
+          url: item.properties.URL.url as string,
+          categories: item.properties.Categories.multi_select.map((i: any) => {
+            return i.name
+          }) as string[],
+          content: item.properties.Summary.rich_text[0].plain_text as string,
+          meta: {
+            ogImage: item.properties.OgImage.url as string,
+            siteName: item.properties.Website.select.name as string,
+          } as WebsiteMeta,
+        })
+      })
+    }
+    return res
   }
 }
 

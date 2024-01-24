@@ -81,9 +81,9 @@ async function getConfigUrl() {
 }
 
 async function redirectToConfig() {
-  const url = await getConfigUrl()
-  if (url)
-    router.push(url)
+  const encode = await getConfigUrl()
+  if (encode)
+    router.push(`/user-config?code=${encode}`)
 }
 </script>
 

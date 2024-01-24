@@ -1,7 +1,35 @@
 <!-- eslint-disable no-console -->
 <script setup lang="ts">
+import type { StorageData } from '@stargram/core/storage'
+
 const runtimeConfig = useRuntimeConfig()
-const userId = useLocalStorage('userId', '')
+const _userId = useLocalStorage('userId', '')
+const pageSize = ref(30)
+const page = ref<string | number | undefined>()
+const dataList = ref<StorageData[]>([])
+async function getDataList() {
+  const body = page.value
+    ? {
+        userId: _userId.value,
+        pageSize: pageSize.value,
+        page: page.value,
+      }
+    : {
+        userId: _userId.value,
+        pageSize: pageSize.value,
+      }
+  const data = await $fetch<{
+    data: StorageData[]
+    nextPage: string | number | undefined
+  }>('/api/data-list', {
+    method: 'POST',
+    body,
+  })
+  if (data?.nextPage)
+    page.value = data.nextPage
+  if (data?.data)
+    dataList.value = dataList.value.concat(data.data)
+}
 function urlBase64ToUint8Array(base64String: string) {
   const padding = '='.repeat((4 - base64String.length % 4) % 4)
   const base64 = `${base64String}${padding}`
@@ -74,14 +102,14 @@ function configurePushSubscription() {
         }
       })
       .then((pushSubscription) => {
-        console.log('subscription !!!', { ...JSON.parse(JSON.stringify(pushSubscription)), userId: userId.value })
+        console.log('subscription !!!', { ...JSON.parse(JSON.stringify(pushSubscription)), userId: _userId.value })
         return $fetch('/api/subscriptions', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
           },
-          body: { ...JSON.parse(JSON.stringify(pushSubscription)), userId: userId.value },
+          body: { ...JSON.parse(JSON.stringify(pushSubscription)), userId: _userId.value },
         })
       })
       .then(() => {
@@ -128,6 +156,13 @@ function askForNotificationPermission() {
 const displayButton = computed(() => {
   return ('Notification' in window)
 })
+
+onMounted(async () => {
+  if (_userId.value) {
+    console.log('getDataList')
+    await getDataList()
+  }
+})
 </script>
 
 <template>
@@ -137,10 +172,24 @@ const displayButton = computed(() => {
         <div mt-4 text-32px>
           Stargram
         </div>
-        <div>
+        <div v-if="_userId">
           <button btn @click="askForNotificationPermission">
             Enable Notifications
           </button>
+        </div>
+        <div>
+          <div mt-4 flex flex-wrap justify-center gap-4 rounded lt-sm:flex-col class="lt-sm:w-4/5">
+            <div v-for="item in dataList" :key="item.url">
+              <div border="1px solid #636161" class="lt-sm:w-full!" h-260px w-350px rounded>
+                <div>
+                  <img :src="item.meta.ogImage" rounded-t>
+                </div>
+                <div class="p-2 text-[#636161]">
+                  {{ item.title }}
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </ClientOnly>
