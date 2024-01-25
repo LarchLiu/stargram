@@ -6,11 +6,14 @@ export default eventHandler(async (event) => {
   const userId = body.userId
   let config = await kv.getItem(`stargram${ConfigKey.notificationKey}:${appId}:${userId}`) as any[]
   if (config) {
-    config.push({
-      endpoint: body.endpoint,
-      expirationTime: body.expirationTime,
-      keys: body.keys,
-    })
+    const hasConfig = config.filter(item => item.endpoint === body.endpoint)
+    if (hasConfig.length === 0) {
+      config.push({
+        endpoint: body.endpoint,
+        expirationTime: body.expirationTime,
+        keys: body.keys,
+      })
+    }
   }
   else {
     config = [{

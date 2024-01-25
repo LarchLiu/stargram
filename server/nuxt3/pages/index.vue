@@ -2,11 +2,13 @@
 <script setup lang="ts">
 import type { StorageData } from '@stargram/core/storage'
 
+const cardWidth = 350
+const cardHeight = 246
 type LoadMoreStatus = 'idle' | 'loading' | 'no-more'
 
 const runtimeConfig = useRuntimeConfig()
 const _userId = useLocalStorage('userId', '')
-const pageSize = ref(30)
+const pageSize = ref(10)
 const page = ref<string | number | undefined>()
 const dataList = ref<StorageData[]>([])
 const list = ref<HTMLDivElement>()
@@ -166,16 +168,20 @@ function askForNotificationPermission() {
 }
 
 const displayButton = computed(() => {
-  return ('Notification' in window)
+  return !Notification || (Notification.permission !== 'granted' && _userId.value)
 })
 
 onMounted(async () => {
+  pageSize.value = Math.floor(window.innerWidth / cardWidth) * 10
   if (_userId.value)
     await getDataList()
 
   window.addEventListener('scroll', async (evt) => {
-    if (loadMoreStatus.value === 'idle' && list.value && list.value.getBoundingClientRect().bottom < (window.innerHeight + 246)) // 246 = data card height
+    if (loadMoreStatus.value === 'idle' && list.value && list.value.getBoundingClientRect().bottom < (window.innerHeight + cardHeight))
       await getDataList()
+  })
+  window.addEventListener('resize', (event) => {
+    pageSize.value = Math.floor(window.innerWidth / cardWidth) * 10
   })
 })
 </script>
@@ -187,7 +193,7 @@ onMounted(async () => {
         <div mt-4 text-32px>
           Stargram
         </div>
-        <div v-if="_userId">
+        <div v-if="displayButton">
           <button btn @click="askForNotificationPermission">
             Enable Notifications
           </button>
@@ -195,7 +201,7 @@ onMounted(async () => {
         <div ref="list" flex flex-col items-center justify-center>
           <div my-4 flex flex-wrap justify-center gap-4 rounded lt-sm:flex-col class="lt-sm:w-4/5">
             <div v-for="item in dataList" :key="item.url">
-              <div border="1px solid #636161" class="lt-sm:w-full!" h-246px w-350px rounded>
+              <div border="1px solid #636161" class="lt-sm:w-full!" :class="`w-${cardWidth}px h-${cardHeight}px`" rounded>
                 <div h-180px w-full flex justify-center>
                   <img :src="item.meta.ogImage" h-full w-full rounded-t-3px object-cover>
                 </div>
