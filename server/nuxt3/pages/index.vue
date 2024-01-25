@@ -176,12 +176,16 @@ onMounted(async () => {
           </button>
         </div>
         <div flex justify-center>
-          <div mt-4 flex flex-wrap justify-center gap-4 rounded lt-sm:flex-col class="lt-sm:w-4/5">
+          <div my-4 flex flex-wrap justify-center gap-4 rounded lt-sm:flex-col class="lt-sm:w-4/5">
             <div v-for="item in dataList" :key="item.url">
-              <div border="1px solid #636161" class="lt-sm:w-full!" h-260px w-350px rounded>
-                <img :src="item.meta.ogImage" rounded-t>
-                <div class="p-2 text-[#636161]">
-                  {{ item.title }}
+              <div border="1px solid #636161" class="lt-sm:w-full!" h-246px w-350px rounded>
+                <div h-180px w-full flex justify-center>
+                  <img :src="item.meta.ogImage" h-full w-full rounded-t object-cover>
+                </div>
+                <div border-t p-2>
+                  <div class="text-[#636161]" line-clamp-2>
+                    {{ item.title }}
+                  </div>
                 </div>
               </div>
             </div>
