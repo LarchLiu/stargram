@@ -174,7 +174,7 @@ onMounted(async () => {
     await getDataList()
 
   window.addEventListener('scroll', async (evt) => {
-    if (loadMoreStatus.value === 'idle' && list.value && list.value.getBoundingClientRect().bottom <= window.innerHeight)
+    if (loadMoreStatus.value === 'idle' && list.value && list.value.getBoundingClientRect().bottom < (window.innerHeight + 246)) // 246 = data card height
       await getDataList()
   })
 })
