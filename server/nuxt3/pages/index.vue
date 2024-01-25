@@ -2,12 +2,18 @@
 <script setup lang="ts">
 import type { StorageData } from '@stargram/core/storage'
 
+type LoadMoreStatus = 'idle' | 'loading' | 'no-more'
+
 const runtimeConfig = useRuntimeConfig()
 const _userId = useLocalStorage('userId', '')
 const pageSize = ref(30)
 const page = ref<string | number | undefined>()
 const dataList = ref<StorageData[]>([])
+const list = ref<HTMLDivElement>()
+const loadMoreStatus = ref<LoadMoreStatus>('idle')
 async function getDataList() {
+  loadMoreStatus.value = 'loading'
+
   const body = page.value
     ? {
         userId: _userId.value,
@@ -25,8 +31,14 @@ async function getDataList() {
     method: 'POST',
     body,
   })
-  if (data?.nextPage)
+  if (data?.nextPage) {
     page.value = data.nextPage
+    loadMoreStatus.value = 'idle'
+  }
+  else {
+    page.value = undefined
+    loadMoreStatus.value = 'no-more'
+  }
   if (data?.data)
     dataList.value = dataList.value.concat(data.data)
 }
@@ -160,6 +172,11 @@ const displayButton = computed(() => {
 onMounted(async () => {
   if (_userId.value)
     await getDataList()
+
+  window.addEventListener('scroll', async (evt) => {
+    if (loadMoreStatus.value === 'idle' && list.value && list.value.getBoundingClientRect().bottom <= window.innerHeight)
+      await getDataList()
+  })
 })
 </script>
 
@@ -175,7 +192,7 @@ onMounted(async () => {
             Enable Notifications
           </button>
         </div>
-        <div flex justify-center>
+        <div ref="list" flex flex-col items-center justify-center>
           <div my-4 flex flex-wrap justify-center gap-4 rounded lt-sm:flex-col class="lt-sm:w-4/5">
             <div v-for="item in dataList" :key="item.url">
               <div border="1px solid #636161" class="lt-sm:w-full!" h-246px w-350px rounded>
@@ -189,6 +206,12 @@ onMounted(async () => {
                 </div>
               </div>
             </div>
+          </div>
+          <div v-if="loadMoreStatus === 'loading'" mb-4>
+            <div uno-eos-icons-bubble-loading />
+          </div>
+          <div v-if="loadMoreStatus === 'no-more'" mb-4>
+            No more data
           </div>
         </div>
       </div>

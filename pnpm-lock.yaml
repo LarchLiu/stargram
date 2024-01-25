@@ -259,6 +259,9 @@ importers:
       '@iconify-json/carbon':
         specifier: ^1.1.26
         version: 1.1.26
+      '@iconify-json/eos-icons':
+        specifier: ^1.1.10
+        version: 1.1.10
       '@iconify-json/logos':
         specifier: ^1.1.41
         version: 1.1.41
@@ -3171,6 +3174,12 @@ packages:
 
   /@iconify-json/carbon@1.1.26:
     resolution: {integrity: sha512-0y6JstqPCsjEiUuyTTdHE7Wd9gGlxzH2dEfvKUJe5E741qRgLlIipVdBoCkOtbyAT92WEcU8BNfDaC585OCC8w==}
+    dependencies:
+      '@iconify/types': 2.0.0
+    dev: true
+
+  /@iconify-json/eos-icons@1.1.10:
+    resolution: {integrity: sha512-sLkaMSrzHgATDFpVYs3/ymeNxR8CtkZCh1Ds9fYxjfhNmXArofbWhHwANqM4Sw9XNbMJq/Z5yxJ5BPTYqjhRcA==}
     dependencies:
       '@iconify/types': 2.0.0
     dev: true
