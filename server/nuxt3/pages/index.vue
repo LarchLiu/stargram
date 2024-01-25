@@ -201,7 +201,7 @@ onMounted(async () => {
         <div ref="list" flex flex-col items-center justify-center>
           <div my-4 flex flex-wrap justify-center gap-4 rounded lt-sm:flex-col class="lt-sm:w-4/5">
             <div v-for="item in dataList" :key="item.url">
-              <div border="1px solid #636161" class="lt-sm:w-full!" :class="`w-${cardWidth}px h-${cardHeight}px`" rounded>
+              <div border="1px solid #636161" class="lt-sm:w-full!" h-246px w-350px rounded>
                 <div h-180px w-full flex justify-center>
                   <img :src="item.meta.ogImage" h-full w-full rounded-t-3px object-cover>
                 </div>
