@@ -7,7 +7,7 @@ const cardHeight = 246
 type LoadMoreStatus = 'idle' | 'loading' | 'no-more' | 'error'
 
 const runtimeConfig = useRuntimeConfig()
-const _userId = useLocalStorage('userId', '')
+const userId = useLocalStorage('userId', '')
 const { width: windowWidth, height: windowHeight } = useWindowSize()
 const pageSize = computed(() => {
   return Math.floor(windowWidth.value / cardWidth) * 10
@@ -21,12 +21,12 @@ async function getDataList() {
 
   const body = page.value
     ? {
-        userId: _userId.value,
+        userId: userId.value,
         pageSize: pageSize.value,
         page: page.value,
       }
     : {
-        userId: _userId.value,
+        userId: userId.value,
         pageSize: pageSize.value,
       }
   try {
@@ -124,14 +124,14 @@ function configurePushSubscription() {
         }
       })
       .then((pushSubscription) => {
-        console.log('subscription !!!', { ...JSON.parse(JSON.stringify(pushSubscription)), userId: _userId.value })
+        console.log('subscription !!!', { ...JSON.parse(JSON.stringify(pushSubscription)), userId: userId.value })
         return $fetch('/api/subscriptions', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
           },
-          body: { ...JSON.parse(JSON.stringify(pushSubscription)), userId: _userId.value },
+          body: { ...JSON.parse(JSON.stringify(pushSubscription)), userId: userId.value },
         })
       })
       .then(() => {
@@ -176,7 +176,7 @@ function askForNotificationPermission() {
 }
 
 const displayButton = computed(() => {
-  return !Notification || (Notification.permission !== 'granted' && _userId.value)
+  return !Notification || (Notification.permission !== 'granted' && userId.value)
 })
 
 useEventListener('scroll', async (evt) => {
@@ -185,7 +185,7 @@ useEventListener('scroll', async (evt) => {
 })
 
 onMounted(async () => {
-  if (_userId.value)
+  if (userId.value)
     await getDataList()
 })
 </script>
@@ -201,6 +201,13 @@ onMounted(async () => {
           <button btn @click="askForNotificationPermission">
             Enable Notifications
           </button>
+        </div>
+        <div v-if="!userId">
+          <NuxtLink to="/settings">
+            <button btn>
+              Settings
+            </button>
+          </NuxtLink>
         </div>
         <div ref="list" flex flex-col items-center justify-center>
           <div my-4 flex flex-wrap justify-center gap-4 rounded lt-sm:flex-col class="lt-sm:w-4/5">
