@@ -4,11 +4,14 @@ import type { StorageData } from '@stargram/core/storage'
 
 const cardWidth = 350
 const cardHeight = 246
-type LoadMoreStatus = 'idle' | 'loading' | 'no-more'
+type LoadMoreStatus = 'idle' | 'loading' | 'no-more' | 'error'
 
 const runtimeConfig = useRuntimeConfig()
 const _userId = useLocalStorage('userId', '')
-const pageSize = ref(10)
+const { width: windowWidth, height: windowHeight } = useWindowSize()
+const pageSize = computed(() => {
+  return Math.floor(windowWidth.value / cardWidth) * 10
+})
 const page = ref<string | number | undefined>()
 const dataList = ref<StorageData[]>([])
 const list = ref<HTMLDivElement>()
@@ -26,23 +29,28 @@ async function getDataList() {
         userId: _userId.value,
         pageSize: pageSize.value,
       }
-  const data = await $fetch<{
-    data: StorageData[]
-    nextPage: string | number | undefined
-  }>('/api/data-list', {
-    method: 'POST',
-    body,
-  })
-  if (data?.nextPage) {
-    page.value = data.nextPage
-    loadMoreStatus.value = 'idle'
+  try {
+    const data = await $fetch<{
+      data: StorageData[]
+      nextPage: string | number | undefined
+    }>('/api/data-list', {
+      method: 'POST',
+      body,
+    })
+    if (data?.nextPage) {
+      page.value = data.nextPage
+      loadMoreStatus.value = 'idle'
+    }
+    else {
+      page.value = undefined
+      loadMoreStatus.value = 'no-more'
+    }
+    if (data?.data)
+      dataList.value = dataList.value.concat(data.data)
   }
-  else {
-    page.value = undefined
-    loadMoreStatus.value = 'no-more'
+  catch (error) {
+    loadMoreStatus.value = 'error'
   }
-  if (data?.data)
-    dataList.value = dataList.value.concat(data.data)
 }
 function urlBase64ToUint8Array(base64String: string) {
   const padding = '='.repeat((4 - base64String.length % 4) % 4)
@@ -171,18 +179,14 @@ const displayButton = computed(() => {
   return !Notification || (Notification.permission !== 'granted' && _userId.value)
 })
 
+useEventListener('scroll', async (evt) => {
+  if (loadMoreStatus.value === 'idle' && list.value && list.value.getBoundingClientRect().bottom < (windowHeight.value + cardHeight))
+    await getDataList()
+})
+
 onMounted(async () => {
-  pageSize.value = Math.floor(window.innerWidth / cardWidth) * 10
   if (_userId.value)
     await getDataList()
-
-  window.addEventListener('scroll', async (evt) => {
-    if (loadMoreStatus.value === 'idle' && list.value && list.value.getBoundingClientRect().bottom < (window.innerHeight + cardHeight))
-      await getDataList()
-  })
-  window.addEventListener('resize', (event) => {
-    pageSize.value = Math.floor(window.innerWidth / cardWidth) * 10
-  })
 })
 </script>
 
@@ -201,7 +205,7 @@ onMounted(async () => {
         <div ref="list" flex flex-col items-center justify-center>
           <div my-4 flex flex-wrap justify-center gap-4 rounded lt-sm:flex-col class="lt-sm:w-4/5">
             <div v-for="item in dataList" :key="item.url">
-              <div border="1px solid #636161" class="lt-sm:w-full!" h-246px w-350px rounded>
+              <div border="1px solid #636161" class="lt-sm:w-full!" :class="pageSize > 10 ? 'h-246px' : ''" w-350px rounded>
                 <div h-180px w-full flex justify-center>
                   <img :src="item.meta.ogImage" h-full w-full rounded-t-3px object-cover>
                 </div>
@@ -216,8 +220,13 @@ onMounted(async () => {
           <div v-if="loadMoreStatus === 'loading'" mb-4>
             <div uno-eos-icons-bubble-loading />
           </div>
-          <div v-if="loadMoreStatus === 'no-more'" mb-4>
+          <div v-else-if="loadMoreStatus === 'no-more'" mb-4>
             No more data
+          </div>
+          <div v-else-if="loadMoreStatus === 'error'">
+            <button btn @click="getDataList">
+              Reload
+            </button>
           </div>
         </div>
       </div>
