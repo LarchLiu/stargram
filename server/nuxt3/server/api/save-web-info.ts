@@ -88,7 +88,8 @@ export default eventHandler(async (event) => {
       return (await sendMessageToSlackBot(config.app.config.webhook, message))
     }
     else if (appName === 'stargram') {
-      const config = await kv.getItem(`stargram${ConfigKey.notificationKey}:${appId}:${userId}`) as any[]
+      const clientId = body.clientId
+      const config = await kv.getItem(`stargram${ConfigKey.notificationKey}:${appId}:${clientId}`) as webpush.PushSubscription[]
       if (config) {
         for (const subscription of config) {
           webpush.sendNotification(subscription, JSON.stringify({
@@ -97,7 +98,7 @@ export default eventHandler(async (event) => {
             imageUrl: '',
             openUrl,
           }))
-            .catch(error => console.error(error))
+            .catch(error => console.error(error)) // TODO: remove unsubscriped notification
         }
       }
       return (message)

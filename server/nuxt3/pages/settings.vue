@@ -7,7 +7,7 @@ const router = useRouter()
 const _userId = ref('')
 const edit = ref(false)
 
-async function getConfigUrl() {
+async function getConfigCode() {
   const { data } = await useFetch<string>('/api/stargram-user-config', {
     method: 'POST',
     body: {
@@ -19,7 +19,7 @@ async function getConfigUrl() {
 }
 
 async function redirectToConfig() {
-  const encode = await getConfigUrl()
+  const encode = await getConfigCode()
   if (encode)
     router.push(`/user-config?code=${encode}`)
 }

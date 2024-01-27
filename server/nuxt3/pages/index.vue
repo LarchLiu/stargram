@@ -1,13 +1,21 @@
 <!-- eslint-disable no-console -->
 <script setup lang="ts">
 import type { StorageData } from '@stargram/core/storage'
+import { v4 as uuidv4 } from 'uuid'
 
 const cardWidth = 350
 const cardHeight = 246
+const supportsPushNotifications = typeof window !== 'undefined'
+  && 'serviceWorker' in navigator
+  && 'PushManager' in window
+  && 'Notification' in window
+  && 'getKey' in PushSubscription.prototype
+
 type LoadMoreStatus = 'idle' | 'loading' | 'no-more' | 'error'
 
 const runtimeConfig = useRuntimeConfig()
 const userId = useLocalStorage('userId', '')
+const clientId = useLocalStorage('clientId', uuidv4())
 const { width: windowWidth, height: windowHeight } = useWindowSize()
 const pageSize = computed(() => {
   return Math.floor(windowWidth.value / cardWidth) * 10
@@ -101,20 +109,19 @@ function displayConfirmNotification() {
 
 function configurePushSubscription() {
   console.log('configurePushSubscription !!!')
-  if ('serviceWorker' in navigator && 'PushManager' in window) {
+  if (supportsPushNotifications) {
     console.log('serviceWorker !!!')
-    let serviceWorkerRegistration: ServiceWorkerRegistration
     navigator.serviceWorker.ready
-      .then((registration) => {
+      .then(async (registration) => {
         console.log('registration !!!', registration)
-        serviceWorkerRegistration = registration
-        return registration.pushManager.getSubscription()
+        const subscription = await registration.pushManager.getSubscription()
+        return { registration, subscription }
       })
-      .then((subscription) => {
+      .then(({ registration, subscription }) => {
         console.log('subscription !!!', subscription)
         if (subscription === null) {
           // Create a new subscription
-          return serviceWorkerRegistration.pushManager.subscribe({
+          return registration.pushManager.subscribe({
             userVisibleOnly: true,
             applicationServerKey: urlBase64ToUint8Array(runtimeConfig.public.VAPID_PUBLIC_KEY as string),
           })
@@ -124,14 +131,14 @@ function configurePushSubscription() {
         }
       })
       .then((pushSubscription) => {
-        console.log('subscription !!!', { ...JSON.parse(JSON.stringify(pushSubscription)), userId: userId.value })
+        console.log('subscription !!!', { ...pushSubscription.toJSON(), clientId: clientId.value })
         return $fetch('/api/subscriptions', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
           },
-          body: { ...JSON.parse(JSON.stringify(pushSubscription)), userId: userId.value },
+          body: { ...pushSubscription.toJSON(), clientId: clientId.value },
         })
       })
       .then(() => {
@@ -162,7 +169,7 @@ function unsubscribe() {
 }
 
 function askForNotificationPermission() {
-  Notification.requestPermission((result) => {
+  window.Notification.requestPermission((result) => {
     console.log('User Choice', result)
     if (result !== 'granted') {
       console.log('No notification permission granted!')
@@ -175,8 +182,8 @@ function askForNotificationPermission() {
   })
 }
 
-const displayButton = computed(() => {
-  return !Notification || (Notification.permission !== 'granted' && userId.value)
+const shouldAskNotifications = computed(() => {
+  return supportsPushNotifications && window.Notification.permission === 'default' && clientId.value
 })
 
 useEventListener('scroll', async (evt) => {
@@ -197,7 +204,7 @@ onMounted(async () => {
         <div mt-4 text-32px>
           Stargram
         </div>
-        <div v-if="displayButton">
+        <div v-if="shouldAskNotifications">
           <button btn @click="askForNotificationPermission">
             Enable Notifications
           </button>

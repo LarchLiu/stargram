@@ -5,6 +5,7 @@ import { errorMessage } from '@stargram/core/utils'
 const textInput = ref<HTMLInputElement>()
 const text = ref('')
 const userId = useLocalStorage('userId', '')
+const clientId = useLocalStorage('clientId', uuidv4())
 const toast = useToast()
 const _userId = ref(uuidv4())
 const { copy } = useClipboard()
@@ -41,6 +42,7 @@ function saveWebInfo(text: string) {
           appName: 'stargram',
           // botId: context.SHARE_CONTEXT.currentBotId,
           userId: userId.value,
+          clientId: clientId.value,
         },
       }).catch((err) => {
         toast.add({

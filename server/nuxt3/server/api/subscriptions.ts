@@ -3,8 +3,8 @@ const kv = useStorage('kv')
 export default eventHandler(async (event) => {
   const { appId } = useRuntimeConfig()
   const body = await readBody(event)
-  const userId = body.userId
-  let config = await kv.getItem(`stargram${ConfigKey.notificationKey}:${appId}:${userId}`) as any[]
+  const clientId = body.clientId
+  let config = await kv.getItem(`stargram${ConfigKey.notificationKey}:${appId}:${clientId}`) as PushSubscriptionJSON[]
   if (config) {
     const hasConfig = config.filter(item => item.endpoint === body.endpoint)
     if (hasConfig.length === 0) {
@@ -22,6 +22,6 @@ export default eventHandler(async (event) => {
       keys: body.keys,
     }]
   }
-  await kv.setItem(`stargram${ConfigKey.notificationKey}:${appId}:${userId}`, config)
+  await kv.setItem(`stargram${ConfigKey.notificationKey}:${appId}:${clientId}`, config)
   return 'ok'
 })
