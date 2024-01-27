@@ -1,18 +1,18 @@
 <!-- eslint-disable no-console -->
 <script setup lang="ts">
 import type { StorageData } from '@stargram/core/storage'
+import { v4 as uuidv4 } from 'uuid'
 
 const cardWidth = 350
 const cardHeight = 246
 type LoadMoreStatus = 'idle' | 'loading' | 'no-more' | 'error'
 
-// const runtimeConfig = useRuntimeConfig()
+const clientId = useLocalStorage('clientId', uuidv4())
 const {
   shouldAskNotifications,
   askForNotificationPermission,
-} = usePushManager()
+} = usePushManager(clientId)
 const userId = useLocalStorage('userId', '')
-// const clientId = useLocalStorage('clientId', uuidv4())
 const { width: windowWidth, height: windowHeight } = useWindowSize()
 const pageSize = computed(() => {
   return Math.floor(windowWidth.value / cardWidth) * 10

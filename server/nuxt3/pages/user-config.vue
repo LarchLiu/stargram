@@ -12,6 +12,7 @@ const slackBot = ref<Record<string, any>[]>([])
 const { code } = route.query
 const decode = cryption.decode(code as string)
 const { appName, appId, userId } = (decode && decode.includes('appName')) ? JSON.parse(decode) : { appName: '', appId: '', userId: '' }
+// useFetch just use on the setup top level
 const { data } = await useFetch<{ config: string }>(`/api/${appName}/${appId}/adduser`, {
   method: 'GET',
   query: {
@@ -62,23 +63,23 @@ const appConfig = computed(() => {
 })
 
 async function onChange(config: ServerConfig<OutUserConfig>) {
-  const { error } = await useFetch(`/api/${appName}/${appId}/adduser`, {
-    method: 'POST',
-    body: {
-      userId,
-      userConfig: cryption.encode(JSON.stringify(config)),
-    },
-  })
-  if (error.value) {
-    toast.add({ title: errorMessage(error.value), color: 'red', timeout: 2000, icon: 'i-carbon-warning' })
-  }
-  else {
+  try {
+    await $fetch(`/api/${appName}/${appId}/adduser`, {
+      method: 'POST',
+      body: {
+        userId,
+        userConfig: cryption.encode(JSON.stringify(config)),
+      },
+    })
     if (appName === 'stargram') {
       const id = useLocalStorage('userId', '')
       id.value = userId
     }
 
     toast.add({ title: 'success', color: 'green', timeout: 2000, icon: 'i-carbon-checkmark-outline' })
+  }
+  catch (error) {
+    toast.add({ title: errorMessage(error), color: 'red', timeout: 2000, icon: 'i-carbon-warning' })
   }
 }
 

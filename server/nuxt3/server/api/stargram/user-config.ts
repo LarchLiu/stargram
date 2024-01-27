@@ -12,5 +12,5 @@ export default eventHandler(async (event) => {
   }
   const encode = cryption.encode(JSON.stringify(info))
 
-  return encode // `/user-config?code=${encode}`
+  return encode
 })

@@ -8,14 +8,14 @@ const _userId = ref('')
 const edit = ref(false)
 
 async function getConfigCode() {
-  const { data } = await useFetch<string>('/api/stargram-user-config', {
+  const data = await $fetch<string>('/api/stargram/user-config', {
     method: 'POST',
     body: {
       userId: _userId.value ? _userId.value : userId.value,
     },
   })
 
-  return data.value
+  return data
 }
 
 async function redirectToConfig() {
@@ -40,16 +40,16 @@ async function redirectToConfig() {
             class="rounded-[4px] text-[#636161]"
             type="text"
             border="1px solid #636161"
-            w-350px p-2px
+            w-340px p-2px
           >
-          <div uno-carbon-rotate-360 ml-1 title="Refresh" h-24px w-24px cursor-pointer @click="_userId = uuidv4()" />
+          <div uno-fad-random-1dice ml-1 title="Refresh" h-32px w-32px cursor-pointer @click="_userId = uuidv4()" />
           <div uno-carbon-copy title="Copy" ml-1 h-24px w-24px cursor-pointer @click="copy(_userId)" />
         </div>
         <div mt-4 flex justify-center>
-          <button btn @click="userId = _userId">
+          <button btn :disabled="!_userId" @click="userId = _userId">
             Save
           </button>
-          <button ml-4 btn @click="redirectToConfig()">
+          <button ml-4 btn :disabled="(!userId && !_userId) || (edit && !_userId)" @click="redirectToConfig()">
             Config
           </button>
         </div>

@@ -1,14 +1,11 @@
 /* eslint-disable no-console */
-import { v4 as uuidv4 } from 'uuid'
-
 const supportsPushNotifications = typeof window !== 'undefined'
   && 'serviceWorker' in navigator
   && 'PushManager' in window
   && 'Notification' in window
   && 'getKey' in PushSubscription.prototype
-const clientId = useLocalStorage('clientId', uuidv4())
 
-export function usePushManager() {
+export function usePushManager(clientId: Ref<string>) {
   const runtimeConfig = useRuntimeConfig()
 
   function urlBase64ToUint8Array(base64String: string) {
@@ -85,10 +82,6 @@ export function usePushManager() {
           console.log('subscription !!!', { ...pushSubscription.toJSON(), clientId: clientId.value })
           return $fetch('/api/subscriptions', {
             method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Accept': 'application/json',
-            },
             body: { ...pushSubscription.toJSON(), clientId: clientId.value },
           })
         })

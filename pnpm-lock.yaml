@@ -262,6 +262,9 @@ importers:
       '@iconify-json/eos-icons':
         specifier: ^1.1.10
         version: 1.1.10
+      '@iconify-json/fad':
+        specifier: ^1.1.9
+        version: 1.1.9
       '@iconify-json/logos':
         specifier: ^1.1.41
         version: 1.1.41
@@ -3180,6 +3183,12 @@ packages:
 
   /@iconify-json/eos-icons@1.1.10:
     resolution: {integrity: sha512-sLkaMSrzHgATDFpVYs3/ymeNxR8CtkZCh1Ds9fYxjfhNmXArofbWhHwANqM4Sw9XNbMJq/Z5yxJ5BPTYqjhRcA==}
+    dependencies:
+      '@iconify/types': 2.0.0
+    dev: true
+
+  /@iconify-json/fad@1.1.9:
+    resolution: {integrity: sha512-yusgVQKa+E3m16u4JEy2rxMfmx/PiGH0//+m8jwuWCWIFWW1xyMWMLwZSsSdLVAp3PPTa9Cg5M2YV1mEBjQZCQ==}
     dependencies:
       '@iconify/types': 2.0.0
     dev: true
