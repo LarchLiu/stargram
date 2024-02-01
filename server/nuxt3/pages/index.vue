@@ -1,6 +1,6 @@
 <!-- eslint-disable no-console -->
 <script setup lang="ts">
-import type { StorageData } from '@stargram/core/storage'
+import type { ReturnStorageData } from '@stargram/core/storage'
 import { v4 as uuidv4 } from 'uuid'
 
 const cardWidth = 350
@@ -18,7 +18,7 @@ const pageSize = computed(() => {
   return Math.floor(windowWidth.value / cardWidth) * 10
 })
 const page = ref<string | number | undefined>()
-const dataList = ref<StorageData[]>([])
+const dataList = ref<ReturnStorageData[]>([])
 const list = ref<HTMLDivElement>()
 const loadMoreStatus = ref<LoadMoreStatus>('idle')
 async function getDataList() {
@@ -36,7 +36,7 @@ async function getDataList() {
       }
   try {
     const data = await $fetch<{
-      data: StorageData[]
+      data: ReturnStorageData[]
       nextPage: string | number | undefined
     }>('/api/data-list', {
       method: 'POST',
@@ -90,8 +90,13 @@ onMounted(async () => {
         </div>
         <div ref="list" flex flex-col items-center justify-center>
           <div my-4 flex flex-wrap justify-center gap-4 rounded lt-sm:flex-col class="lt-sm:w-4/5">
-            <div v-for="item in dataList" :key="item.url">
-              <div border="1px solid #636161" class="lt-sm:w-full!" :class="pageSize > 10 ? 'h-246px' : ''" w-350px rounded>
+            <div v-for="item in dataList" :key="item.id">
+              <div
+                border="1px solid #636161"
+                class="shadow-[0_2px_4px_#0000004d] lt-sm:w-full!"
+                :class="pageSize > 10 ? 'h-246px' : ''"
+                w-350px cursor-pointer rounded hover:bg-gray-100
+              >
                 <div h-180px w-full flex justify-center>
                   <img :src="item.meta.ogImage" h-full w-full rounded-t-3px object-cover>
                 </div>

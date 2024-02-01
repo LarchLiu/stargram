@@ -2,7 +2,7 @@ import { $fetch } from 'ofetch'
 import type { GithubRepoMeta, NotionDataConfig, NotionPage, SavedNotion, TwitterTweetMeta, WebsiteMeta } from '../../types'
 import { GITHUB_DOMAIN, NOTION_API_URL, TWITTER_DOMAIN } from '../../const'
 import { DataStorage } from '../types'
-import type { StorageData, StorageType } from '../types'
+import type { ReturnStorageData, StorageData, StorageType } from '../types'
 
 export class NotionDataStorage extends DataStorage<NotionDataConfig, SavedNotion> {
   constructor(config: NotionDataConfig, data?: StorageData) {
@@ -88,7 +88,7 @@ export class NotionDataStorage extends DataStorage<NotionDataConfig, SavedNotion
     }
   }
 
-  async list(pageSize: number, startCursor?: string): Promise<{ data: StorageData[]; nextPage: string | undefined }> {
+  async list(pageSize: number, startCursor?: string): Promise<{ data: ReturnStorageData[]; nextPage: string | undefined }> {
     const body = startCursor
       ? {
           page_size: pageSize,
@@ -107,12 +107,13 @@ export class NotionDataStorage extends DataStorage<NotionDataConfig, SavedNotion
       body,
     })
     const res = {
-      data: [] as StorageData[],
+      data: [] as ReturnStorageData[],
       nextPage: checkData.has_more && checkData.next_cursor ? checkData.next_cursor as string : undefined,
     }
     if (checkData.results.length > 0) {
       checkData.results.forEach((item: any) => {
         res.data.push({
+          id: item.id,
           title: item.properties.Title.title[0].plain_text as string,
           summary: item.properties.Summary.rich_text[0].plain_text as string,
           url: item.properties.URL.url as string,
