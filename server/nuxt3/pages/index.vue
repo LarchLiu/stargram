@@ -21,6 +21,8 @@ const page = ref<string | number | undefined>()
 const dataList = ref<ReturnStorageData[]>([])
 const list = ref<HTMLDivElement>()
 const loadMoreStatus = ref<LoadMoreStatus>('idle')
+const selectedData = ref<ReturnStorageData>()
+const modalOpen = ref(false)
 async function getDataList() {
   loadMoreStatus.value = 'loading'
 
@@ -58,6 +60,11 @@ async function getDataList() {
   }
 }
 
+function onPageItemClick(data: ReturnStorageData) {
+  selectedData.value = data
+  modalOpen.value = true
+}
+
 useEventListener('scroll', async (evt) => {
   if (userId.value && loadMoreStatus.value === 'idle' && list.value && list.value.getBoundingClientRect().bottom < (windowHeight.value + cardHeight))
     await getDataList()
@@ -90,9 +97,9 @@ onMounted(async () => {
         </div>
         <div ref="list" flex flex-col items-center justify-center>
           <div my-4 flex flex-wrap justify-center gap-4 rounded lt-sm:flex-col class="lt-sm:w-4/5">
-            <div v-for="item in dataList" :key="item.id">
+            <div v-for="item in dataList" :key="item.id" @click="onPageItemClick(item)">
               <div
-                border="1px solid #636161"
+                border="1px solid #777"
                 class="shadow-[0_2px_4px_#0000004d] lt-sm:w-full!"
                 :class="pageSize > 10 ? 'h-246px' : ''"
                 w-350px cursor-pointer rounded hover:bg-gray-100
@@ -121,6 +128,41 @@ onMounted(async () => {
           </div>
         </div>
       </div>
+      <UModal v-model="modalOpen">
+        <div flex flex-col gap-2 p-4>
+          <div flex justify-right>
+            <UButton color="gray" variant="ghost" icon="i-heroicons-x-mark-20-solid" class="-my-1" @click="modalOpen = false" />
+          </div>
+          <img :src="selectedData?.meta.ogImage">
+          <div text-28px font-bold>
+            {{ selectedData?.title }}
+          </div>
+          <div flex gap-2>
+            <div font-bold>
+              Summary:
+            </div>
+            <div break-all>
+              <span class="text-14px text-[#37352f]">
+                {{ selectedData?.summary }}
+              </span>
+            </div>
+          </div>
+          <div flex gap-2>
+            <span font-bold>Categories: </span>
+            <div flex flex-row flex-wrap gap-2>
+              <div v-for="item in selectedData?.categories" :key="item">
+                <UBadge color="gray" variant="solid">
+                  {{ item }}
+                </UBadge>
+              </div>
+            </div>
+          </div>
+          <div truncate>
+            <span font-bold>URL: </span>
+            <a class="text-14px text-[#37352f] underline decoration-solid" :href="selectedData?.url" target="_blank"> {{ selectedData?.url }} </a>
+          </div>
+        </div>
+      </UModal>
     </ClientOnly>
   </div>
 </template>

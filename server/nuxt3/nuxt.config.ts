@@ -51,7 +51,7 @@ export default defineNuxtConfig({
     '@vueuse/nuxt',
     '@unocss/nuxt',
     '@pinia/nuxt',
-    '@nuxthq/ui',
+    '@nuxt/ui',
     '@vite-pwa/nuxt',
   ],
   ui: {
