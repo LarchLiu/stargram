@@ -96,16 +96,16 @@ onMounted(async () => {
           </NuxtLink>
         </div>
         <div ref="list" flex flex-col items-center justify-center>
-          <div my-4 flex flex-wrap justify-center gap-4 rounded lt-sm:flex-col class="lt-sm:w-4/5">
+          <div my-4 flex flex-wrap justify-center gap-4 rounded lt-sm:flex-col class="lt-sm:w-9/10">
             <div v-for="item in dataList" :key="item.id" @click="onPageItemClick(item)">
               <div
-                border="1px solid #777"
-                class="shadow-[0_2px_4px_#0000004d] lt-sm:w-full!"
+                border="1px solid #0f0f0f1a"
+                class="shadow-[0_2px_4px_#0f0f0f1a] lt-sm:w-full!"
                 :class="pageSize > 10 ? 'h-246px' : ''"
                 w-350px cursor-pointer rounded hover:bg-gray-100
               >
                 <div h-180px w-full flex justify-center>
-                  <img :src="item.meta.ogImage" h-full w-full rounded-t-3px object-cover>
+                  <img :src="item.meta.ogImage" h-full w-full rounded-t-3px object-contain>
                 </div>
                 <div border-t p-2>
                   <div class="text-[#636161]" line-clamp-2>
