@@ -130,9 +130,7 @@ onMounted(async () => {
       </div>
       <UModal v-model="modalOpen">
         <div flex flex-col gap-2 p-4>
-          <div flex justify-right>
-            <UButton color="gray" variant="ghost" icon="i-heroicons-x-mark-20-solid" class="-my-1" @click="modalOpen = false" />
-          </div>
+          <div uno-carbon-close h-24px btn @click="modalOpen = false" />
           <img :src="selectedData?.meta.ogImage">
           <div text-28px font-bold>
             {{ selectedData?.title }}
@@ -157,7 +155,7 @@ onMounted(async () => {
               </div>
             </div>
           </div>
-          <div truncate>
+          <div mb-4 truncate>
             <span font-bold>URL: </span>
             <a class="text-14px text-[#37352f] underline decoration-solid" :href="selectedData?.url" target="_blank"> {{ selectedData?.url }} </a>
           </div>
