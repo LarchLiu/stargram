@@ -4,9 +4,7 @@
 
 <template>
   <VitePwaManifest />
-  <UContainer>
-    <NuxtPage />
-  </UContainer>
+  <NuxtPage />
   <UNotifications md:w-120 xl:w-120 />
 </template>
 
