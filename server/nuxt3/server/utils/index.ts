@@ -130,6 +130,7 @@ export async function MakeQAChain(question: string, context: { USER_CONFIG: User
   let source: string[] = []
   if (typeof info === 'string') {
     message = `Error Info: ${info}\n`
+    answer = message
   }
   else {
     message += info.text
