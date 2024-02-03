@@ -70,15 +70,12 @@ export default eventHandler(async (event) => {
   }).catch(e => errorMessage(e))
 
   let message = ''
-  let openUrl = '/share-target'
-  if (typeof info === 'string') {
+  const openUrl = '/'
+  if (typeof info === 'string')
     message = `Save failed 🐛. ${url}\nError Info: ${info}\n`
-  }
-  else {
+  else
     message = `Saved to Stargram 🎉. ${url}\n`
     // openUrl = `/${config.dataStorage.select}/${info.storageId}`
-    openUrl = '/'
-  }
 
   try {
     if (appName === 'telegram') {

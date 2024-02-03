@@ -21,7 +21,7 @@ export function onShareTarget(event: FetchEvent) {
 }
 
 async function handleSharedTarget(event: FetchEvent) {
-  event.respondWith(Response.redirect('/share-target', 303))
+  event.respondWith(Response.redirect('/', 303))
   await waitForClientToGetReady(event.resultingClientId)
 
   const [client, formData] = await getClientAndFormData(event)
