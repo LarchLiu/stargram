@@ -26,6 +26,9 @@ const { width: windowWidth, height: windowHeight } = useWindowSize()
 const pageSize = computed(() => {
   return Math.floor(windowWidth.value / cardWidth) * 10
 })
+const headerWidth = computed(() => {
+  return pageSize.value > 10 ? `${pageSize.value / 10 * cardWidth + (pageSize.value / 10 - 1) * 16}px` : '100%'
+})
 const page = ref<string | number | undefined>()
 const dataList = ref<ReturnStorageData[]>([])
 const list = ref<HTMLDivElement>()
@@ -198,7 +201,7 @@ onMounted(async () => {
   <div flex justify-center>
     <ClientOnly>
       <div flex flex-col items-center justify-center>
-        <div sticky top-0 z10 backdrop-blur class="w-100vw lg:w-[calc(100vw-4rem)]">
+        <div sticky top-0 z10 backdrop-blur class="header-width">
           <div flex justify-between px5 py2 border="b base">
             <div w-full flex items-center gap-3 overflow-hidden sm:py2>
               <div w-full flex truncate text-6>
@@ -261,7 +264,7 @@ onMounted(async () => {
               </button>
             </div>
           </div>
-          <div sticky bottom-0 z10 class="w-full bg-[#fafafa] lg:w-[calc(100vw-4rem)]">
+          <div sticky bottom-0 z10 class="w-full bg-[#fafafa]">
             <div flex justify-between px5 py2 border="t base">
               <div w-full flex items-center gap-1 overflow-hidden sm:py2>
                 <div w-full>
@@ -332,3 +335,9 @@ onMounted(async () => {
     </ClientOnly>
   </div>
 </template>
+
+<style>
+.header-width {
+  width: v-bind(headerWidth);
+}
+</style>
