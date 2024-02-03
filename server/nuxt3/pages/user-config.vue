@@ -1,9 +1,15 @@
 <script setup lang="ts">
 import { errorMessage } from '@stargram/core/utils'
 import UserConfigFlow from '~/components/UserConfigFlow.vue'
-import { cryption } from '~/constants'
+import { appName as _appName, cryption } from '~/constants'
 import type { BasicConfig, ModelsConfig, OutUserConfig, ServerConfig } from '~/composables/config'
 
+useHead({
+  title: `User Config - ${_appName}`,
+  meta: [
+    { property: 'og:title', content: `User Config - ${_appName}` },
+  ],
+})
 const route = useRoute()
 const toast = useToast()
 const showBot = ref(false)

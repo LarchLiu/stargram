@@ -3,11 +3,18 @@
 import type { ReturnStorageData } from '@stargram/core/storage'
 import { v4 as uuidv4 } from 'uuid'
 import { errorMessage } from '@stargram/core/utils'
+import { appName } from '~/constants'
 
 interface QARes {
   answer: string
   source: string[]
 }
+useHead({
+  title: appName,
+  meta: [
+    { property: 'og:title', content: appName },
+  ],
+})
 const textInput = ref<HTMLInputElement>()
 const text = ref('')
 const toast = useToast()

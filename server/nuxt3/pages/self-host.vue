@@ -1,7 +1,13 @@
 <script setup lang="ts">
-import { cryption } from '../constants/index'
+import { appName, cryption } from '../constants/index'
 import type { OutUserConfig, ServerConfig } from '~/composables/config'
 
+useHead({
+  title: `Self Host - ${appName}`,
+  meta: [
+    { property: 'og:title', content: `Self Host - ${appName}` },
+  ],
+})
 const configStore = useConfigStore()
 const { data: fetchData } = await useFetch('/api/defaultBotConfig')
 const defaultBotConfig = ref<ServerConfig<OutUserConfig>>()

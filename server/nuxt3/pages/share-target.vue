@@ -1,7 +1,14 @@
 <script setup lang="ts">
 import { v4 as uuidv4 } from 'uuid'
 import { errorMessage } from '@stargram/core/utils'
+import { appName } from '~/constants'
 
+useHead({
+  title: `Share Target - ${appName}`,
+  meta: [
+    { property: 'og:title', content: `Share Target - ${appName}` },
+  ],
+})
 const textInput = ref<HTMLInputElement>()
 const text = ref('')
 const userId = useLocalStorage('userId', '')

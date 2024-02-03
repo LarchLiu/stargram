@@ -1,6 +1,13 @@
 <script setup lang="ts">
 import { v4 as uuidv4 } from 'uuid'
+import { appName } from '~/constants'
 
+useHead({
+  title: `Settings - ${appName}`,
+  meta: [
+    { property: 'og:title', content: `Settings - ${appName}` },
+  ],
+})
 const userId = useLocalStorage('userId', '')
 const { copy } = useClipboard()
 const router = useRouter()
