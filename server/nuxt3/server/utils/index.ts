@@ -126,16 +126,20 @@ export async function MakeQAChain(question: string, context: { USER_CONFIG: User
 
   let message = 'Answer: '
   let meta = 'Source: '
+  let answer = ''
+  let source: string[] = []
   if (typeof info === 'string') {
     message = `Error Info: ${info}\n`
   }
   else {
     message += info.text
+    answer = info.text
     if (info.sourceDocuments) {
       const uniqueUrls = new Set(info.sourceDocuments.map((d) => {
-        return d.metadata.source
+        return d.metadata.source!
       }))
       const uniqueMatchs = [...uniqueUrls]
+      source = [...uniqueUrls]
       meta += uniqueMatchs.join('\n') || ''
       message += `\n${meta}`
     }
@@ -147,7 +151,7 @@ export async function MakeQAChain(question: string, context: { USER_CONFIG: User
     else if (appName === 'slack')
       return (await sendMessageToSlackBot(config.app.config.webhook, message))
     else if (appName === 'stargram')
-      return message
+      return { answer, source }
   }
   catch (error) {
     console.error(error)

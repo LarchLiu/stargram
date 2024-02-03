@@ -4,6 +4,10 @@ import type { ReturnStorageData } from '@stargram/core/storage'
 import { v4 as uuidv4 } from 'uuid'
 import { errorMessage } from '@stargram/core/utils'
 
+interface QARes {
+  answer: string
+  source: string[]
+}
 const textInput = ref<HTMLInputElement>()
 const text = ref('')
 const toast = useToast()
@@ -30,7 +34,7 @@ const selectedData = ref<ReturnStorageData>()
 const modalOpen = ref(false)
 const qaModalOpen = ref(false)
 const qaQuestion = ref('')
-const qaAnswer = ref('')
+const qaAnswer = ref<QARes>()
 async function getDataList() {
   loadMoreStatus.value = 'loading'
 
@@ -100,7 +104,7 @@ function handleInputText() {
     else {
       qaModalOpen.value = true
       qaQuestion.value = question
-      $fetch('/api/stargram/qa-chain', {
+      $fetch<QARes>('/api/stargram/qa-chain', {
         method: 'POST',
         body: {
           userId: userId.value,
@@ -108,7 +112,7 @@ function handleInputText() {
         },
       })
         .then((data) => {
-          qaAnswer.value = data as string
+          qaAnswer.value = data
         })
         .catch((err) => {
           toast.add({
@@ -174,7 +178,7 @@ function handleInputText() {
 
 watch(qaModalOpen, () => {
   if (!qaModalOpen.value) {
-    qaAnswer.value = ''
+    qaAnswer.value = undefined
     qaQuestion.value = ''
   }
 })
@@ -310,10 +314,18 @@ onMounted(async () => {
         <div flex flex-col gap-2 p-4>
           <button uno-carbon-close h-24px btn @click="qaModalOpen = false" />
           <div>
-            Question: {{ qaQuestion }}
+            <span font-bold>Question: </span>{{ qaQuestion }}
           </div>
           <div v-if="qaAnswer" mb-4>
-            {{ qaAnswer }}
+            <div>
+              <span font-bold>Answer: </span>{{ qaAnswer.answer }}
+            </div>
+            <div v-if="qaAnswer.source && qaAnswer.source.length">
+              <span font-bold>Source: </span>
+            </div>
+            <div v-for="item in qaAnswer.source" :key="item" truncate>
+              <a class="text-14px text-[#37352f] underline decoration-solid" :href="item" target="_blank"> {{ item }} </a>
+            </div>
           </div>
         </div>
       </UModal>
