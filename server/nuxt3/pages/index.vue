@@ -264,7 +264,7 @@ onMounted(async () => {
               </button>
             </div>
           </div>
-          <div sticky bottom-0 z10 class="w-full bg-[#fafafa]">
+          <div sticky bottom-0 z10 class="header-width bg-[#fafafa]">
             <div flex justify-between px5 py2 border="t base">
               <div w-full flex items-center gap-1 overflow-hidden sm:py2>
                 <div w-full>
