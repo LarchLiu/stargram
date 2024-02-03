@@ -27,7 +27,7 @@ const pageSize = computed(() => {
   return Math.floor(windowWidth.value / cardWidth) * 10
 })
 const headerWidth = computed(() => {
-  return pageSize.value > 10 ? `${pageSize.value / 10 * cardWidth + (pageSize.value / 10 - 1) * 16}px` : '100%'
+  return pageSize.value > 10 ? `${pageSize.value / 10 * cardWidth + (pageSize.value / 10 - 1) * 16}px` : '100vw'
 })
 const page = ref<string | number | undefined>()
 const dataList = ref<ReturnStorageData[]>([])
