@@ -131,7 +131,7 @@ function saveWebInfo(text: string) {
 }
 
 useEventListener('scroll', async (evt) => {
-  if (userId.value && loadMoreStatus.value === 'idle' && list.value && list.value.getBoundingClientRect().bottom < (windowHeight.value + cardHeight))
+  if (userId.value && loadMoreStatus.value === 'idle' && list.value && list.value.getBoundingClientRect().bottom < (windowHeight.value + cardHeight * 2))
     await getDataList()
 })
 
@@ -210,7 +210,7 @@ onMounted(async () => {
           </div>
           <div sticky bottom-0 z10 class="w-full bg-[#fafafa] lg:w-[calc(100vw-4rem)]">
             <div flex justify-between px5 py2 border="t base">
-              <div w-full flex items-center gap-3 overflow-hidden sm:py2>
+              <div w-full flex items-center gap-1 overflow-hidden sm:py2>
                 <div w-full>
                   <input ref="textInput" v-model="text" class="vue-flow" h-8 w-full type="text">
                 </div>
