@@ -28,6 +28,9 @@ const list = ref<HTMLDivElement>()
 const loadMoreStatus = ref<LoadMoreStatus>('idle')
 const selectedData = ref<ReturnStorageData>()
 const modalOpen = ref(false)
+const qaModalOpen = ref(false)
+const qaQuestion = ref('')
+const qaAnswer = ref('')
 async function getDataList() {
   loadMoreStatus.value = 'loading'
 
@@ -79,56 +82,102 @@ useWebShareTarget(async ({ data: { data, action } }: any) => {
   text.value = (data.textParts.join('\n')) as string
 })
 
-function saveWebInfo(text: string) {
+function handleInputText() {
   const regex = /(http(s)?:\/\/)?[a-zA-Z0-9][-a-zA-Z0-9]{0,62}(\.[a-zA-Z0-9][-a-zA-Z0-9]{0,62})+(:[0-9]{1,5})?[-a-zA-Z0-9()@:%_\\\+\.~#?&//=]*/g
-  const matchs = text.match(regex)
+  const qaCommand = '/qa '
+  if (text.value.startsWith(qaCommand)) {
+    const question = text.value.substring(qaCommand.length).trim()
+    text.value = ''
 
-  if (matchs) {
-    let i = 0
-    const uniqueUrls = new Set(matchs)
-    const uniqueMatchs = [...uniqueUrls]
-    while (i < uniqueMatchs.length) {
-      let url = uniqueMatchs[i]
-      if (!url.startsWith('http'))
-        url = `https://${url}`
-
-      $fetch('/api/save-web-info', {
+    if (!question) {
+      toast.add({
+        title: 'Please enter your question with command. The format is: /qa <your question>',
+        color: 'red',
+        timeout: 2000,
+        icon: 'i-carbon-warning',
+      })
+    }
+    else {
+      qaModalOpen.value = true
+      qaQuestion.value = question
+      $fetch('/api/stargram/qa-chain', {
         method: 'POST',
         body: {
-          // context,
-          url,
-          // stargramHub,
-          appName: 'stargram',
-          // botId: context.SHARE_CONTEXT.currentBotId,
           userId: userId.value,
-          clientId: clientId.value,
+          question,
         },
-      }).catch((err) => {
-        toast.add({
-          title: errorMessage(err),
-          color: 'red',
-          timeout: 5000,
-          icon: 'i-carbon-warning',
-        })
       })
-      i += 1
+        .then((data) => {
+          qaAnswer.value = data as string
+        })
+        .catch((err) => {
+          toast.add({
+            title: errorMessage(err),
+            color: 'red',
+            timeout: 2000,
+            icon: 'i-carbon-warning',
+          })
+        })
     }
-    toast.add({
-      title: `Found ${i} Website. Saving...`,
-      color: 'green',
-      timeout: 2000,
-      icon: 'i-carbon-checkmark-outline',
-    })
   }
   else {
-    toast.add({
-      title: 'No Supported Website.',
-      color: 'red',
-      timeout: 5000,
-      icon: 'i-carbon-warning',
-    })
+    const matchs = text.value.match(regex)
+
+    text.value = ''
+    if (matchs) {
+      let i = 0
+      const uniqueUrls = new Set(matchs)
+      const uniqueMatchs = [...uniqueUrls]
+      while (i < uniqueMatchs.length) {
+        let url = uniqueMatchs[i]
+        if (!url.startsWith('http'))
+          url = `https://${url}`
+
+        $fetch('/api/save-web-info', {
+          method: 'POST',
+          body: {
+          // context,
+            url,
+            // stargramHub,
+            appName: 'stargram',
+            // botId: context.SHARE_CONTEXT.currentBotId,
+            userId: userId.value,
+            clientId: clientId.value,
+          },
+        }).catch((err) => {
+          toast.add({
+            title: errorMessage(err),
+            color: 'red',
+            timeout: 2000,
+            icon: 'i-carbon-warning',
+          })
+        })
+        i += 1
+      }
+      toast.add({
+        title: `Found ${i} Website. Saving...`,
+        color: 'green',
+        timeout: 2000,
+        icon: 'i-carbon-checkmark-outline',
+      })
+    }
+    else {
+      toast.add({
+        title: 'No Supported Website.',
+        color: 'red',
+        timeout: 2000,
+        icon: 'i-carbon-warning',
+      })
+    }
   }
 }
+
+watch(qaModalOpen, () => {
+  if (!qaModalOpen.value) {
+    qaAnswer.value = ''
+    qaQuestion.value = ''
+  }
+})
 
 useEventListener('scroll', async (evt) => {
   if (userId.value && loadMoreStatus.value === 'idle' && list.value && list.value.getBoundingClientRect().bottom < (windowHeight.value + cardHeight * 2))
@@ -216,7 +265,7 @@ onMounted(async () => {
                 </div>
                 <div h-7 w-1px sm:hidden />
               </div>
-              <div flex flex-shrink-0 items-center gap-x-2 @click="saveWebInfo(text)">
+              <div flex flex-shrink-0 items-center gap-x-2 @click="handleInputText()">
                 <div uno-carbon-send-alt h-6 w-6 btn />
               </div>
             </div>
@@ -254,6 +303,17 @@ onMounted(async () => {
           <div mb-4 truncate>
             <span font-bold>URL: </span>
             <a class="text-14px text-[#37352f] underline decoration-solid" :href="selectedData?.url" target="_blank"> {{ selectedData?.url }} </a>
+          </div>
+        </div>
+      </UModal>
+      <UModal v-model="qaModalOpen">
+        <div flex flex-col gap-2 p-4>
+          <button uno-carbon-close h-24px btn @click="qaModalOpen = false" />
+          <div>
+            Question: {{ qaQuestion }}
+          </div>
+          <div v-if="qaAnswer" mb-4>
+            {{ qaAnswer }}
           </div>
         </div>
       </UModal>

@@ -146,6 +146,8 @@ export async function MakeQAChain(question: string, context: { USER_CONFIG: User
       return (await sendMessageToTelegramWithContext(context as Context)(message))
     else if (appName === 'slack')
       return (await sendMessageToSlackBot(config.app.config.webhook, message))
+    else if (appName === 'stargram')
+      return message
   }
   catch (error) {
     console.error(error)
