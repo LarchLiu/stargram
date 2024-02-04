@@ -120,10 +120,7 @@ export class SupabaseVectorStorage extends VectorStorage<SupabaseVectorConfig> {
     const rawDoc = new Document({ pageContent: storageData.content, metadata: this.config.metaData })
 
     /* Split text into chunks */
-    const textSplitter = new RecursiveCharacterTextSplitter({
-      chunkSize: 300,
-      chunkOverlap: 40,
-    })
+    const textSplitter = new RecursiveCharacterTextSplitter()
 
     const docs = await textSplitter.splitDocuments([rawDoc])
     await SupabaseVectorStore.fromDocuments(docs, this.config.embeddingsInfo.embeddings, {

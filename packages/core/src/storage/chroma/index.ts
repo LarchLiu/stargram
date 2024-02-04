@@ -21,10 +21,7 @@ export class ChromaVectorStorage extends VectorStorage<ChromaVectorConfig> {
     const rawDoc = new Document({ pageContent: storageData.content, metadata: this.config.metaData })
 
     /* Split text into chunks */
-    const textSplitter = new RecursiveCharacterTextSplitter({
-      chunkSize: 300,
-      chunkOverlap: 40,
-    })
+    const textSplitter = new RecursiveCharacterTextSplitter()
 
     const docs = await textSplitter.splitDocuments([rawDoc])
     await Chroma.fromDocuments(docs, this.config.embeddingsInfo.embeddings, {
