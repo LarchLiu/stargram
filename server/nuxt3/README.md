@@ -41,7 +41,6 @@
 
 - 📲 [PWA](https://github.com/vite-pwa/nuxt) with offline support and auto update behavior.
 
-
 ## Plugins
 
 ### Nuxt Modules

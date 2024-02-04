@@ -80,7 +80,7 @@ export function usePushManager(clientId: Ref<string>) {
         })
         .then((pushSubscription) => {
           console.log('subscription !!!', { ...pushSubscription.toJSON(), clientId: clientId.value })
-          return $fetch('/api/subscriptions', {
+          return $fetch<string>('/api/subscriptions', {
             method: 'POST',
             body: { ...pushSubscription.toJSON(), clientId: clientId.value },
           })

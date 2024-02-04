@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import { saveToNotion } from '../src/storage/notion'
 
 const notionPage = {
@@ -14,7 +14,7 @@ const notionPage = {
   },
 }
 describe('notion', () => {
-  test('save to notion', async () => {
+  it('save to notion', async () => {
     const res = await saveToNotion({
       apiKey: import.meta.env.VITE_NOTION_API_KEY,
       databaseId: import.meta.env.VITE_NOTION_DATABASE_ID,

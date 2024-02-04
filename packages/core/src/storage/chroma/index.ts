@@ -41,7 +41,8 @@ export class ChromaVectorStorage extends VectorStorage<ChromaVectorConfig> {
           botId: this.config.metaData.botId,
           userId: this.config.metaData.userId,
         },
-      })
+      },
+    )
     return vectorStore.asRetriever()
   }
 

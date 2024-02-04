@@ -91,7 +91,7 @@ async function onChange(config: ServerConfig<OutUserConfig>) {
 
 onMounted(async () => {
   if (!code) {
-    const data = await $fetch<{ telegram: Record<string, any>[]; slack: Record<string, any>[] }>('/api/botInfo')
+    const data = await $fetch<{ telegram: Record<string, any>[], slack: Record<string, any>[] }>('/api/botInfo')
     if (data) {
       showBot.value = true
       telegramBot.value = data.telegram

@@ -139,7 +139,7 @@ async function msgHandleRole(message: any, context: Context) {
     for (const key in roleConfig as any) {
       if (
         context.USER_CONFIG.hasOwnProperty(key)
-          && typeof context.USER_CONFIG[key as keyof typeof context.USER_CONFIG] === typeof roleConfig[key]
+        && typeof context.USER_CONFIG[key as keyof typeof context.USER_CONFIG] === typeof roleConfig[key]
       )
         context.USER_CONFIG[key as keyof typeof context.USER_CONFIG] = roleConfig[key]
     }

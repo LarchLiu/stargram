@@ -89,7 +89,7 @@ export class Context {
         for (const key in userConfig) {
           if (
             this.USER_CONFIG.hasOwnProperty(key)
-          && typeof this.USER_CONFIG[key as keyof typeof this.USER_CONFIG] === typeof userConfig[key]
+              && typeof this.USER_CONFIG[key as keyof typeof this.USER_CONFIG] === typeof userConfig[key]
           )
             this.USER_CONFIG[key as keyof typeof this.USER_CONFIG] = userConfig[key]
         }
@@ -104,7 +104,7 @@ export class Context {
     for (const key in userDefine) {
       if (
         this.USER_DEFINE.hasOwnProperty(key)
-        && typeof this.USER_DEFINE[key as keyof typeof this.USER_DEFINE] === typeof userDefine[key]
+          && typeof this.USER_DEFINE[key as keyof typeof this.USER_DEFINE] === typeof userDefine[key]
       )
         this.USER_DEFINE[key as keyof typeof this.USER_DEFINE] = userDefine[key]
     }

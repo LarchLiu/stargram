@@ -1,7 +1,0 @@
-dist
-extension
-local
-node_modules
-*.d.ts
-.next
-.turbo

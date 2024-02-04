@@ -1,9 +1,9 @@
-[build.environment]
-  NODE_VERSION = "18"
-
 [build]
-  publish = "dist"
-  command = "pnpm run build:netlify"
+publish = "dist"
+command = "pnpm run build:netlify"
+
+[build.environment]
+NODE_VERSION = "18"
 
 [functions]
-  directory = ".netlify/edge-functions/"
+directory = ".netlify/edge-functions/"

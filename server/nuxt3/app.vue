@@ -9,7 +9,9 @@
 </template>
 
 <style>
-html, body , #__nuxt{
+html,
+body,
+#__nuxt {
   height: 100vh;
   margin: 0;
   padding: 0;
@@ -26,7 +28,7 @@ html.dark {
 }
 
 input {
-  border-color:rgb(98, 93, 100);
+  border-color: rgb(98, 93, 100);
   border-style: solid;
 }
 

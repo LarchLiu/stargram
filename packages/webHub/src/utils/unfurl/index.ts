@@ -69,7 +69,7 @@ async function getPage(url: string, opts: Opts) {
 }
 
 function getMetadata(url: string, opts: Opts) {
-  return async function (text: string): Promise<{ metadata: any[]; content: string }> {
+  return async function (text: string): Promise<{ metadata: any[], content: string }> {
     const metadata: any[] = []
     const parserContext: ParserContext = { text: '' }
     let content = ''
@@ -193,7 +193,7 @@ function getMetadata(url: string, opts: Opts) {
 }
 
 function parse(url: string) {
-  return function ({ metadata, content }: { metadata: any[]; content: string }) {
+  return function ({ metadata, content }: { metadata: any[], content: string }) {
     const parsed: any = {}
     const ogVideoTags: any[] = []
     const articleTags: any[] = []

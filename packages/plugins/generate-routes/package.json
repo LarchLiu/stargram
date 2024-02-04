@@ -45,8 +45,8 @@
     }
   },
   "files": [
-    "dist",
-    "*.d.ts"
+    "*.d.ts",
+    "dist"
   ],
   "engines": {
     "node": ">=16.0.0"

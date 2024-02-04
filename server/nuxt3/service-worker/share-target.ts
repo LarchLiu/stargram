@@ -32,7 +32,7 @@ async function handleSharedTarget(event: FetchEvent) {
 }
 
 async function sendShareTargetMessage(client: Client, data: FormData) {
-  const sharedData: { textParts: string[]; files: File[] } = {
+  const sharedData: { textParts: string[], files: File[] } = {
     textParts: [],
     files: [],
   }

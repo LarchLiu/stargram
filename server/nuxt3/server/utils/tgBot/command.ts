@@ -170,7 +170,7 @@ export async function bindCommandForTelegram(token: string, lang: string) {
           body: JSON.stringify({
             commands: scopeCommandMap[scope as ScopeType].map((command: CommandType) => ({
               command,
-              description: i18n.command.help[(command.substring(1) as keyof typeof i18n.command.help)] || '',
+              description: i18n.command.help[command.substring(1) as keyof typeof i18n.command.help] || '',
             })),
             scope: {
               type: scope,

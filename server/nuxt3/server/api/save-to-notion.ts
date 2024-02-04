@@ -4,7 +4,7 @@ import { errorMessage } from '@stargram/core/utils'
 export default eventHandler(async (event) => {
   let apiKey = getHeader(event, 'Authorization')
   apiKey = apiKey!.split('Bearer ')[1]
-  const req = await readBody<{ title: string; url: string; summary: string; apiKey: string; databaseId: string; ogImage: string }>(event)
+  const req = await readBody<{ title: string, url: string, summary: string, apiKey: string, databaseId: string, ogImage: string }>(event)
   const title = req.title
   const url = req.url
   const summary = req.summary
@@ -12,8 +12,7 @@ export default eventHandler(async (event) => {
   const defaultOgImage = req.ogImage || ''
 
   try {
-    const storage = new NotionDataStorage({ apiKey, databaseId, defaultOgImage },
-      { title, summary, url, content: '', categories: [], meta: {} })
+    const storage = new NotionDataStorage({ apiKey, databaseId, defaultOgImage }, { title, summary, url, content: '', categories: [], meta: {} })
     const data = await storage.create()
     return data
   }

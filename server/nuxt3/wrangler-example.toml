@@ -5,5 +5,5 @@ main = "./.output/server/index.mjs"
 workers_dev = true
 
 [vars]
-KV_REST_API_URL=
-KV_REST_API_TOKEN=
+KV_REST_API_URL = ""
+KV_REST_API_TOKEN = ""

@@ -16,8 +16,7 @@ onMounted(() => {
   if (fetchData.value && fetchData.value.config) {
     defaultBotConfig.value = JSON.parse(cryption.decode(fetchData.value.config)) as ServerConfig<OutUserConfig>
     configStore.config.imgStorage.select = 'LocalService'
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-expect-error
+    // @ts-expect-error eslint-disable-next-line
     configStore.config.imgStorage.info.LocalService = {
       displayName: 'Local Service',
       config: {

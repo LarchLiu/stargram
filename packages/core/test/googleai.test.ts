@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import { summarizeContent } from '../src/llm/googleai'
 import type { WebInfoData } from '../src/types'
 
@@ -13,13 +13,13 @@ const webInfo: WebInfoData = {
   },
 }
 describe('googleai', () => {
-  test('summarize in zh-CN', async () => {
+  it('summarize in zh-CN', async () => {
     const res = await summarizeContent({ apiKey: import.meta.env.VITE_GOOGLE_API_KEY, lang: 'zh-CN' }, webInfo)
     expect(res.summary).toBeDefined()
     expect(res.categories).toBeDefined()
     // expect(res)?.toMatchSnapshot()
   })
-  test('summarize in en', async () => {
+  it('summarize in en', async () => {
     const res = await summarizeContent({ apiKey: import.meta.env.VITE_GOOGLE_API_KEY, lang: 'en' }, webInfo)
     expect(res.summary).toBeDefined()
     expect(res.categories).toBeDefined()

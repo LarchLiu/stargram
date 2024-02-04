@@ -1,9 +1,9 @@
-import { describe, expect, test } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import { Cryption, countWord, getDomain, getPromptsByTemplate, preprocessText, strNotEqualWith } from '../src/utils'
 
 const host = 'github.com'
 describe('utils', () => {
-  test('get domain', async () => {
+  it('get domain', async () => {
     let res = getDomain('https://github.com')
     expect(res).toBe(host)
     res = getDomain('http://github.com')
@@ -23,7 +23,7 @@ describe('utils', () => {
     res = getDomain('gist.github.com/LarchLiu')
     expect(res).toBe(host)
   })
-  test('strNotEqualWith', async () => {
+  it('strNotEqualWith', async () => {
     let res = strNotEqualWith('', [])
     expect(res).toBeFalsy()
     const key = 'one'
@@ -36,7 +36,7 @@ describe('utils', () => {
     res = strNotEqualWith(key, values)
     expect(res).toBeFalsy()
   })
-  test('get prompts by template', async () => {
+  it('get prompts by template', async () => {
     const template = 'template test: {content}{language}'
     const language = {
       'en': ' in English.',
@@ -55,7 +55,7 @@ describe('utils', () => {
     const valueZh = getPromptsByTemplate(template, kvZh)
     expect(valueZh).toMatchSnapshot()
   })
-  test('preprocess text', async () => {
+  it('preprocess text', async () => {
     let text = `antfu/vitesse: 🏕 Opinionated Vite + Vue Starter Template
 
     <p align='center'>
@@ -287,7 +287,7 @@ describe('utils', () => {
     const countAfter = countWord(text)
     expect(countAfter).toMatchSnapshot()
   })
-  test('Cryption', async () => {
+  it('cryption', async () => {
     const C1 = 32456
     const C2 = 46981
     const crytion = new Cryption(C1, C2)

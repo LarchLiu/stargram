@@ -21,7 +21,7 @@ export default class UnexpectedError extends Error {
     httpStatus?: string
   }
 
-  constructor(errorType: { message: string; name: string; info?: any }) {
+  constructor(errorType: { message: string, name: string, info?: any }) {
     super(errorType.message)
 
     this.name = errorType.name

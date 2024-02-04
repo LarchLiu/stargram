@@ -83,8 +83,7 @@ export default defineNuxtConfig({
       kv: getKVStorageConfig(),
     },
     rollupConfig: {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-expect-error
+      // @ts-expect-error eslint
       plugins: [vue()],
     },
   },

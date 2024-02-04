@@ -44,8 +44,7 @@ onMounted(() => {
   if (fetchData.value && fetchData.value.config) {
     defaultBotConfig.value = JSON.parse(cryption.decode(fetchData.value.config)) as ServerConfig<OutUserConfig>
     configStore.config.imgStorage.select = 'LocalService'
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-expect-error
+    // @ts-expect-error  eslint-disable-next-line
     configStore.config.imgStorage.info.LocalService = {
       displayName: 'Local Service',
       config: {
@@ -80,43 +79,54 @@ onMounted(() => {
 <style lang="scss" scoped>
 .customnodeflow {
   .vue-flow__node-select {
-    border:1px solid #777;
-    padding:10px;
-    border-radius:4px;
+    border: 1px solid #777;
+    padding: 10px;
+    border-radius: 4px;
     background: white;
-    display:flex;
-    flex-direction:column;
-    gap:4px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
     width: 200px;
 
     &:hover {
       border-color: #292524;
-      box-shadow:0 5px 10px #0000004d;
+      box-shadow: 0 5px 10px #0000004d;
     }
 
     &.selected {
-      border:1px solid transparent;
-      box-shadow:0 5px 10px #0000004d;
-      background: linear-gradient(90deg, #fff, #fff), linear-gradient(45deg, #54c8fa,#be1cfa, #54c8fa);
+      border: 1px solid transparent;
+      box-shadow: 0 5px 10px #0000004d;
+      background: linear-gradient(90deg, #fff, #fff),
+        linear-gradient(45deg, #54c8fa, #be1cfa, #54c8fa);
       background-origin: border-box;
-      background-clip: padding-box,border-box;
+      background-clip: padding-box, border-box;
     }
   }
 }
 .customnodeflow.dark {
   .vue-flow__node-select {
     &.selected {
-      border:1px solid transparent;
-      box-shadow:0 5px 10px #0000004d;
-      background: linear-gradient(90deg, #292524, #292524), linear-gradient(45deg, #54c8fa,#be1cfa, #54c8fa);
+      border: 1px solid transparent;
+      box-shadow: 0 5px 10px #0000004d;
+      background: linear-gradient(90deg, #292524, #292524),
+        linear-gradient(45deg, #54c8fa, #be1cfa, #54c8fa);
       background-origin: border-box;
-      background-clip: padding-box,border-box;
+      background-clip: padding-box, border-box;
     }
   }
 }
 .bg-stripes-black {
   background-color: #f7f7fa;
-  background-image: linear-gradient(135deg,#1b1c1c80 10%,#0000 0,#0000 50%,#1a1b1b80 0,#26292a80 60%,#0000 0,#0000);
+  background-image: linear-gradient(
+    135deg,
+    #1b1c1c80 10%,
+    #0000 0,
+    #0000 50%,
+    #1a1b1b80 0,
+    #26292a80 60%,
+    #0000 0,
+    #0000
+  );
   background-size: 7.07px 7.07px;
 }
 </style>

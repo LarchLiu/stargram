@@ -1,5 +1,5 @@
 export function useWebShareTarget(listener?: (message: MessageEvent) => void) {
-  // eslint-disable-next-line n/prefer-global/process
+  // eslint-disable-next-line node/prefer-global/process
   if (process.server)
     return
 

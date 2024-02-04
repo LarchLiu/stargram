@@ -11,8 +11,15 @@ function repoFilter(urls: WebLoaderUrls): WebLoaderUrls | undefined {
   const id = webPath.split('/')[0]
 
   if (strNotEqualWith(id, [
-    'issues', 'pulls', 'marketplace', 'explore', 'settings',
-    'notifications', 'discussions', 'sponsors', 'organizations',
+    'issues',
+    'pulls',
+    'marketplace',
+    'explore',
+    'settings',
+    'notifications',
+    'discussions',
+    'sponsors',
+    'organizations',
   ]))
     return { ...urls, webPath }
 

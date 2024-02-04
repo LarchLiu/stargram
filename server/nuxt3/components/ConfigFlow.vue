@@ -213,48 +213,72 @@ function toggleClass() {
 </template>
 
 <style lang="scss">
-.basicflow.dark{background:#57534e;color:#fffffb}
-.basicflow.dark .vue-flow__node{background:#292524;color:#fffffb}
-.basicflow.dark .vue-flow__controls .vue-flow__controls-button{background:#292524;fill:#fffffb;border-color:#fffffb}
-.basicflow.dark .vue-flow__edge-textbg{fill:#292524}.basicflow.dark .vue-flow__edge-text{fill:#fffffb}
-.basicflow .controls{display:flex;flex-wrap:wrap;justify-content:center;gap:8px}
-.basicflow .controls button{
-  padding:4px;
-  border-radius:5px;
-  font-weight:600;
-  -webkit-box-shadow:0px 5px 10px 0px rgba(0,0,0,.3);
-  box-shadow:0 5px 10px #0000004d;
-  cursor:pointer;
-  display:flex;
-  justify-content:center;
-  align-items:center
+.basicflow.dark {
+  background: #57534e;
+  color: #fffffb;
 }
-.basicflow .controls button:hover{transform:scale(102%);transition:.25s all ease}
+.basicflow.dark .vue-flow__node {
+  background: #292524;
+  color: #fffffb;
+}
+.basicflow.dark .vue-flow__controls .vue-flow__controls-button {
+  background: #292524;
+  fill: #fffffb;
+  border-color: #fffffb;
+}
+.basicflow.dark .vue-flow__edge-textbg {
+  fill: #292524;
+}
+.basicflow.dark .vue-flow__edge-text {
+  fill: #fffffb;
+}
+.basicflow .controls {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+}
+.basicflow .controls button {
+  padding: 4px;
+  border-radius: 5px;
+  font-weight: 600;
+  -webkit-box-shadow: 0px 5px 10px 0px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 5px 10px #0000004d;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.basicflow .controls button:hover {
+  transform: scale(102%);
+  transition: 0.25s all ease;
+}
 
 .customnodeflow {
   .vue-flow__node-text-input,
   .vue-flow__node-preview-config,
   .vue-flow__node-select {
-    border:1px solid #777;
-    padding:10px;
-    border-radius:4px;
+    border: 1px solid #777;
+    padding: 10px;
+    border-radius: 4px;
     background: white;
-    display:flex;
-    flex-direction:column;
-    gap:4px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
     width: 200px;
 
     &:hover {
       border-color: #292524;
-      box-shadow:0 5px 10px #0000004d;
+      box-shadow: 0 5px 10px #0000004d;
     }
 
     &.selected {
-      border:1px solid transparent;
-      box-shadow:0 5px 10px #0000004d;
-      background: linear-gradient(90deg, #fff, #fff), linear-gradient(45deg, #54c8fa,#be1cfa, #54c8fa);
+      border: 1px solid transparent;
+      box-shadow: 0 5px 10px #0000004d;
+      background: linear-gradient(90deg, #fff, #fff),
+        linear-gradient(45deg, #54c8fa, #be1cfa, #54c8fa);
       background-origin: border-box;
-      background-clip: padding-box,border-box;
+      background-clip: padding-box, border-box;
     }
   }
 }
@@ -263,11 +287,12 @@ function toggleClass() {
   .vue-flow__node-preview-config,
   .vue-flow__node-select {
     &.selected {
-      border:1px solid transparent;
-      box-shadow:0 5px 10px #0000004d;
-      background: linear-gradient(90deg, #292524, #292524), linear-gradient(45deg, #54c8fa,#be1cfa, #54c8fa);
+      border: 1px solid transparent;
+      box-shadow: 0 5px 10px #0000004d;
+      background: linear-gradient(90deg, #292524, #292524),
+        linear-gradient(45deg, #54c8fa, #be1cfa, #54c8fa);
       background-origin: border-box;
-      background-clip: padding-box,border-box;
+      background-clip: padding-box, border-box;
     }
   }
 }

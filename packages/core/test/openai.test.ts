@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import { summarizeContent } from '../src/llm/openai'
 import type { WebInfoData } from '../src/types'
 
@@ -13,13 +13,13 @@ const webInfo: WebInfoData = {
   },
 }
 describe('openai', () => {
-  test('summarize in zh-CN', async () => {
+  it('summarize in zh-CN', async () => {
     const res = await summarizeContent(import.meta.env.VITE_OPENAI_API_KEY, webInfo, 'zh-CN')
     expect(res.summary).toBeDefined()
     expect(res.categories).toBeDefined()
     // expect(res)?.toMatchSnapshot()
   })
-  test('summarize in en', async () => {
+  it('summarize in en', async () => {
     const res = await summarizeContent(import.meta.env.VITE_OPENAI_API_KEY, webInfo, 'en')
     expect(res.summary).toBeDefined()
     expect(res.categories).toBeDefined()

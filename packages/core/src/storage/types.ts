@@ -23,16 +23,16 @@ export interface SavedImage {
 }
 
 export interface IDataStorage {
-  create(data?: StorageData): Promise<SavedData>
-  query(url: string): Promise<SavedData | undefined>
-  update(savedData: SavedData, data?: StorageData): Promise<SavedData>
-  updateOgImage(info: SavedData, url: string): Promise<SavedImage>
-  getType(): StorageType
-  getConfig(): any
-  list(pageSize: number, page?: number | string): Promise<{ data: ReturnStorageData[]; nextPage: number | string | undefined }>
+  create: (data?: StorageData) => Promise<SavedData>
+  query: (url: string) => Promise<SavedData | undefined>
+  update: (savedData: SavedData, data?: StorageData) => Promise<SavedData>
+  updateOgImage: (info: SavedData, url: string) => Promise<SavedImage>
+  getType: () => StorageType
+  getConfig: () => any
+  list: (pageSize: number, page?: number | string) => Promise<{ data: ReturnStorageData[], nextPage: number | string | undefined }>
 }
 
-export abstract class DataStorage<T, R extends SavedData> implements IDataStorage {
+export abstract class DataStorage<T> implements IDataStorage {
   constructor(config: T, data?: StorageData) {
     this.config = config
     this.data = data
@@ -41,20 +41,20 @@ export abstract class DataStorage<T, R extends SavedData> implements IDataStorag
   protected config: T
   protected data?: StorageData
   abstract query(url: string): Promise<SavedData | undefined>
-  abstract create(data?: StorageData): Promise<R>
+  abstract create(data?: StorageData): Promise<SavedData>
   abstract update(savedData: SavedData, data?: StorageData): Promise<SavedData>
-  abstract updateOgImage(info: R, url: string): Promise<SavedImage>
+  abstract updateOgImage(info: SavedData, url: string): Promise<SavedImage>
   abstract getType(): StorageType
   abstract getConfig(): T
-  abstract list(pageSize: number, page?: number | string): Promise<{ data: ReturnStorageData[]; nextPage: number | string | undefined }>
+  abstract list(pageSize: number, page?: number | string): Promise<{ data: ReturnStorageData[], nextPage: number | string | undefined }>
 }
 
 export interface IImageStorage {
-  create(data?: StorageImage): Promise<SavedImage>
-  update(data?: StorageImage): Promise<SavedImage>
-  query(imgPath: string): Promise<SavedImage>
-  getType(): StorageType
-  getConfig(): any
+  create: (data?: StorageImage) => Promise<SavedImage>
+  update: (data?: StorageImage) => Promise<SavedImage>
+  query: (imgPath: string) => Promise<SavedImage>
+  getType: () => StorageType
+  getConfig: () => any
 }
 
 export abstract class ImageStorage<T, R extends SavedImage> implements IImageStorage {
@@ -74,10 +74,10 @@ export abstract class ImageStorage<T, R extends SavedImage> implements IImageSto
 }
 
 export interface IVectorStorage {
-  save(data?: WebInfoData): Promise<void>
-  getRetriever(): Promise<BaseRetriever>
-  getType(): StorageType
-  getConfig(): VectorConfig
+  save: (data?: WebInfoData) => Promise<void>
+  getRetriever: () => Promise<BaseRetriever>
+  getType: () => StorageType
+  getConfig: () => VectorConfig
 }
 export interface VectorConfig {
   embeddingsInfo: EmbeddingsInfo

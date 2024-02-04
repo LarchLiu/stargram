@@ -4,7 +4,7 @@ import { GITHUB_DOMAIN, NOTION_API_URL, TWITTER_DOMAIN } from '../../const'
 import { DataStorage } from '../types'
 import type { ReturnStorageData, StorageData, StorageType } from '../types'
 
-export class NotionDataStorage extends DataStorage<NotionDataConfig, SavedNotion> {
+export class NotionDataStorage extends DataStorage<NotionDataConfig> {
   constructor(config: NotionDataConfig, data?: StorageData) {
     super(config, data)
   }
@@ -67,7 +67,8 @@ export class NotionDataStorage extends DataStorage<NotionDataConfig, SavedNotion
         starred = true
       storageId = checkData.results[0].id
       return {
-        starred, storageId,
+        starred,
+        storageId,
       }
     }
     else { return undefined }
@@ -88,7 +89,7 @@ export class NotionDataStorage extends DataStorage<NotionDataConfig, SavedNotion
     }
   }
 
-  async list(pageSize: number, startCursor?: string): Promise<{ data: ReturnStorageData[]; nextPage: string | undefined }> {
+  async list(pageSize: number, startCursor?: string): Promise<{ data: ReturnStorageData[], nextPage: string | undefined }> {
     const body = startCursor
       ? {
           page_size: pageSize,

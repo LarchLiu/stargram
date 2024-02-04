@@ -45,7 +45,11 @@ if (import.meta.env.PROD) {
     /^\/sw.js$/,
     // exclude webmanifest: has its own cache
     /^\/manifest-(.*).webmanifest$/,
-    /^\/self-host/, /^\/user-config/, /^\/app-config/, /^\/share-target/, /^\/settings/,
+    /^\/self-host/,
+    /^\/user-config/,
+    /^\/app-config/,
+    /^\/share-target/,
+    /^\/settings/,
   ]
 }
 
@@ -68,8 +72,8 @@ if (import.meta.env.PROD) {
   registerRoute(
     ({ sameOrigin, request, url }) =>
       sameOrigin
-        && request.destination === 'image'
-        && url.pathname.startsWith('/emojis/'),
+      && request.destination === 'image'
+      && url.pathname.startsWith('/emojis/'),
     new StaleWhileRevalidate({
       cacheName: 'stargram-emojis',
       plugins: [

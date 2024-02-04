@@ -28,17 +28,16 @@ export class WebInfoByApi {
     if (!this.stargramHub)
       throw new Error('Stargram error: No StargramHub API.')
 
-    const info = await $fetch<WebInfoData>(this.stargramHub + this.apiUrl,
-      {
-        method: 'POST',
-        headers: this.headers,
-        body: {
-          webUrl: urls.webUrl,
-          browserlessToken: this.browserlessToken,
-          twitterOauthToken: this.twitterOauthToken,
-          twitterOauthTokenSecret: this.twitterOauthTokenSecret,
-        },
-      })
+    const info = await $fetch<WebInfoData>(this.stargramHub + this.apiUrl, {
+      method: 'POST',
+      headers: this.headers,
+      body: {
+        webUrl: urls.webUrl,
+        browserlessToken: this.browserlessToken,
+        twitterOauthToken: this.twitterOauthToken,
+        twitterOauthTokenSecret: this.twitterOauthTokenSecret,
+      },
+    })
     return info
   }
 

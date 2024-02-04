@@ -21,7 +21,7 @@ export class WebCardByApi {
   private webData
   public localFn = undefined
 
-  async call(fields: { dataStorage: IDataStorage; savedData: SavedData; webData?: WebInfoData }) {
+  async call(fields: { dataStorage: IDataStorage, savedData: SavedData, webData?: WebInfoData }) {
     if (!fields.webData && !this.webData)
       throw new Error('WebCard error: No WebInfo Data')
 
@@ -65,7 +65,7 @@ export class WebCard {
   private imgStorage
   public localFn
 
-  async call(fields: { dataStorage: IDataStorage; savedData: SavedData; webData?: WebInfoData }) {
+  async call(fields: { dataStorage: IDataStorage, savedData: SavedData, webData?: WebInfoData }) {
     if (!fields.webData && !this.webData)
       throw new Error('WebCard error: No WebInfo Data')
 
