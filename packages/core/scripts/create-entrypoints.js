@@ -108,6 +108,7 @@ function updateConfig() {
 
   const generatedFiles = generateFiles()
   const filenames = Object.keys(generatedFiles)
+  const files = ['dist/', ...filenames].sort()
 
   // Update package.json `exports` and `files` fields
   updateJsonFile('./package.json', json => ({
@@ -117,8 +118,8 @@ function updateConfig() {
         ['index', ...Object.keys(entrypoints)].map((key) => {
           const entryPoint = {
             types: `./${key}.d.ts`,
-            require: `./${key}.cjs`,
             import: `./${key}.js`,
+            require: `./${key}.cjs`,
           }
 
           // if (deprecatedNodeOnly.includes(key)) {
@@ -132,7 +133,7 @@ function updateConfig() {
       ),
       { './package.json': './package.json' },
     ),
-    files: ['dist/', ...filenames],
+    files,
   }))
 
   // Write generated files
