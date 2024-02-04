@@ -42,7 +42,9 @@ export default defineConfig({
       // into your library
       external: [
         '@google/generative-ai',
+        '@langchain/community',
         '@langchain/google-genai',
+        '@langchain/openai',
         '@supabase/supabase-js',
         /langchain\/.*/,
         'chromadb',
@@ -53,7 +55,9 @@ export default defineConfig({
         // for externalized deps
         globals: {
           '@google/generative-ai': '@google/generative-ai',
+          '@langchain/community': '@langchain/community',
           '@langchain/google-genai': '@langchain/google-genai',
+          '@langchain/openai': '@langchain/openai',
           '@supabase/supabase-js': '@supabase/supabase-js',
           'chromadb': 'chromadb',
           'ofetch': 'ofetch',

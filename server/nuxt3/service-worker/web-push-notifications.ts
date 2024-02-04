@@ -62,8 +62,8 @@ async function openUrl(url: string) {
   await self.clients.openWindow(url)
 }
 
-function isClientFocused() {
-  return self.clients
-    .matchAll({ type: 'window', includeUncontrolled: true })
-    .then(windowClients => Promise.resolve(windowClients.some(windowClient => windowClient.focused)))
-}
+// function isClientFocused() {
+//   return self.clients
+//     .matchAll({ type: 'window', includeUncontrolled: true })
+//     .then(windowClients => Promise.resolve(windowClients.some(windowClient => windowClient.focused)))
+// }

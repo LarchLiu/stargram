@@ -193,7 +193,7 @@ watch(qaModalOpen, () => {
   }
 })
 
-useEventListener('scroll', async (evt) => {
+useEventListener('scroll', async () => {
   if (userId.value && loadMoreStatus.value === 'idle' && list.value && list.value.getBoundingClientRect().bottom < (windowHeight.value + cardHeight * 2))
     await getDataList()
 })

@@ -1,4 +1,4 @@
-import { PGVectorStore } from 'langchain/vectorstores/pgvector'
+import { PGVectorStore } from '@langchain/community/vectorstores/pgvector'
 import { Document } from 'langchain/document'
 import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter'
 import type { WebInfoData } from '../../types'

@@ -1,6 +1,5 @@
 import { $fetch } from 'ofetch'
-import { OpenAIEmbeddings } from 'langchain/embeddings/openai'
-import { ChatOpenAI } from 'langchain/chat_models/openai'
+import { ChatOpenAI, OpenAIEmbeddings } from '@langchain/openai'
 import type { PromptsLanguage, SummarizeData, WebInfoData } from '../../types'
 import { countWord, getPromptsByTemplate, preprocessText } from '../../utils'
 import { ANSWER_IN_LANGUAGE, OPENAI_CHAT_API, SUMMARIZE_PROMPTS, USER_PROMPTS } from '../../const'

@@ -1,5 +1,5 @@
 import { RetrievalQAChain } from 'langchain/chains'
-import { PromptTemplate } from 'langchain/prompts'
+import { PromptTemplate } from '@langchain/core/prompts'
 import type { IVectorStorage } from '../storage'
 import type { PromptsLanguage, QARes } from '../types'
 import { ANSWER_IN_LANGUAGE } from '../const'
