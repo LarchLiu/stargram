@@ -2,6 +2,7 @@ import process from 'node:process'
 import vue from '@vitejs/plugin-vue'
 import { appDescription } from './constants/index'
 import { pwa } from './config/pwa'
+import type { BuildInfo } from './types'
 
 export type KV_DRIVER_TYPE = 'vercelKV' | 'cloudflareKVHTTP' | 'redis'
 
@@ -105,3 +106,11 @@ export default defineNuxtConfig({
   },
   pwa,
 })
+
+declare module '@nuxt/schema' {
+  interface AppConfig {
+    storage: any
+    env: BuildInfo['env']
+    buildInfo: BuildInfo
+  }
+}

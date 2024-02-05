@@ -8,6 +8,7 @@ useHead({
     { property: 'og:title', content: `Settings - ${appName}` },
   ],
 })
+const buildInfo = useBuildInfo()
 const userId = useLocalStorage('userId', '')
 const { copy } = useClipboard()
 const router = useRouter()
@@ -52,13 +53,22 @@ async function redirectToConfig() {
           <div uno-fad-random-1dice ml-1 title="Refresh" h-32px w-32px cursor-pointer @click="_userId = uuidv4()" />
           <div uno-carbon-copy title="Copy" ml-1 h-24px w-24px cursor-pointer @click="copy(_userId)" />
         </div>
-        <div mt-4 flex justify-center>
+        <div my-4 flex justify-center>
           <button btn :disabled="!_userId" @click="userId = _userId">
             Save
           </button>
           <button ml-4 btn :disabled="(!userId && !_userId) || (edit && !_userId)" @click="redirectToConfig()">
             Config
           </button>
+        </div>
+        <UDivider label="About" />
+        <div flex justify-between>
+          <div>Version</div>
+          {{ `v${buildInfo.version} (${buildInfo.shortCommit}@${buildInfo.env})` }}
+        </div>
+        <div flex justify-between>
+          <div>Build time</div>
+          {{ new Date(buildInfo.time).toUTCString() }}
         </div>
       </div>
     </ClientOnly>
