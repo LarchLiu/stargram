@@ -1,8 +1,5 @@
 FROM node:18-slim as builder
 
-RUN apt update
-RUN apt install -y git
-
 ARG KV_DRIVER
 ENV KV_DRIVER=$KV_DRIVER
 

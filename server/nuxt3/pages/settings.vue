@@ -64,7 +64,7 @@ async function redirectToConfig() {
         <UDivider label="About" />
         <div flex justify-between>
           <div>Version</div>
-          {{ `v${buildInfo.version} (${buildInfo.shortCommit}@${buildInfo.env})` }}
+          {{ `v${buildInfo.version} (@${buildInfo.env})` }}
         </div>
         <div flex justify-between>
           <div>Build time</div>

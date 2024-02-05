@@ -37,13 +37,9 @@ export async function getGitInfo() {
 }
 
 export async function getEnv() {
-  const { commit, shortCommit, branch } = await getGitInfo()
+  // const { commit, shortCommit, branch } = await getGitInfo()
   const env = isDevelopment
     ? 'dev'
-    : isPreview
-      ? 'preview'
-      : branch === 'main'
-        ? 'canary'
-        : 'release'
-  return { commit, shortCommit, branch, env } as const
+    : 'release'
+  return { env } as const
 }

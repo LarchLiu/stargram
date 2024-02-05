@@ -7,13 +7,10 @@ export default defineNuxtModule({
     name: 'stargram:build-env',
   },
   async setup(_options, nuxt) {
-    const { env, commit, shortCommit, branch } = await getEnv()
+    const { env } = await getEnv()
     const buildInfo: BuildInfo = {
       version,
       time: +Date.now(),
-      commit,
-      shortCommit,
-      branch,
       env,
     }
 
