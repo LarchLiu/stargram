@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { errorMessage } from '@stargram/core/utils'
-import { cryption } from '../constants'
 import SelectConfig from './vue-flow/SelectConfig.vue'
 import type { OutUserConfig, ServerConfig } from '~/composables/config'
 
@@ -9,7 +8,7 @@ const toast = useToast()
 const config = ref([configStore.config.app, configStore.config.webCard, configStore.config.imgStorage])
 const { data: fetchData } = await useFetch('/api/defaultBotConfig')
 const defaultBotConfig = ref<ServerConfig<OutUserConfig>>()
-
+const cryption = useCryption()
 async function onInit() {
   const outConfig = configStore.outUserConfig
   const appName = outConfig.app.select

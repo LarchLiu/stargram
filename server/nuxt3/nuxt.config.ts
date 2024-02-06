@@ -46,6 +46,8 @@ export default defineNuxtConfig({
     VAPID_PRIVATE_KEY: process.env.VAPID_PRIVATE_KEY,
     public: {
       VAPID_PUBLIC_KEY: process.env.VAPID_PUBLIC_KEY,
+      CRYPTION_C1: process.env.CRYPTION_C1,
+      CRYPTION_C2: process.env.CRYPTION_C2,
     },
   },
   modules: [

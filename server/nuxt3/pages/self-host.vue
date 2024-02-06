@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { appName, cryption } from '../constants/index'
+import { appName } from '../constants/index'
 import type { OutUserConfig, ServerConfig } from '~/composables/config'
 
 useHead({
@@ -11,6 +11,7 @@ useHead({
 const configStore = useConfigStore()
 const { data: fetchData } = await useFetch('/api/defaultBotConfig')
 const defaultBotConfig = ref<ServerConfig<OutUserConfig>>()
+const cryption = useCryption()
 
 onMounted(() => {
   if (fetchData.value && fetchData.value.config) {
