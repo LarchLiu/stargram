@@ -31,12 +31,21 @@ export default eventHandler(async (event) => {
         imgConfig = botConfig.imgStorage.config
       }
       else {
-        const slackConfig = await getBotConfig('slack')
-        if (slackConfig.default) {
-          const id = slackConfig.default
-          botConfig = JSON.parse(cryption.decode(slackConfig[id].config)) as ServerConfig<OutUserConfig>
+        const stargramConfig = await getBotConfig('stargram')
+        if (stargramConfig.default) {
+          const id = stargramConfig.default
+          botConfig = JSON.parse(cryption.decode(stargramConfig[id].config)) as ServerConfig<OutUserConfig>
           fnName = botConfig.imgStorage.select
           imgConfig = botConfig.imgStorage.config
+        }
+        else {
+          const slackConfig = await getBotConfig('slack')
+          if (slackConfig.default) {
+            const id = slackConfig.default
+            botConfig = JSON.parse(cryption.decode(slackConfig[id].config)) as ServerConfig<OutUserConfig>
+            fnName = botConfig.imgStorage.select
+            imgConfig = botConfig.imgStorage.config
+          }
         }
       }
       if (!fnName || !imgConfig) {

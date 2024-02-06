@@ -10,10 +10,17 @@ export default eventHandler(async (event) => {
       encodeConfig = telegramConfig[id].config
     }
     else {
-      const slackConfig = await getBotConfig('slack')
-      if (slackConfig.default) {
-        const id = slackConfig.default
-        encodeConfig = slackConfig[id].config
+      const stargramConfig = await getBotConfig('stargram')
+      if (stargramConfig.default) {
+        const id = stargramConfig.default
+        encodeConfig = stargramConfig[id].config
+      }
+      else {
+        const slackConfig = await getBotConfig('slack')
+        if (slackConfig.default) {
+          const id = slackConfig.default
+          encodeConfig = slackConfig[id].config
+        }
       }
     }
     return { config: encodeConfig }
