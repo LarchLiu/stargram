@@ -5,9 +5,9 @@ on:
     branches:
       - main
 
-  schedule:
-    # GitHub Actions at 00:00 on Monday
-    - cron: 0 0 * * Mon
+  # schedule:
+  #   # GitHub Actions at 00:00 on Monday
+  #   - cron: 0 0 * * Mon
 
 permissions:
   contents: read
@@ -26,7 +26,7 @@ jobs:
       - name: Run sh and generate account
         id: generate
         run: |
-          echo "account=$(./scripts/twitter-token/generate.sh)" >> $GITHUB_OUTPUT
+          echo "account=$(./scripts/twitter-token/generate.sh ${{ secrets.TWITTER_NAME }} ${{ secrets.TWITTER_PASSWORD }})" >> $GITHUB_OUTPUT
 
       - name: Update TWITTER_OAUTH_TOKEN
         if: ${{ steps.generate.outputs.account }}
