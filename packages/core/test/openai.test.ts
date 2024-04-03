@@ -14,13 +14,13 @@ const webInfo: WebInfoData = {
 }
 describe('openai', () => {
   it('summarize in zh-CN', async () => {
-    const res = await summarizeContent(import.meta.env.VITE_OPENAI_API_KEY, webInfo, 'zh-CN', 'https://aihubmix.com/v1')
+    const res = await summarizeContent(import.meta.env.VITE_OPENAI_API_KEY, webInfo, 'zh-CN', 'https://aihubmix.com')
     expect(res.summary).toBeDefined()
     expect(res.categories).toBeDefined()
     // expect(res)?.toMatchSnapshot()
   })
   it('summarize in en', async () => {
-    const res = await summarizeContent(import.meta.env.VITE_OPENAI_API_KEY, webInfo, 'en', 'https://aihubmix.com/v1')
+    const res = await summarizeContent(import.meta.env.VITE_OPENAI_API_KEY, webInfo, 'en', 'https://aihubmix.com')
     expect(res.summary).toBeDefined()
     expect(res.categories).toBeDefined()
     // expect(res)?.toMatchSnapshot()
