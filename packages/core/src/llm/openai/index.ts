@@ -42,7 +42,7 @@ export async function summarizeContent(apiKey: string, websiteInfo: WebInfoData,
   let content = websiteInfo.content
   content = preprocessText(content)
   const wordCount = countWord(content)
-  const host = apiHost === OPENAI_CHAT_API ? `${apiHost}/v1` : apiHost
+  const host = `${apiHost}/v1`
 
   if (wordCount > 40) {
     content = getSummaryPrompt(content)
