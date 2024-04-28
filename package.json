@@ -2,7 +2,7 @@
   "name": "stargram",
   "version": "0.0.9",
   "private": true,
-  "packageManager": "pnpm@8.15.1",
+  "packageManager": "pnpm@9.0.6",
   "description": "Manage all your starred pages.",
   "author": "Alex Liu <larch.liu@gmail.com>",
   "license": "MIT",
