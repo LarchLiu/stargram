@@ -1,4 +1,4 @@
-FROM node:18-slim as builder
+FROM node:18 as builder
 
 ARG KV_DRIVER
 ENV KV_DRIVER=$KV_DRIVER
