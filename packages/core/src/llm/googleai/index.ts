@@ -69,7 +69,7 @@ export async function summarizeContent(config: GoogleaiConfig, websiteInfo: WebI
     while (!returnRes) {
       const model = new ChatGoogleGenerativeAI({
         apiKey: config.apiKey,
-        modelName: 'gemini-pro',
+        modelName: 'gemini-2.0-flash',
         maxOutputTokens: 2048,
         temperature: 0.3,
         safetySettings: [
