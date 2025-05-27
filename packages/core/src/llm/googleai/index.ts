@@ -28,7 +28,7 @@ export class Googleai extends CLLM<GoogleaiConfig> {
     })
     const model = new ChatGoogleGenerativeAI({
       apiKey: this.config.apiKey,
-      modelName: 'gemini-pro',
+      modelName: 'gemini-2.0-flash',
       maxOutputTokens: 2048,
       temperature: 0.3,
       safetySettings: [
