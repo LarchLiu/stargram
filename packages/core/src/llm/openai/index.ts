@@ -24,7 +24,7 @@ export class Openai extends CLLM<OpenaiConfig> {
     const embeddings = new OpenAIEmbeddings({ openAIApiKey: this.config.apiKey }, {
       basePath: `${this.config.apiHost}/v1`,
     })
-    const model = new ChatOpenAI({ openAIApiKey: this.config.apiKey, modelName: 'gpt-3.5-turbo', temperature: 0.2 }, {
+    const model = new ChatOpenAI({ openAIApiKey: this.config.apiKey, modelName: 'gpt-5-mini', temperature: 0.2 }, {
       basePath: `${this.config.apiHost}/v1`,
     })
     return {
@@ -64,7 +64,7 @@ export async function summarizeContent(apiKey: string, websiteInfo: WebInfoData,
           'Content-Type': 'application/json',
         },
         body: {
-          model: 'gpt-3.5-turbo',
+          model: 'gpt-5-mini',
           messages: [
             {
               role: 'system',
