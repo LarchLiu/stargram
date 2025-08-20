@@ -21,10 +21,10 @@ export class Openai extends CLLM<OpenaiConfig> {
   }
 
   embeddingsInfo() {
-    const embeddings = new OpenAIEmbeddings({ openAIApiKey: this.config.apiKey }, {
+    const embeddings = new OpenAIEmbeddings({ openAIApiKey: this.config.apiKey, modelName: 'text-embedding-3-large', dimensions: 1536 }, {
       basePath: `${this.config.apiHost}/v1`,
     })
-    const model = new ChatOpenAI({ openAIApiKey: this.config.apiKey, modelName: 'gpt-5-mini', temperature: 0.2 }, {
+    const model = new ChatOpenAI({ openAIApiKey: this.config.apiKey, modelName: 'gpt-5-mini' }, {
       basePath: `${this.config.apiHost}/v1`,
     })
     return {
@@ -75,8 +75,8 @@ export async function summarizeContent(apiKey: string, websiteInfo: WebInfoData,
               content: userPrompts,
             },
           ],
-          max_tokens: 800,
-          temperature: 0.3,
+          max_completion_tokens: 800,
+          // temperature: 0.3,
         },
       })
 
