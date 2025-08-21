@@ -23,7 +23,7 @@ export class Googleai extends CLLM<GoogleaiConfig> {
   embeddingsInfo() {
     const embeddings = new GoogleGenerativeAIEmbeddings({
       apiKey: this.config.apiKey,
-      modelName: 'embedding-001', // 768 dimensions
+      modelName: 'gemini-embedding-001', // 768 dimensions
       taskType: TaskType.RETRIEVAL_DOCUMENT,
     })
     const model = new ChatGoogleGenerativeAI({

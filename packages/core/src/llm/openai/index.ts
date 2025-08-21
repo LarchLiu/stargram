@@ -75,14 +75,14 @@ export async function summarizeContent(apiKey: string, websiteInfo: WebInfoData,
               content: userPrompts,
             },
           ],
-          max_completion_tokens: 800,
+          max_completion_tokens: 2048,
           // temperature: 0.3,
         },
       })
 
       const text = openaiData.choices[0].message.content
       try {
-        const json = JSON.parse(text)
+        const json = JSON.parse(text.replace('```json', '').replace('```', ''))
         summary = json.summary
         categories = json.categories
         returnRes = true
